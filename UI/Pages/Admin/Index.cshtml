@@ -1,0 +1,20 @@
+﻿@page
+@using API.Controllers
+@{
+    if (!SecurityController.IsAdmin())
+    {
+        Response.Redirect("./login");
+        return;
+    }
+}
+<script type="module">
+   
+</script>
+@if (SecurityController.HavePermission("ADMINISTRAR_USUARIOS"))
+{
+    <script src="~/Admin/AdminSecurity.js" type="module"></script>
+}
+@if (SecurityController.HavePermission("ADMINISTRAR_CATALOGOS"))
+{
+    <script  src="~/Admin/AdminConfig.js" type="module"></script>
+}

@@ -1,0 +1,56 @@
+﻿@using API.Controllers
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] SNI ADMIN</title>
+    <link rel="stylesheet" href="~/css/AdminTemplate.css" />
+    <script type="module">
+        import { WSecurity } from "../WDevCore/WModules/WSecurity.js";
+        const logout = ()=>{
+            WSecurity.LogOut();
+        }
+        window.addEventListener("load", () => {
+            //active nav
+            if (location.href.includes("Transaction_FacturaView")) {
+                Transaction_FacturaView.className = "active";
+            } else if (location.href.includes("Transaction_Transacciones_LotesView")) {
+                Transaction_Transacciones_LotesView.className = "active";
+            } else if (location.href.includes("Transaction_MoviminetoView")) {
+                Transaction_MoviminetoView.className = "active";
+            } else {
+                Home.className = "active";
+            }
+            //logOut
+            btnLogOut.onclick = logout;
+        })
+    </script>
+</head>
+
+<body id="AdminTemplate">
+    <aside id="Aside">
+        <nav>
+         
+        </nav>
+    </aside>
+
+    <header id="Header" class="admin-header">
+        @if (SecurityController.IsAdmin())
+        {
+            <a href="~/Admin/Index">Admin Panel</a>
+        }  
+        <a href="#" id="btnLogOut">Cerrar Sesión</a>      
+    </header>
+    <div class="background"></div>
+
+    <div id="MainContainer">
+        <main role="main" id="Main">
+            @RenderBody()
+        </main>
+    </div>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>
