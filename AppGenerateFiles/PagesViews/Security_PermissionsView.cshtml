@@ -1,0 +1,11 @@
+@page
+@using API.Controllers
+@{
+    if (!SecurityController.Auth())
+    {
+        Response.Redirect("../LoginView");
+        return;
+    }    
+}
+<script src='~/Views/Security_PermissionsView.js' type='module'></script>
+<div id='MainBody'></div>
