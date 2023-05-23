@@ -13,6 +13,12 @@ namespace CAPA_NEGOCIO.Security
     public enum PermissionsEnum
     {
        ADMIN_ACCESS,
-       HOME_ACCESS    
+       HOME_ACCESS,
+       GESTION_CLIENTES,
+       GESTION_INGRESOS,
+       GESTION_EGRESOS,
+       GESTION_CONTRATOS,
+       GESTION_SUCURSALES,
+       GESTION_MOVIMIENTOS,//PERMITE INGRESOS Y EGRESOS, Y MOVIMIENTOS DE CAJA
     }
 }

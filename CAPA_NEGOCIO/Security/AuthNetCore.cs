@@ -97,8 +97,8 @@ namespace CAPA_NEGOCIO.Security
             }
         }
         public static bool HavePermission(string permission)
-        {
-            if (HaveRole(RoleEnum.ADMIN.ToString())) return true;
+        {   var isAdmin = security_User?.Security_Users_Roles?.Where(r => RoleHavePermission(PermissionsEnum.ADMIN_ACCESS.ToString(), r)?.Count != 0).ToList();
+            if (isAdmin?.Count != 0) return true;
             if (Authenticate())
             {
                 var roleHavePermision = security_User?.Security_Users_Roles?.Where(r => RoleHavePermission(permission, r)?.Count != 0).ToList();

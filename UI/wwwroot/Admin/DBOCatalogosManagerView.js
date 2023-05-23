@@ -5,7 +5,7 @@ import { StylesControlsV2, StyleScrolls } from "../WDevCore/StyleModules/WStyleC
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
 import { WFilterOptions } from '../WDevCore/WComponents/WFilterControls.js';
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js"
-import {  Catalogo_Sucursales, Datos_Configuracion } from "../FrontModel/DBODataBaseModel.js"
+import { Catalogo_Agentes,Catalogo_Clasificacion_Cliente,Catalogo_Clientes,Catalogo_Tipo_Agente,Catalogo_Tipo_Identificacion,Catalogo_Cambio_Dolar,Catalogo_Cuentas,Catalogo_Departamento,Catalogo_Inversores,Catalogo_Municipio,Catalogo_Nacionalidad,Catalogo_Profesiones,Catalogo_Sucursales } from "../FrontModel/DBODataBaseModel.js"
 import { EntityClass } from "../WDevCore/WModules/EntityClass.js";
 class DBOCatalogosManagerView extends HTMLElement {
     constructor() {
@@ -44,16 +44,47 @@ class DBOCatalogosManagerView extends HTMLElement {
         this.TabManager.NavigateFunction( Model.constructor.name ,  WRender.Create({ className: "catalogo-container", children: [filterOptions, mainComponent] }));
     }
     MainNav = new WAppNavigator({
+        //@ts-ignore
         Elements: [
-            {
-                name: WOrtograficValidation.es('Catalogo_Sucursales'), action: async () => {
-                    this.NavigateFunction(new Catalogo_Sucursales())
-                }
-            },  {
-                name: WOrtograficValidation.es('Datos_Configuracion'), action: async () => {
-                    this.NavigateFunction(new Datos_Configuracion())
-                }
-            }
+            { name: WOrtograficValidation.es('Catalogo_Agentes'), action : async ()=> {
+                this.NavigateFunction(new Catalogo_Agentes())
+             }},
+            { name: WOrtograficValidation.es('Catalogo_Clasificacion_Cliente'), action : async ()=> {
+                this.NavigateFunction(new Catalogo_Clasificacion_Cliente())
+             }},
+            { name: WOrtograficValidation.es('Catalogo_Clientes'), action : async ()=> {
+                this.NavigateFunction(new Catalogo_Clientes())
+             }},
+            { name: WOrtograficValidation.es('Catalogo_Tipo_Agente'), action : async ()=> {
+                this.NavigateFunction(new Catalogo_Tipo_Agente())
+             }},
+            { name: WOrtograficValidation.es('Catalogo_Tipo_Identificacion'), action : async ()=> {
+                this.NavigateFunction(new Catalogo_Tipo_Identificacion())
+             }},
+            { name: WOrtograficValidation.es('Catalogo_Cambio_Dolar'), action : async ()=> {
+                this.NavigateFunction(new Catalogo_Cambio_Dolar())
+             }},
+            { name: WOrtograficValidation.es('Catalogo_Cuentas'), action : async ()=> {
+                this.NavigateFunction(new Catalogo_Cuentas())
+             }},
+            { name: WOrtograficValidation.es('Catalogo_Departamento'), action : async ()=> {
+                this.NavigateFunction(new Catalogo_Departamento())
+             }},
+            { name: WOrtograficValidation.es('Catalogo_Inversores'), action : async ()=> {
+                this.NavigateFunction(new Catalogo_Inversores())
+             }},
+            { name: WOrtograficValidation.es('Catalogo_Municipio'), action : async ()=> {
+                this.NavigateFunction(new Catalogo_Municipio())
+             }},
+            { name: WOrtograficValidation.es('Catalogo_Nacionalidad'), action : async ()=> {
+                this.NavigateFunction(new Catalogo_Nacionalidad())
+             }},
+            { name: WOrtograficValidation.es('Catalogo_Profesiones'), action : async ()=> {
+                this.NavigateFunction(new Catalogo_Profesiones())
+             }},
+            { name: WOrtograficValidation.es('Catalogo_Sucursales'), action : async ()=> {
+                this.NavigateFunction(new Catalogo_Sucursales())
+             }},
         ]
     });
 }

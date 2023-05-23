@@ -1,4 +1,5 @@
 ﻿@using API.Controllers
+@using CAPA_NEGOCIO.Security
 <!DOCTYPE html>
 <html lang="en">
 
@@ -9,17 +10,21 @@
     <link rel="stylesheet" href="~/css/AdminTemplate.css" />
     <script type="module">
         import { WSecurity } from "../WDevCore/WModules/WSecurity.js";
-        const logout = ()=>{
+        const logout = () => {
             WSecurity.LogOut();
         }
         window.addEventListener("load", () => {
             //active nav
-            if (location.href.includes("Transaction_FacturaView")) {
-                Transaction_FacturaView.className = "active";
-            } else if (location.href.includes("Transaction_Transacciones_LotesView")) {
-                Transaction_Transacciones_LotesView.className = "active";
-            } else if (location.href.includes("Transaction_MoviminetoView")) {
-                Transaction_MoviminetoView.className = "active";
+            if (location.href.includes("Datos_ConfiguracionView")) {
+                Datos_ConfiguracionView.className = "active";
+            } else if (location.href.includes("Transaction_Contratos_InversionistasView")) {
+                Transaction_Contratos_InversionistasView.className = "active";
+            } else if (location.href.includes("Transaction_ContratosView")) {
+                Transaction_ContratosView.className = "active";
+            } else if (location.href.includes("Transaction_FacturasView")) {
+                Transaction_FacturasView.className = "active";
+            } else if (location.href.includes("Transaction_Ingresos_EgresosView")) {
+                Transaction_Ingresos_EgresosView.className = "active";
             } else {
                 Home.className = "active";
             }
@@ -32,16 +37,34 @@
 <body id="AdminTemplate">
     <aside id="Aside">
         <nav>
-         
+            <a class="" id="Home" asp-area="" asp-page="/">HOME</a>
+            @if (SecurityController.HavePermission(PermissionsEnum.GESTION_SUCURSALES.ToString()))
+            {
+                <a class="" id="Datos_ConfiguracionView" asp-area="" asp-page="/PagesViews/Datos_ConfiguracionView">CONFIGURACIONES</a>
+            }
+            @if (SecurityController.HavePermission(PermissionsEnum.GESTION_CONTRATOS.ToString()))
+            {
+                <a class="" id="Transaction_Contratos_InversionistasView" asp-area="" asp-page="/PagesViews/Transaction_Contratos_InversionistasView">CONTRATOS INVERSIONISTAS</a>
+                <a class="" id="Transaction_ContratosView" asp-area="" asp-page="/PagesViews/Transaction_ContratosView">CONTRATOS</a>
+            }            
+            @if (SecurityController.HavePermission(PermissionsEnum.GESTION_INGRESOS.ToString()))
+            {
+                <a class="" id="Transaction_FacturasView" asp-area="" asp-page="/PagesViews/Transaction_FacturasView">FACTURAS</a>
+            }
+            @if (SecurityController.HavePermission(PermissionsEnum.GESTION_MOVIMIENTOS.ToString()) )
+            {
+                <a class="" id="Transaction_Ingresos_EgresosView" asp-area="" asp-page="/PagesViews/Transaction_Ingresos_EgresosView">EGRESOS/INGRESOS</a>                
+            }        
         </nav>
+        
     </aside>
 
     <header id="Header" class="admin-header">
         @if (SecurityController.IsAdmin())
         {
             <a href="~/Admin/Index">Admin Panel</a>
-        }  
-        <a href="#" id="btnLogOut">Cerrar Sesión</a>      
+        }
+        <a href="#" id="btnLogOut">Cerrar Sesión</a>
     </header>
     <div class="background"></div>
 
