@@ -178,7 +178,7 @@ namespace CAPA_DATOS
             LoggerServices.AddMessageInfo(strQuery);
             return strQuery;
         }
-        protected override string BuildSelectQuery(object Inst, string CondSQL, bool fullEntity = true, bool isFind = false)
+        protected override string BuildSelectQuery(object Inst, string CondSQL, bool fullEntity = true, bool isFind = false, List<FilterData> filterData = null)
         {
             string CondicionString = "";
             string Columns = "";
@@ -200,7 +200,7 @@ namespace CAPA_DATOS
                     Columns = Columns + AtributeName + ",";
                     if (AtributeValue != null)
                     {
-                        WhereConstruction(ref CondicionString, ref index, AtributeName, AtributeValue);
+                        WhereConstruction(ref CondicionString, ref index, AtributeName, AtributeValue, filterData);
                     }
                 }
                 else if (manyToOne != null && fullEntity)
@@ -288,7 +288,7 @@ namespace CAPA_DATOS
             char ta5 = (char)(((int)'A') + new Random().Next(26));
             return ta.ToString() + ta2 + ta3 + "_" + ta4 + "_" + ta5;
         }
-        private static void WhereConstruction(ref string CondicionString, ref int index, string AtributeName, object AtributeValue)
+        private static void WhereConstruction(ref string CondicionString, ref int index, string AtributeName, object AtributeValue, List<FilterData> filterData = null)
         {
             if (AtributeValue != null)
             {
@@ -310,6 +310,21 @@ namespace CAPA_DATOS
                 {
                     WhereOrAnd(ref CondicionString, ref index);
                     CondicionString = CondicionString + AtributeName + "=" + AtributeValue?.ToString() + " ";
+                }
+            }
+            if (filterData != null)
+            {
+                FilterData? filter = filterData?.Find(f => f?.PropName == AtributeName);
+                if (filter != null)
+                {
+                    WhereOrAnd(ref CondicionString, ref index);
+                    switch (filter.FilterType?.ToUpper())
+                    {
+                        case "BETWEEN":
+                        break;
+                        default:
+                        break;
+                    }
                 }
             }
         }
