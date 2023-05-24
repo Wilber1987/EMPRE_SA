@@ -206,41 +206,40 @@ namespace CAPA_DATOS
                     }
                     if (filterData != null && filterData.GetValue(Inst) != null)
                     {
-                        WhereConstruction(ref CondicionString, ref index, AtributeName, oProperty,
-                            (List<FilterData>)filterData.GetValue(Inst));
+                        WhereConstruction(ref CondicionString, ref index, AtributeName, oProperty, (List<FilterData>?)filterData.GetValue(Inst));
                     }
                 }
                 else if (manyToOne != null && fullEntity)
                 {
                     var manyToOneInstance = Activator.CreateInstance(oProperty.PropertyType);
-                    string condition = " " + manyToOne.KeyColumn + " = " + tableAlias + "." + manyToOne.ForeignKeyColumn
-                        + " FOR JSON PATH,  ROOT('object') ";
+                    string condition = " " + manyToOne.KeyColumn + " = " + tableAlias + "." + manyToOne.ForeignKeyColumn;
                     Columns = Columns + AtributeName
                         + " = JSON_QUERY(("
                         + BuildSelectQuery(manyToOneInstance, condition, false)
-                        + "),'$.object[0]'),";
+                        + " FOR JSON PATH,  ROOT('object')),'$.object[0]'),";
                 }
                 else if (oneToOne != null && fullEntity)
                 {
                     var oneToOneInstance = Activator.CreateInstance(oProperty.PropertyType);
                     List<PropertyInfo> pimaryKeyPropiertys = lst.Where(p => Attribute.GetCustomAttribute(p, typeof(PrimaryKey)) != null).ToList();
                     PrimaryKey? pkInfo = (PrimaryKey?)Attribute.GetCustomAttribute(pimaryKeyPropiertys[0], typeof(PrimaryKey));
-
-                    string condition = " " + oneToOne.KeyColumn + " = " + tableAlias + "." + oneToOne.ForeignKeyColumn
-                        + " FOR JSON PATH,  ROOT('object') ";
-                    Columns = Columns + AtributeName
-                        + " = JSON_QUERY(("
-                        + BuildSelectQuery(oneToOneInstance, condition, pimaryKeyPropiertys.Find(p => pkInfo.Identity) != null)
-                        + "),'$.object[0]'),";
+                    if (pkInfo != null)
+                    {
+                        string condition = " " + oneToOne.KeyColumn + " = " + tableAlias + "." + oneToOne.ForeignKeyColumn;
+                        Columns = Columns + AtributeName
+                            + " = JSON_QUERY(("
+                            + BuildSelectQuery(oneToOneInstance, condition, pimaryKeyPropiertys.Find(p => pkInfo.Identity) != null)
+                            + " FOR JSON PATH,  ROOT('object') ),'$.object[0]'),";
+                    }
                 }
                 else if (oneToMany != null && fullEntity)
                 {
                     var oneToManyInstance = Activator.CreateInstance(oProperty.PropertyType.GetGenericArguments()[0]);
-                    string condition = " " + oneToMany.ForeignKeyColumn + " = " + tableAlias + "." + oneToMany.KeyColumn + " FOR JSON PATH";
+                    string condition = " " + oneToMany.ForeignKeyColumn + " = " + tableAlias + "." + oneToMany.KeyColumn;
                     Columns = Columns + AtributeName
                         + " = ("
                         + BuildSelectQuery(oneToManyInstance, condition, oneToMany.TableName != Inst.GetType().Name)
-                        + "),";
+                        + " FOR JSON PATH),";
                 }
 
             }
@@ -254,9 +253,16 @@ namespace CAPA_DATOS
                 CondicionString = CondicionString + " AND ";
             }
             Columns = Columns.TrimEnd(',');
-            string queryString = "SELECT " + Columns
+
+            string queryString = "SELECT TOP 1000 " + Columns
                 + " FROM " + entityProps[0].TABLE_SCHEMA + "." + Inst.GetType().Name + " as " + tableAlias
                 + CondicionString + CondSQL;
+
+            PropertyInfo? primaryKeyPropierty = Inst?.GetType()?.GetProperties()?.ToList()?.Where(p => Attribute.GetCustomAttribute(p, typeof(PrimaryKey)) != null).FirstOrDefault();
+            if (primaryKeyPropierty != null)
+            {
+                queryString = queryString + " ORDER BY " + primaryKeyPropierty.Name + " DESC";
+            }
             return queryString;
         }
         private static string BuildSetsForUpdate(string Values, string AtributeName, object AtributeValue, EntityProps EntityProp)
@@ -323,7 +329,7 @@ namespace CAPA_DATOS
         }
 
         private static void WhereConstruction(ref string CondicionString, ref int index,
-            string AtributeName, PropertyInfo atribute, List<FilterData> filterData = null)
+            string AtributeName, PropertyInfo atribute, List<FilterData>? filterData = null)
         {
             if (filterData != null)
             {
@@ -331,9 +337,8 @@ namespace CAPA_DATOS
                 if (filter != null && filter.Values != null && filter.Values.Count > 0)
                 {
                     // WhereOrAnd(ref CondicionString, ref index);
-                    var propertyType = atribute?.PropertyType;
-                    propertyType = Nullable.GetUnderlyingType(atribute?.PropertyType) ?? atribute?.PropertyType;
-                    string atributeType = propertyType?.Name;
+                    var propertyType =  Nullable.GetUnderlyingType(atribute?.PropertyType) ?? atribute?.PropertyType;
+                    string? atributeType = propertyType?.Name;
                     switch (filter.FilterType?.ToUpper())
                     {
                         case "BETWEEN":
@@ -351,14 +356,14 @@ namespace CAPA_DATOS
                                                 || atributeType == "int")
                             {
                                 WhereOrAnd(ref CondicionString, ref index);
-                                 CondicionString = CondicionString + " ( " +
-                                    (filter.Values[0] != null ? AtributeName + "  >= " + filter.Values[0] + "  " : " ") +
-                                    (filter.Values.Count > 1 && filter.Values[0] != null ? " AND " : " ") +
-                                    (filter.Values.Count > 1 ? AtributeName + " <= " + filter.Values[1] + " ) " : ") ");
+                                CondicionString = CondicionString + " ( " +
+                                   (filter.Values[0] != null ? AtributeName + "  >= " + filter.Values[0] + "  " : " ") +
+                                   (filter.Values.Count > 1 && filter.Values[0] != null ? " AND " : " ") +
+                                   (filter.Values.Count > 1 ? AtributeName + " <= " + filter.Values[1] + " ) " : ") ");
                             }
                             break;
                         default:
-                            if ((atributeType == "string" || atributeType == "String") && filter.Values[0].ToString()?.Length < 200)
+                            if ((atributeType == "string" || atributeType == "String") && filter.Values[0]?.ToString()?.Length < 200)
                             {
                                 WhereOrAnd(ref CondicionString, ref index);
                                 CondicionString = CondicionString + AtributeName + " LIKE '%" + filter.Values[0] + "%' ";
@@ -385,15 +390,6 @@ namespace CAPA_DATOS
 
         private static void WhereOrAnd(ref string CondicionString, ref int index)
         {
-            // if (index == 0)
-            // {
-            //     CondicionString = " WHERE ";
-            //     index++;
-            // }
-            // else
-            // {
-            //     CondicionString = CondicionString + " AND ";
-            // }
 
             if (!CondicionString.Contains("WHERE"))
             {
