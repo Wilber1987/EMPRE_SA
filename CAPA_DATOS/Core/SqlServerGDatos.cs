@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using System.Data.SqlClient;
 using System.Reflection;
+using System.Text.Json;
 
 namespace CAPA_DATOS
 {
@@ -253,7 +254,7 @@ namespace CAPA_DATOS
                 CondicionString = CondicionString + " AND ";
             }
             Columns = Columns.TrimEnd(',');
-            string queryString = "SELECT TOP 100" + Columns
+            string queryString = "SELECT " + Columns
                 + " FROM " + entityProps[0].TABLE_SCHEMA + "." + Inst.GetType().Name + " as " + tableAlias
                 + CondicionString + CondSQL;
             return queryString;
@@ -329,18 +330,20 @@ namespace CAPA_DATOS
                 FilterData? filter = filterData?.Find(f => f?.PropName == AtributeName);
                 if (filter != null && filter.Values != null && filter.Values.Count > 0)
                 {
-                    WhereOrAnd(ref CondicionString, ref index);
-                    String atributeType = atribute?.PropertyType.FullName;
-
+                    // WhereOrAnd(ref CondicionString, ref index);
+                    var propertyType = atribute?.PropertyType;
+                    propertyType = Nullable.GetUnderlyingType(atribute?.PropertyType) ?? atribute?.PropertyType;
+                    string atributeType = propertyType?.Name;
                     switch (filter.FilterType?.ToUpper())
                     {
                         case "BETWEEN":
                             if (atributeType == "DateTime")
                             {
                                 WhereOrAnd(ref CondicionString, ref index);
-                                CondicionString = CondicionString + " ( " + AtributeName
-                                    + " BETWEEN '" + ((DateTime)filter.Values[0]).ToString("yyyy/MM/dd") + "' "
-                                    + " AND '" + ((DateTime)filter.Values[1]).ToString("yyyy/MM/dd") + "' ) ";
+                                CondicionString = CondicionString + " ( " +
+                                    (filter.Values[0] != null ? AtributeName + "  >= '" + filter.Values[0] + "'  " : " ") +
+                                    (filter.Values.Count > 1 && filter.Values[0] != null ? " AND " : " ") +
+                                    (filter.Values.Count > 1 ? AtributeName + " <= '" + filter.Values[1] + "' ) " : ") ");
                             }
                             else if (atributeType == "int"
                                                 || atributeType == "Double"
@@ -348,31 +351,32 @@ namespace CAPA_DATOS
                                                 || atributeType == "int")
                             {
                                 WhereOrAnd(ref CondicionString, ref index);
-                                CondicionString = CondicionString + " ( " + AtributeName
-                                    + " BETWEEN " + filter.Values[0]?.ToString() + " "
-                                    + " AND " + filter.Values[1]?.ToString() + " ) ";
+                                 CondicionString = CondicionString + " ( " +
+                                    (filter.Values[0] != null ? AtributeName + "  >= " + filter.Values[0] + "  " : " ") +
+                                    (filter.Values.Count > 1 && filter.Values[0] != null ? " AND " : " ") +
+                                    (filter.Values.Count > 1 ? AtributeName + " <= " + filter.Values[1] + " ) " : ") ");
                             }
                             break;
                         default:
-                            // if (atributeType == typeof(string) && filter.Values[0].ToString()?.Length < 200)
-                            // {
-                            //     WhereOrAnd(ref CondicionString, ref index);
-                            //     CondicionString = CondicionString + AtributeName + " LIKE '%" + filter.Values[0].ToString() + "%' ";
-                            // }
-                            // else if (atributeType == typeof(DateTime))
-                            // {
-                            //     WhereOrAnd(ref CondicionString, ref index);
-                            //     CondicionString = CondicionString + AtributeName
-                            //         + "= '" + ((DateTime)filter.Values[0]).ToString("yyyy/MM/dd") + "' ";
-                            // }
-                            // else if (atributeType == typeof(int)
-                            //                     || atributeType == typeof(Double)
-                            //                     || atributeType == typeof(Decimal)
-                            //                     || atributeType == typeof(int?))
-                            // {
-                            //     WhereOrAnd(ref CondicionString, ref index);
-                            //     CondicionString = CondicionString + AtributeName + "=" + filter.Values[0]?.ToString() + " ";
-                            // }
+                            if ((atributeType == "string" || atributeType == "String") && filter.Values[0].ToString()?.Length < 200)
+                            {
+                                WhereOrAnd(ref CondicionString, ref index);
+                                CondicionString = CondicionString + AtributeName + " LIKE '%" + filter.Values[0] + "%' ";
+                            }
+                            else if (atributeType == "DateTime")
+                            {
+                                WhereOrAnd(ref CondicionString, ref index);
+                                CondicionString = CondicionString + AtributeName
+                                    + "= '" + filter.Values[0] + "' ";
+                            }
+                            else if (atributeType == "int"
+                                                || atributeType == "Double"
+                                                || atributeType == "Decimal"
+                                                || atributeType == "int")
+                            {
+                                WhereOrAnd(ref CondicionString, ref index);
+                                CondicionString = CondicionString + AtributeName + "=" + filter.Values[0]?.ToString() + " ";
+                            }
                             break;
                     }
                 }

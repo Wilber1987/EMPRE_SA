@@ -20,7 +20,7 @@ namespace DataBaseModel
         public string? Estado { get; set; }
         [ManyToOne(TableName = "Catalogo_Tipo_Agente", KeyColumn = "Id_Tipo_Agente", ForeignKeyColumn = "Id_Tipo_Agente")]
         public Catalogo_Tipo_Agente? Catalogo_Tipo_Agente { get; set; }
-        [OneToMany(TableName = "Transaction_Contratos", KeyColumn = "id_agente", ForeignKeyColumn = "id_agente")]
+        //[OneToMany(TableName = "Transaction_Contratos", KeyColumn = "id_agente", ForeignKeyColumn = "id_agente")]
         public List<Transaction_Contratos>? Transaction_Contratos { get; set; }
     }
     public class Catalogo_Clasificacion_Cliente : EntityClass
