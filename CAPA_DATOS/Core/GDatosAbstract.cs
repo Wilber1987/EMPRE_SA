@@ -18,7 +18,7 @@ namespace CAPA_DATOS
         protected abstract IDataAdapter CrearDataAdapterSql(IDbCommand comandoSql);
         protected abstract List<EntityProps> DescribeEntity(string entityName);
         protected abstract string BuildSelectQuery(object Inst, string CondSQL,
-            bool fullEntity = true, bool isFind = true, List<FilterData> filterData = null);
+            bool fullEntity = true, bool isFind = true);
         protected abstract string BuildInsertQueryByObject(object Inst);
         protected abstract string BuildUpdateQueryByObject(object Inst, string IdObject);
         protected abstract string BuildUpdateQueryByObject(object Inst, string[] WhereProps);
@@ -314,12 +314,12 @@ namespace CAPA_DATOS
         }
 
         //LECTURA DE OBJETOS
-        public List<T> TakeList<T>(Object Inst, bool fullEntity, string CondSQL = "", List<FilterData> filterData = null)
+        public List<T> TakeList<T>(Object Inst, bool fullEntity, string CondSQL = "")
         {
             try
             {
                 LoggerServices.AddMessageInfo("-- > TakeList<T>(" + Inst.GetType().Name + ",fullEntity: " + fullEntity.ToString() + ", condition: " + CondSQL + ")");
-                DataTable Table = BuildTable(Inst, ref CondSQL, fullEntity, false, filterData);
+                DataTable Table = BuildTable(Inst, ref CondSQL, fullEntity, false);
                 List<T> ListD = ConvertDataTable<T>(Table, Inst);
                 return ListD;
             }
@@ -348,9 +348,9 @@ namespace CAPA_DATOS
             }
         }
 
-        protected private DataTable BuildTable(object Inst, ref string CondSQL, bool fullEntity = true, bool isFind = true, List<FilterData> filterData = null)
+        protected private DataTable BuildTable(object Inst, ref string CondSQL, bool fullEntity = true, bool isFind = true)
         {
-            string queryString = BuildSelectQuery(Inst, CondSQL, fullEntity, isFind, filterData);
+            string queryString = BuildSelectQuery(Inst, CondSQL, fullEntity, isFind);
             LoggerServices.AddMessageInfo(queryString);
             DataTable Table = TraerDatosSQL(queryString);
             return Table;

@@ -10,16 +10,13 @@ namespace CAPA_DATOS
 {
     public abstract class EntityClass
     {
+        public List<FilterData>? filterData { get; set; }
         public List<T> Get<T>()
         {
             var Data = SqlADOConexion.SQLM?.TakeList<T>(this, true);
             return Data ?? new List<T>();
         }
-        public List<T> Get<T>(List<FilterData> filterData, string condition = "")
-        {
-            var Data = SqlADOConexion.SQLM?.TakeList<T>(this, true, condition, filterData);
-            return Data ?? new List<T>();
-        }
+      
         public Boolean Exists<T>()
         {
             var Data = SqlADOConexion.SQLM?.TakeList<T>(this, true);

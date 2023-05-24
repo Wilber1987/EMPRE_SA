@@ -178,7 +178,7 @@ namespace CAPA_DATOS
             LoggerServices.AddMessageInfo(strQuery);
             return strQuery;
         }
-        protected override string BuildSelectQuery(object Inst, string CondSQL, bool fullEntity = true, bool isFind = false, List<FilterData> filterData = null)
+        protected override string BuildSelectQuery(object Inst, string CondSQL, bool fullEntity = true, bool isFind = false)
         {
             string CondicionString = "";
             string Columns = "";
@@ -187,6 +187,7 @@ namespace CAPA_DATOS
             List<EntityProps> entityProps = DescribeEntity(Inst.GetType().Name);
             int index = 0;
             string tableAlias = tableAliaGenerator();
+            var filterData = Inst.GetType().GetProperty("filterData");
             foreach (PropertyInfo oProperty in lst)
             {
                 string AtributeName = oProperty.Name;
@@ -200,7 +201,12 @@ namespace CAPA_DATOS
                     Columns = Columns + AtributeName + ",";
                     if (AtributeValue != null)
                     {
-                        WhereConstruction(ref CondicionString, ref index, AtributeName, AtributeValue, filterData);
+                        WhereConstruction(ref CondicionString, ref index, AtributeName, AtributeValue);
+                    }
+                    if (filterData != null && filterData.GetValue(Inst) != null)
+                    {
+                        WhereConstruction(ref CondicionString, ref index, AtributeName, oProperty,
+                            (List<FilterData>)filterData.GetValue(Inst));
                     }
                 }
                 else if (manyToOne != null && fullEntity)
@@ -235,6 +241,7 @@ namespace CAPA_DATOS
                         + BuildSelectQuery(oneToManyInstance, condition, oneToMany.TableName != Inst.GetType().Name)
                         + "),";
                 }
+
             }
             CondicionString = CondicionString.TrimEnd(new char[] { '0', 'R' });
             if (CondicionString == "" && CondSQL != "")
@@ -288,7 +295,7 @@ namespace CAPA_DATOS
             char ta5 = (char)(((int)'A') + new Random().Next(26));
             return ta.ToString() + ta2 + ta3 + "_" + ta4 + "_" + ta5;
         }
-        private static void WhereConstruction(ref string CondicionString, ref int index, string AtributeName, object AtributeValue, List<FilterData> filterData = null)
+        private static void WhereConstruction(ref string CondicionString, ref int index, string AtributeName, object AtributeValue)
         {
             if (AtributeValue != null)
             {
@@ -312,28 +319,82 @@ namespace CAPA_DATOS
                     CondicionString = CondicionString + AtributeName + "=" + AtributeValue?.ToString() + " ";
                 }
             }
+        }
+
+        private static void WhereConstruction(ref string CondicionString, ref int index,
+            string AtributeName, PropertyInfo atribute, List<FilterData> filterData = null)
+        {
             if (filterData != null)
             {
                 FilterData? filter = filterData?.Find(f => f?.PropName == AtributeName);
-                if (filter != null)
+                if (filter != null && filter.Values != null && filter.Values.Count > 0)
                 {
                     WhereOrAnd(ref CondicionString, ref index);
+                    String atributeType = atribute?.PropertyType.FullName;
+
                     switch (filter.FilterType?.ToUpper())
                     {
                         case "BETWEEN":
-                        break;
+                            if (atributeType == "DateTime")
+                            {
+                                WhereOrAnd(ref CondicionString, ref index);
+                                CondicionString = CondicionString + " ( " + AtributeName
+                                    + " BETWEEN '" + ((DateTime)filter.Values[0]).ToString("yyyy/MM/dd") + "' "
+                                    + " AND '" + ((DateTime)filter.Values[1]).ToString("yyyy/MM/dd") + "' ) ";
+                            }
+                            else if (atributeType == "int"
+                                                || atributeType == "Double"
+                                                || atributeType == "Decimal"
+                                                || atributeType == "int")
+                            {
+                                WhereOrAnd(ref CondicionString, ref index);
+                                CondicionString = CondicionString + " ( " + AtributeName
+                                    + " BETWEEN " + filter.Values[0]?.ToString() + " "
+                                    + " AND " + filter.Values[1]?.ToString() + " ) ";
+                            }
+                            break;
                         default:
-                        break;
+                            // if (atributeType == typeof(string) && filter.Values[0].ToString()?.Length < 200)
+                            // {
+                            //     WhereOrAnd(ref CondicionString, ref index);
+                            //     CondicionString = CondicionString + AtributeName + " LIKE '%" + filter.Values[0].ToString() + "%' ";
+                            // }
+                            // else if (atributeType == typeof(DateTime))
+                            // {
+                            //     WhereOrAnd(ref CondicionString, ref index);
+                            //     CondicionString = CondicionString + AtributeName
+                            //         + "= '" + ((DateTime)filter.Values[0]).ToString("yyyy/MM/dd") + "' ";
+                            // }
+                            // else if (atributeType == typeof(int)
+                            //                     || atributeType == typeof(Double)
+                            //                     || atributeType == typeof(Decimal)
+                            //                     || atributeType == typeof(int?))
+                            // {
+                            //     WhereOrAnd(ref CondicionString, ref index);
+                            //     CondicionString = CondicionString + AtributeName + "=" + filter.Values[0]?.ToString() + " ";
+                            // }
+                            break;
                     }
                 }
             }
         }
+
         private static void WhereOrAnd(ref string CondicionString, ref int index)
         {
-            if (index == 0)
+            // if (index == 0)
+            // {
+            //     CondicionString = " WHERE ";
+            //     index++;
+            // }
+            // else
+            // {
+            //     CondicionString = CondicionString + " AND ";
+            // }
+
+            if (!CondicionString.Contains("WHERE"))
             {
                 CondicionString = " WHERE ";
-                index++;
+                //index++;
             }
             else
             {
@@ -438,7 +499,7 @@ namespace CAPA_DATOS
                            and Col.Table_Name = Tab.Table_Name
                 where
                     Constraint_Type = '" + keyType + @"'
-                    and Tab.TABLE_NAME = '" + entityName +"';";
+                    and Tab.TABLE_NAME = '" + entityName + "';";
             DataTable Table = TraerDatosSQL(DescribeQuery);
             return Table.Rows.Count;
         }
