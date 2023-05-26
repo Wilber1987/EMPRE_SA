@@ -25,6 +25,8 @@
                 Transaction_FacturasView.className = "active";
             } else if (location.href.includes("Transaction_Ingresos_EgresosView")) {
                 Transaction_Ingresos_EgresosView.className = "active";
+            }else if (location.href.includes("Gestion_Clientes")) {
+                Gestion_Clientes.className = "active";
             } else {
                 Home.className = "active";
             }
@@ -54,7 +56,11 @@
             @if (SecurityController.HavePermission(PermissionsEnum.GESTION_MOVIMIENTOS.ToString()) )
             {
                 <a class="" id="Transaction_Ingresos_EgresosView" asp-area="" asp-page="/PagesViews/Transaction_Ingresos_EgresosView">EGRESOS/INGRESOS</a>                
-            }        
+            }
+            @if (SecurityController.HavePermission(PermissionsEnum.GESTION_CLIENTES.ToString()) )
+            {
+                <a class="" id="Gestion_Clientes" asp-area="" asp-page="/PagesViews/Gestion_Clientes">Gestion de clientes</a>                
+            }
         </nav>
         
     </aside>
