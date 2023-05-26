@@ -1,5 +1,6 @@
 ﻿@page
 @using API.Controllers
+@using CAPA_NEGOCIO.Security
 @{
     if (!SecurityController.IsAdmin())
     {
@@ -10,11 +11,11 @@
 <script type="module">
    
 </script>
-@if (SecurityController.HavePermission("ADMINISTRAR_USUARIOS"))
+@if (SecurityController.IsAdmin())
 {
     <script src="~/Admin/AdminSecurity.js" type="module"></script>
 }
-@if (SecurityController.HavePermission("ADMINISTRAR_CATALOGOS"))
+@if (SecurityController.IsAdmin())
 {
     <script  src="~/Admin/AdminConfig.js" type="module"></script>
 }

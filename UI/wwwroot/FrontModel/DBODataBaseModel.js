@@ -1,5 +1,40 @@
 import { EntityClass } from "../WDevCore/WModules/EntityClass.js";
 import { WAjaxTools } from "../WDevCore/WModules/WComponentsTools.js";
+class Catalogo_Estados_Articulos extends EntityClass {
+    constructor(props) {
+        super(props, 'EntityDBO');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
+    id_estado_articulo = { type: 'number', primary: true };
+    nombre = { type: 'text' };
+    descripcion = { type: 'text' };
+    porcentaje_compra = { type: 'number' };
+    porcentaje_empeno = { type: 'number' };
+ }
+ export { Catalogo_Estados_Articulos }
+ class Transactional_Valoracion extends EntityClass {
+    constructor(props) {
+        super(props, 'EntityDBO');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
+    id_valoracion = { type: 'number', primary: true };
+    Descripcion = { type: 'text' };
+    Marca = { type: 'text' };
+    Modelo = { type: 'text' };
+    Tasa_interes = { type: 'number' };
+    Plazo = { type: 'number' };
+    Fecha = { type: 'date' };
+    Tasa_de_cambio = { type: 'number' };
+    valoracion_compra = { type: 'number' };
+    valoracion_empeño = { type: 'number' };
+    Catalogo_Estados_Articulos = { type: 'WSELECT',  ModelObject: ()=> new Catalogo_Estados_Articulos()};
+ }
+ export { Transactional_Valoracion }
+
 class Catalogo_Agentes extends EntityClass {
    constructor(props) {
        super(props, 'EntityDBO');

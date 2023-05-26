@@ -7,6 +7,34 @@ using System.Text;
 using System.Threading.Tasks;
 namespace DataBaseModel
 {
+    public class Catalogo_Estados_Articulos : EntityClass
+    {
+        [PrimaryKey(Identity = true)]
+        public int? id_estado_articulo { get; set; }
+        public string? nombre { get; set; }
+        public string? descripcion { get; set; }
+        public Double? porcentaje_compra { get; set; }
+        public Double? porcentaje_empeno { get; set; }
+        // [OneToMany(TableName = "Transactional_Valoracion", KeyColumn = "id_estado_articulo", ForeignKeyColumn = "id_estado")]
+        // public List<Transactional_Valoracion>? Transactional_Valoracion { get; set; }
+    }
+    public class Transactional_Valoracion : EntityClass
+    {
+        [PrimaryKey(Identity = true)]
+        public int? id_valoracion { get; set; }
+        public string? Descripcion { get; set; }
+        public string? Marca { get; set; }
+        public string? Modelo { get; set; }
+        public Double? Tasa_interes { get; set; }
+        public int? Plazo { get; set; }
+        public DateTime? Fecha { get; set; }
+        public Double? Tasa_de_cambio { get; set; }
+        public int? id_estado { get; set; }
+        public Double? valoracion_compra { get; set; }
+        public Double? valoracion_empeño { get; set; }
+        [ManyToOne(TableName = "Catalogo_Estados_Articulos", KeyColumn = "id_estado_articulo", ForeignKeyColumn = "id_estado")]
+        public Catalogo_Estados_Articulos? Catalogo_Estados_Articulos { get; set; }
+    }
     public class Catalogo_Agentes : EntityClass
     {
         [PrimaryKey(Identity = true)]
