@@ -18,6 +18,18 @@ namespace DataBaseModel
         // [OneToMany(TableName = "Transactional_Valoracion", KeyColumn = "id_estado_articulo", ForeignKeyColumn = "id_estado")]
         // public List<Transactional_Valoracion>? Transactional_Valoracion { get; set; }
     }
+
+    public class Detail_Valores : EntityClass
+    {
+        [PrimaryKey(Identity = false)]
+        public int? id_valoracion { get; set; }
+        public Double? Valoracion_1 { get; set; }
+        public Double? Valoracion_2 { get; set; }
+        public Double? Valoracion_3 { get; set; }
+        public Double? dolares_1 { get; set; }
+        public Double? dolares_2 { get; set; }
+        public Double? dolares_3 { get; set; }
+    }
     public class Transactional_Valoracion : EntityClass
     {
         [PrimaryKey(Identity = true)]
@@ -30,10 +42,34 @@ namespace DataBaseModel
         public DateTime? Fecha { get; set; }
         public Double? Tasa_de_cambio { get; set; }
         public int? id_estado { get; set; }
-        public Double? valoracion_compra { get; set; }
-        public Double? valoracion_empeño { get; set; }
+        public Double? valoracion_compra_cordobas { get; set; }
+        public Double? valoracion_compra_dolares { get; set; }
+        public Double? valoracion_empeño_cordobas { get; set; }
+        public Double? valoracion_empeño_dolares { get; set; }
+
         [ManyToOne(TableName = "Catalogo_Estados_Articulos", KeyColumn = "id_estado_articulo", ForeignKeyColumn = "id_estado")]
         public Catalogo_Estados_Articulos? Catalogo_Estados_Articulos { get; set; }
+        [OneToOne(TableName = "Detail_Valores", KeyColumn = "id_valoracion", ForeignKeyColumn = "id_valoracion")]
+        public Detail_Valores? Detail_Valores { get; set; }
+
+        public List<Transactional_Valoracion> GuardarValoraciones(List<Transactional_Valoracion> valoraciones)
+        {
+            try
+            {
+                this.BeginGlobalTransaction();
+                foreach (Transactional_Valoracion valoracion in valoraciones)
+                {
+                    valoracion.Save();
+                }
+                this.CommitGlobalTransaction();
+                return valoraciones;
+            }
+            catch (System.Exception)
+            {
+                this.RollBackGlobalTransaction();
+                throw;
+            }
+        }
     }
     public class Catalogo_Agentes : EntityClass
     {

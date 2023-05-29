@@ -56,29 +56,39 @@
                         asp-page="/PagesViews/Transaction_Valoraciones_View">VALORACIONES</a>
                     <a class="" id="Transaction_ContratosView" asp-area=""
                         asp-page="/PagesViews/Transaction_ContratosView">CONTRATOS</a>
+                    <a class="" id="Gestion_Clientes" asp-area="" asp-page="/PagesViews/Gestion_Clientes">Gestión de
+                        clientes</a>
                 </div>
 
             }
             @if (SecurityController.HavePermission(PermissionsEnum.GESTION_CONTRATOS.ToString()))
             {
-                <a class="" id="Transaction_Contratos_InversionistasView" asp-area=""
-                    asp-page="/PagesViews/Transaction_Contratos_InversionistasView">CONTRATOS INVERSIONISTAS</a>
+                <a class="title-collapse" id="GestionContratosMenu" onclick="changeActive(this)">GESTIÓN DE CONTRATOS</a>
+                <div class="collapse">
+                    <a class="" id="Transaction_Contratos_InversionistasView" asp-area=""
+                        asp-page="/PagesViews/Transaction_Contratos_InversionistasView">PRESTAMOS DE PERSONAS NATURALES</a>
+                </div>
 
             }
             @if (SecurityController.HavePermission(PermissionsEnum.GESTION_INGRESOS.ToString()))
             {
-                <a class="" id="Transaction_FacturasView" asp-area=""
-                    asp-page="/PagesViews/Transaction_FacturasView">FACTURAS</a>
+                <a class="title-collapse" id="GestionIngresosMenu" onclick="changeActive(this)">GESTIÓN DE CONTRATOS</a>
+                <div class="collapse">
+                    <a class="" id="Transaction_FacturasView" asp-area=""
+                        asp-page="/PagesViews/Transaction_FacturasView">FACTURAS</a>
+                </div>
             }
             @if (SecurityController.HavePermission(PermissionsEnum.GESTION_MOVIMIENTOS.ToString()))
             {
-                <a class="" id="Transaction_Ingresos_EgresosView" asp-area=""
-                    asp-page="/PagesViews/Transaction_Ingresos_EgresosView">EGRESOS/INGRESOS</a>
+                <a class="title-collapse" id="GestionMovimientosMenu" onclick="changeActive(this)">GESTIÓN DE CONTRATOS</a>
+                <div class="collapse">
+                    <a class="" id="Transaction_Ingresos_EgresosView" asp-area=""
+                        asp-page="/PagesViews/Transaction_Ingresos_EgresosView">EGRESOS/INGRESOS</a>
+                </div>
             }
             @if (SecurityController.HavePermission(PermissionsEnum.GESTION_CLIENTES.ToString()))
             {
-                <a class="" id="Gestion_Clientes" asp-area="" asp-page="/PagesViews/Gestion_Clientes">Gestion de
-                    clientes</a>
+
             }
             @if (SecurityController.HavePermission(PermissionsEnum.GESTION_SUCURSALES.ToString()))
             {
@@ -115,6 +125,9 @@
     </div>
     @await RenderSectionAsync("Scripts", required: false)
     <script>
+        if (sessionStorage.getItem("menu_active") == null) {
+            sessionStorage.setItem("menu_active", "PrestamosClientesMenu")
+        }
         const changeActive = (target) => {
             if (target.className.includes("active-title")) {
                 target.className = target.className.replace("active-title", "")
