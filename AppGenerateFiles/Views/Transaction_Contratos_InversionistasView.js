@@ -2,20 +2,20 @@ import { WRender, ComponentsManager, WAjaxTools } from "../WDevCore/WModules/WCo
 import { StylesControlsV2, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js"
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
 import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js"
-import { Datos_Configuracion } from "../FrontModel/DBODataBaseModel.js"
-class Datos_ConfiguracionView extends HTMLElement {
+import { Transaction_Contratos_Inversionistas } from "../FrontModel/DBODataBaseModel.js"
+class Transaction_Contratos_InversionistasView extends HTMLElement {
    constructor(props) {
        super();
        this.Draw();
    }
    Draw = async () => {
-       const model = new  Datos_Configuracion();
+       const model = new  Transaction_Contratos_Inversionistas();
        const dataset = await model.Get();
        this.TabContainer = WRender.createElement({ type: 'div', props: { class: 'TabContainer', id: 'TabContainer' } })
        this.MainComponent = new WTableComponent({ ModelObject: model, Dataset: dataset, Options: {
-           Add: true, UrlAdd: "../api/ApiEntityDBO/saveDatos_Configuracion",
-           Edit: true, UrlUpdate: "../api/ApiEntityDBO/updateDatos_Configuracion",
-           Search: true, UrlSearch: "../api/ApiEntityDBO/getDatos_Configuracion"
+           Add: true, UrlAdd: "../api/ApiEntityDBO/saveTransaction_Contratos_Inversionistas",
+           Edit: true, UrlUpdate: "../api/ApiEntityDBO/updateTransaction_Contratos_Inversionistas",
+           Search: true, UrlSearch: "../api/ApiEntityDBO/getTransaction_Contratos_Inversionistas"
        }})
        this.TabContainer.append(this.MainComponent)
        this.FilterOptions = new WFilterOptions({
@@ -33,5 +33,5 @@ class Datos_ConfiguracionView extends HTMLElement {
        );
    }
 }
-customElements.define('w-datos_configuracion', Datos_ConfiguracionView );
-window.addEventListener('load', async () => {  MainBody.append(new Datos_ConfiguracionView())  })
+customElements.define('w-transaction_contratos_inversionistas', Transaction_Contratos_InversionistasView );
+window.addEventListener('load', async () => {  MainBody.append(new Transaction_Contratos_InversionistasView())  })

@@ -1,20 +1,34 @@
 import { WRender, ComponentsManager, WAjaxTools } from "../WDevCore/WModules/WComponentsTools.js";
 import { StylesControlsV2, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js"
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
+import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js"
 import { Security_Users } from "../FrontModel/SECURITYDataBaseModel.js"
 class Security_UsersView extends HTMLElement {
    constructor(props) {
        super();
+       this.Draw();
+   }
+   Draw = async () => {
+       const model = new  Security_Users();
+       const dataset = await model.Get();
        this.TabContainer = WRender.createElement({ type: 'div', props: { class: 'TabContainer', id: 'TabContainer' } })
-       this.MainComponent = new WTableComponent({ ModelObject: new Security_Users(), Dataset: [], Options: {
+       this.MainComponent = new WTableComponent({ ModelObject: model, Dataset: dataset, Options: {
            Add: true, UrlAdd: "../api/ApiEntitySECURITY/saveSecurity_Users",
            Edit: true, UrlUpdate: "../api/ApiEntitySECURITY/updateSecurity_Users",
            Search: true, UrlSearch: "../api/ApiEntitySECURITY/getSecurity_Users"
        }})
        this.TabContainer.append(this.MainComponent)
+       this.FilterOptions = new WFilterOptions({
+           Dataset: dataset,
+           ModelObject: model,
+           FilterFunction: (DFilt) => {
+               this.MainComponent.DrawTable(DFilt);
+           }
+      });
        this.append(
            StylesControlsV2.cloneNode(true),
            StyleScrolls.cloneNode(true),
+           this.FilterOptions,
            this.TabContainer
        );
    }

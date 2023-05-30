@@ -92,7 +92,7 @@ namespace AppGenerator
                     }
                     continue;
                 }
-                else if (entity.REFERENCE_TABLE_NAME.ToLower().StartsWith("relational") 
+                else if (entity.REFERENCE_TABLE_NAME.ToLower().StartsWith("relational")
                     || entity.REFERENCE_TABLE_NAME.ToLower().StartsWith("relacional"))
                 {
                     controlType = "Model";
@@ -115,7 +115,7 @@ namespace AppGenerator
                     mapType = "WSELECT";
                 }
                 if ((!table.TABLE_NAME.ToLower().StartsWith("catalogo")
-                    || entity.FKTABLE_NAME.ToLower().StartsWith("relational")) 
+                    || entity.FKTABLE_NAME.ToLower().StartsWith("relational"))
                     & !entity.FKTABLE_NAME.ToLower().StartsWith("transaction"))
                 {
                     entityString.AppendLine("   " + entity.FKTABLE_NAME + " = { type: '" + mapType + "',  ModelObject: ()=> new " + entity.FKTABLE_NAME + "()};");
@@ -126,7 +126,7 @@ namespace AppGenerator
         }
         public static void setJsViewBuilder(string schema, string name, string type)
         {
-            if (name.ToLower().StartsWith("relational") || name.ToLower().StartsWith("detail"))
+            if (name.ToLower().StartsWith("relational") || name.ToLower().StartsWith("detail") || name.ToLower().StartsWith("catalogo_"))
             {
                 return;
             }
@@ -134,12 +134,18 @@ namespace AppGenerator
             entityString.AppendLine("import { WRender, ComponentsManager, WAjaxTools } from \"../WDevCore/WModules/WComponentsTools.js\";");
             entityString.AppendLine("import { StylesControlsV2, StyleScrolls } from \"../WDevCore/StyleModules/WStyleComponents.js\"");
             entityString.AppendLine("import { WTableComponent } from \"../WDevCore/WComponents/WTableComponent.js\"");
+            entityString.AppendLine("import { WFilterOptions } from \"../WDevCore/WComponents/WFilterControls.js\"");
             entityString.AppendLine("import { " + name + " } from \"../FrontModel/" + schema.ToUpper() + (type == "VIEW" ? "ViewModel.js\"" : "DataBaseModel.js\""));
             entityString.AppendLine("class " + name + "View extends HTMLElement {");
             entityString.AppendLine("   constructor(props) {");
             entityString.AppendLine("       super();");
+            entityString.AppendLine("       this.Draw();");
+            entityString.AppendLine("   }");
+            entityString.AppendLine("   Draw = async () => {");
+            entityString.AppendLine("       const model = new  " + name + "();");
+            entityString.AppendLine("       const dataset = await model.Get();");
             entityString.AppendLine("       this.TabContainer = WRender.createElement({ type: 'div', props: { class: 'TabContainer', id: 'TabContainer' } })");
-            entityString.AppendLine("       this.MainComponent = new WTableComponent({ ModelObject: new " + name + "(), Dataset: [], Options: {");
+            entityString.AppendLine("       this.MainComponent = new WTableComponent({ ModelObject: model, Dataset: dataset, Options: {");
             if (type != "VIEW")
             {
                 entityString.AppendLine("           Add: true, UrlAdd: \"../api/Api" + (type == "VIEW" ? "View" : "Entity") + schema.ToUpper() + "/save" + name + "\",");
@@ -148,9 +154,19 @@ namespace AppGenerator
             entityString.AppendLine("           Search: true, UrlSearch: \"../api/Api" + (type == "VIEW" ? "View" : "Entity") + schema.ToUpper() + "/get" + name + "\"");
             entityString.AppendLine("       }})");
             entityString.AppendLine("       this.TabContainer.append(this.MainComponent)");
+            entityString.AppendLine("       this.FilterOptions = new WFilterOptions({");
+            entityString.AppendLine("           Dataset: dataset,");
+            entityString.AppendLine("           ModelObject: model,");
+            entityString.AppendLine("           FilterFunction: (DFilt) => {");
+            entityString.AppendLine("               this.MainComponent.DrawTable(DFilt);");
+            entityString.AppendLine("           }");
+            entityString.AppendLine("      });");
+
+
             entityString.AppendLine("       this.append(");
             entityString.AppendLine("           StylesControlsV2.cloneNode(true),");
             entityString.AppendLine("           StyleScrolls.cloneNode(true),");
+            entityString.AppendLine("           this.FilterOptions,");
             entityString.AppendLine("           this.TabContainer");
             entityString.AppendLine("       );");
             entityString.AppendLine("   }");
@@ -162,9 +178,9 @@ namespace AppGenerator
             AppGenerator.Utility.createFile(@"../AppGenerateFiles/Views\" + name + "View.js", entityString.ToString());
 
         }
-         public static void setJsCatalogoBuilder(string schema, List<string> names)
+        public static void setJsCatalogoBuilder(string schema, List<string> names)
         {
-            
+
             var entityString = new StringBuilder();
             entityString.AppendLine("//@ts-check");
             entityString.AppendLine("import { WRender, ComponentsManager, WAjaxTools } from \"../WDevCore/WModules/WComponentsTools.js\";");
@@ -172,17 +188,17 @@ namespace AppGenerator
             entityString.AppendLine("import { StylesControlsV2, StyleScrolls } from \"../WDevCore/StyleModules/WStyleComponents.js\"");
             entityString.AppendLine("import { WTableComponent } from \"../WDevCore/WComponents/WTableComponent.js\"");
             entityString.AppendLine("import { WAppNavigator } from \"../WDevCore/WComponents/WAppNavigator.js\"");
-            entityString.AppendLine("import { " + String.Join(',', names)  + " } from \"../FrontModel/" + schema.ToUpper() + "DataBaseModel.js\"");
-            
+            entityString.AppendLine("import { " + String.Join(',', names) + " } from \"../FrontModel/" + schema.ToUpper() + "DataBaseModel.js\"");
+
             entityString.AppendLine("class CatalogosManagerView extends HTMLElement {");
             entityString.AppendLine("   constructor() {");
             entityString.AppendLine("       super();");
             entityString.AppendLine("       this.TabContainer = WRender.createElement({ type: 'div', props: { class: 'TabContainer', id: 'TabContainer' } })");
-            entityString.AppendLine("       this.TabManager = new ComponentsManager({ MainContainer: this.TabContainer });");    
+            entityString.AppendLine("       this.TabManager = new ComponentsManager({ MainContainer: this.TabContainer });");
             entityString.AppendLine("       this.append(");
             entityString.AppendLine("           StylesControlsV2.cloneNode(true),");
             entityString.AppendLine("           StyleScrolls.cloneNode(true),");
-             entityString.AppendLine("          this.MainNav,");
+            entityString.AppendLine("          this.MainNav,");
             entityString.AppendLine("           this.TabContainer");
             entityString.AppendLine("       );");
             entityString.AppendLine("   }");
@@ -191,18 +207,18 @@ namespace AppGenerator
             entityString.AppendLine("   NavigateFunction = (Model)=>{");
             entityString.AppendLine("       const mainComponent = new WTableComponent({ ModelObject: model, Dataset: [], Options: {");
             entityString.AppendLine("           Add: true,");
-            entityString.AppendLine("           Edit: true,");            
+            entityString.AppendLine("           Edit: true,");
             entityString.AppendLine("           Search: true,");
             entityString.AppendLine("           Delete: true");
             entityString.AppendLine("       }})");
             entityString.AppendLine("       this.TabManager.NavigateFunction(Model.constructor.name, mainComponent);");
             entityString.AppendLine("   }");
-            
+
             entityString.AppendLine("    MainNav = new WAppNavigator({  Elements: [");
             foreach (var name in names)
             {
                 entityString.AppendLine("       { name: WOrtograficValidation.es('" + name + "'), action : async ()=> {");
-                entityString.AppendLine("           this.NavigateFunction(new "+ name +"())");
+                entityString.AppendLine("           this.NavigateFunction(new " + name + "())");
                 entityString.AppendLine("        }},");
             }
             entityString.AppendLine("   ]});");
@@ -210,8 +226,8 @@ namespace AppGenerator
             entityString.AppendLine("customElements.define('w-catalogos_manager', CatalogosManagerView );");
             entityString.AppendLine(@"window.addEventListener('load', async () => {  MainBody.append(new CatalogosManagerView()) })");
 
-            AppGenerator.CSharpEnviroment.createCSharpView( schema.ToUpper() +"CatalogosManager");
-            AppGenerator.Utility.createFile(@"../AppGenerateFiles/Views/"+ schema.ToUpper() +"CatalogosManagerView.js", entityString.ToString());
+            AppGenerator.CSharpEnviroment.createCSharpView(schema.ToUpper() + "CatalogosManager");
+            AppGenerator.Utility.createFile(@"../AppGenerateFiles/Views/" + schema.ToUpper() + "CatalogosManagerView.js", entityString.ToString());
 
         }
     }
