@@ -10,7 +10,7 @@ namespace CAPA_DATOS
         public static SqlServerGDatos? SQLM;
         public static string DataBaseName = "EMPRE_SA";
         public static bool Anonimo = true;
-        static string SQLServer = "localhost";
+        static string SQLServer = ".\\SQLEXPRESS";
         static public bool IniciarConexionSNIBD(string user, string password)
         {
             try

@@ -254,7 +254,7 @@ namespace CAPA_DATOS
             }
             Columns = Columns.TrimEnd(',');
 
-            string queryString = "SELECT TOP 1000 " + Columns
+            string queryString = "SELECT TOP 100 " + Columns
                 + " FROM " + entityProps[0].TABLE_SCHEMA + "." + Inst.GetType().Name + " as " + tableAlias
                 + CondicionString + CondSQL;
 

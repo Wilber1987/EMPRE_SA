@@ -9,7 +9,7 @@ namespace CAPA_NEGOCIO.Security
     public class AuthNetCore
     {
         static private string SGBD_USER = "sa";
-        static private string SWGBD_PASSWORD = "zaxscd";
+        static private string SWGBD_PASSWORD = "123";
         static public bool AuthAttribute = false;
         static private Security_Users? security_User;
         static public bool Authenticate()
