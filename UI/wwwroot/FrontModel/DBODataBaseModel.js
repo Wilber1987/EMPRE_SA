@@ -34,6 +34,8 @@ class Transactional_Valoracion extends EntityClass {
     valoracion_empeño_cordobas = { type: 'number' };
     valoracion_empeño_dolares = { type: 'number' };
     Catalogo_Estados_Articulos = { type: 'WSELECT', hiddenInTable: true, ModelObject: () => new Catalogo_Estados_Articulos() };
+    //TASAS DE INTERES
+    valoracion_empeño_dolares = { type: 'operation' };
     GuardarValoraciones = async (valoraciones) => {
        return await  this.SaveData("Transactional_Valoracion/GuardarValoraciones", { valoraciones: valoraciones })
     }

@@ -1,0 +1,1 @@
+ALTER TABLE EMPRE_SA.dbo.Catalogo_Clientes ALTER COLUMN fecha datetime NULL;

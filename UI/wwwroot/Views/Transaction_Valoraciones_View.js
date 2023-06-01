@@ -31,22 +31,39 @@ class Transaction_Valoraciones_View extends HTMLElement {
         const estadosArticulos = await new Catalogo_Estados_Articulos().Get();
         this.buildValoresModel(tasasCambio);
 
-        const multiSelectEstadosArticulos = new WTableComponent({
+        this.multiSelectEstadosArticulos = new WTableComponent({
             Dataset: estadosArticulos,
-            ModelObject: new Catalogo_Estados_Articulos(),
+            ModelObject: new Catalogo_Estados_Articulos({
+                porcentaje_compra: { type: 'number', hidden: true },
+                porcentaje_empeno: { type: 'number', hidden: true },
+                valor_compra_cordobas: {
+                    type: "operation", action: (element) => {
+                        return this.calculoCordobas(element.porcentaje_compra);
+                    }
+                }, valor_compra_dolares: {
+                    type: "operation", action: (element) => {
+                        return this.calculoDolares(element.porcentaje_compra, tasasCambio[0].valor_de_compra);
+                    }
+                },
+                valor_empeño_cordobas: {
+                    type: "operation", action: (element) => {
+                        return this.calculoCordobas(element.porcentaje_empeno);
+                    }
+                }, valor_empeño_dolares: {
+                    type: "operation", action: (element) => {
+                        return this.calculoDolares(element.porcentaje_empeno, tasasCambio[0].valor_de_compra);
+                    }
+                }
+            }),
             selectedItems: [estadosArticulos[0]],
             paginate: false,
             Options: {
                 Select: true, MultiSelect: false, SelectAction: () => {
-                    this.calcValoracionCompraCordobas(multiSelectEstadosArticulos, this.valoracionesForm?.FormObject);
-                    this.calcValoracionEmpenoCordobas(multiSelectEstadosArticulos, this.valoracionesForm?.FormObject);
-                    this.calcValoracionCompraDolares(multiSelectEstadosArticulos, this.valoracionesForm?.FormObject, tasasCambio);
-                    this.calcValoracionEmpenoDolares(multiSelectEstadosArticulos, this.valoracionesForm?.FormObject, tasasCambio);
                     this.valoracionesForm?.DrawComponent();
                 }
             }
         });
-        this.valoracionModel = this.valoracionesModel(tasasCambio, multiSelectEstadosArticulos);
+        this.valoracionModel = this.valoracionesModel(tasasCambio, this.multiSelectEstadosArticulos);
 
         this.SetOption();
 
@@ -58,20 +75,18 @@ class Transaction_Valoraciones_View extends HTMLElement {
             SaveFunction: (/**@type {Transactional_Valoracion} */ valoracion) => {
 
             }, CustomStyle: css`
-            .divForm{
-                display: "grid";
-                grid-template-columns: repeat(6, calc(16% - 15px));
-                grid-template-rows: repeat(3, auto)
-            } .textAreaContainer{
-                grid-row: span 1 !important;
-                padding-bottom: 0px !important;
-            }
-            .ModalElement {
-            } .ModalElement label {
-                display: block;
-                width: 100%;
-                margin: 0px;
-            } `
+                .divForm{
+                    display: "grid";
+                    grid-template-columns: repeat(6, calc(16% - 15px));
+                    grid-template-rows: repeat(3, auto)
+                } .textAreaContainer{
+                    grid-row: span 1 !important;
+                    padding-bottom: 0px !important;
+                }  .ModalElement label {
+                    display: block;
+                    width: 100%;
+                    margin: 0px;
+                } `
         });
 
         this.valoracionesTable = new WTableComponent({
@@ -108,7 +123,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
         this.valoracionesContainer.append(
             this.valoracionesForm,
             this.valoresForm,
-            multiSelectEstadosArticulos,
+            this.multiSelectEstadosArticulos,
             this.valoracionesTable
         );
         this.Manager.NavigateFunction("valoraciones", this.valoracionesContainer);
@@ -130,6 +145,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
                     if (control != undefined || control != null) {
                         control.value = this.valoresObject.dolares_1.toFixed(2).toString();
                     }
+                    this.multiSelectEstadosArticulos?.SetOperationValues()
                 }
             },
             dolares_1: {
@@ -140,6 +156,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
                     if (control != undefined || control != null) {
                         control.value = this.valoresObject.Valoracion_1.toFixed(2).toString();
                     }
+                    this.multiSelectEstadosArticulos?.SetOperationValues()
                 }
             },
             Valoracion_2: {
@@ -150,6 +167,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
                     if (control != undefined || control != null) {
                         control.value = this.valoresObject.dolares_2.toFixed(2).toString();
                     }
+                    this.multiSelectEstadosArticulos?.SetOperationValues()
                 }
             },
             dolares_2: {
@@ -160,6 +178,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
                     if (control != undefined || control != null) {
                         control.value = this.valoresObject.Valoracion_2.toFixed(2).toString();
                     }
+                    this.multiSelectEstadosArticulos?.SetOperationValues()
                 }
             },
             Valoracion_3: {
@@ -170,6 +189,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
                     if (control != undefined || control != null) {
                         control.value = this.valoresObject.dolares_3.toFixed(2).toString();
                     }
+                    this.multiSelectEstadosArticulos?.SetOperationValues()
                 }
             },
             dolares_3: {
@@ -180,6 +200,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
                     if (control != undefined || control != null) {
                         control.value = this.valoresObject.Valoracion_3.toFixed(2).toString();
                     }
+                    this.multiSelectEstadosArticulos?.SetOperationValues()
                 }
             },
         };
@@ -192,62 +213,29 @@ class Transaction_Valoraciones_View extends HTMLElement {
             Catalogo_Estados_Articulos: { type: 'WSELECT', hidden: true },
             valoracion_compra_cordobas: {
                 type: 'operation', action: (/**@type {Transactional_Valoracion} */ valoracion) => {
-                    this.calcValoracionCompraCordobas(multiSelectEstadosArticulos, valoracion);
-                    return valoracion.valoracion_compra_cordobas.toFixed(2);
+                    return this.calculoCordobas(multiSelectEstadosArticulos.selectedItems[0].porcentaje_compra);
                 }
-            },  valoracion_empeño_cordobas: {
+            }, valoracion_empeño_cordobas: {
                 type: 'operation', action: (/**@type {Transactional_Valoracion} */ valoracion) => {
-                    this.calcValoracionEmpenoCordobas(multiSelectEstadosArticulos, valoracion);
-                    return valoracion.valoracion_empeño_cordobas.toFixed(2);
+                    return this.calculoCordobas(multiSelectEstadosArticulos.selectedItems[0].porcentaje_empeno);
                 }
             }, valoracion_compra_dolares: {
                 type: 'operation', action: (/**@type {Transactional_Valoracion} */ valoracion) => {
-                    this.calcValoracionCompraDolares(multiSelectEstadosArticulos, valoracion, tasasCambio);
-                    return valoracion.valoracion_compra_dolares.toFixed(2);
+                    return this.calculoDolares(multiSelectEstadosArticulos.selectedItems[0].porcentaje_compra, tasasCambio[0].valor_de_compra);
                 }
             }, valoracion_empeño_dolares: {
                 type: 'operation', action: (/**@type {Transactional_Valoracion} */ valoracion) => {
-                    this.calcValoracionEmpenoDolares(multiSelectEstadosArticulos, valoracion, tasasCambio);
-                    return valoracion.valoracion_empeño_dolares.toFixed(2);
+                    return this.calculoDolares(multiSelectEstadosArticulos.selectedItems[0].porcentaje_empeno, tasasCambio[0].valor_de_compra);
                 }
             },
         });
     }
 
-    calcValoracionEmpenoDolares(multiSelectEstadosArticulos, valoracion, tasasCambio) {
-        if (multiSelectEstadosArticulos.selectedItems.length > 0) {
-            valoracion.valoracion_empeño_dolares = (this.avgValores()
-                * (multiSelectEstadosArticulos.selectedItems[0].porcentaje_empeno / 100)) / tasasCambio[0].valor_de_compra;
-        } else {
-            valoracion.valoracion_empeño_dolares = 0;
-        }
+    calculoCordobas = (porcentaje) => {        
+        return (this.avgValores() * (porcentaje / 100)).toFixed(2);
     }
-
-    calcValoracionCompraDolares(multiSelectEstadosArticulos, valoracion, tasasCambio) {
-        if (multiSelectEstadosArticulos.selectedItems.length > 0) {
-            valoracion.valoracion_compra_dolares = (this.avgValores()
-                * (multiSelectEstadosArticulos.selectedItems[0].porcentaje_compra / 100)) / tasasCambio[0].valor_de_compra;
-        } else {
-            valoracion.valoracion_compra_dolares = 0;
-        }
-    }
-
-    calcValoracionEmpenoCordobas(multiSelectEstadosArticulos, valoracion) {
-        if (multiSelectEstadosArticulos.selectedItems.length > 0) {
-            valoracion.valoracion_empeño_cordobas = this.avgValores()
-                * (multiSelectEstadosArticulos.selectedItems[0].porcentaje_empeno / 100);
-        } else {
-            valoracion.valoracion_empeño_cordobas = 0;
-        }
-    }
-
-    calcValoracionCompraCordobas(multiSelectEstadosArticulos, valoracion) {
-        if (multiSelectEstadosArticulos.selectedItems.length > 0) {
-            valoracion.valoracion_compra_cordobas = this.avgValores()
-                * (multiSelectEstadosArticulos.selectedItems[0].porcentaje_compra / 100);
-        } else {
-            valoracion.valoracion_compra_cordobas = 0;
-        }
+    calculoDolares = (porcentaje, tasa_cambio) => {
+        return ((this.avgValores() * (porcentaje / 100)) / tasa_cambio).toFixed(2);
     }
 
     avgValores() {
@@ -259,12 +247,12 @@ class Transaction_Valoraciones_View extends HTMLElement {
     SetOption() {
         this.OptionContainer.append(WRender.Create({
             tagName: 'button', className: 'Block-Alert', innerText: 'Nueva valoración',
-            onclick: () => this.Manager.NavigateFunction( "valoraciones")
+            onclick: () => this.Manager.NavigateFunction("valoraciones")
         }))
 
         this.OptionContainer.append(WRender.Create({
             tagName: 'button', className: 'Block-Basic', innerText: 'Buscar valoraciones',
-            onclick: () => this.Manager.NavigateFunction( "Searcher", new ValoracionesSearch(this.setValoracion))
+            onclick: () => this.Manager.NavigateFunction("Searcher", new ValoracionesSearch(this.setValoracion))
         }))
 
         this.OptionContainer.append(WRender.Create({
@@ -281,7 +269,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
                 }
                 const newValoracion = {};
                 for (const prop in this.valoracionesForm?.FormObject) {
-                    newValoracion[prop] =  this.valoracionesForm?.FormObject[prop];
+                    newValoracion[prop] = this.valoracionesForm?.FormObject[prop];
                 }
                 const newValores = {};
                 for (const prop in this.valoresObject) {
@@ -303,9 +291,9 @@ class Transaction_Valoraciones_View extends HTMLElement {
             }
         }))
     }
-    setValoracion = (valoracion)=> {
+    setValoracion = (valoracion) => {
         this.valoracionesForm?.FormObject
-        
+
         //throw new Error("Method not implemented.");
     }
     CustomStyle = css`
