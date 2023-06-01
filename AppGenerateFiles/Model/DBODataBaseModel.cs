@@ -5,31 +5,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 namespace DataBaseModel {
-   public class Catalogo_Estados_Articulos : EntityClass {
+   public class Condicion_Laboral_Cliente : EntityClass {
        [PrimaryKey(Identity = true)]
-       public int? id_estado_articulo { get; set; }
-       public string? nombre { get; set; }
-       public string? descripcion { get; set; }
-       public Double? porcentaje_compra { get; set; }
-       public Double? porcentaje_empeno { get; set; }
-       [OneToMany(TableName = "Transactional_Valoracion", KeyColumn = "id_estado_articulo", ForeignKeyColumn = "id_estado")]
-       public List<Transactional_Valoracion>? Transactional_Valoracion { get; set; }
-   }
-   public class Transactional_Valoracion : EntityClass {
-       [PrimaryKey(Identity = true)]
-       public int? id_valoracion { get; set; }
-       public string? Descripcion { get; set; }
-       public string? Marca { get; set; }
-       public string? Modelo { get; set; }
-       public Double? Tasa_interes { get; set; }
-       public int? Plazo { get; set; }
-       public DateTime? Fecha { get; set; }
-       public Double? Tasa_de_cambio { get; set; }
-       public int? id_estado { get; set; }
-       public Double? valoracion_compra { get; set; }
-       public Double? valoracion_empeño { get; set; }
-       [ManyToOne(TableName = "Catalogo_Estados_Articulos", KeyColumn = "id_estado_articulo", ForeignKeyColumn = "id_estado")]
-       public Catalogo_Estados_Articulos? Catalogo_Estados_Articulos { get; set; }
+       public int? id { get; set; }
+       public int? codigo_cliente { get; set; }
+       public DateTime? fecha_ingreso { get; set; }
+       public string? ocupacion_cargo { get; set; }
+       public Double? ingresos_mensuales { get; set; }
+       public string? direccion { get; set; }
+       public int? id_municipio { get; set; }
+       public int? id_departamento { get; set; }
+       [ManyToOne(TableName = "Catalogo_Clientes", KeyColumn = "codigo_cliente", ForeignKeyColumn = "codigo_cliente")]
+       public Catalogo_Clientes? Catalogo_Clientes { get; set; }
+       [ManyToOne(TableName = "Catalogo_Municipio", KeyColumn = "id_municipio", ForeignKeyColumn = "id_municipio")]
+       public Catalogo_Municipio? Catalogo_Municipio { get; set; }
+       [ManyToOne(TableName = "Catalogo_Departamento", KeyColumn = "id_departamento", ForeignKeyColumn = "id_departamento")]
+       public Catalogo_Departamento? Catalogo_Departamento { get; set; }
    }
    public class Catalogo_Agentes : EntityClass {
        [PrimaryKey(Identity = true)]
@@ -90,13 +81,15 @@ namespace DataBaseModel {
        public string? solo_acreedor { get; set; }
        public Double? promedio { get; set; }
        public int? id_clasificacion { get; set; }
-       [ManyToOne(TableName = "Catalogo_Clasificacion_Cliente", KeyColumn = "id_clasificacion", ForeignKeyColumn = "id_clasificacion")]
-       public Catalogo_Clasificacion_Cliente? Catalogo_Clasificacion_Cliente { get; set; }
-       [ManyToOne(TableName = "Catalogo_Profesiones", KeyColumn = "id_profesion", ForeignKeyColumn = "id_profesion")]
-       public Catalogo_Profesiones? Catalogo_Profesiones { get; set; }
        [ManyToOne(TableName = "Catalogo_Tipo_Identificacion", KeyColumn = "Id_Tipo_Identificacion", ForeignKeyColumn = "id_tipo_Identificacion")]
        public Catalogo_Tipo_Identificacion? Catalogo_Tipo_Identificacion { get; set; }
-       [OneToMany(TableName = "Transaction_Contratos", KeyColumn = "codigo_cliente", ForeignKeyColumn = "codigo_cliente")]
+       [ManyToOne(TableName = "Catalogo_Profesiones", KeyColumn = "id_profesion", ForeignKeyColumn = "id_profesion")]
+       public Catalogo_Profesiones? Catalogo_Profesiones { get; set; }
+       [ManyToOne(TableName = "Catalogo_Clasificacion_Cliente", KeyColumn = "id_clasificacion", ForeignKeyColumn = "id_clasificacion")]
+       public Catalogo_Clasificacion_Cliente? Catalogo_Clasificacion_Cliente { get; set; }
+       [OneToMany(TableName = "Condicion_Laboral_Cliente", KeyColumn = "codigo_cliente", ForeignKeyColumn = "id_cliente")]
+       public List<Condicion_Laboral_Cliente>? Condicion_Laboral_Cliente { get; set; }
+       /*[OneToMany(TableName = "Transaction_Contratos", KeyColumn = "codigo_cliente", ForeignKeyColumn = "codigo_cliente")]*/
        public List<Transaction_Contratos>? Transaction_Contratos { get; set; }
    }
    public class Catalogo_Cuentas : EntityClass {
@@ -118,6 +111,18 @@ namespace DataBaseModel {
        public Catalogo_Nacionalidad? Catalogo_Nacionalidad { get; set; }
        [OneToMany(TableName = "Catalogo_Municipio", KeyColumn = "id_departamento", ForeignKeyColumn = "id_departamento")]
        public List<Catalogo_Municipio>? Catalogo_Municipio { get; set; }
+       [OneToMany(TableName = "Condicion_Laboral_Cliente", KeyColumn = "id_departamento", ForeignKeyColumn = "id_departamento")]
+       public List<Condicion_Laboral_Cliente>? Condicion_Laboral_Cliente { get; set; }
+   }
+   public class Catalogo_Estados_Articulos : EntityClass {
+       [PrimaryKey(Identity = true)]
+       public int? id_estado_articulo { get; set; }
+       public string? nombre { get; set; }
+       public string? descripcion { get; set; }
+       public Double? porcentaje_compra { get; set; }
+       public Double? porcentaje_empeno { get; set; }
+       [OneToMany(TableName = "Transactional_Valoracion", KeyColumn = "id_estado_articulo", ForeignKeyColumn = "id_estado")]
+       public List<Transactional_Valoracion>? Transactional_Valoracion { get; set; }
    }
    public class Catalogo_Inversores : EntityClass {
        [PrimaryKey(Identity = true)]
@@ -145,6 +150,8 @@ namespace DataBaseModel {
        public Catalogo_Departamento? Catalogo_Departamento { get; set; }
        [OneToMany(TableName = "Catalogo_Inversores", KeyColumn = "id_municipio", ForeignKeyColumn = "id_municipio")]
        public List<Catalogo_Inversores>? Catalogo_Inversores { get; set; }
+       [OneToMany(TableName = "Condicion_Laboral_Cliente", KeyColumn = "id_municipio", ForeignKeyColumn = "id_municipio")]
+       public List<Condicion_Laboral_Cliente>? Condicion_Laboral_Cliente { get; set; }
    }
    public class Catalogo_Nacionalidad : EntityClass {
        [PrimaryKey(Identity = true)]
@@ -258,6 +265,18 @@ namespace DataBaseModel {
        [OneToOne(TableName = "Detail_Prendas", KeyColumn = "numero_prenda", ForeignKeyColumn = "numero_prenda")]
        public Detail_Prendas? Detail_Prendas { get; set; }
    }
+   public class Detail_Valores : EntityClass {
+       [PrimaryKey(Identity = false)]
+       public int? id_valoracion { get; set; }
+       public Double? Valoracion_1 { get; set; }
+       public Double? Valoracion_2 { get; set; }
+       public Double? Valoracion_3 { get; set; }
+       public Double? dolares_1 { get; set; }
+       public Double? dolares_2 { get; set; }
+       public Double? dolares_3 { get; set; }
+       [OneToOne(TableName = "Transactional_Valoracion", KeyColumn = "id_valoracion", ForeignKeyColumn = "id_valoracion")]
+       public Transactional_Valoracion? Transactional_Valoracion { get; set; }
+   }
    public class Transaction_Contratos : EntityClass {
        [PrimaryKey(Identity = true)]
        public int? numero_contrato { get; set; }
@@ -313,10 +332,10 @@ namespace DataBaseModel {
        public int? plazo_inicial { get; set; }
        public int? dias_para_baja { get; set; }
        public int? Id_User { get; set; }
-       [ManyToOne(TableName = "Catalogo_Agentes", KeyColumn = "id_agente", ForeignKeyColumn = "id_agente")]
-       public Catalogo_Agentes? Catalogo_Agentes { get; set; }
        [ManyToOne(TableName = "Catalogo_Clientes", KeyColumn = "codigo_cliente", ForeignKeyColumn = "codigo_cliente")]
        public Catalogo_Clientes? Catalogo_Clientes { get; set; }
+       [ManyToOne(TableName = "Catalogo_Agentes", KeyColumn = "id_agente", ForeignKeyColumn = "id_agente")]
+       public Catalogo_Agentes? Catalogo_Agentes { get; set; }
        [ManyToOne(TableName = "Security_Users", KeyColumn = "Id_User", ForeignKeyColumn = "Id_User")]
        public Security_Users? Security_Users { get; set; }
        [OneToMany(TableName = "Detail_Prendas", KeyColumn = "numero_contrato", ForeignKeyColumn = "numero_contrato")]
@@ -442,9 +461,29 @@ namespace DataBaseModel {
        public string? estado { get; set; }
        public int? numero_original { get; set; }
        public DateTime? fecha { get; set; }
-       [ManyToOne(TableName = "Catalogo_Cuentas", KeyColumn = "id_cuentas", ForeignKeyColumn = "id_cuenta")]
-       public Catalogo_Cuentas? Catalogo_Cuentas { get; set; }
        [ManyToOne(TableName = "Catalogo_Tipo_Transaccion", KeyColumn = "id_tipo_transaccion", ForeignKeyColumn = "id_tipo_transaccion")]
        public Catalogo_Tipo_Transaccion? Catalogo_Tipo_Transaccion { get; set; }
+       [ManyToOne(TableName = "Catalogo_Cuentas", KeyColumn = "id_cuentas", ForeignKeyColumn = "id_cuenta")]
+       public Catalogo_Cuentas? Catalogo_Cuentas { get; set; }
+   }
+   public class Transactional_Valoracion : EntityClass {
+       [PrimaryKey(Identity = true)]
+       public int? id_valoracion { get; set; }
+       public string? Descripcion { get; set; }
+       public string? Marca { get; set; }
+       public string? Modelo { get; set; }
+       public Double? Tasa_interes { get; set; }
+       public int? Plazo { get; set; }
+       public DateTime? Fecha { get; set; }
+       public Double? Tasa_de_cambio { get; set; }
+       public int? id_estado { get; set; }
+       public Double? valoracion_compra_cordobas { get; set; }
+       public Double? valoracion_compra_dolares { get; set; }
+       public Double? valoracion_empeño_cordobas { get; set; }
+       public Double? valoracion_empeño_dolares { get; set; }
+       [ManyToOne(TableName = "Catalogo_Estados_Articulos", KeyColumn = "id_estado_articulo", ForeignKeyColumn = "id_estado")]
+       public Catalogo_Estados_Articulos? Catalogo_Estados_Articulos { get; set; }
+       [OneToOne(TableName = "Detail_Valores", KeyColumn = "id_valoracion", ForeignKeyColumn = "id_valoracion")]
+       public Detail_Valores? Detail_Valores { get; set; }
    }
 }

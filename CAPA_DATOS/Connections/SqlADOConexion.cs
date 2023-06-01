@@ -60,7 +60,7 @@ namespace CAPA_DATOS
                 Anonimo = false;
                 UserSQLConexion = "Data Source=" + SQLServer +
                     "; Initial Catalog=" + DataBaseName +
-                    "; User ID=sa;Password=zaxscd;MultipleActiveResultSets=true";
+                    "; User ID=sa;Password=123;MultipleActiveResultSets=true";
                 SQLM = new SqlServerGDatos(UserSQLConexion);
                 return true;
             }

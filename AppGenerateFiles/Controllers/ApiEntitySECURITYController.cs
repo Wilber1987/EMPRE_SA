@@ -7,6 +7,38 @@ namespace API.Controllers {
    [Route("api/[controller]/[action]")]
    [ApiController]
    public class  ApiEntitySECURITYController : ControllerBase {
+       //Security_Users
+       [HttpPost]
+       [AuthController]
+       public List<Security_Users> getSecurity_Users(Security_Users Inst) {
+           return Inst.Get<Security_Users>();
+       }
+       [HttpPost]
+       [AuthController]
+       public object saveSecurity_Users(Security_Users inst) {
+           return inst.Save();
+       }
+       [HttpPost]
+       [AuthController]
+       public object updateSecurity_Users(Security_Users inst) {
+           return inst.Update();
+       }
+       //Security_Users_Roles
+       [HttpPost]
+       [AuthController]
+       public List<Security_Users_Roles> getSecurity_Users_Roles(Security_Users_Roles Inst) {
+           return Inst.Get<Security_Users_Roles>();
+       }
+       [HttpPost]
+       [AuthController]
+       public object saveSecurity_Users_Roles(Security_Users_Roles inst) {
+           return inst.Save();
+       }
+       [HttpPost]
+       [AuthController]
+       public object updateSecurity_Users_Roles(Security_Users_Roles inst) {
+           return inst.Update();
+       }
        //Security_Permissions
        [HttpPost]
        [AuthController]
@@ -53,38 +85,6 @@ namespace API.Controllers {
        [HttpPost]
        [AuthController]
        public object updateSecurity_Roles(Security_Roles inst) {
-           return inst.Update();
-       }
-       //Security_Users
-       [HttpPost]
-       [AuthController]
-       public List<Security_Users> getSecurity_Users(Security_Users Inst) {
-           return Inst.Get<Security_Users>();
-       }
-       [HttpPost]
-       [AuthController]
-       public object saveSecurity_Users(Security_Users inst) {
-           return inst.Save();
-       }
-       [HttpPost]
-       [AuthController]
-       public object updateSecurity_Users(Security_Users inst) {
-           return inst.Update();
-       }
-       //Security_Users_Roles
-       [HttpPost]
-       [AuthController]
-       public List<Security_Users_Roles> getSecurity_Users_Roles(Security_Users_Roles Inst) {
-           return Inst.Get<Security_Users_Roles>();
-       }
-       [HttpPost]
-       [AuthController]
-       public object saveSecurity_Users_Roles(Security_Users_Roles inst) {
-           return inst.Save();
-       }
-       [HttpPost]
-       [AuthController]
-       public object updateSecurity_Users_Roles(Security_Users_Roles inst) {
            return inst.Update();
        }
    }

@@ -7,36 +7,20 @@ namespace API.Controllers {
    [Route("api/[controller]/[action]")]
    [ApiController]
    public class  ApiEntityDBOController : ControllerBase {
-       //Catalogo_Estados_Articulos
+       //Condicion_Laboral_Cliente
        [HttpPost]
        [AuthController]
-       public List<Catalogo_Estados_Articulos> getCatalogo_Estados_Articulos(Catalogo_Estados_Articulos Inst) {
-           return Inst.Get<Catalogo_Estados_Articulos>();
+       public List<Condicion_Laboral_Cliente> getCondicion_Laboral_Cliente(Condicion_Laboral_Cliente Inst) {
+           return Inst.Get<Condicion_Laboral_Cliente>();
        }
        [HttpPost]
        [AuthController]
-       public object saveCatalogo_Estados_Articulos(Catalogo_Estados_Articulos inst) {
+       public object saveCondicion_Laboral_Cliente(Condicion_Laboral_Cliente inst) {
            return inst.Save();
        }
        [HttpPost]
        [AuthController]
-       public object updateCatalogo_Estados_Articulos(Catalogo_Estados_Articulos inst) {
-           return inst.Update();
-       }
-       //Transactional_Valoracion
-       [HttpPost]
-       [AuthController]
-       public List<Transactional_Valoracion> getTransactional_Valoracion(Transactional_Valoracion Inst) {
-           return Inst.Get<Transactional_Valoracion>();
-       }
-       [HttpPost]
-       [AuthController]
-       public object saveTransactional_Valoracion(Transactional_Valoracion inst) {
-           return inst.Save();
-       }
-       [HttpPost]
-       [AuthController]
-       public object updateTransactional_Valoracion(Transactional_Valoracion inst) {
+       public object updateCondicion_Laboral_Cliente(Condicion_Laboral_Cliente inst) {
            return inst.Update();
        }
        //Catalogo_Agentes
@@ -133,6 +117,22 @@ namespace API.Controllers {
        [HttpPost]
        [AuthController]
        public object updateCatalogo_Departamento(Catalogo_Departamento inst) {
+           return inst.Update();
+       }
+       //Catalogo_Estados_Articulos
+       [HttpPost]
+       [AuthController]
+       public List<Catalogo_Estados_Articulos> getCatalogo_Estados_Articulos(Catalogo_Estados_Articulos Inst) {
+           return Inst.Get<Catalogo_Estados_Articulos>();
+       }
+       [HttpPost]
+       [AuthController]
+       public object saveCatalogo_Estados_Articulos(Catalogo_Estados_Articulos inst) {
+           return inst.Save();
+       }
+       [HttpPost]
+       [AuthController]
+       public object updateCatalogo_Estados_Articulos(Catalogo_Estados_Articulos inst) {
            return inst.Update();
        }
        //Catalogo_Inversores
@@ -311,6 +311,22 @@ namespace API.Controllers {
        public object updateDetail_Prendas_Vehiculos(Detail_Prendas_Vehiculos inst) {
            return inst.Update();
        }
+       //Detail_Valores
+       [HttpPost]
+       [AuthController]
+       public List<Detail_Valores> getDetail_Valores(Detail_Valores Inst) {
+           return Inst.Get<Detail_Valores>();
+       }
+       [HttpPost]
+       [AuthController]
+       public object saveDetail_Valores(Detail_Valores inst) {
+           return inst.Save();
+       }
+       [HttpPost]
+       [AuthController]
+       public object updateDetail_Valores(Detail_Valores inst) {
+           return inst.Update();
+       }
        //Transaction_Contratos
        [HttpPost]
        [AuthController]
@@ -405,6 +421,22 @@ namespace API.Controllers {
        [HttpPost]
        [AuthController]
        public object updateTransaction_Ingresos_Egresos(Transaction_Ingresos_Egresos inst) {
+           return inst.Update();
+       }
+       //Transactional_Valoracion
+       [HttpPost]
+       [AuthController]
+       public List<Transactional_Valoracion> getTransactional_Valoracion(Transactional_Valoracion Inst) {
+           return Inst.Get<Transactional_Valoracion>();
+       }
+       [HttpPost]
+       [AuthController]
+       public object saveTransactional_Valoracion(Transactional_Valoracion inst) {
+           return inst.Save();
+       }
+       [HttpPost]
+       [AuthController]
+       public object updateTransactional_Valoracion(Transactional_Valoracion inst) {
            return inst.Update();
        }
    }

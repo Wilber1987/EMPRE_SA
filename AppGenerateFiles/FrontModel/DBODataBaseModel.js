@@ -1,39 +1,22 @@
 import { EntityClass } from "../WDevCore/WModules/EntityClass.js";
 import { WAjaxTools } from "../WDevCore/WModules/WComponentsTools.js";
-class Catalogo_Estados_Articulos extends EntityClass {
+class Condicion_Laboral_Cliente extends EntityClass {
    constructor(props) {
        super(props, 'EntityDBO');
        for (const prop in props) {
            this[prop] = props[prop];
        }
    }
-   id_estado_articulo = { type: 'number', primary: true };
-   nombre = { type: 'text' };
-   descripcion = { type: 'text' };
-   porcentaje_compra = { type: 'number' };
-   porcentaje_empeno = { type: 'number' };
+   id = { type: 'number', primary: true };
+   fecha_ingreso = { type: 'date' };
+   ocupacion_cargo = { type: 'text' };
+   ingresos_mensuales = { type: 'number' };
+   direccion = { type: 'text' };
+   Catalogo_Clientes = { type: 'WSELECT',  ModelObject: ()=> new Catalogo_Clientes()};
+   Catalogo_Municipio = { type: 'WSELECT',  ModelObject: ()=> new Catalogo_Municipio()};
+   Catalogo_Departamento = { type: 'WSELECT',  ModelObject: ()=> new Catalogo_Departamento()};
 }
-export { Catalogo_Estados_Articulos }
-class Transactional_Valoracion extends EntityClass {
-   constructor(props) {
-       super(props, 'EntityDBO');
-       for (const prop in props) {
-           this[prop] = props[prop];
-       }
-   }
-   id_valoracion = { type: 'number', primary: true };
-   Descripcion = { type: 'text' };
-   Marca = { type: 'text' };
-   Modelo = { type: 'text' };
-   Tasa_interes = { type: 'number' };
-   Plazo = { type: 'number' };
-   Fecha = { type: 'date' };
-   Tasa_de_cambio = { type: 'number' };
-   valoracion_compra = { type: 'number' };
-   valoracion_empeño = { type: 'number' };
-   Catalogo_Estados_Articulos = { type: 'WSELECT',  ModelObject: ()=> new Catalogo_Estados_Articulos()};
-}
-export { Transactional_Valoracion }
+export { Condicion_Laboral_Cliente }
 class Catalogo_Agentes extends EntityClass {
    constructor(props) {
        super(props, 'EntityDBO');
@@ -107,9 +90,9 @@ class Catalogo_Clientes extends EntityClass {
    valor_interes = { type: 'number' };
    solo_acreedor = { type: 'text' };
    promedio = { type: 'number' };
-   Catalogo_Clasificacion_Cliente = { type: 'WSELECT',  ModelObject: ()=> new Catalogo_Clasificacion_Cliente()};
-   Catalogo_Profesiones = { type: 'WSELECT',  ModelObject: ()=> new Catalogo_Profesiones()};
    Catalogo_Tipo_Identificacion = { type: 'WSELECT',  ModelObject: ()=> new Catalogo_Tipo_Identificacion()};
+   Catalogo_Profesiones = { type: 'WSELECT',  ModelObject: ()=> new Catalogo_Profesiones()};
+   Catalogo_Clasificacion_Cliente = { type: 'WSELECT',  ModelObject: ()=> new Catalogo_Clasificacion_Cliente()};
 }
 export { Catalogo_Clientes }
 class Catalogo_Cuentas extends EntityClass {
@@ -138,6 +121,20 @@ class Catalogo_Departamento extends EntityClass {
    Catalogo_Nacionalidad = { type: 'WSELECT',  ModelObject: ()=> new Catalogo_Nacionalidad()};
 }
 export { Catalogo_Departamento }
+class Catalogo_Estados_Articulos extends EntityClass {
+   constructor(props) {
+       super(props, 'EntityDBO');
+       for (const prop in props) {
+           this[prop] = props[prop];
+       }
+   }
+   id_estado_articulo = { type: 'number', primary: true };
+   nombre = { type: 'text' };
+   descripcion = { type: 'text' };
+   porcentaje_compra = { type: 'number' };
+   porcentaje_empeno = { type: 'number' };
+}
+export { Catalogo_Estados_Articulos }
 class Catalogo_Inversores extends EntityClass {
    constructor(props) {
        super(props, 'EntityDBO');
@@ -309,6 +306,21 @@ class Detail_Prendas_Vehiculos extends EntityClass {
    Detail_Prendas = { type: 'WSELECT',  ModelObject: ()=> new Detail_Prendas()};
 }
 export { Detail_Prendas_Vehiculos }
+class Detail_Valores extends EntityClass {
+   constructor(props) {
+       super(props, 'EntityDBO');
+       for (const prop in props) {
+           this[prop] = props[prop];
+       }
+   }
+   Valoracion_1 = { type: 'number' };
+   Valoracion_2 = { type: 'number' };
+   Valoracion_3 = { type: 'number' };
+   dolares_1 = { type: 'number' };
+   dolares_2 = { type: 'number' };
+   dolares_3 = { type: 'number' };
+}
+export { Detail_Valores }
 class Transaction_Contratos extends EntityClass {
    constructor(props) {
        super(props, 'EntityDBO');
@@ -366,8 +378,8 @@ class Transaction_Contratos extends EntityClass {
    fecha_cancelar_inicial = { type: 'date' };
    plazo_inicial = { type: 'number' };
    dias_para_baja = { type: 'number' };
-   Catalogo_Agentes = { type: 'WSELECT',  ModelObject: ()=> new Catalogo_Agentes()};
    Catalogo_Clientes = { type: 'WSELECT',  ModelObject: ()=> new Catalogo_Clientes()};
+   Catalogo_Agentes = { type: 'WSELECT',  ModelObject: ()=> new Catalogo_Agentes()};
    Detail_Prendas = { type: 'MasterDetail',  ModelObject: ()=> new Detail_Prendas()};
 }
 export { Transaction_Contratos }
@@ -506,7 +518,30 @@ class Transaction_Ingresos_Egresos extends EntityClass {
    estado = { type: 'text' };
    numero_original = { type: 'number' };
    fecha = { type: 'date' };
-   Catalogo_Cuentas = { type: 'WSELECT',  ModelObject: ()=> new Catalogo_Cuentas()};
    Catalogo_Tipo_Transaccion = { type: 'WSELECT',  ModelObject: ()=> new Catalogo_Tipo_Transaccion()};
+   Catalogo_Cuentas = { type: 'WSELECT',  ModelObject: ()=> new Catalogo_Cuentas()};
 }
 export { Transaction_Ingresos_Egresos }
+class Transactional_Valoracion extends EntityClass {
+   constructor(props) {
+       super(props, 'EntityDBO');
+       for (const prop in props) {
+           this[prop] = props[prop];
+       }
+   }
+   id_valoracion = { type: 'number', primary: true };
+   Descripcion = { type: 'text' };
+   Marca = { type: 'text' };
+   Modelo = { type: 'text' };
+   Tasa_interes = { type: 'number' };
+   Plazo = { type: 'number' };
+   Fecha = { type: 'date' };
+   Tasa_de_cambio = { type: 'number' };
+   valoracion_compra_cordobas = { type: 'number' };
+   valoracion_compra_dolares = { type: 'number' };
+   valoracion_empeño_cordobas = { type: 'number' };
+   valoracion_empeño_dolares = { type: 'number' };
+   Catalogo_Estados_Articulos = { type: 'WSELECT',  ModelObject: ()=> new Catalogo_Estados_Articulos()};
+   Detail_Valores = { type: 'MasterDetail',  ModelObject: ()=> new Detail_Valores()};
+}
+export { Transactional_Valoracion }

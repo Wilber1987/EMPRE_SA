@@ -77,32 +77,32 @@ class Catalogo_Clientes extends EntityClass {
         }
     }
     codigo_cliente = { type: 'number', primary: true };
-    primer_nombre = { type: 'text' };
+    primer_nombre = { type: 'text'};
     segundo_nombre = { type: 'text' };
     primer_apellido = { type: 'text' };
     segundo_apellidio = { type: 'text' };
-    identificacion = { type: 'text' };
-    sexo = { type: 'text' };
-    fecha_nacimiento = { type: 'date' };
-    id_departemento = { type: 'number' };
-    id_municipio = { type: 'number' };
-    correo = { type: 'text' };
-    telefono = { type: 'text' };
-    direccion = { type: 'text' };
-    hora = { type: 'text' };
-    fecha = { type: 'date' };
-    observaciones = { type: 'text' };
-    estado_civil = { type: 'text' };
-    tipoc = { type: 'number' };
-    tipo_firma = { type: 'text' };
-    valor_cliente = { type: 'text' };
-    operadora_celular = { type: 'text' };
-    valor_interes = { type: 'number' };
-    solo_acreedor = { type: 'text' };
-    promedio = { type: 'number' };
-    Catalogo_Clasificacion_Cliente = { type: 'WSELECT', ModelObject: () => new Catalogo_Clasificacion_Cliente() };
-    Catalogo_Tipo_Identificacion = { type: 'WSELECT', ModelObject: () => new Catalogo_Tipo_Identificacion() };
-    Catalogo_Profesiones = { type: 'WSELECT', ModelObject: () => new Catalogo_Profesiones() };
+    identificacion = { type: 'text', hiddenFilter: true };
+    sexo = { type: 'text', hiddenInTable: true , hiddenFilter: true };
+    fecha_nacimiento = { type: 'date', hiddenInTable: true , hiddenFilter: true };
+    id_departemento = { type: 'number', hiddenInTable: true , hiddenFilter: true };
+    id_municipio = { type: 'number', hiddenInTable: true , hiddenFilter: true };
+    correo = { type: 'text', hiddenInTable: true , hiddenFilter: true };
+    telefono = { type: 'text', hiddenInTable: true , hiddenFilter: true };
+    direccion = { type: 'text', hiddenInTable: true , hiddenFilter: true };
+    hora = { type: 'text', hiddenInTable: true , hiddenFilter: true };
+    fecha = { type: 'date', hiddenInTable: true , hiddenFilter: true };
+    observaciones = { type: 'text', hiddenInTable: true , hiddenFilter: true };
+    estado_civil = { type: 'text', hiddenInTable: true , hiddenFilter: true };
+    tipoc = { type: 'number', hiddenInTable: true , hiddenFilter: true };
+    tipo_firma = { type: 'text', hiddenInTable: true , hiddenFilter: true };
+    valor_cliente = { type: 'text', hiddenInTable: true , hiddenFilter: true };
+    operadora_celular = { type: 'text', hiddenInTable: true , hiddenFilter: true };
+    valor_interes = { type: 'number' , hiddenInTable: true, hiddenFilter: true };
+    solo_acreedor = { type: 'text', hiddenInTable: true , hiddenFilter: true };
+    promedio = { type: 'number', hiddenInTable: true , hiddenFilter: true };
+    Catalogo_Clasificacion_Cliente = { type: 'WSELECT', ModelObject: () => new Catalogo_Clasificacion_Cliente(), hiddenFilter: true };
+    Catalogo_Tipo_Identificacion = { type: 'WSELECT', ModelObject: () => new Catalogo_Tipo_Identificacion(), hiddenFilter: true };
+    Catalogo_Profesiones = { type: 'WSELECT', ModelObject: () => new Catalogo_Profesiones() , hiddenInTable: true, hiddenFilter: true };
 
 }
 export { Catalogo_Clientes }

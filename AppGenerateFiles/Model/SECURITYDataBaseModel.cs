@@ -5,25 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 namespace DataBaseModel {
-   public class Security_Permissions : EntityClass {
-       [PrimaryKey(Identity = true)]
-       public int? Id_Permission { get; set; }
-       public string? Descripcion { get; set; }
-       public string? Estado { get; set; }
-   }
-   public class Security_Permissions_Roles : EntityClass {
-       [PrimaryKey(Identity = false)]
-       public int? Id_Role { get; set; }
-       [PrimaryKey(Identity = false)]
-       public int? Id_Permission { get; set; }
-       public string? Estado { get; set; }
-   }
-   public class Security_Roles : EntityClass {
-       [PrimaryKey(Identity = true)]
-       public int? Id_Role { get; set; }
-       public string? Descripcion { get; set; }
-       public string? Estado { get; set; }
-   }
    public class Security_Users : EntityClass {
        [PrimaryKey(Identity = true)]
        public int? Id_User { get; set; }
@@ -42,6 +23,25 @@ namespace DataBaseModel {
        public int? Id_Role { get; set; }
        [PrimaryKey(Identity = false)]
        public int? Id_User { get; set; }
+       public string? Estado { get; set; }
+   }
+   public class Security_Permissions : EntityClass {
+       [PrimaryKey(Identity = true)]
+       public int? Id_Permission { get; set; }
+       public string? Descripcion { get; set; }
+       public string? Estado { get; set; }
+   }
+   public class Security_Permissions_Roles : EntityClass {
+       [PrimaryKey(Identity = false)]
+       public int? Id_Role { get; set; }
+       [PrimaryKey(Identity = false)]
+       public int? Id_Permission { get; set; }
+       public string? Estado { get; set; }
+   }
+   public class Security_Roles : EntityClass {
+       [PrimaryKey(Identity = true)]
+       public int? Id_Role { get; set; }
+       public string? Descripcion { get; set; }
        public string? Estado { get; set; }
    }
 }

@@ -4,7 +4,7 @@ import { WOrtograficValidation } from "../WDevCore/WModules/WOrtograficValidatio
 import { StylesControlsV2, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js"
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js"
-import { Catalogo_Estados_Articulos,Catalogo_Agentes,Catalogo_Cambio_Dolar,Catalogo_Clasificacion_Cliente,Catalogo_Clientes,Catalogo_Cuentas,Catalogo_Departamento,Catalogo_Inversores,Catalogo_Municipio,Catalogo_Nacionalidad,Catalogo_Profesiones,Catalogo_Sucursales,Catalogo_Tipo_Agente,Catalogo_Tipo_Identificacion,Catalogo_Tipo_Transaccion } from "../FrontModel/DBODataBaseModel.js"
+import { Catalogo_Agentes,Catalogo_Cambio_Dolar,Catalogo_Clasificacion_Cliente,Catalogo_Clientes,Catalogo_Cuentas,Catalogo_Departamento,Catalogo_Estados_Articulos,Catalogo_Inversores,Catalogo_Municipio,Catalogo_Nacionalidad,Catalogo_Profesiones,Catalogo_Sucursales,Catalogo_Tipo_Agente,Catalogo_Tipo_Identificacion,Catalogo_Tipo_Transaccion } from "../FrontModel/DBODataBaseModel.js"
 class CatalogosManagerView extends HTMLElement {
    constructor() {
        super();
@@ -28,9 +28,6 @@ class CatalogosManagerView extends HTMLElement {
        this.TabManager.NavigateFunction(Model.constructor.name, mainComponent);
    }
     MainNav = new WAppNavigator({  Elements: [
-       { name: WOrtograficValidation.es('Catalogo_Estados_Articulos'), action : async ()=> {
-           this.NavigateFunction(new Catalogo_Estados_Articulos())
-        }},
        { name: WOrtograficValidation.es('Catalogo_Agentes'), action : async ()=> {
            this.NavigateFunction(new Catalogo_Agentes())
         }},
@@ -48,6 +45,9 @@ class CatalogosManagerView extends HTMLElement {
         }},
        { name: WOrtograficValidation.es('Catalogo_Departamento'), action : async ()=> {
            this.NavigateFunction(new Catalogo_Departamento())
+        }},
+       { name: WOrtograficValidation.es('Catalogo_Estados_Articulos'), action : async ()=> {
+           this.NavigateFunction(new Catalogo_Estados_Articulos())
         }},
        { name: WOrtograficValidation.es('Catalogo_Inversores'), action : async ()=> {
            this.NavigateFunction(new Catalogo_Inversores())
