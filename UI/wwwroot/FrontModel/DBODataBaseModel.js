@@ -25,8 +25,8 @@ class Transactional_Valoracion extends EntityClass {
     Descripcion = { type: 'textarea' };
     Marca = { type: 'text' };
     Modelo = { type: 'text' };
-    Tasa_interes = { type: 'number', hiddenInTable: true };
-    Plazo = { type: 'number', hiddenInTable: true };
+    Tasa_interes = { type: 'number', hiddenInTable: true, enabled: false, Dataset: [] };
+    Plazo = { type: 'number', hiddenInTable: true, max: 24 , min: 1 };
     Fecha = { type: 'date', hiddenInTable: true };
     Tasa_de_cambio = { type: 'number', hiddenInTable: true };
     valoracion_compra_cordobas = { type: 'number' };

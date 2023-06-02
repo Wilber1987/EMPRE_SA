@@ -36,14 +36,14 @@ SET Nombre=N'LOGO_PRINCIPAL', Descripcion=N'Logo que se muestra en los encabezad
 WHERE Id_Configuracion=4;
 
 INSERT INTO EMPRE_SA.administrative_access.Transactional_Configuraciones
-(Id_Configuracion, Nombre, Descripcion, Valor, Tipo_Configuracion)
-VALUES(5, N'GASTOS_ADMINISTRATIVOS', N' Gastos administrativos', N'5', N'INTERESES');
+(Nombre, Descripcion, Valor, Tipo_Configuracion)
+VALUES( N'GASTOS_ADMINISTRATIVOS', N' Gastos administrativos', N'5', N'INTERESES');
 INSERT INTO EMPRE_SA.administrative_access.Transactional_Configuraciones
-(Id_Configuracion, Nombre, Descripcion, Valor, Tipo_Configuracion)
-VALUES(6, N'COMISIONES', N' gastos legales', N'1', N'INTERESES');
+(Nombre, Descripcion, Valor, Tipo_Configuracion)
+VALUES( N'COMISIONES', N' gastos legales', N'1', N'INTERESES');
 INSERT INTO EMPRE_SA.administrative_access.Transactional_Configuraciones
-(Id_Configuracion, Nombre, Descripcion, Valor, Tipo_Configuracion)
-VALUES(7, N'MANTENIMIENTO_VALOR', N'Comisiones', N'1', N'INTERESES');
+(Nombre, Descripcion, Valor, Tipo_Configuracion)
+VALUES( N'MANTENIMIENTO_VALOR', N'Comisiones', N'1', N'INTERESES');
 INSERT INTO EMPRE_SA.administrative_access.Transactional_Configuraciones
-(Id_Configuracion, Nombre, Descripcion, Valor, Tipo_Configuracion)
-VALUES(8, N'GASTOS_LEGALES', N'mantenimiento al valor de   la prenda', N'1', N'INTERESES');
+(Nombre, Descripcion, Valor, Tipo_Configuracion)
+VALUES( N'GASTOS_LEGALES', N'mantenimiento al valor de   la prenda', N'1', N'INTERESES');

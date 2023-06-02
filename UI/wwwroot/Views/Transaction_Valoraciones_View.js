@@ -66,7 +66,8 @@ class Transaction_Valoraciones_View extends HTMLElement {
                 }
             }
         });
-        this.valoracionModel = this.valoracionesModel(tasasCambio, this.multiSelectEstadosArticulos);
+        this.valoracionModel = this.valoracionesModel(tasasCambio,
+            this.multiSelectEstadosArticulos);
 
         this.SetOption();
 
@@ -286,6 +287,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
                 const serch = this.valoracionesTable?.Dataset.find(f => WArrayF.compareObj(f, newValoracion));
                 this.valoracionesTable?.Dataset.push(newValoracion);
                 this.valoracionesTable?.DrawTable();
+                this.calculoValoracion();
             }
         }))
         this.OptionContainer.append(WRender.Create({
@@ -298,6 +300,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
             }
         }))
     }
+
     selectCliente = (selectCliente) => {
         this.Cliente = selectCliente;
     }
@@ -305,6 +308,19 @@ class Transaction_Valoraciones_View extends HTMLElement {
         this.valoracionesForm?.FormObject
 
         //throw new Error("Method not implemented.");
+    }
+
+    calculoValoracion = () => {
+        // const total = this.valoracionesTable?.Dataset.reduce((sum, value) => (typeof value.Edad == "number" ? sum + value.Edad : sum), 0);
+        const constrato = {
+            valoracion_compra_cordobas: WArrayF.SumValAtt(this.valoracionesTable?.Dataset, "valoracion_compra_cordobas"),
+            valoracion_compra_dolares: WArrayF.SumValAtt(this.valoracionesTable?.Dataset, "valoracion_compra_dolares"),
+            valoracion_empeño_cordobas: WArrayF.SumValAtt(this.valoracionesTable?.Dataset, "valoracion_empeño_cordobas"),
+            valoracion_empeño_dolares: WArrayF.SumValAtt(this.valoracionesTable?.Dataset, "valoracion_empeño_dolares"),
+            tasas_interes: this.Cliente.tasas_interes ?? 15,
+            plazo: this.valoracionesForm?.FormObject.Plazo ?? 1            
+        }
+        console.log(constrato);
     }
 
     CustomStyle = css`
