@@ -13,7 +13,7 @@ namespace CAPA_DATOS
         private static string SGBD_USER = "sa";
         private static string SWGBD_PASSWORD = "zaxscd";
         //static string SQLServer = ".\\SQLEXPRESS";
-        static string SQLServer = "DESKTOP-I58J01U";
+        static string SQLServer = "localhost";
 
         static public bool IniciarConexion()
         {

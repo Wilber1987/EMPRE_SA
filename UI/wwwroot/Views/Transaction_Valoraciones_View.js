@@ -15,7 +15,8 @@ class Transaction_Valoraciones_View extends HTMLElement {
         this.TabContainer = WRender.Create({ className: "TabContainer", id: 'TabContainer' });
         this.Manager = new ComponentsManager({ MainContainer: this.TabContainer, SPAManage: false });
         this.valoracionesContainer = WRender.Create({ className: "valoraciones-container" });
-        this.append(this.CustomStyle)
+        this.append(this.CustomStyle);
+        this.Cliente = {}
 
         this.valoresObject = {
             Valoracion_1: 0, dolares_1: 0,
@@ -29,6 +30,8 @@ class Transaction_Valoraciones_View extends HTMLElement {
         this.valoracionesContainer.innerHTML = "";
         const tasasCambio = await new Catalogo_Cambio_Dolar().Get();
         const estadosArticulos = await new Catalogo_Estados_Articulos().Get();
+
+
         this.buildValoresModel(tasasCambio);
 
         this.multiSelectEstadosArticulos = new WTableComponent({
@@ -231,7 +234,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
         });
     }
 
-    calculoCordobas = (porcentaje) => {        
+    calculoCordobas = (porcentaje) => {
         return (this.avgValores() * (porcentaje / 100)).toFixed(2);
     }
     calculoDolares = (porcentaje, tasa_cambio) => {
@@ -248,6 +251,10 @@ class Transaction_Valoraciones_View extends HTMLElement {
         this.OptionContainer.append(WRender.Create({
             tagName: 'button', className: 'Block-Alert', innerText: 'Nueva valoración',
             onclick: () => this.Manager.NavigateFunction("valoraciones")
+        }))
+        this.OptionContainer.append(WRender.Create({
+            tagName: 'button', className: 'Block-Alert', innerText: 'Buscar cliente',
+            onclick: () => this.Manager.NavigateFunction("buscar-cliente", clientSearcher(this.selectCliente))
         }))
 
         this.OptionContainer.append(WRender.Create({
@@ -291,11 +298,15 @@ class Transaction_Valoraciones_View extends HTMLElement {
             }
         }))
     }
+    selectCliente = (selectCliente) => {
+        this.Cliente = selectCliente;
+    }
     setValoracion = (valoracion) => {
         this.valoracionesForm?.FormObject
 
         //throw new Error("Method not implemented.");
     }
+
     CustomStyle = css`
         .valoraciones-container{
             padding: 20px;
@@ -308,6 +319,8 @@ class Transaction_Valoraciones_View extends HTMLElement {
         }
         .OptionContainer{
             display: flex;
+        } w-filter-option {
+            grid-column: span 2;
         }
     `
 }
@@ -361,3 +374,31 @@ class ValoracionesSearch extends HTMLElement {
 }
 customElements.define('w-component', ValoracionesSearch);
 export { ValoracionesSearch }
+/**
+ * 
+ * @param { Function } action 
+ * @returns { HTMLElement }
+ */
+const clientSearcher = (action) => {
+    const model = new Catalogo_Clientes();
+    const TableComponent = new WTableComponent({
+        ModelObject: model, Dataset: [], Options: {
+            UserActions: [{
+                name: "Selecionar",
+                action: async (cliente) => {
+                    await action(cliente);
+                }
+            }]
+        }
+    })
+    const FilterOptions = new WFilterOptions({
+        Dataset: [],
+        ModelObject: model,
+        Display: true,
+        FilterFunction: (DFilt) => {
+            TableComponent?.DrawTable(DFilt);
+        }
+    });
+    return WRender.Create({ className: "main-container", children: [FilterOptions, TableComponent] });
+}
+export { clientSearcher }
