@@ -2,14 +2,14 @@
 CREATE TABLE Condicion_Laboral_Cliente
 (
 	id int IDENTITY(1,1) PRIMARY KEY,
-	id_cliente int,
-    fecha_ingreso date,
-    ocupacion_cargo varchar(255),
-    ingresos_mensuales float,
-    direccion varchar(600),
+	codigo_cliente int,
+        fecha_ingreso date,
+        ocupacion_cargo varchar(255),
+        ingresos_mensuales float,
+        direccion varchar(600),
 	id_municipio int,
-    id_departamento int,	
-	CONSTRAINT FK_Laboral_Clientes FOREIGN KEY (id_cliente)
+        id_departamento int,	
+	CONSTRAINT FK_Laboral_Clientes FOREIGN KEY (codigo_cliente)
         REFERENCES dbo.Catalogo_Clientes (codigo_cliente),
 	CONSTRAINT FK_Laboral_Municipios FOREIGN KEY (id_municipio)
         REFERENCES dbo.Catalogo_Municipio (id_municipio),

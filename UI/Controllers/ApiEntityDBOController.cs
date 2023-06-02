@@ -102,6 +102,22 @@ namespace API.Controllers
         {
             return inst.Update();
         }
+        //Condicion_Laboral_Cliente
+        [HttpPost]
+        [AuthController]
+        public List<Condicion_Laboral_Cliente> getCondicion_Laboral_Cliente(Condicion_Laboral_Cliente Inst) {
+            return Inst.Get<Condicion_Laboral_Cliente>();
+        }
+        [HttpPost]
+        [AuthController]
+        public object saveCondicion_Laboral_Cliente(Condicion_Laboral_Cliente inst) {
+            return inst.Save();
+        }
+        [HttpPost]
+        [AuthController]
+        public object updateCondicion_Laboral_Cliente(Condicion_Laboral_Cliente inst) {
+            return inst.Update();
+        }
         //Catalogo_Tipo_Agente
         [HttpPost]
         [AuthController]
