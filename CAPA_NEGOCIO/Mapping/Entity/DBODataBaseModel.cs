@@ -132,9 +132,30 @@ namespace DataBaseModel
         public Catalogo_Tipo_Identificacion? Catalogo_Tipo_Identificacion { get; set; }
         [ManyToOne(TableName = "Catalogo_Profesiones", KeyColumn = "id_profesion", ForeignKeyColumn = "id_profesion")]
         public Catalogo_Profesiones? Catalogo_Profesiones { get; set; }
-        [OneToMany(TableName = "Transaction_Contratos", KeyColumn = "codigo_cliente", ForeignKeyColumn = "codigo_cliente")]
+        /*[OneToMany(TableName = "Transaction_Contratos", KeyColumn = "codigo_cliente", ForeignKeyColumn = "codigo_cliente")]*/
         public List<Transaction_Contratos>? Transaction_Contratos { get; set; }
+        [OneToMany(TableName = "Condicion_Laboral_Cliente", KeyColumn = "codigo_cliente", ForeignKeyColumn = "codigo_cliente")]
+        public List<Condicion_Laboral_Cliente>? Condicion_Laboral_Cliente { get; set; }
+
     }
+
+    public class Condicion_Laboral_Cliente : EntityClass {
+       [PrimaryKey(Identity = true)]
+       public int? id { get; set; }
+       public int? codigo_cliente { get; set; }
+       public DateTime? fecha_ingreso { get; set; }
+       public string? ocupacion_cargo { get; set; }
+       public Double? ingresos_mensuales { get; set; }
+       public string? direccion { get; set; }
+       public int? id_municipio { get; set; }
+       public int? id_departamento { get; set; }
+       /*[ManyToOne(TableName = "Catalogo_Clientes", KeyColumn = "codigo_cliente", ForeignKeyColumn = "id_cliente")]*/
+       public Catalogo_Clientes? Catalogo_Clientes { get; set; }
+       [ManyToOne(TableName = "Catalogo_Municipio", KeyColumn = "id_municipio", ForeignKeyColumn = "id_municipio")]
+       public Catalogo_Municipio? Catalogo_Municipio { get; set; }
+       [ManyToOne(TableName = "Catalogo_Departamento", KeyColumn = "id_departamento", ForeignKeyColumn = "id_departamento")]
+       public Catalogo_Departamento? Catalogo_Departamento { get; set; }
+   }
     public class Catalogo_Tipo_Agente : EntityClass
     {
         [PrimaryKey(Identity = true)]

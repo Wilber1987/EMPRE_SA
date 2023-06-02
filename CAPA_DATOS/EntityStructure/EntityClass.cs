@@ -16,7 +16,7 @@ namespace CAPA_DATOS
             var Data = SqlADOConexion.SQLM?.TakeList<T>(this, true).Take<T>(100);
             return Data.ToList() ?? new List<T>();
         }
-      
+
         public Boolean Exists<T>()
         {
             var Data = SqlADOConexion.SQLM?.TakeList<T>(this, true);
@@ -93,13 +93,25 @@ namespace CAPA_DATOS
                 if (pkPropiertys.Count == values.Count)
                 {
                     this.Update(pkPropiertys.Select(p => p.Name).ToArray());
-                    return this;
+                    return new ResponseService()
+                    {
+                        status = 200,
+                        message = this.GetType().Name + " actualizado correctamente"
+                    };
                 }
-                else return false;
+                else return new ResponseService()
+                {
+                    status = 500,
+                    message = "Error al actualizar: no se encuentra el registro " + this.GetType().Name
+                };
             }
             catch (Exception e)
             {
-                throw e;
+                return new ResponseService()
+                {
+                    status = 500,
+                    message = "Error al actualizar: " + e.Message
+                };
             }
         }
         public bool Update(string Id)

@@ -72,7 +72,13 @@ namespace CAPA_DATOS
                             break;
                         case "int":
                         case "float":
+                            ColumnNames = ColumnNames + AtributeName.ToString() + ",";
+                            Values = Values + "cast ('"+ AtributeValue.ToString().Replace(",",".") + "' as float),";
+                            break;
                         case "decimal":
+                            ColumnNames = ColumnNames + AtributeName.ToString() + ",";
+                            Values = Values + "cast ('"+ AtributeValue.ToString().Replace(",",".") + "' as decimal),";
+                            break;
                         case "bigint":
                         case "money":
                         case "smallint":
@@ -276,7 +282,11 @@ namespace CAPA_DATOS
                     break;
                 case "int":
                 case "float":
+                    Values = Values + AtributeName + "= cast('" + AtributeValue.ToString().Replace(",",".") + "' as float),";
+                    break;
                 case "decimal":
+                    Values = Values + AtributeName + "= cast('" + AtributeValue.ToString().Replace(",",".") + "' as decimal),";
+                    break;
                 case "bigint":
                 case "money":
                 case "smallint":
@@ -317,13 +327,20 @@ namespace CAPA_DATOS
                     CondicionString = CondicionString + AtributeName
                         + "= '" + ((DateTime)AtributeValue).ToString("yyyy/MM/dd") + "' ";
                 }
-                else if (AtributeValue?.GetType() == typeof(int)
-                                    || AtributeValue?.GetType() == typeof(Double)
-                                    || AtributeValue?.GetType() == typeof(Decimal)
-                                    || AtributeValue?.GetType() == typeof(int?))
+                else if (AtributeValue?.GetType() == typeof(int) || AtributeValue?.GetType() == typeof(int?))
                 {
                     WhereOrAnd(ref CondicionString, ref index);
                     CondicionString = CondicionString + AtributeName + "=" + AtributeValue?.ToString() + " ";
+                }
+                else if (AtributeValue?.GetType() == typeof(Double))
+                {
+                    WhereOrAnd(ref CondicionString, ref index);
+                    CondicionString = CondicionString + AtributeName + "= cast('" + AtributeValue?.ToString().Replace(",",".") + "' as float)  ";
+                }
+                else if (AtributeValue?.GetType() == typeof(Decimal))
+                {
+                    WhereOrAnd(ref CondicionString, ref index);
+                    CondicionString = CondicionString + AtributeName + "= cast('" + AtributeValue?.ToString().Replace(",",".") + "' as decimal)  ";
                 }
             }
         }
@@ -337,7 +354,7 @@ namespace CAPA_DATOS
                 if (filter != null && filter.Values != null && filter.Values.Count > 0)
                 {
                     // WhereOrAnd(ref CondicionString, ref index);
-                    var propertyType =  Nullable.GetUnderlyingType(atribute?.PropertyType) ?? atribute?.PropertyType;
+                    var propertyType = Nullable.GetUnderlyingType(atribute?.PropertyType) ?? atribute?.PropertyType;
                     string? atributeType = propertyType?.Name;
                     switch (filter.FilterType?.ToUpper())
                     {
