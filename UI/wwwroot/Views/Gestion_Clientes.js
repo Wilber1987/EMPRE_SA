@@ -115,7 +115,7 @@ class Gestion_ClientesForm extends HTMLElement {
         this.innerHTML = "";
 
         this.FormularioCliente = new WForm({
-            ModelObject: this.ModelCliente, EditObject: this.cliente, Options: false
+            ModelObject: this.ModelCliente, EditObject: this.cliente, Options: false,DivColumns: "32% 32% 32%" 
         });
         this.FormularioDatos = new WForm({
             ModelObject: this.ModelDatosLaborales, EditObject: this.cliente.Condicion_Laboral_Cliente[0], Options: false

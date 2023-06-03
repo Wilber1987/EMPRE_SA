@@ -64,7 +64,7 @@ namespace DataBaseModel {
        public string? sexo { get; set; }
        public DateTime? fecha_nacimiento { get; set; }
        public int? id_profesion { get; set; }
-       public int? id_departemento { get; set; }
+       public int? id_departamento { get; set; }
        public int? id_municipio { get; set; }
        public string? correo { get; set; }
        public string? telefono { get; set; }
@@ -91,6 +91,10 @@ namespace DataBaseModel {
        public List<Condicion_Laboral_Cliente>? Condicion_Laboral_Cliente { get; set; }
        /*[OneToMany(TableName = "Transaction_Contratos", KeyColumn = "codigo_cliente", ForeignKeyColumn = "codigo_cliente")]*/
        public List<Transaction_Contratos>? Transaction_Contratos { get; set; }
+       [ManyToOne(TableName = "Catalogo_Municipio", KeyColumn = "id_municipio", ForeignKeyColumn = "id_municipio")]
+       public Catalogo_Municipio? Catalogo_Municipio { get; set; }
+       [ManyToOne(TableName = "Catalogo_Departamento", KeyColumn = "id_departamento", ForeignKeyColumn = "id_departamento")]
+       public Catalogo_Departamento? Catalogo_Departamento { get; set; }
    }
    public class Catalogo_Cuentas : EntityClass {
        [PrimaryKey(Identity = false)]

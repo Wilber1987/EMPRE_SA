@@ -104,12 +104,12 @@ namespace DataBaseModel
         public string? segundo_nombre { get; set; }
         public string? primer_apellido { get; set; }
         public string? segundo_apellidio { get; set; }
-        public int? id_tipo_Identificacion { get; set; }
+        public int? id_tipo_identificacion { get; set; }
         public string? identificacion { get; set; }
         public string? sexo { get; set; }
         public DateTime? fecha_nacimiento { get; set; }
         public int? id_profesion { get; set; }
-        public int? id_departemento { get; set; }
+        public int? id_departamento { get; set; }
         public int? id_municipio { get; set; }
         public string? correo { get; set; }
         public string? telefono { get; set; }
@@ -128,7 +128,7 @@ namespace DataBaseModel
         public int? id_clasificacion { get; set; }
         [ManyToOne(TableName = "Catalogo_Clasificacion_Cliente", KeyColumn = "id_clasificacion", ForeignKeyColumn = "id_clasificacion")]
         public Catalogo_Clasificacion_Cliente? Catalogo_Clasificacion_Cliente { get; set; }
-        [ManyToOne(TableName = "Catalogo_Tipo_Identificacion", KeyColumn = "Id_Tipo_Identificacion", ForeignKeyColumn = "id_tipo_Identificacion")]
+        [ManyToOne(TableName = "Catalogo_Tipo_Identificacion", KeyColumn = "id_tipo_identificacion", ForeignKeyColumn = "id_tipo_identificacion")]
         public Catalogo_Tipo_Identificacion? Catalogo_Tipo_Identificacion { get; set; }
         [ManyToOne(TableName = "Catalogo_Profesiones", KeyColumn = "id_profesion", ForeignKeyColumn = "id_profesion")]
         public Catalogo_Profesiones? Catalogo_Profesiones { get; set; }
@@ -136,7 +136,11 @@ namespace DataBaseModel
         public List<Transaction_Contratos>? Transaction_Contratos { get; set; }
         [OneToMany(TableName = "Condicion_Laboral_Cliente", KeyColumn = "codigo_cliente", ForeignKeyColumn = "codigo_cliente")]
         public List<Condicion_Laboral_Cliente>? Condicion_Laboral_Cliente { get; set; }
-
+        
+        [ManyToOne(TableName = "Catalogo_Municipio", KeyColumn = "id_municipio", ForeignKeyColumn = "id_municipio")]
+        public Catalogo_Municipio? Catalogo_Municipio { get; set; }
+        [ManyToOne(TableName = "Catalogo_Departamento", KeyColumn = "id_departamento", ForeignKeyColumn = "id_departamento")]
+        public Catalogo_Departamento? Catalogo_Departamento { get; set; }
     }
 
     public class Condicion_Laboral_Cliente : EntityClass {
@@ -168,10 +172,10 @@ namespace DataBaseModel
     public class Catalogo_Tipo_Identificacion : EntityClass
     {
         [PrimaryKey(Identity = true)]
-        public int? Id_Tipo_Identificacion { get; set; }
+        public int? id_tipo_identificacion { get; set; }
         public string? Descripcion { get; set; }
         public string? Estado { get; set; }
-        //    [OneToMany(TableName = "Catalogo_Clientes", KeyColumn = "Id_Tipo_Identificacion", ForeignKeyColumn = "id_tipo_Identificacion")]
+        //    [OneToMany(TableName = "Catalogo_Clientes", KeyColumn = "id_tipo_identificacion", ForeignKeyColumn = "id_tipo_identificacion")]
         //    public List<Catalogo_Clientes>? Catalogo_Clientes { get; set; }
     }
     public class Transaction_Contratos : EntityClass

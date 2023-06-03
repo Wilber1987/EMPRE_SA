@@ -88,8 +88,9 @@ class Catalogo_Clientes extends EntityClass {
     identificacion = { type: 'text', hiddenFilter: true };
     sexo = { type: 'select', Dataset: [{id: "Masculino", Descripcion:"Masculino"},{id: "Femenino", Descripcion: "Femenino"}], hiddenInTable: true, hiddenFilter: true };
     fecha_nacimiento = { type: 'date', hiddenInTable: true, hiddenFilter: true };
-    id_departemento = { type: 'number', hiddenInTable: true, hiddenFilter: true, hidden: true };
+    id_departamento = { type: 'number', hiddenInTable: true, hiddenFilter: true, hidden: true };
     id_municipio = { type: 'number', hiddenInTable: true, hiddenFilter: true, hidden: true };
+    id_tipo_identificacion = { type: 'number', hiddenInTable: true, hiddenFilter: true, hidden: true };
     correo = { type: 'text', hiddenInTable: true, hiddenFilter: true };
     telefono = { type: 'text', hiddenInTable: true, hiddenFilter: true };
     direccion = { type: 'text', hiddenInTable: true, hiddenFilter: true };
@@ -108,6 +109,8 @@ class Catalogo_Clientes extends EntityClass {
     Catalogo_Tipo_Identificacion = { type: 'WSELECT', ModelObject: () => new Catalogo_Tipo_Identificacion(), hiddenFilter: true };
     Catalogo_Profesiones = { type: 'WSELECT', ModelObject: () => new Catalogo_Profesiones(), hiddenInTable: true, hiddenFilter: true };
     Condicion_Laboral_Cliente = { type: 'WSELECT', ModelObject: () => new Condicion_Laboral_Cliente(), hiddenInTable: true, hiddenFilter: true, hidden: true };
+    Catalogo_Municipio = { type: 'WSELECT', ModelObject: () => new Catalogo_Municipio() };
+    Catalogo_Departamento = { type: 'WSELECT', ModelObject: () => new Catalogo_Departamento() };
 
 }
 export { Catalogo_Clientes }
@@ -149,7 +152,7 @@ class Catalogo_Tipo_Identificacion extends EntityClass {
             this[prop] = props[prop];
         }
     }
-    Id_Tipo_Identificacion = { type: 'number', primary: true };
+    id_tipo_identificacion = { type: 'number', primary: true };
     Descripcion = { type: 'text' };
     Estado = { type: 'select', Dataset: ["ACTIVO", "INACTIVO"] };
 }
