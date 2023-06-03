@@ -25,8 +25,8 @@ class Transactional_Valoracion extends EntityClass {
     Descripcion = { type: 'textarea' };
     Marca = { type: 'text' };
     Modelo = { type: 'text' };
-    Tasa_interes = { type: 'number', hiddenInTable: true };
-    Plazo = { type: 'number', hiddenInTable: true };
+    Tasa_interes = { type: 'number', hiddenInTable: true, enabled: false, Dataset: [] };
+    Plazo = { type: 'number', hiddenInTable: true, max: 24 , min: 1 };
     Fecha = { type: 'date', hiddenInTable: true };
     Tasa_de_cambio = { type: 'number', hiddenInTable: true };
     valoracion_compra_cordobas = { type: 'number' };
@@ -82,10 +82,10 @@ class Catalogo_Clientes extends EntityClass {
     }
     codigo_cliente = { type: 'number', primary: true };
     primer_nombre = { type: 'text' };
-    segundo_nombre = { type: 'text' };
+    segundo_nombre = { type: 'text', hiddenFilter: true };
     primer_apellido = { type: 'text' };
     segundo_apellidio = { type: 'text' };
-    identificacion = { type: 'text', hiddenFilter: true };
+    identificacion = { type: 'text' };
     sexo = { type: 'select', Dataset: [{id: "Masculino", Descripcion:"Masculino"},{id: "Femenino", Descripcion: "Femenino"}], hiddenInTable: true, hiddenFilter: true };
     fecha_nacimiento = { type: 'date', hiddenInTable: true, hiddenFilter: true };
     id_departamento = { type: 'number', hiddenInTable: true, hiddenFilter: true, hidden: true };
@@ -104,6 +104,7 @@ class Catalogo_Clientes extends EntityClass {
     operadora_celular = { type: 'select', Dataset: ["Tigo", "Claro"], hiddenInTable: true, hiddenFilter: true };
     valor_interes = { type: 'number', hiddenInTable: true, hiddenFilter: true };
     solo_acreedor = { type: 'select',Dataset: [{id: "Si", Descripcion:"Si"},{id: "No", Descripcion: "Ambos"}],  hiddenInTable: true, hiddenFilter: true };
+
     promedio = { type: 'number', hiddenInTable: true, hiddenFilter: true };
     Catalogo_Clasificacion_Cliente = { type: 'WSELECT', ModelObject: () => new Catalogo_Clasificacion_Cliente(), hiddenFilter: true };
     Catalogo_Tipo_Identificacion = { type: 'WSELECT', ModelObject: () => new Catalogo_Tipo_Identificacion(), hiddenFilter: true };
