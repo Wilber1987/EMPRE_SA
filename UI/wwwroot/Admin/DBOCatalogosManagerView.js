@@ -67,7 +67,7 @@ class DBOCatalogosManagerView extends HTMLElement {
                 }
             },
             {
-                name: WOrtograficValidation.es('Catalogo_Tipo_Identificacion'), action: async () => {
+                name: 'Tipo Identificación', action: async () => {
                     this.NavigateFunction(new Catalogo_Tipo_Identificacion())
                 }
             },
@@ -87,7 +87,7 @@ class DBOCatalogosManagerView extends HTMLElement {
                 }
             },
             {
-                name: WOrtograficValidation.es('Catalogo_Inversores'), action: async () => {
+                name: 'Inversionistas', action: async () => {
                     this.NavigateFunction(new Catalogo_Inversores())
                 }
             },

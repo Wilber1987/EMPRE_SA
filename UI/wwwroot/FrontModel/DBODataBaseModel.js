@@ -50,11 +50,11 @@ class Catalogo_Agentes extends EntityClass {
         }
     }
     id_agente = { type: 'number', primary: true };
-    identificacion = { type: 'text' };
+    identificacion = { type: 'text', hiddenFilter: true };
     nombre = { type: 'text', label: "nombres y apellidos" };
-    telefono = { type: 'text' };
-    direccion = { type: 'text' };
-    fecha = { type: 'date' };
+    telefono = { type: 'text' };    
+    fecha = { type: 'date', hiddenFilter: true, hiddenInTable: true };
+    direccion = { type: 'textarea', hiddenInTable: true };
     Estado = { type: 'select', Dataset: ["ACTIVO", "INACTIVO"] };
     Catalogo_Tipo_Agente = { type: 'WSELECT', ModelObject: () => new Catalogo_Tipo_Agente() };
 }
@@ -81,13 +81,13 @@ class Catalogo_Clientes extends EntityClass {
         }
     }
     codigo_cliente = { type: 'number', primary: true };
-    primer_nombre = { type: 'text' };
+    primer_nombre = { type: 'text', };
     segundo_nombre = { type: 'text', hiddenFilter: true };
     primer_apellido = { type: 'text' };
     segundo_apellidio = { type: 'text' };
     identificacion = { type: 'text' };
     sexo = { type: 'select', Dataset: [{id: "Masculino", Descripcion:"Masculino"},{id: "Femenino", Descripcion: "Femenino"}], hiddenInTable: true, hiddenFilter: true };
-    fecha_nacimiento = { type: 'date', hiddenInTable: true, hiddenFilter: true };
+    fecha_nacimiento = { type: 'date', hiddenInTable: true, hiddenFilter: true, hiddenInTable: true };
     id_departamento = { type: 'number', hiddenInTable: true, hiddenFilter: true, hidden: true };
     id_municipio = { type: 'number', hiddenInTable: true, hiddenFilter: true, hidden: true };
     id_tipo_identificacion = { type: 'number', hiddenInTable: true, hiddenFilter: true, hidden: true };
@@ -107,11 +107,11 @@ class Catalogo_Clientes extends EntityClass {
 
     promedio = { type: 'number', hiddenInTable: true, hiddenFilter: true };
     Catalogo_Clasificacion_Cliente = { type: 'WSELECT', ModelObject: () => new Catalogo_Clasificacion_Cliente(), hiddenFilter: true };
-    Catalogo_Tipo_Identificacion = { type: 'WSELECT', ModelObject: () => new Catalogo_Tipo_Identificacion(), hiddenFilter: true };
+    Catalogo_Tipo_Identificacion = { type: 'WSELECT', ModelObject: () => new Catalogo_Tipo_Identificacion(), hiddenFilter: true, hiddenInTable: true };
     Catalogo_Profesiones = { type: 'WSELECT', ModelObject: () => new Catalogo_Profesiones(), hiddenInTable: true, hiddenFilter: true };
     Condicion_Laboral_Cliente = { type: 'WSELECT', ModelObject: () => new Condicion_Laboral_Cliente(), hiddenInTable: true, hiddenFilter: true, hidden: true };
-    Catalogo_Municipio = { type: 'WSELECT', ModelObject: () => new Catalogo_Municipio() };
-    Catalogo_Departamento = { type: 'WSELECT', ModelObject: () => new Catalogo_Departamento() };
+    Catalogo_Municipio = { type: 'WSELECT', ModelObject: () => new Catalogo_Municipio(), hiddenInTable: true };
+    Catalogo_Departamento = { type: 'WSELECT', ModelObject: () => new Catalogo_Departamento(), hiddenInTable: true };
 
 }
 export { Catalogo_Clientes }
@@ -285,8 +285,8 @@ class Catalogo_Cambio_Dolar extends EntityClass {
     }
     id_cambio = { type: 'number', primary: true };
     fecha = { type: 'date' };
-    valor_de_compra = { type: 'number' };
-    valor_de_venta = { type: 'number' };
+    valor_de_compra = { type: 'number', hiddenFilter:true };
+    valor_de_venta = { type: 'number', hiddenFilter:true };
 }
 export { Catalogo_Cambio_Dolar }
 class Catalogo_Cuentas extends EntityClass {
@@ -309,10 +309,10 @@ class Catalogo_Departamento extends EntityClass {
     }
     id_departamento = { type: 'number', primary: true };
     nombre = { type: 'text' };
-    ponderacion = { type: 'number' };
-    puntaje = { type: 'number' };
-    clasificacion = { type: 'text' };
-    Catalogo_Nacionalidad = { type: 'WSELECT', ModelObject: () => new Catalogo_Nacionalidad() };
+    ponderacion = { type: 'number', hiddenInTable: true, hiddenFilter: true };
+    puntaje = { type: 'number', hiddenInTable: true, hiddenFilter: true };
+    clasificacion = { type: 'text', hiddenInTable: true, hiddenFilter: true };
+    Catalogo_Nacionalidad = { type: 'WSELECT', ModelObject: () => new Catalogo_Nacionalidad(), hiddenInTable: true };
 }
 export { Catalogo_Departamento }
 class Catalogo_Inversores extends EntityClass {
@@ -324,12 +324,12 @@ class Catalogo_Inversores extends EntityClass {
     }
     id_inversor = { type: 'number', primary: true };
     nombre = { type: 'text' };
-    direccion = { type: 'text' };
-    estado_civil = { type: 'text' };
     identificacion = { type: 'text' };
     telefono = { type: 'text' };
-    Catalogo_Municipio = { type: 'WSELECT', ModelObject: () => new Catalogo_Municipio() };
-    Catalogo_Nacionalidad = { type: 'WSELECT', ModelObject: () => new Catalogo_Nacionalidad() };
+    estado_civil = { type: 'text'};
+    direccion = { type: 'text', hiddenInTable: true, hiddenFilter: true  };
+    Catalogo_Municipio = { type: 'WSELECT', ModelObject: () => new Catalogo_Municipio(), hiddenInTable: true, hiddenFilter: true };
+    Catalogo_Nacionalidad = { type: 'WSELECT', ModelObject: () => new Catalogo_Nacionalidad(), hiddenInTable: true, hiddenFilter: true };
 }
 export { Catalogo_Inversores }
 class Catalogo_Municipio extends EntityClass {
@@ -354,8 +354,8 @@ class Catalogo_Nacionalidad extends EntityClass {
     id_nacionalidad = { type: 'number', primary: true };
     nombre = { type: 'text' };
     nacionalidad = { type: 'text' };
-    ponderacion = { type: 'number' };
-    puntaje = { type: 'number' };
+    ponderacion = { type: 'number', hiddenFilter: true };
+    puntaje = { type: 'number', hiddenFilter: true };
     clasificacion = { type: 'text' };
 }
 export { Catalogo_Nacionalidad }
