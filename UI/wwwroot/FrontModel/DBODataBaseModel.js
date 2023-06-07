@@ -298,6 +298,10 @@ class Catalogo_Cuentas extends EntityClass {
     }
     id_cuentas = { type: 'number', primary: true };
     nombre = { type: 'text' };
+    tipo_transaccion = { type: 'select',Dataset: ['Entrada','Salida'] };
+    cuenta_propia = { type: 'select',Dataset: ['Si','No'] };
+    
+    Catalogo_Sucursales = { type: 'WSELECT', ModelObject: () => new Catalogo_Sucursales() };
 }
 export { Catalogo_Cuentas }
 class Catalogo_Departamento extends EntityClass {
