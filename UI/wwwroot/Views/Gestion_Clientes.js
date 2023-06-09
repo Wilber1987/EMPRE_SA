@@ -135,10 +135,10 @@ class Gestion_ClientesForm extends HTMLElement {
         this.OptionContainer.append(WRender.Create({
             tagName: 'button', className: 'Block-Basic', innerText: 'Datos Laborales',
             onclick: () => {
-                if (!this.FormularioCliente?.Validate()) {
-                    this.append(ModalMessege("Necesita llenar los datos del cliente primeramente"));
-                    return;
-                }
+                // if (!this.FormularioCliente?.Validate()) {
+                //     this.append(ModalMessege("Necesita llenar los datos del cliente primeramente"));
+                //     return;
+                // }
                 this.DatosLaborales();
             }
         }))
@@ -161,15 +161,17 @@ class Gestion_ClientesForm extends HTMLElement {
                     }
                 } else {
                     const result = await new Catalogo_Clientes(this.cliente).Update();
-                    console.log(result)
                     this.append(ModalMessege(WOrtograficValidation.es(result.message)));
                 }
             }
         }))
         this.TabContainer.append(WRender.Create({
             tagName: 'button', className: 'Block-Basic', innerText: 'Limpiar',
-            onclick: async () => {
-                onclick: () => { this.ModelCliente = new Catalogo_Clientes(); this.ClienteFormulario() }
+            onclick: () => {
+                for (const prop in this.cliente) {
+                    this.cliente[prop] = undefined;
+                }
+                this.FormularioCliente?.DrawComponent();
             }
         }));
         this.ClienteFormulario()

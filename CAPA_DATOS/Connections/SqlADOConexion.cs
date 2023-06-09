@@ -11,8 +11,8 @@ namespace CAPA_DATOS
         public static string DataBaseName = "EMPRE_SA";
         public static bool Anonimo = true;
         private static string SGBD_USER = "sa";
-        private static string SWGBD_PASSWORD = "123";
-        static string SQLServer = ".\\SQLEXPRESS";
+        private static string SWGBD_PASSWORD = "zaxscd";
+        static string SQLServer = "localhost";
         //static string SQLServer = "DESKTOP-I58J01U";
 //
         static public bool IniciarConexion()
