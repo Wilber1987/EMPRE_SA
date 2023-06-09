@@ -36,6 +36,7 @@ namespace DataBaseModel
         public int? id_valoracion { get; set; }
         public string? Descripcion { get; set; }
         public string? Marca { get; set; }
+        public string? Serie { get; set; }
         public string? Modelo { get; set; }
         public Double? Tasa_interes { get; set; }
         public int? Plazo { get; set; }
@@ -310,6 +311,11 @@ namespace DataBaseModel
         [PrimaryKey(Identity = false)]
         public int? id_cuentas { get; set; }
         public string? nombre { get; set; }
+        public string? tipo_transaccion { get; set; }
+        public string? cuenta_propia { get; set; }
+        [ManyToOne(TableName = "Catalogo_Sucursales", KeyColumn = "Id_Sucursal", ForeignKeyColumn = "Id_Sucursal")]
+        public Catalogo_Sucursales? Catalogo_Sucursales { get; set; }
+        
         // [OneToMany(TableName = "Transaction_Ingresos_Egresos", KeyColumn = "id_cuentas", ForeignKeyColumn = "id_cuenta")]
         // public List<Transaction_Ingresos_Egresos>? Transaction_Ingresos_Egresos { get; set; }
     }
