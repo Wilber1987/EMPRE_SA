@@ -11,8 +11,9 @@ namespace DataBaseModel
         [PrimaryKey(Identity = true)]
         public int? Id_Configuracion { get; set; }
         public string? Nombre { get; set; }
-        public string? Descripcion { get; set; }
+        public string? Descripcion { get; set; }        
         public string? Valor { get; set; }
+        public string? Tipo_Configuracion { get; set; }
     }
 
     public enum configuracionesEnum

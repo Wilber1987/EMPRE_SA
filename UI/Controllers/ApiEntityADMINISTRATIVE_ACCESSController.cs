@@ -14,6 +14,11 @@ namespace API.Controllers {
        }
        [HttpPost]
        [AuthController]
+       public List<Transactional_Configuraciones> getTransactional_Configuraciones_Intereses(Transactional_Configuraciones Inst) {
+           return Inst.Get<Transactional_Configuraciones>().Where(x => x.Tipo_Configuracion.Equals("INTERESES")).ToList();
+       }
+       [HttpPost]
+       [AuthController]
        public object saveTransactional_Configuraciones(Transactional_Configuraciones inst) {
            return inst.Save();
        }
