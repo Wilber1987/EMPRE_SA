@@ -307,13 +307,15 @@ namespace DataBaseModel
     }
     public class Catalogo_Cuentas : EntityClass
     {
-        [PrimaryKey(Identity = false)]
+        [PrimaryKey(Identity = true)]
         public int? id_cuentas { get; set; }
-        public string? nombre { get; set; }
-        public string? tipo_transaccion { get; set; }
-        public string? cuenta_propia { get; set; }
+        public string? nombre { get; set; }        
+        public string? tipo_cuenta { get; set; }
         [ManyToOne(TableName = "Catalogo_Sucursales", KeyColumn = "Id_Sucursal", ForeignKeyColumn = "Id_Sucursal")]
         public Catalogo_Sucursales? Catalogo_Sucursales { get; set; }
+
+        [ManyToOne(TableName = "Catalogo_Tipo_Transaccion", KeyColumn = "id_tipo_transaccion", ForeignKeyColumn = "id_tipo_transaccion")]
+        public Catalogo_Tipo_Transaccion? Catalogo_Tipo_Transaccion { get; set; }
         
         // [OneToMany(TableName = "Transaction_Ingresos_Egresos", KeyColumn = "id_cuentas", ForeignKeyColumn = "id_cuenta")]
         // public List<Transaction_Ingresos_Egresos>? Transaction_Ingresos_Egresos { get; set; }

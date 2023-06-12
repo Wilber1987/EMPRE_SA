@@ -97,7 +97,7 @@ namespace DataBaseModel {
        public Catalogo_Departamento? Catalogo_Departamento { get; set; }
    }
    public class Catalogo_Cuentas : EntityClass {
-       [PrimaryKey(Identity = false)]
+       [PrimaryKey(Identity = true)]
        public int? id_cuentas { get; set; }
        public string? nombre { get; set; }
        [OneToMany(TableName = "Transaction_Ingresos_Egresos", KeyColumn = "id_cuentas", ForeignKeyColumn = "id_cuenta")]

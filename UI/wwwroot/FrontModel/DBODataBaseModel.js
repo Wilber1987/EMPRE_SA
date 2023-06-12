@@ -297,11 +297,10 @@ class Catalogo_Cuentas extends EntityClass {
         }
     }
     id_cuentas = { type: 'number', primary: true };
-    nombre = { type: 'text' };
-    tipo_transaccion = { type: 'select',Dataset: ['Entrada','Salida'] };
-    cuenta_propia = { type: 'select',Dataset: ['Si','No'] };
-    
+    nombre = { type: 'text' };    
+    tipo_cuenta = { type: 'select',Dataset: ['PROPIA','PAGO'] };    
     Catalogo_Sucursales = { type: 'WSELECT', ModelObject: () => new Catalogo_Sucursales() };
+    Catalogo_Tipo_Transaccion = { type: 'WSELECT', ModelObject: () => new Catalogo_Tipo_Transaccion() };
 }
 export { Catalogo_Cuentas }
 class Catalogo_Departamento extends EntityClass {
@@ -536,6 +535,17 @@ class Catalogo_Sucursales extends EntityClass {
     Direccion = { type: 'text' };
 }
 export { Catalogo_Sucursales }
+class Catalogo_Tipo_Transaccion extends EntityClass {
+    constructor(props) {
+        super(props, 'EntityDBO');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
+    id_tipo_transaccion = { type: 'number', primary: true };
+    descripcion = { type: 'text' };    
+}
+export { Catalogo_Tipo_Transaccion }
 class Datos_Configuracion extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
