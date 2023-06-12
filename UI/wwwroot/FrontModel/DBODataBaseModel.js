@@ -15,6 +15,10 @@ class Catalogo_Estados_Articulos extends EntityClass {
 }
 export { Catalogo_Estados_Articulos }
 class Transactional_Valoracion extends EntityClass {
+    /**
+     * 
+     * @param {Transactional_Valoracion} props 
+     */
     constructor(props) {
         super(props, 'EntityDBO');
         for (const prop in props) {
@@ -23,6 +27,7 @@ class Transactional_Valoracion extends EntityClass {
     }
     id_valoracion = { type: 'number', primary: true };
     Descripcion = { type: 'textarea' };
+    Serie = { type: 'text' };
     Marca = { type: 'text' };
     Modelo = { type: 'text' };
     Tasa_interes = { type: 'number', hiddenInTable: true, enabled: false, Dataset: [] };
@@ -81,10 +86,10 @@ class Catalogo_Clientes extends EntityClass {
         }
     }
     codigo_cliente = { type: 'number', primary: true };
-    primer_nombre = { type: 'text', };
-    segundo_nombre = { type: 'text', hiddenFilter: true };
+    primer_nombre = { type: 'text' };
+    segundo_nombre = { type: 'text', hiddenFilter: true, require: false };
     primer_apellido = { type: 'text' };
-    segundo_apellidio = { type: 'text' };
+    segundo_apellidio = { type: 'text', require: false  };
     identificacion = { type: 'text' };
     sexo = { type: 'select', Dataset: [{id: "Masculino", Descripcion:"Masculino"},{id: "Femenino", Descripcion: "Femenino"}], hiddenInTable: true, hiddenFilter: true };
     fecha_nacimiento = { type: 'date', hiddenInTable: true, hiddenFilter: true, hiddenInTable: true };
@@ -98,7 +103,6 @@ class Catalogo_Clientes extends EntityClass {
     fecha = { type: 'date', hiddenInTable: true, hiddenFilter: true, hidden: true };
     observaciones = { type: 'text', hiddenInTable: true, hiddenFilter: true, hidden: true };
     estado_civil = { type: 'select', Dataset: ["Soltero", "Casado"], hiddenInTable: true, hiddenFilter: true };
-    tipoc = { type: 'number', hiddenInTable: true, hiddenFilter: true };
     tipo_firma = { type: 'select', Dataset: [{id: "Iletrado", Descripcion:"Iletrado"},{id: "Ilegible", Descripcion: "Ilegible"},{id: "Legible", Descripcion: "Legible"}], hiddenInTable: true, hiddenFilter: true };
     valor_cliente = { type: 'text', hiddenInTable: true, hiddenFilter: true };
     operadora_celular = { type: 'select', Dataset: ["Tigo", "Claro"], hiddenInTable: true, hiddenFilter: true };

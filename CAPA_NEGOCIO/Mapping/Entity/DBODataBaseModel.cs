@@ -36,6 +36,7 @@ namespace DataBaseModel
         public int? id_valoracion { get; set; }
         public string? Descripcion { get; set; }
         public string? Marca { get; set; }
+        public string? Serie { get; set; }
         public string? Modelo { get; set; }
         public Double? Tasa_interes { get; set; }
         public int? Plazo { get; set; }
