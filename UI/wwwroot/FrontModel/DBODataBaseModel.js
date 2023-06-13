@@ -304,7 +304,7 @@ class Catalogo_Cuentas extends EntityClass {
     nombre = { type: 'text' };    
     tipo_cuenta = { type: 'select',Dataset: ['PROPIA','PAGO'] };    
     Catalogo_Sucursales = { type: 'WSELECT', ModelObject: () => new Catalogo_Sucursales() };
-    Catalogo_Tipo_Transaccion = { type: 'WSELECT', ModelObject: () => new Catalogo_Tipo_Transaccion() };
+    /*Catalogo_Tipo_Transaccion = { type: 'WSELECT', ModelObject: () => new Catalogo_Tipo_Transaccion() };*/
 }
 export { Catalogo_Cuentas }
 class Catalogo_Departamento extends EntityClass {
