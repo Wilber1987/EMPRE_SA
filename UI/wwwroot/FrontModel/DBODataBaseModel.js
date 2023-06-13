@@ -17,7 +17,7 @@ export { Catalogo_Estados_Articulos }
 class Transactional_Valoracion extends EntityClass {
     /**
      * 
-     * @param {Transactional_Valoracion} props 
+     * @param {Transactional_Valoracion | Object} props 
      */
     constructor(props) {
         super(props, 'EntityDBO');
@@ -74,6 +74,7 @@ class Catalogo_Clasificacion_Cliente extends EntityClass {
     }
     id_clasificacion = { type: 'number', primary: true };
     Descripcion = { type: 'text' };
+    porcentaje = { type: 'number' };
     Estado = { type: 'select', Dataset: ["ACTIVO", "INACTIVO"] };
 }
 export { Catalogo_Clasificacion_Cliente }

@@ -11,6 +11,7 @@ import { css } from "../WDevCore/WModules/WStyledRender.js";
 import { Cuota, ValoracionesContrato } from "../FrontModel/Model.js";
 import { CuotaComponent } from "../FrontModel/ModelComponents.js";
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
+import { Transactional_Configuraciones } from "../FrontModel/ADMINISTRATIVE_ACCESSDataBaseModel.js";
 class Transaction_Valoraciones_View extends HTMLElement {
     constructor(props) {
         super();
@@ -33,7 +34,8 @@ class Transaction_Valoraciones_View extends HTMLElement {
         this.valoracionesContainer.innerHTML = "";
         const tasasCambio = await new Catalogo_Cambio_Dolar().Get();
         const estadosArticulos = await new Catalogo_Estados_Articulos().Get();
-
+        this.Intereses = await new Transactional_Configuraciones().getTransactional_Configuraciones_Intereses();
+        this.InteresBase = WArrayF.SumValAtt(this.Intereses, "Valor");
 
         this.buildValoresModel(tasasCambio);
 
@@ -80,7 +82,6 @@ class Transaction_Valoraciones_View extends HTMLElement {
             Options: false,
             id: "valoracionesForm",
             SaveFunction: (/**@type {Transactional_Valoracion} */ valoracion) => {
-
             }, CustomStyle: css`
                 .divForm{
                     display: "grid";
@@ -98,8 +99,8 @@ class Transaction_Valoraciones_View extends HTMLElement {
 
         this.valoracionesTable = new WTableComponent({
             Dataset: this.valoracionesDataset,
-            ModelObject: new Transactional_Valoracion(),
-            paginate: false,            
+            ModelObject: new Transactional_Valoracion({}),
+            paginate: false,
             AutoSave: false,
             id: "valoracionesTable",
             Options: {
@@ -248,6 +249,8 @@ class Transaction_Valoraciones_View extends HTMLElement {
         return new Transactional_Valoracion({
             Fecha: { type: 'date', disabled: true },
             Tasa_de_cambio: { type: 'number', disabled: true, defaultValue: tasasCambio[0].valor_de_compra },
+            // @ts-ignore
+            Tasa_interes: { type: 'number', disabled: true, defaultValue: this.InteresBase + 6 },
             Plazo: {
                 type: "number", action: () => this.calculoAmortizacion()
             }, Catalogo_Estados_Articulos: { type: 'WSELECT', hidden: true },
@@ -296,7 +299,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
 
         this.OptionContainer.append(WRender.Create({
             tagName: 'button', className: 'Block-Basic', innerText: 'Buscar valoraciones',
-            onclick: () => this.Manager.NavigateFunction("Searcher", new ValoracionesSearch(this.setValoracion))
+            onclick: () => this.Manager.NavigateFunction("Searcher", new ValoracionesSearch(this.selectValoracion))
         }))
 
         this.OptionContainer.append(WRender.Create({
@@ -339,13 +342,38 @@ class Transaction_Valoraciones_View extends HTMLElement {
 
     selectCliente = (selectCliente) => {
         this.Cliente = selectCliente;
+        if (this.valoracionesForm != undefined) {
+            this.valoracionesForm.FormObject.Tasa_interes =
+                parseFloat(this.Cliente.Catalogo_Clasificacion_Cliente.porcentaje)
+                // @ts-ignore
+                + this.InteresBase;
+            this.valoracionesForm.DrawComponent();
+        }
+        this.calculoAmortizacion();
+        this.Manager.NavigateFunction("valoraciones");
     }
-    setValoracion = (valoracion) => {
-        this.valoracionesForm?.FormObject
-
-        //throw new Error("Method not implemented.");
+    selectValoracion = (valoracion) => {
+        if (this.valoracionesForm != undefined) {
+            for (const prop in this.valoracionesForm?.FormObject) {
+                if (prop == "Detail_Valores" || prop == "id_valoracion") continue;
+                this.valoracionesForm.FormObject[prop] = valoracion[prop]
+            }
+            this.valoracionesForm.DrawComponent();
+            // @ts-ignore
+            if (new Date().subtractDays(40) < new Date(valoracion.Fecha)) {
+                if (this.valoresForm != undefined) {
+                    this.valoresObject.Valoracion_1 = valoracion.Detail_Valores?.Valoracion_1.toFixed(2) ?? 0;
+                    this.valoresObject.dolares_1 = valoracion.Detail_Valores?.dolares_1.toFixed(2) ?? 0;
+                    this.valoresObject.Valoracion_2 = valoracion.Detail_Valores?.Valoracion_2.toFixed(2) ?? 0;
+                    this.valoresObject.dolares_2 = valoracion.Detail_Valores?.dolares_2.toFixed(2) ?? 0;
+                    this.valoresObject.Valoracion_3 = valoracion.Detail_Valores?.Valoracion_3.toFixed(2) ?? 0;
+                    this.valoresObject.dolares_3 = valoracion.Detail_Valores?.dolares_3.toFixed(2) ?? 0;
+                    this.valoresForm.DrawComponent();
+                }
+            }
+        }
+        this.Manager.NavigateFunction("valoraciones");
     }
-
     calculoAmortizacion = () => {
         if (this.valoracionesTable?.Dataset.length == 0) {
             return;
@@ -356,7 +384,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
             valoracion_compra_dolares: WArrayF.SumValAtt(this.valoracionesTable?.Dataset, "valoracion_compra_dolares"),
             valoracion_empeño_cordobas: WArrayF.SumValAtt(this.valoracionesTable?.Dataset, "valoracion_empeño_cordobas"),
             valoracion_empeño_dolares: WArrayF.SumValAtt(this.valoracionesTable?.Dataset, "valoracion_empeño_dolares"),
-            tasas_interes: (this.Cliente.tasas_interes ?? 15) / 100,
+            tasas_interes: this.valoracionesForm?.FormObject.Tasa_interes / 100,
             plazo: this.valoracionesForm?.FormObject.Plazo ?? 1,
             fecha: new Date(),
             cuotas: new Array()
@@ -367,7 +395,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
             const abono_capital = cuotaFija - (capital * constrato.tasas_interes);
             const cuota = new Cuota({
                 // @ts-ignore
-                fecha: constrato.fecha.addMonth(index + 1),
+                fecha: constrato.fecha.modifyMonth(index + 1),
                 cuotaFija: cuotaFija.toFixed(2),
                 interes: (capital * constrato.tasas_interes).toFixed(2),
                 abono_capital: abono_capital.toFixed(2),
@@ -376,14 +404,13 @@ class Transaction_Valoraciones_View extends HTMLElement {
             capital = capital - abono_capital;
             constrato.cuotas.push(cuota)
         }
-        console.log(constrato);
+        //console.log(constrato);
         if (this.CuotasTable != undefined) {
             this.CuotasTable.Dataset = constrato.cuotas;
             this.CuotasTable?.Draw();
         }
         return constrato;
     }
-
     CustomStyle = css`
         .valoraciones-container{
             padding: 20px;
@@ -400,12 +427,10 @@ class Transaction_Valoraciones_View extends HTMLElement {
             grid-column: span 2;
         }
     `
-
     getPago(constrato) {
         const monto = constrato.valoracion_empeño_cordobas;
         const cuotas = constrato.plazo;
         const tasa = constrato.tasas_interes;
-        console.log(monto, cuotas, tasa);
         const payment = ((tasa * Math.pow(1 + tasa, cuotas)) * monto) / (Math.pow(1 + tasa, cuotas) - 1);
         return payment;
     }
@@ -424,7 +449,7 @@ class ValoracionesSearch extends HTMLElement {
         this.DrawComponent();
     }
     DrawComponent = async () => {
-        const model = new Transactional_Valoracion();
+        const model = new Transactional_Valoracion({});
         const dataset = await model.Get();
 
         this.SearchContainer = WRender.Create({
