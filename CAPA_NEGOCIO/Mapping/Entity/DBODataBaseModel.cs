@@ -314,7 +314,8 @@ namespace DataBaseModel
         public int? id_cuentas { get; set; }
         public string? nombre { get; set; }        
         public string? tipo_cuenta { get; set; }
-        [ManyToOne(TableName = "Catalogo_Sucursales", KeyColumn = "id_sucursal", ForeignKeyColumn = "id_sucursal")]
+        public int? id_sucursal { get; set; }
+        [ManyToOne(TableName = "Catalogo_Sucursales", KeyColumn = "Id_Sucursal", ForeignKeyColumn = "id_sucursal")]
         public Catalogo_Sucursales? Catalogo_Sucursales { get; set; }
 
         /*[ManyToOne(TableName = "Catalogo_Tipo_Transaccion", KeyColumn = "id_tipo_transaccion", ForeignKeyColumn = "id_tipo_transaccion")]

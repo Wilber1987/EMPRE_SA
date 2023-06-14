@@ -145,7 +145,7 @@ namespace CAPA_DATOS
                 var atributeValue = oneToOneProp.GetValue(entity);
                 if (atributeValue != null)
                 {
-                    OneToOne? oneToOne = (OneToOne?)Attribute.GetCustomAttribute(oneToOneProp, typeof(OneToOne));
+                    OneToOne? oneToOne = (OneToOne?)Attribute.GetCustomAttribute(oneToOneProp, typeof(OneToOne));//TODO revisar relaciones
                     PropertyInfo? KeyColumn = entity?.GetType().GetProperty(oneToOne?.KeyColumn);
                     PropertyInfo? ForeignKeyColumn = atributeValue.GetType().GetProperty(oneToOne?.ForeignKeyColumn);
                     if (ForeignKeyColumn != null)
@@ -191,7 +191,7 @@ namespace CAPA_DATOS
                 {
                     ManyToOne? manyToOne = (ManyToOne?)Attribute.GetCustomAttribute(manyToOneProp, typeof(ManyToOne));
                     PropertyInfo? KeyColumn = atributeValue.GetType().GetProperty(manyToOne?.KeyColumn);
-                    PropertyInfo? ForeignKeyColumn = atributeValue.GetType().GetProperty(manyToOne?.ForeignKeyColumn);
+                    PropertyInfo? ForeignKeyColumn = entity.GetType().GetProperty(manyToOne?.ForeignKeyColumn);
                     if (KeyColumn != null)
                     {
                         if (KeyColumn?.GetValue(atributeValue) == null)
@@ -199,7 +199,7 @@ namespace CAPA_DATOS
                             this.InsertObject(atributeValue);
                         }
                     }
-                    if (ForeignKeyColumn != null)
+                    if (KeyColumn != null && ForeignKeyColumn != null)
                     {
                         var FK = entity.GetType().GetProperty(ForeignKeyColumn.Name);
                         var keyVal = atributeValue?.GetType()?.GetProperty(KeyColumn?.Name)?.GetValue(atributeValue);
