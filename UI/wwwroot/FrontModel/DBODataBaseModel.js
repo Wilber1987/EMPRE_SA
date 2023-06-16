@@ -9,7 +9,7 @@ class Catalogo_Estados_Articulos extends EntityClass {
     }
     id_estado_articulo = { type: 'number', primary: true };
     nombre = { type: 'text' };
-    descripcion = { type: 'text' };
+    descripcion = { type: 'text', hiddenInTable: true };
     porcentaje_compra = { type: 'number' };
     porcentaje_empeno = { type: 'number' };
 }
@@ -27,18 +27,18 @@ class Transactional_Valoracion extends EntityClass {
     }
     id_valoracion = { type: 'number', primary: true };
     Descripcion = { type: 'textarea' };
-    Serie = { type: 'text' };
+    Serie = { type: 'text', require: false };
     Marca = { type: 'text' };
     Modelo = { type: 'text' };
-    Tasa_interes = { type: 'number', hiddenInTable: true, enabled: false, Dataset: [] };
-    Plazo = { type: 'number', hiddenInTable: true, max: 24 , min: 1 };
-    Fecha = { type: 'date', hiddenInTable: true };
-    Tasa_de_cambio = { type: 'number', hiddenInTable: true };
-    valoracion_compra_cordobas = { type: 'number' };
-    valoracion_compra_dolares = { type: 'number' };
-    valoracion_empeño_cordobas = { type: 'number' };
-    valoracion_empeño_dolares = { type: 'number' };
-    Catalogo_Estados_Articulos = { type: 'WSELECT', hiddenInTable: true, ModelObject: () => new Catalogo_Estados_Articulos() };
+    Plazo = { type: 'number', hiddenInTable: true, max: 24, min: 1, hiddenFilter: true };
+    Tasa_interes = { type: 'number', hiddenInTable: true, enabled: false, Dataset: [], hiddenFilter: true };
+    Fecha = { type: 'date', hiddenInTable: true, hiddenFilter: true };
+    Tasa_de_cambio = { type: 'number', hiddenInTable: true, hiddenFilter: true };
+    valoracion_compra_cordobas = { type: 'number', hiddenFilter: true };
+    valoracion_compra_dolares = { type: 'number', hiddenFilter: true };
+    valoracion_empeño_cordobas = { type: 'number', hiddenFilter: true };
+    valoracion_empeño_dolares = { type: 'number', hiddenFilter: true };
+    Catalogo_Estados_Articulos = { type: 'WSELECT', hiddenInTable: true, ModelObject: () => new Catalogo_Estados_Articulos(), hiddenFilter: true };
     //TASAS DE INTERES
     valoracion_empeño_dolares = { type: 'operation' };
     GuardarValoraciones = async (valoraciones) => {
@@ -57,7 +57,7 @@ class Catalogo_Agentes extends EntityClass {
     id_agente = { type: 'number', primary: true };
     identificacion = { type: 'text', hiddenFilter: true };
     nombre = { type: 'text', label: "nombres y apellidos" };
-    telefono = { type: 'text' };    
+    telefono = { type: 'text' };
     fecha = { type: 'date', hiddenFilter: true, hiddenInTable: true };
     direccion = { type: 'textarea', hiddenInTable: true };
     Estado = { type: 'select', Dataset: ["ACTIVO", "INACTIVO"] };
@@ -90,9 +90,9 @@ class Catalogo_Clientes extends EntityClass {
     primer_nombre = { type: 'text' };
     segundo_nombre = { type: 'text', hiddenFilter: true, require: false };
     primer_apellido = { type: 'text' };
-    segundo_apellidio = { type: 'text', require: false  };
+    segundo_apellidio = { type: 'text', require: false };
     identificacion = { type: 'text' };
-    sexo = { type: 'select', Dataset: [{id: "Masculino", Descripcion:"Masculino"},{id: "Femenino", Descripcion: "Femenino"}], hiddenInTable: true, hiddenFilter: true };
+    sexo = { type: 'select', Dataset: [{ id: "Masculino", Descripcion: "Masculino" }, { id: "Femenino", Descripcion: "Femenino" }], hiddenInTable: true, hiddenFilter: true };
     fecha_nacimiento = { type: 'date', hiddenInTable: true, hiddenFilter: true, hiddenInTable: true };
     id_departamento = { type: 'number', hiddenInTable: true, hiddenFilter: true, hidden: true };
     id_municipio = { type: 'number', hiddenInTable: true, hiddenFilter: true, hidden: true };
@@ -104,11 +104,11 @@ class Catalogo_Clientes extends EntityClass {
     fecha = { type: 'date', hiddenInTable: true, hiddenFilter: true, hidden: true };
     observaciones = { type: 'text', hiddenInTable: true, hiddenFilter: true, hidden: true };
     estado_civil = { type: 'select', Dataset: ["Soltero", "Casado"], hiddenInTable: true, hiddenFilter: true };
-    tipo_firma = { type: 'select', Dataset: [{id: "Iletrado", Descripcion:"Iletrado"},{id: "Ilegible", Descripcion: "Ilegible"},{id: "Legible", Descripcion: "Legible"}], hiddenInTable: true, hiddenFilter: true };
+    tipo_firma = { type: 'select', Dataset: [{ id: "Iletrado", Descripcion: "Iletrado" }, { id: "Ilegible", Descripcion: "Ilegible" }, { id: "Legible", Descripcion: "Legible" }], hiddenInTable: true, hiddenFilter: true };
     valor_cliente = { type: 'text', hiddenInTable: true, hiddenFilter: true };
     operadora_celular = { type: 'select', Dataset: ["Tigo", "Claro"], hiddenInTable: true, hiddenFilter: true };
     valor_interes = { type: 'number', hiddenInTable: true, hiddenFilter: true };
-    solo_acreedor = { type: 'select',Dataset: [{id: "Si", Descripcion:"Si"},{id: "No", Descripcion: "Ambos"}],  hiddenInTable: true, hiddenFilter: true };
+    solo_acreedor = { type: 'select', Dataset: [{ id: "Si", Descripcion: "Si" }, { id: "No", Descripcion: "Ambos" }], hiddenInTable: true, hiddenFilter: true };
 
     promedio = { type: 'number', hiddenInTable: true, hiddenFilter: true };
     Catalogo_Clasificacion_Cliente = { type: 'WSELECT', ModelObject: () => new Catalogo_Clasificacion_Cliente(), hiddenFilter: true };
@@ -290,8 +290,8 @@ class Catalogo_Cambio_Dolar extends EntityClass {
     }
     id_cambio = { type: 'number', primary: true };
     fecha = { type: 'date' };
-    valor_de_compra = { type: 'number', hiddenFilter:true };
-    valor_de_venta = { type: 'number', hiddenFilter:true };
+    valor_de_compra = { type: 'number', hiddenFilter: true };
+    valor_de_venta = { type: 'number', hiddenFilter: true };
 }
 export { Catalogo_Cambio_Dolar }
 class Catalogo_Cuentas extends EntityClass {
@@ -302,8 +302,8 @@ class Catalogo_Cuentas extends EntityClass {
         }
     }
     id_cuentas = { type: 'number', primary: true };
-    nombre = { type: 'text' };    
-    tipo_cuenta = { type: 'select',Dataset: ['PROPIA','PAGO'] };    
+    nombre = { type: 'text' };
+    tipo_cuenta = { type: 'select', Dataset: ['PROPIA', 'PAGO'] };
     Catalogo_Sucursales = { type: 'WSELECT', ModelObject: () => new Catalogo_Sucursales() };
     /*Catalogo_Tipo_Transaccion = { type: 'WSELECT', ModelObject: () => new Catalogo_Tipo_Transaccion() };*/
 }
@@ -334,8 +334,8 @@ class Catalogo_Inversores extends EntityClass {
     nombre = { type: 'text' };
     identificacion = { type: 'text' };
     telefono = { type: 'text' };
-    estado_civil = { type: 'text'};
-    direccion = { type: 'text', hiddenInTable: true, hiddenFilter: true  };
+    estado_civil = { type: 'text' };
+    direccion = { type: 'text', hiddenInTable: true, hiddenFilter: true };
     Catalogo_Municipio = { type: 'WSELECT', ModelObject: () => new Catalogo_Municipio(), hiddenInTable: true, hiddenFilter: true };
     Catalogo_Nacionalidad = { type: 'WSELECT', ModelObject: () => new Catalogo_Nacionalidad(), hiddenInTable: true, hiddenFilter: true };
 }
@@ -548,7 +548,7 @@ class Catalogo_Tipo_Transaccion extends EntityClass {
         }
     }
     id_tipo_transaccion = { type: 'number', primary: true };
-    descripcion = { type: 'text' };    
+    descripcion = { type: 'text' };
 }
 export { Catalogo_Tipo_Transaccion }
 class Datos_Configuracion extends EntityClass {

@@ -3,7 +3,7 @@ import { WRender, WArrayF, ComponentsManager, WAjaxTools } from '../WDevCore/WMo
 import { WCssClass } from '../WDevCore/WModules/WStyledRender.js';
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js";
 import { StylesControlsV2 } from "../WDevCore/StyleModules/WStyleComponents.js";
-import { ChangePasswordModel, Security_Permissions, Security_Roles, Security_Users } from "../Model/SecurityModel.js";
+import { ChangePasswordModel, ChangeStateModel, Security_Permissions, Security_Roles, Security_Users } from "../Model/SecurityModel.js";
 import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 window.addEventListener("load", async () => {
@@ -51,6 +51,11 @@ function ElementTab(TabName = "Tab", DOMManager, Model) {
                     Search: true, UrlSearch: "../api/ApiEntitySECURITY/get" + Model.constructor.name,
                     UserActions: [
                         TabName == "Usuarios" ? {
+                            name: "Cambiar estado", action: (object) => {
+                                Main.append(ChangeState(object));
+                            }
+                        } : null,
+                        TabName == "Usuarios" ? {
                             name: "Editar contraseña", action: (object) => {
                                 Main.append(ChangePassword(object));
                             }
@@ -82,3 +87,12 @@ const ChangePassword = (object) => {
         ObjectOptions: { Url: "../api/ApiEntitySECURITY/saveSecurity_Users" }
     })
 }
+const ChangeState = (object) => {
+    return new WModalForm({
+        title: "CAMBIO DE ESTADO",
+        EditObject: object,
+        ModelObject: new ChangeStateModel(),
+        ObjectOptions: { Url: "../api/ApiEntitySECURITY/saveSecurity_Users" }
+    })
+}
+

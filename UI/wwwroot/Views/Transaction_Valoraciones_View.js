@@ -28,6 +28,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
             Valoracion_3: 0, dolares_3: 0,
         }
         this.valoracionesDataset = [];
+        this.amortizacionResumen = WRender.Create({ tagName: "label", innerText: this.valoracionResumen(0, 0, 0, 0) });
         this.Draw();
     }
     Draw = async () => {
@@ -157,12 +158,11 @@ class Transaction_Valoraciones_View extends HTMLElement {
             }]
         })
 
-
         this.valoracionesContainer.append(
             this.valoracionesForm,
             this.valoresForm,
             this.multiSelectEstadosArticulos,
-            this.TableNavigator,
+            WRender.Create({ className: "nav-header", children: [this.TableNavigator, this.amortizacionResumen] }),
             this.TabContainerTables
         );
         this.Manager.NavigateFunction("valoraciones", this.valoracionesContainer);
@@ -173,6 +173,17 @@ class Transaction_Valoraciones_View extends HTMLElement {
             this.OptionContainer,
             this.TabContainer
         );
+    }
+    /**
+     * 
+     * @param {Number} valoracion_compra_cordobas 
+     * @param {Number} valoracion_compra_dolares 
+     * @param {Number} valoracion_empeño_cordobas 
+     * @param {Number} valoracion_empeño_dolares 
+     * @returns {string}
+     */
+    valoracionResumen(valoracion_compra_cordobas, valoracion_compra_dolares, valoracion_empeño_cordobas, valoracion_empeño_dolares) {
+        return `Compra C$: ${valoracion_compra_cordobas.toFixed(2)} - Compra $: ${valoracion_compra_dolares.toFixed(2)} - Empeño C$: ${valoracion_empeño_cordobas.toFixed(2)} - Empeño $: ${valoracion_empeño_dolares.toFixed(2)}`;
     }
     buildValoresModel(tasasCambio) {
         this.valoresModel = {
@@ -244,7 +255,6 @@ class Transaction_Valoraciones_View extends HTMLElement {
             },
         };
     }
-
     valoracionesModel(tasasCambio, multiSelectEstadosArticulos) {
         return new Transactional_Valoracion({
             Fecha: { type: 'date', disabled: true },
@@ -252,7 +262,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
             // @ts-ignore
             Tasa_interes: { type: 'number', disabled: true, defaultValue: this.InteresBase + 6 },
             Plazo: {
-                type: "number", action: () => this.calculoAmortizacion()
+                type: "number", action: () => this.calculoAmortizacion(), min: 1, max: 24, defaultValue: 1
             }, Catalogo_Estados_Articulos: { type: 'WSELECT', hidden: true },
             valoracion_compra_cordobas: {
                 type: 'operation', action: (/**@type {Transactional_Valoracion} */ valoracion) => {
@@ -273,20 +283,17 @@ class Transaction_Valoraciones_View extends HTMLElement {
             },
         });
     }
-
     calculoCordobas = (porcentaje) => {
         return (this.avgValores() * (porcentaje / 100)).toFixed(2);
     }
     calculoDolares = (porcentaje, tasa_cambio) => {
         return ((this.avgValores() * (porcentaje / 100)) / tasa_cambio).toFixed(2);
     }
-
     avgValores() {
         return (parseFloat(this.valoresObject.Valoracion_1.toString()) +
             parseFloat(this.valoresObject.Valoracion_2.toString()) +
             parseFloat(this.valoresObject.Valoracion_3.toString())) / 3;
     }
-
     SetOption() {
         this.OptionContainer.append(WRender.Create({
             tagName: 'button', className: 'Block-Alert', innerText: 'Nueva valoración',
@@ -339,7 +346,6 @@ class Transaction_Valoraciones_View extends HTMLElement {
             }
         }))
     }
-
     selectCliente = (selectCliente) => {
         this.Cliente = selectCliente;
         if (this.valoracionesForm != undefined) {
@@ -409,6 +415,11 @@ class Transaction_Valoraciones_View extends HTMLElement {
             this.CuotasTable.Dataset = constrato.cuotas;
             this.CuotasTable?.Draw();
         }
+        this.amortizacionResumen.innerText = this.valoracionResumen(
+            constrato.valoracion_compra_cordobas,
+            constrato.valoracion_compra_dolares,
+            constrato.valoracion_empeño_cordobas,
+            constrato.valoracion_empeño_dolares);
         return constrato;
     }
     CustomStyle = css`
@@ -418,9 +429,17 @@ class Transaction_Valoraciones_View extends HTMLElement {
             grid-template-columns: 400px calc(100% - 430px);
             gap: 30px;
         }
-        #valoracionesForm, #valoracionesTable, #cuotasTable, .TabContainerTables, w-app-navigator{
+        #valoracionesForm, #valoracionesTable, #cuotasTable, .TabContainerTables,.nav-header{
             grid-column: span 2;
         }
+        .nav-header {
+            display: flex;
+            width: 100%;
+            justify-content: space-between;
+            font-size: 14px;
+            font-weight: bold;
+            color: #00238a
+        }        
         .OptionContainer{
             display: flex;
         } w-filter-option {
@@ -449,14 +468,20 @@ class ValoracionesSearch extends HTMLElement {
         this.DrawComponent();
     }
     DrawComponent = async () => {
-        const model = new Transactional_Valoracion({});
+        const model = new Transactional_Valoracion({ requiere_valoracion: { type: "TEXT" } });
         const dataset = await model.Get();
 
         this.SearchContainer = WRender.Create({
             className: "search-container"
         })
         this.MainComponent = new WTableComponent({
-            ModelObject: model, Dataset: dataset, Options: {
+            ModelObject: model,
+            Dataset: dataset.map(x => {
+                // @ts-ignore
+                x.requiere_valoracion = (new Date().subtractDays(40) < new Date(x.Fecha)) ? "NO" : "SI";
+                return x;
+            }),
+            Options: {
                 UserActions: [
                     {
                         name: "seleccionar", action: (/**@type {Transactional_Valoracion}*/ selected) => {
@@ -469,8 +494,13 @@ class ValoracionesSearch extends HTMLElement {
         this.FilterOptions = new WFilterOptions({
             Dataset: dataset,
             ModelObject: model,
+            Display: true,
             FilterFunction: (DFilt) => {
-                this.MainComponent?.DrawTable(DFilt);
+                this.MainComponent?.DrawTable(DFilt.map(x => {
+                    // @ts-ignore
+                    x.requiere_valoracion = (new Date().subtractDays(40) < new Date(x.Fecha)) ?"NO" : "SI";
+                    return x;
+                }));
             }
         });
         this.append(

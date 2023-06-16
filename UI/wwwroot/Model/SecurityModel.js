@@ -61,7 +61,7 @@ class Security_Users {
 	Nombres = { type: "text" };
 	Descripcion = { type: "text", require: false };
 	Mail = { type: "email" };
-	Estado = { type: "Select", Dataset: ["Activo", "Inactivo"] };
+	Estado = { type: "Select", Dataset: ["ACTIVO", "INACTIVO"] };
 	Password = { type: "password", hiddenInTable: true };
 	Catalogo_Sucursales = { type: 'WSELECT',  ModelObject: ()=> new Catalogo_Sucursales()};
 	Security_Users_Roles = {
@@ -79,3 +79,13 @@ class ChangePasswordModel {
 	Password = { type: "password", hiddenInTable: true };
 }
 export { ChangePasswordModel }
+class ChangeStateModel {
+	constructor(props) {
+		for (const prop in props) {
+			this[prop] = props[prop];
+		}
+	}
+	Id_User = { type: "number", primary: true };
+	Estate = { type: "radio", hiddenInTable: true, Dataset: ["ACTIVO", "INACTIVO"] };
+}
+export { ChangeStateModel }
