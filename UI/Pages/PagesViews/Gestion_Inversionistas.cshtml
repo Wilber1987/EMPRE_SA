@@ -1,0 +1,12 @@
+@page
+@using API.Controllers
+@using CAPA_NEGOCIO.Security
+@{
+    @if (!SecurityController.HavePermission(PermissionsEnum.GESTION_PRESTAMOS_POR_PERSONAS_NATURALES.ToString()) )
+    {
+        Response.Redirect("../LoginView");
+        return;
+    }    
+}
+<script src='~/Views/Gestion_Inversionistas.js' type='module'></script>
+<div id='MainBody'></div>

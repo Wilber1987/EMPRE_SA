@@ -1,5 +1,5 @@
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
-import { WRender, WArrayF, ComponentsManager, WAjaxTools } from '../WDevCore/WModules/WComponentsTools.js';
+import { WRender, WArrayF, ComponentsManager, WAjaxTools, type } from '../WDevCore/WModules/WComponentsTools.js';
 import { WCssClass } from '../WDevCore/WModules/WStyledRender.js';
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js";
 import { StylesControlsV2 } from "../WDevCore/StyleModules/WStyleComponents.js";
@@ -79,19 +79,21 @@ function ElementTab(TabName = "Tab", DOMManager, Model) {
         }
     };
 }
-const ChangePassword = (object) => {
+const ChangePassword = (/**@type {Security_Users} */ object) => {
     return new WModalForm({
         title: "CAMBIO DE CONTRASEÑA",
-        EditObject: object,
+        EditObject: { Id_User: object.Id_User, Password: object.Password },
         ModelObject: new ChangePasswordModel(),
+        StyleForm:"ColumnX1" ,
         ObjectOptions: { Url: "../api/ApiEntitySECURITY/saveSecurity_Users" }
     })
 }
-const ChangeState = (object) => {
+const ChangeState = (/**@type {Security_Users} */ object) => {
     return new WModalForm({
         title: "CAMBIO DE ESTADO",
-        EditObject: object,
+        EditObject: { Id_User: object.Id_User, Estado: object.Estado },
         ModelObject: new ChangeStateModel(),
+        StyleForm:"columnX1" ,
         ObjectOptions: { Url: "../api/ApiEntitySECURITY/saveSecurity_Users" }
     })
 }

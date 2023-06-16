@@ -529,11 +529,14 @@ namespace DataBaseModel
     {
         [PrimaryKey(Identity = true)]
         public int? Id_Sucursal { get; set; }
+        public int? id_municipio { get; set; }
         public string? Nombre { get; set; }
         public string? Descripcion { get; set; }
         public string? Direccion { get; set; }
         [OneToOne(TableName = "Datos_Configuracion", KeyColumn = "Id_Sucursal", ForeignKeyColumn = "Id_Sucursal")]
         public Datos_Configuracion? Datos_Configuracion { get; set; }
+         [ManyToOne(TableName = "Catalogo_Municipio", KeyColumn = "id_municipio", ForeignKeyColumn = "id_municipio")]
+        public Catalogo_Municipio? Catalogo_Municipio { get; set; }
         // [OneToMany(TableName = "Security_Users", KeyColumn = "Id_Sucursal", ForeignKeyColumn = "Id_Sucursal")]
         // public List<Security_Users>? Security_Users { get; set; }
     }

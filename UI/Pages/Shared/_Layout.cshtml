@@ -7,7 +7,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] SNI ADMIN</title>
+    <title>@ViewData["Title"] EMPRE S.A</title>
     <link rel="stylesheet" href="~/css/AdminTemplate.css" />
     <script type="module">
         import { WSecurity } from "../WDevCore/WModules/WSecurity.js";
@@ -30,6 +30,8 @@
                 Transaction_Ingresos_EgresosView.className = "active";
             } else if (location.href.includes("Gestion_Clientes")) {
                 Gestion_Clientes.className = "active";
+            } else if (location.href.includes("Gestion_Inversionistas")) {
+                Gestion_Inversionistas.className = "active";
             } else {
                 Home.className = "active";
             }
@@ -56,10 +58,12 @@
                         asp-page="/PagesViews/Transaction_Valoraciones_View">VALORACIONES</a>
                     <a class="" id="Transaction_ContratosView" asp-area=""
                         asp-page="/PagesViews/Transaction_ContratosView">CONTRATOS</a>
-                    <a class="" id="Gestion_Clientes" asp-area="" asp-page="/PagesViews/Gestion_Clientes">Gestión de
-                        clientes</a>
+                    @if (SecurityController.HavePermission(PermissionsEnum.GESTION_CLIENTES.ToString()))
+                    {
+                        <a class="" id="Gestion_Clientes" asp-area="" asp-page="/PagesViews/Gestion_Clientes">Gestión de
+                            clientes</a>
+                    }
                 </div>
-
             }
             @if (SecurityController.HavePermission(PermissionsEnum.GESTION_CONTRATOS.ToString()))
             {
@@ -67,28 +71,26 @@
                 <div class="collapse">
                     <a class="" id="Transaction_Contratos_InversionistasView" asp-area=""
                         asp-page="/PagesViews/Transaction_Contratos_InversionistasView">PRESTAMOS DE PERSONAS NATURALES</a>
+                    <a class="" id="Gestion_Inversionistas" asp-area=""
+                        asp-page="/PagesViews/Gestion_Inversionistas">GESTIÓN DE PERSONAS NATURALES</a>
                 </div>
-
             }
-            @if (SecurityController.HavePermission(PermissionsEnum.GESTION_INGRESOS.ToString()))
+            @* @if (SecurityController.HavePermission(PermissionsEnum.GESTION_INGRESOS.ToString()))
             {
-                <a class="title-collapse" id="GestionIngresosMenu" onclick="changeActive(this)">GESTIÓN DE CONTRATOS</a>
-                <div class="collapse">
-                    <a class="" id="Transaction_FacturasView" asp-area=""
-                        asp-page="/PagesViews/Transaction_FacturasView">FACTURAS</a>
-                </div>
-            }
+            <a class="title-collapse" id="GestionIngresosMenu" onclick="changeActive(this)">GESTIÓN DE CONTRATOS</a>
+            <div class="collapse">
+            <a class="" id="Transaction_FacturasView" asp-area=""
+            asp-page="/PagesViews/Transaction_FacturasView">FACTURAS</a>
+            </div>
+            } *@
             @if (SecurityController.HavePermission(PermissionsEnum.GESTION_MOVIMIENTOS.ToString()))
             {
-                <a class="title-collapse" id="GestionMovimientosMenu" onclick="changeActive(this)">GESTIÓN DE CONTRATOS</a>
-                <div class="collapse">
-                    <a class="" id="Transaction_Ingresos_EgresosView" asp-area=""
-                        asp-page="/PagesViews/Transaction_Ingresos_EgresosView">EGRESOS/INGRESOS</a>
-                </div>
-            }
-            @if (SecurityController.HavePermission(PermissionsEnum.GESTION_CLIENTES.ToString()))
-            {
-
+                <a class="title-collapse" id="GestionMovimientosMenu" onclick="changeActive(this)">GESTIÓN DE
+                    MOVIMIENTOS</a>
+                @* <div class="collapse">
+            <a class="" id="Transaction_Ingresos_EgresosView" asp-area=""
+            asp-page="/PagesViews/Transaction_Ingresos_EgresosView">EGRESOS/INGRESOS</a>
+            </div> *@
             }
             @if (SecurityController.HavePermission(PermissionsEnum.GESTION_SUCURSALES.ToString()))
             {
@@ -99,7 +101,6 @@
                     <a class="" id="Datos_ConfiguracionView" asp-area=""
                         asp-page="/PagesViews/Datos_ConfiguracionView">CONFIGURACIONES</a>
                 </div>
-
             }
         </nav>
     </aside>

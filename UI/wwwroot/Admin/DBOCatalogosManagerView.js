@@ -47,71 +47,50 @@ class DBOCatalogosManagerView extends HTMLElement {
         //@ts-ignore
         Elements: [
             {
-                name: WOrtograficValidation.es('Catalogo_Agentes'), action: async () => {
-                    this.NavigateFunction(new Catalogo_Agentes())
-                }
-            },
-            {
-                name: WOrtograficValidation.es('Catalogo_Clasificacion_Cliente'), action: async () => {
-                    this.NavigateFunction(new Catalogo_Clasificacion_Cliente())
-                }
-            },
-            {
-                name: WOrtograficValidation.es('Catalogo_Clientes'), action: async () => {
-                    this.NavigateFunction(new Catalogo_Clientes())
-                }
-            },
-            {
-                name: WOrtograficValidation.es('Catalogo_Tipo_Agente'), action: async () => {
-                    this.NavigateFunction(new Catalogo_Tipo_Agente())
-                }
-            },
-            {
-                name: 'Tipo Identificación', action: async () => {
-                    this.NavigateFunction(new Catalogo_Tipo_Identificacion())
-                }
-            },
-            {
                 name: WOrtograficValidation.es('Catalogo_Cambio_Dolar'), action: async () => {
                     this.NavigateFunction(new Catalogo_Cambio_Dolar())
                 }
-            },
-            {
-                name: WOrtograficValidation.es('Catalogo_Cuentas'), action: async () => {
-                    this.NavigateFunction(new Catalogo_Cuentas())
-                }
-            },
-            {
-                name: WOrtograficValidation.es('Catalogo_Departamento'), action: async () => {
-                    this.NavigateFunction(new Catalogo_Departamento())
-                }
-            },
-            {
-                name: 'Inversionistas', action: async () => {
-                    this.NavigateFunction(new Catalogo_Inversores())
-                }
-            },
-            {
-                name: WOrtograficValidation.es('Catalogo_Municipio'), action: async () => {
-                    this.NavigateFunction(new Catalogo_Municipio())
-                }
-            },
-            {
-                name: WOrtograficValidation.es('Catalogo_Nacionalidad'), action: async () => {
-                    this.NavigateFunction(new Catalogo_Nacionalidad())
-                }
-            },
-            {
-                name: WOrtograficValidation.es('Catalogo_Profesiones'), action: async () => {
-                    this.NavigateFunction(new Catalogo_Profesiones())
-                }
-            },
-            {
+            }, {
                 name: WOrtograficValidation.es('Catalogo_Sucursales'), action: async () => {
                     this.NavigateFunction(new Catalogo_Sucursales())
                 }
-            },
-            {
+            }, {
+                name: WOrtograficValidation.es('Catalogo_Cuentas'), action: async () => {
+                    this.NavigateFunction(new Catalogo_Cuentas())
+                }
+            }, {
+                name: WOrtograficValidation.es('Catalogo_Tipo_Agente'), action: async () => {
+                    this.NavigateFunction(new Catalogo_Tipo_Agente())
+                }
+            }, {
+                name: WOrtograficValidation.es('Catalogo_Agentes'), action: async () => {
+                    this.NavigateFunction(new Catalogo_Agentes())
+                }
+            }, {
+                name: WOrtograficValidation.es('Catalogo_Nacionalidad'), action: async () => {
+                    this.NavigateFunction(new Catalogo_Nacionalidad())
+                }
+            },{
+                name: WOrtograficValidation.es('Catalogo_Departamento'), action: async () => {
+                    this.NavigateFunction(new Catalogo_Departamento())
+                }
+            }, {
+                name: WOrtograficValidation.es('Catalogo_Municipio'), action: async () => {
+                    this.NavigateFunction(new Catalogo_Municipio())
+                }
+            }, {
+                name: WOrtograficValidation.es('Catalogo_Profesiones'), action: async () => {
+                    this.NavigateFunction(new Catalogo_Profesiones())
+                }
+            }, {
+                name: WOrtograficValidation.es('Catalogo_Clasificacion_Cliente'), action: async () => {
+                    this.NavigateFunction(new Catalogo_Clasificacion_Cliente())
+                }
+            }, {
+                name: 'Tipo Identificación', action: async () => {
+                    this.NavigateFunction(new Catalogo_Tipo_Identificacion())
+                }
+            }, {
                 name: WOrtograficValidation.es('Catalogo_Estados_Articulos'), action: async () => {
                     this.NavigateFunction(new Catalogo_Estados_Articulos())
                 }

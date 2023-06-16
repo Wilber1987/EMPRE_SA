@@ -333,8 +333,8 @@ class Catalogo_Inversores extends EntityClass {
     id_inversor = { type: 'number', primary: true };
     nombre = { type: 'text' };
     identificacion = { type: 'text' };
-    telefono = { type: 'text' };
-    estado_civil = { type: 'text' };
+    telefono = { type: 'tel' };
+    stado_civil = { type: 'select', Dataset: ["Soltero", "Casado"], hiddenInTable: true, hiddenFilter: true };
     direccion = { type: 'text', hiddenInTable: true, hiddenFilter: true };
     Catalogo_Municipio = { type: 'WSELECT', ModelObject: () => new Catalogo_Municipio(), hiddenInTable: true, hiddenFilter: true };
     Catalogo_Nacionalidad = { type: 'WSELECT', ModelObject: () => new Catalogo_Nacionalidad(), hiddenInTable: true, hiddenFilter: true };
@@ -536,8 +536,10 @@ class Catalogo_Sucursales extends EntityClass {
     }
     Id_Sucursal = { type: 'number', primary: true };
     Nombre = { type: 'text' };
-    Descripcion = { type: 'text' };
+    Descripcion = { type: 'text',  hiddenInTable: true  };
     Direccion = { type: 'text' };
+    Catalogo_Municipio = { type: 'WSELECT', ModelObject: () => new Catalogo_Municipio(), hiddenInTable: true };
+
 }
 export { Catalogo_Sucursales }
 class Catalogo_Tipo_Transaccion extends EntityClass {

@@ -1,4 +1,4 @@
-import { Catalogo_Sucursales } from "../FrontModel/DBODataBaseModel.js";
+import { Catalogo_Agentes, Catalogo_Sucursales } from "../FrontModel/DBODataBaseModel.js";
 
 class Security_Roles {
 	constructor(props) {
@@ -63,10 +63,11 @@ class Security_Users {
 	Mail = { type: "email" };
 	Estado = { type: "Select", Dataset: ["ACTIVO", "INACTIVO"] };
 	Password = { type: "password", hiddenInTable: true };
-	Catalogo_Sucursales = { type: 'WSELECT',  ModelObject: ()=> new Catalogo_Sucursales()};
+	Catalogo_Sucursales = { type: 'WSELECT', hiddenInTable: true,  ModelObject: ()=> new Catalogo_Sucursales()};
 	Security_Users_Roles = {
 		type: "MULTISELECT", Dataset: [{ Descripcion: "Role 1" }]
 	};
+	Catalogo_Agentes = { type: 'WSELECT', ModelObject: () => new Catalogo_Agentes() };
 }
 export { Security_Users }
 class ChangePasswordModel {
@@ -86,6 +87,6 @@ class ChangeStateModel {
 		}
 	}
 	Id_User = { type: "number", primary: true };
-	Estate = { type: "radio", hiddenInTable: true, Dataset: ["ACTIVO", "INACTIVO"] };
+	Estado = { type: "radio", hiddenInTable: true, Dataset: ["ACTIVO", "INACTIVO"] };
 }
 export { ChangeStateModel }

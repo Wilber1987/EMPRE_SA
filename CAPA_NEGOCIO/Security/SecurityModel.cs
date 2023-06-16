@@ -1,4 +1,5 @@
 ﻿using CAPA_DATOS;
+using DataBaseModel;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,7 +9,7 @@ namespace CAPA_NEGOCIO.Security
 {
     public class Security_Roles : EntityClass
     {
-         [PrimaryKey(Identity = true)]
+        [PrimaryKey(Identity = true)]
         public int? Id_Role { get; set; }
         public string? Descripcion { get; set; }
         public string? Estado { get; set; }
@@ -60,6 +61,7 @@ namespace CAPA_NEGOCIO.Security
     {
         [PrimaryKey(Identity = true)]
         public int? Id_User { get; set; }
+        public int? id_agente { get; set; }
         public string? Nombres { get; set; }
         public string? Estado { get; set; }
         public string? Descripcion { get; set; }
@@ -68,6 +70,8 @@ namespace CAPA_NEGOCIO.Security
         public string? Token { get; set; }
         public DateTime? Token_Date { get; set; }
         public DateTime? Token_Expiration_Date { get; set; }
+        [ManyToOne(TableName = "Catalogo_Agentes", KeyColumn = "id_agente", ForeignKeyColumn = "id_agente")]
+        public Catalogo_Agentes? Catalogo_Agentes { get; set; }
         [OneToMany(TableName = "Security_Users_Roles", KeyColumn = "Id_User", ForeignKeyColumn = "Id_User")]
         public List<Security_Users_Roles>? Security_Users_Roles { get; set; }
         public Security_Users? GetUserData()
@@ -91,7 +95,10 @@ namespace CAPA_NEGOCIO.Security
             try
             {
                 this.BeginGlobalTransaction();
-                this.Password = EncrypterServices.Encrypt(this.Password);
+                if (this.Password != null)
+                {
+                    this.Password = EncrypterServices.Encrypt(this.Password);
+                }
                 if (this.Id_User == null)
                 {
                     if (new Security_Users() { Mail = this.Mail }.Exists<Security_Users>())
@@ -162,7 +169,7 @@ namespace CAPA_NEGOCIO.Security
         public int? Id_User { get; set; }
         public string? Estado { get; set; }
         [ManyToOne(TableName = "Security_Role", KeyColumn = "Id_Role", ForeignKeyColumn = "Id_Role")]
-        public Security_Roles? Security_Role { get; set; }
+        public Security_Roles? Security_Role { get; set; }      
 
     }
 }

@@ -296,11 +296,11 @@ class Transaction_Valoraciones_View extends HTMLElement {
     }
     SetOption() {
         this.OptionContainer.append(WRender.Create({
-            tagName: 'button', className: 'Block-Alert', innerText: 'Nueva valoración',
+            tagName: 'button', className: 'Block-Basic', innerText: 'Nueva valoración',
             onclick: () => this.Manager.NavigateFunction("valoraciones")
         }))
         this.OptionContainer.append(WRender.Create({
-            tagName: 'button', className: 'Block-Alert', innerText: 'Buscar cliente',
+            tagName: 'button', className: 'Block-Basic', innerText: 'Buscar cliente',
             onclick: () => this.Manager.NavigateFunction("buscar-cliente", clientSearcher(this.selectCliente))
         }))
 
