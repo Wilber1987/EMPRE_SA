@@ -498,5 +498,24 @@ namespace API.Controllers
         {
             return inst.Update();
         }
+        //Catalogo_Categoria
+        [HttpPost]
+        [AuthController]
+        public List<Catalogo_Categoria> getCatalogo_Categoria(Catalogo_Categoria Inst)
+        {
+            return Inst.Get<Catalogo_Categoria>();
+        }
+        [HttpPost]
+        [AuthController]
+        public object saveCatalogo_Categoria(Catalogo_Categoria inst)
+        {
+            return inst.Save();
+        }
+        [HttpPost]
+        [AuthController]
+        public object updateCatalogo_Categoria(Catalogo_Categoria inst)
+        {
+            return inst.Update();
+        }
     }
 }
