@@ -324,6 +324,18 @@ namespace DataBaseModel
         // [OneToMany(TableName = "Transaction_Ingresos_Egresos", KeyColumn = "id_cuentas", ForeignKeyColumn = "id_cuenta")]
         // public List<Transaction_Ingresos_Egresos>? Transaction_Ingresos_Egresos { get; set; }
     }
+
+    public class Catalogo_Categoria : EntityClass
+    {
+        [PrimaryKey(Identity = true)]
+        public int? id_categoria { get; set; }
+        public string? tipo { get; set; }        
+        public string? descripcion { get; set; }
+        public int? plazo_limite { get; set; }
+        public int? prioridad { get; set; }
+        //TODO relaciones
+    }
+
     public class Catalogo_Departamento : EntityClass
     {
         [PrimaryKey(Identity = true)]

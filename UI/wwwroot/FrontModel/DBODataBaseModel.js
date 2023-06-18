@@ -121,6 +121,22 @@ class Catalogo_Clientes extends EntityClass {
 }
 export { Catalogo_Clientes }
 
+
+class Catalogo_Categoria extends EntityClass {
+    constructor(props) {
+        super(props, 'EntityDBO');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
+    id_categoria = { type: 'number', primary: true };
+    tipo = { type: 'text' };
+    descripcion = { type: 'text', hiddenFilter: true, require: false };
+    plazo_limite = { type: 'number' };
+    prioridad = { type: 'number' };
+}
+export { Catalogo_Categoria }
+
 class Condicion_Laboral_Cliente extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
@@ -536,7 +552,7 @@ class Catalogo_Sucursales extends EntityClass {
     }
     Id_Sucursal = { type: 'number', primary: true };
     Nombre = { type: 'text' };
-    Descripcion = { type: 'text',  hiddenInTable: true  };
+    Descripcion = { type: 'text', hiddenInTable: true };
     Direccion = { type: 'text' };
     Catalogo_Municipio = { type: 'WSELECT', ModelObject: () => new Catalogo_Municipio(), hiddenInTable: true };
 
