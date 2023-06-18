@@ -7,6 +7,7 @@ import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { ModalMessege, WForm } from "../WDevCore/WComponents/WForm.js";
 import { Catalogo_Inversores } from "../FrontModel/DBODataBaseModel.js";
 import { WOrtograficValidation } from "../WDevCore/WModules/WOrtograficValidation.js";
+import { css } from "../WDevCore/WModules/WStyledRender.js";
 class Gestion_InversionistaView extends HTMLElement {
     constructor(props) {
         super();
@@ -47,7 +48,7 @@ class Gestion_InversionistaView extends HTMLElement {
             onclick: () => this.NewTransaction()
         }))
         this.OptionContainer.append(WRender.Create({
-            tagName: 'button', className: 'Block-Basic', innerText: 'Editar PersonaNatural',
+            tagName: 'button', className: 'Block-Secundary', innerText: 'Editar PersonaNatural',
             onclick: () => { this.Manager?.NavigateFunction("tabla", this.MainComponent) }
         }))
         this.NewTransaction()
@@ -91,10 +92,10 @@ class Gestion_InversionistaForm extends HTMLElement {
             ModelObject: this.ModelCliente, EditObject: this.cliente, Options: false,DivColumns: "32% 32% 32%" 
         });
 
-        this.OptionContainer = WRender.Create({ className: "OptionContainer" });
+        this.OptionContainer = WRender.Create({ className: "OptionContainer OptionBottom" });
         this.TabContainer = WRender.Create({ className: "TabNewContainer", id: 'TabNewContainer' });
         this.Manager = new ComponentsManager({ MainContainer: this.TabContainer, SPAManage: false });
-        this.TabContainer.append(WRender.Create({
+        this.OptionContainer.append(WRender.Create({
             tagName: 'button', className: 'Block-Success', innerText: 'Guardar',
             onclick: async () => {
                 if (!this.FormularioCliente?.Validate()) {
@@ -117,7 +118,7 @@ class Gestion_InversionistaForm extends HTMLElement {
                 }
             }
         }))
-        this.TabContainer.append(WRender.Create({
+        this.OptionContainer.append(WRender.Create({
             tagName: 'button', className: 'Block-Basic', innerText: 'Limpiar',
             onclick: () => {
                 for (const prop in this.cliente) {
@@ -131,15 +132,21 @@ class Gestion_InversionistaForm extends HTMLElement {
         this.append(
             StylesControlsV2.cloneNode(true),
             StyleScrolls.cloneNode(true),
-            StylesControlsV3.cloneNode(true),
-            this.OptionContainer,
-            this.TabContainer
+            StylesControlsV3.cloneNode(true), 
+            this.CustomStyle,           
+            this.TabContainer, 
+            this.OptionContainer
         );
     }
     /***formulario para creacion y edicion de cliente  */
     ClienteFormulario() {
         this.Manager?.NavigateFunction("formularioCliente", this.FormularioCliente)
     }
+    CustomStyle = css`
+        w-form {
+            margin: 20px;
+        }
+    `
 }
 customElements.define('w-catalogo_inversores', Gestion_InversionistaForm);
 export {Gestion_InversionistaView}

@@ -100,15 +100,16 @@ class Catalogo_Clientes extends EntityClass {
     correo = { type: 'text', hiddenInTable: true, hiddenFilter: true };
     telefono = { type: 'text', hiddenInTable: true, hiddenFilter: true };
     direccion = { type: 'text', hiddenInTable: true, hiddenFilter: true };
+    //grupo1 = undefined;
     hora = { type: 'text', hiddenInTable: true, hiddenFilter: true, hidden: true };
     fecha = { type: 'date', hiddenInTable: true, hiddenFilter: true, hidden: true };
     observaciones = { type: 'text', hiddenInTable: true, hiddenFilter: true, hidden: true };
     estado_civil = { type: 'select', Dataset: ["Soltero", "Casado"], hiddenInTable: true, hiddenFilter: true };
-    tipo_firma = { type: 'select', Dataset: [{ id: "Iletrado", Descripcion: "Iletrado" }, { id: "Ilegible", Descripcion: "Ilegible" }, { id: "Legible", Descripcion: "Legible" }], hiddenInTable: true, hiddenFilter: true };
+    tipo_firma = { type: 'select', Dataset: ["Iletrado", "Ilegible", "Legible"], hiddenInTable: true, hiddenFilter: true };
     valor_cliente = { type: 'text', hiddenInTable: true, hiddenFilter: true };
     operadora_celular = { type: 'select', Dataset: ["Tigo", "Claro"], hiddenInTable: true, hiddenFilter: true };
     valor_interes = { type: 'number', hiddenInTable: true, hiddenFilter: true };
-    solo_acreedor = { type: 'select', Dataset: [{ id: "Si", Descripcion: "Si" }, { id: "No", Descripcion: "Ambos" }], hiddenInTable: true, hiddenFilter: true };
+    solo_acreedor = { type: 'radio', Dataset: ["Si", "Ambos"], hiddenInTable: true, hiddenFilter: true };
 
     promedio = { type: 'number', hiddenInTable: true, hiddenFilter: true };
     Catalogo_Clasificacion_Cliente = { type: 'WSELECT', ModelObject: () => new Catalogo_Clasificacion_Cliente(), hiddenFilter: true };
@@ -536,7 +537,7 @@ class Catalogo_Sucursales extends EntityClass {
     }
     Id_Sucursal = { type: 'number', primary: true };
     Nombre = { type: 'text' };
-    Descripcion = { type: 'text',  hiddenInTable: true  };
+    Descripcion = { type: 'text', hiddenInTable: true };
     Direccion = { type: 'text' };
     Catalogo_Municipio = { type: 'WSELECT', ModelObject: () => new Catalogo_Municipio(), hiddenInTable: true };
 

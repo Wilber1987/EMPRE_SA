@@ -7,6 +7,8 @@ import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { ModalMessege, WForm } from "../WDevCore/WComponents/WForm.js";
 import { Catalogo_Clientes, Condicion_Laboral_Cliente } from "../FrontModel/DBODataBaseModel.js";
 import { WOrtograficValidation } from "../WDevCore/WModules/WOrtograficValidation.js";
+import { css } from "../WDevCore/WModules/WStyledRender.js";
+import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
 class Gestion_ClientesView extends HTMLElement {
     constructor(props) {
         super();
@@ -22,9 +24,6 @@ class Gestion_ClientesView extends HTMLElement {
         this.Manager = new ComponentsManager({ MainContainer: this.TabContainer, SPAManage: false });
         this.TableComponent = new WTableComponent({
             ModelObject: model, Dataset: dataset, Options: {
-                //Add: false, UrlAdd: "../api/ApiEntityDBO/saveCatalogo_Clientes",
-                //Edit: true, UrlUpdate: "../api/ApiEntityDBO/updateCatalogo_Clientes",
-                //Search: true, UrlSearch: "../api/ApiEntityDBO/getCatalogo_Clientes"
                 UserActions: [
                     {
                         name: "Editar", action: (cliente) => {
@@ -54,23 +53,10 @@ class Gestion_ClientesView extends HTMLElement {
             onclick: () => this.NewTransaction()
         }))
         this.OptionContainer.append(WRender.Create({
-            tagName: 'button', className: 'Block-Basic', innerText: 'Editar cliente',
+            tagName: 'button', className: 'Block-Secundary', innerText: 'Editar cliente',
             onclick: () => { this.Manager?.NavigateFunction("tabla", this.MainComponent) }
         }))
-        /*this.OptionContainer.append(WRender.Create({
-            tagName: 'button', className: 'Alert', innerText: 'Egreso por baja',
-            //onclick: () => this.NewTransaction(new Catalogo_Tipo_Transaccion())
-        }))
-        this.OptionContainer.append(WRender.Create({
-            tagName: 'button', className: 'Block-Success', innerText: 'Egreso por Venta',
-            //onclick: () => this.NewTransaction(this.VentaModel())
-        }))*/
 
-
-
-        // this.TabContainer.append(this.MainComponent)
-
-        //this.Manager.NavigateFunction("tabla", this.MainComponent)
         this.NewTransaction()
 
 
@@ -78,7 +64,6 @@ class Gestion_ClientesView extends HTMLElement {
             StylesControlsV2.cloneNode(true),
             StyleScrolls.cloneNode(true),
             StylesControlsV3.cloneNode(true),
-            //this.FilterOptions,
             this.OptionContainer,
             this.TabContainer
         );
@@ -103,7 +88,7 @@ class Gestion_ClientesForm extends HTMLElement {
         this.Draw();
     }
 
-    ModelCliente = new Catalogo_Clientes();
+    ModelCliente = new Catalogo_Clientes({ grupo1: { type: 'title' } });
     ModelDatosLaborales = new Condicion_Laboral_Cliente();
 
     Draw = async () => {
@@ -115,35 +100,32 @@ class Gestion_ClientesForm extends HTMLElement {
         this.innerHTML = "";
 
         this.FormularioCliente = new WForm({
-            ModelObject: this.ModelCliente, EditObject: this.cliente, Options: false,DivColumns: "32% 32% 32%" 
+            ModelObject: this.ModelCliente, EditObject: this.cliente, Options: false, DivColumns: "32% 32% 32%"
         });
         this.FormularioDatos = new WForm({
             ModelObject: this.ModelDatosLaborales, EditObject: this.cliente.Condicion_Laboral_Cliente[0], Options: false
         });
 
 
-        this.OptionContainer = WRender.Create({ className: "OptionContainer" });
+        this.OptionContainer = new WAppNavigator({
+            Elements: [
+                {
+                    name: 'Datos Cliente', action: () => {
+                        this.ClienteFormulario()
+                    }
+                }, {
+                    name: 'Datos Laborales', action: () => {
+                        this.DatosLaborales()
+                    }
+                }
+            ]
+        }); //WRender.Create({ className: "OptionContainer" });
+        this.OptionContainerBottom = WRender.Create({ className: "OptionContainer OptionBottom" });
         this.TabContainer = WRender.Create({ className: "TabNewContainer", id: 'TabNewContainer' });
 
         this.Manager = new ComponentsManager({ MainContainer: this.TabContainer, SPAManage: false });
 
-        this.OptionContainer.append(WRender.Create({
-            tagName: 'button', className: 'Block-Basic', innerText: 'Datos Cliente',
-            onclick: () => { this.ClienteFormulario() }
-        }))
-
-        this.OptionContainer.append(WRender.Create({
-            tagName: 'button', className: 'Block-Basic', innerText: 'Datos Laborales',
-            onclick: () => {
-                // if (!this.FormularioCliente?.Validate()) {
-                //     this.append(ModalMessege("Necesita llenar los datos del cliente primeramente"));
-                //     return;
-                // }
-                this.DatosLaborales();
-            }
-        }))
-
-        this.TabContainer.append(WRender.Create({
+        this.OptionContainerBottom.append(WRender.Create({
             tagName: 'button', className: 'Block-Success', innerText: 'Guardar',
             onclick: async () => {
                 if (!this.FormularioCliente?.Validate() || !this.FormularioDatos?.Validate()) {
@@ -153,7 +135,7 @@ class Gestion_ClientesForm extends HTMLElement {
                 if (this.cliente.codigo_cliente == null || this.cliente.codigo_cliente == undefined) {
                     /**@type {Catalogo_Clientes} */
                     const result = await new Catalogo_Clientes(this.cliente).Save();
-                    
+
                     if (result?.codigo_cliente != null) {
                         this.cliente.codigo_cliente = result?.codigo_cliente;
                         this.append(ModalMessege("Datos guardados correctamente"));
@@ -166,7 +148,7 @@ class Gestion_ClientesForm extends HTMLElement {
                 }
             }
         }))
-        this.TabContainer.append(WRender.Create({
+        this.OptionContainerBottom.append(WRender.Create({
             tagName: 'button', className: 'Block-Basic', innerText: 'Limpiar',
             onclick: () => {
                 for (const prop in this.cliente) {
@@ -181,12 +163,11 @@ class Gestion_ClientesForm extends HTMLElement {
             StylesControlsV2.cloneNode(true),
             StyleScrolls.cloneNode(true),
             StylesControlsV3.cloneNode(true),
+            this.CustomStyle,
             this.OptionContainer,
-            this.TabContainer
+            this.TabContainer,
+            this.OptionContainerBottom
         );
-
-
-
     }
     /***formulario para creacion y edicion de cliente  */
     ClienteFormulario() {
@@ -198,5 +179,10 @@ class Gestion_ClientesForm extends HTMLElement {
         this.Manager?.NavigateFunction("formularioDatosLaborales", this.FormularioDatos)
     }
 
+    CustomStyle = css`
+        w-form {
+            margin: 20px;
+        }
+    `
 }
 customElements.define('w-catalogo_clientes', Gestion_ClientesForm);

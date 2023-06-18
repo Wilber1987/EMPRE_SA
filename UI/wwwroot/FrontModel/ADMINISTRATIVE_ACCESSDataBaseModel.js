@@ -11,7 +11,7 @@ class Transactional_Configuraciones extends EntityClass {
     Nombre = { type: 'text', disabled: true };
     Descripcion = { type: 'text', disabled: true };
     Valor = { type: 'text' };
-    Tipo_Configuracion = { type: 'text' };
+    Tipo_Configuracion = { type: 'text' , disabled: true };
     getTransactional_Configuraciones_Intereses =  async () => {
         return await this.GetData("ApiEntityADMINISTRATIVE_ACCESS/getTransactional_Configuraciones_Intereses");
     }

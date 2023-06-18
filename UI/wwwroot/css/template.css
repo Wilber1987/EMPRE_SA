@@ -181,6 +181,13 @@ body {
     padding-left: 20px;
     color: #ffff;
 }
+
 .title-container .sub-title {
     font-size: 12px;
+}
+
+.OptionBottom {
+    margin: 20px;
+    display: flex;
+    justify-content: flex-end;
 }

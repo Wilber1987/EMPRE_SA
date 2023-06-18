@@ -70,67 +70,6 @@ ADD
 	porcentaje float NULL;
 
 go
---clasificacion de cliente
-UPDATE
-	EMPRE_SA.dbo.Catalogo_Clasificacion_Cliente
-SET
-	Descripcion = N'EXECELENTE',
-	Estado = N'ACTIVO',
-	porcentaje = 1
-WHERE
-	id_clasificacion = 1;
-
-go
-UPDATE
-	EMPRE_SA.dbo.Catalogo_Clasificacion_Cliente
-SET
-	Descripcion = N'MUY BUENO',
-	Estado = N'ACTIVO',
-	porcentaje = 2
-WHERE
-	id_clasificacion = 2;
-
-go
-UPDATE
-	EMPRE_SA.dbo.Catalogo_Clasificacion_Cliente
-SET
-	Descripcion = N'BUENO',
-	Estado = N'ACTIVO',
-	porcentaje = 3
-WHERE
-	id_clasificacion = 3;
-
-go
-UPDATE
-	EMPRE_SA.dbo.Catalogo_Clasificacion_Cliente
-SET
-	Descripcion = N'REGULAR',
-	Estado = N'ACTIVO',
-	porcentaje = 4
-WHERE
-	id_clasificacion = 4;
-
-go
-UPDATE
-	EMPRE_SA.dbo.Catalogo_Clasificacion_Cliente
-SET
-	Descripcion = N'DEFICIENTE',
-	Estado = N'ACTIVO',
-	porcentaje = 5
-WHERE
-	id_clasificacion = 5;
-
-go
-UPDATE
-	EMPRE_SA.dbo.Catalogo_Clasificacion_Cliente
-SET
-	Descripcion = N'NO DEFINIDO',
-	Estado = N'ACTIVO',
-	porcentaje = 6
-WHERE
-	id_clasificacion = 6;
-
-go
 ALTER TABLE
 	EMPRE_SA.administrative_access.Transactional_Configuraciones
 ADD
@@ -179,49 +118,5 @@ SET
 	Tipo_Configuracion = N'THEME'
 WHERE
 	Id_Configuracion = 4;
-
-go
-INSERT INTO
-	EMPRE_SA.administrative_access.Transactional_Configuraciones (Nombre, Descripcion, Valor, Tipo_Configuracion)
-VALUES
-(
-		N 'GASTOS_ADMINISTRATIVOS',
-		N' Gastos administrativos',
-		N'5',
-		N 'INTERESES'
-	);
-
-go
-INSERT INTO
-	EMPRE_SA.administrative_access.Transactional_Configuraciones (Nombre, Descripcion, Valor, Tipo_Configuracion)
-VALUES
-(
-		N 'COMISIONES',
-		N' gastos legales',
-		N'1',
-		N 'INTERESES'
-	);
-
-go
-INSERT INTO
-	EMPRE_SA.administrative_access.Transactional_Configuraciones (Nombre, Descripcion, Valor, Tipo_Configuracion)
-VALUES
-(
-		N 'MANTENIMIENTO_VALOR',
-		N'Comisiones',
-		N'1',
-		N 'INTERESES'
-	);
-
-go
-INSERT INTO
-	EMPRE_SA.administrative_access.Transactional_Configuraciones (Nombre, Descripcion, Valor, Tipo_Configuracion)
-VALUES
-(
-		N'GASTOS_LEGALES',
-		N'mantenimiento al valor de   la prenda',
-		N'1',
-		N 'INTERESES'
-	);
 
 go

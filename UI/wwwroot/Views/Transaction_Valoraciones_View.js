@@ -42,6 +42,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
 
         this.multiSelectEstadosArticulos = new WTableComponent({
             Dataset: estadosArticulos,
+            
             ModelObject: new Catalogo_Estados_Articulos({
                 porcentaje_compra: { type: 'number', hidden: true },
                 porcentaje_empeno: { type: 'number', hidden: true },
@@ -67,8 +68,9 @@ class Transaction_Valoraciones_View extends HTMLElement {
             selectedItems: [estadosArticulos[0]],
             paginate: false,
             Options: {
-                Select: true, MultiSelect: false, SelectAction: () => {
+                Select: true, MultiSelect: false, SelectAction: () => {                    
                     this.valoracionesForm?.DrawComponent();
+                    this.calculoAmortizacion();
                 }
             }
         });
