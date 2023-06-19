@@ -30,6 +30,7 @@ class Transactional_Valoracion extends EntityClass {
     Serie = { type: 'text', require: false };
     Marca = { type: 'text' };
     Modelo = { type: 'text' };
+    Catalogo_Categoria = { type: 'WSELECT', ModelObject: () => new Catalogo_Categoria(), action: () => { } };
     Plazo = { type: 'number', hiddenInTable: true, max: 24, min: 1, hiddenFilter: true };
     Tasa_interes = { type: 'number', hiddenInTable: true, enabled: false, Dataset: [], hiddenFilter: true };
     Fecha = { type: 'date', hiddenInTable: true, hiddenFilter: true };

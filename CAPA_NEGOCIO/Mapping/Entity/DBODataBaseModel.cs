@@ -43,6 +43,7 @@ namespace DataBaseModel
         public DateTime? Fecha { get; set; }
         public Double? Tasa_de_cambio { get; set; }
         public int? id_estado { get; set; }
+        public int? id_categoria { get; set; }
         public Double? valoracion_compra_cordobas { get; set; }
         public Double? valoracion_compra_dolares { get; set; }
         public Double? valoracion_empeño_cordobas { get; set; }
@@ -50,6 +51,8 @@ namespace DataBaseModel
 
         [ManyToOne(TableName = "Catalogo_Estados_Articulos", KeyColumn = "id_estado_articulo", ForeignKeyColumn = "id_estado")]
         public Catalogo_Estados_Articulos? Catalogo_Estados_Articulos { get; set; }
+        [ManyToOne(TableName = "Catalogo_Categoria", KeyColumn = "id_categoria", ForeignKeyColumn = "id_categoria")]
+        public Catalogo_Categoria? Catalogo_Categoria { get; set; }
         [OneToOne(TableName = "Detail_Valores", KeyColumn = "id_valoracion", ForeignKeyColumn = "id_valoracion")]
         public Detail_Valores? Detail_Valores { get; set; }
 
