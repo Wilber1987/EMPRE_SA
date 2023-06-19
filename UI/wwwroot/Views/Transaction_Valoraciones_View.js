@@ -5,7 +5,7 @@ import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
 import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { ModalMessege, WForm } from "../WDevCore/WComponents/WForm.js";
-import { Catalogo_Cambio_Dolar, Catalogo_Clientes, Catalogo_Estados_Articulos, Transactional_Valoracion } from "../FrontModel/DBODataBaseModel.js";
+import { Catalogo_Cambio_Dolar, Catalogo_Categoria, Catalogo_Clientes, Catalogo_Estados_Articulos, Transactional_Valoracion } from "../FrontModel/DBODataBaseModel.js";
 import { MultiSelect } from "../WDevCore/WComponents/WMultiSelect.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 import { Cuota, ValoracionesContrato } from "../FrontModel/Model.js";
@@ -35,6 +35,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
         this.valoracionesContainer.innerHTML = "";
         const tasasCambio = await new Catalogo_Cambio_Dolar().Get();
         const estadosArticulos = await new Catalogo_Estados_Articulos().Get();
+        this.Categorias = await new Catalogo_Categoria().Get();
         this.Intereses = await new Transactional_Configuraciones().getTransactional_Configuraciones_Intereses();
         this.InteresBase = WArrayF.SumValAtt(this.Intereses, "Valor");
 
@@ -264,7 +265,8 @@ class Transaction_Valoraciones_View extends HTMLElement {
             // @ts-ignore
             Tasa_interes: { type: 'number', disabled: true, defaultValue: this.InteresBase + 6 },
             Plazo: {
-                type: "number", action: () => this.calculoAmortizacion(), min: 1, max: 24, defaultValue: 1
+                // @ts-ignore
+                type: "number", action: () => {}, min: 1, max: this.Categorias[0].plazo_limite , defaultValue: 1
             }, Catalogo_Estados_Articulos: { type: 'WSELECT', hidden: true },
             valoracion_compra_cordobas: {
                 type: 'operation', action: (/**@type {Transactional_Valoracion} */ valoracion) => {
@@ -351,14 +353,22 @@ class Transaction_Valoraciones_View extends HTMLElement {
     selectCliente = (selectCliente) => {
         this.Cliente = selectCliente;
         if (this.valoracionesForm != undefined) {
-            this.valoracionesForm.FormObject.Tasa_interes =
-                parseFloat(this.Cliente.Catalogo_Clasificacion_Cliente.porcentaje)
-                // @ts-ignore
-                + this.InteresBase;
-            this.valoracionesForm.DrawComponent();
+            this.valoracionesForm.FormObject.Tasa_interes = this.getTasaInteres();
+                
         }
         this.calculoAmortizacion();
         this.Manager.NavigateFunction("valoraciones");
+    }
+    getTasaInteres = ()=>{
+        if (this.Cliente.Catalogo_Clasificacion_Cliente) {
+            return parseFloat(this.Cliente.Catalogo_Clasificacion_Cliente.porcentaje)
+            // @ts-ignore
+                + this.InteresBase;
+        } else {
+            // @ts-ignore
+            return 6 + this.InteresBase;
+        }
+       
     }
     selectValoracion = (valoracion) => {
         if (this.valoracionesForm != undefined) {
@@ -392,10 +402,12 @@ class Transaction_Valoraciones_View extends HTMLElement {
             valoracion_compra_dolares: WArrayF.SumValAtt(this.valoracionesTable?.Dataset, "valoracion_compra_dolares"),
             valoracion_empeño_cordobas: WArrayF.SumValAtt(this.valoracionesTable?.Dataset, "valoracion_empeño_cordobas"),
             valoracion_empeño_dolares: WArrayF.SumValAtt(this.valoracionesTable?.Dataset, "valoracion_empeño_dolares"),
-            tasas_interes: this.valoracionesForm?.FormObject.Tasa_interes / 100,
+            tasas_interes: this.getTasaInteres() / 100,
             plazo: this.valoracionesForm?.FormObject.Plazo ?? 1,
             fecha: new Date(),
-            cuotas: new Array()
+            cuotas: new Array(),
+            prendas: this.valoracionesTable?.Dataset,
+            cliente: this.Cliente
         })
         const cuotaFija = this.getPago(constrato);
         let capital = constrato.valoracion_empeño_cordobas;
@@ -422,6 +434,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
             constrato.valoracion_compra_dolares,
             constrato.valoracion_empeño_cordobas,
             constrato.valoracion_empeño_dolares);
+        console.log(constrato);
         return constrato;
     }
     CustomStyle = css`

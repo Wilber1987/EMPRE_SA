@@ -7,32 +7,56 @@ IF OBJECT_ID(N'dbo.Catalogo_Categoria', N'U') IS NULL begin CREATE TABLE [dbo].[
 )
 end
 go
-INSERT INTO EMPRE_SA.dbo.Catalogo_Categoria (
-        id_categoria,
+INSERT INTO
+    EMPRE_SA.dbo.Catalogo_Categoria (
         tipo,
         descripcion,
         plazo_limite,
         prioridad
     )
-VALUES(1, N'Electrónico', N'electronico', 3, 2);
-INSERT INTO EMPRE_SA.dbo.Catalogo_Categoria (
-        id_categoria,
+VALUES
+(N'Electrónico', N'electronico', 3, 2);
+
+INSERT INTO
+    EMPRE_SA.dbo.Catalogo_Categoria (
         tipo,
         descripcion,
         plazo_limite,
         prioridad
     )
-VALUES(2, N'Vehículos', N'vehiculos', 12, 1);
-INSERT INTO EMPRE_SA.dbo.Catalogo_Categoria (
-        id_categoria,
+VALUES
+(N'Vehículos', N'vehiculos', 12, 1);
+
+INSERT INTO
+    EMPRE_SA.dbo.Catalogo_Categoria (
         tipo,
         descripcion,
         plazo_limite,
         prioridad
     )
-VALUES(3, N'Otros', N'otros', 6, 3);
+VALUES
+(N'Otros', N'otros', 6, 3);
+
 go
-ALTER TABLE EMPRE_SA.dbo.Transactional_Valoracion
-ADD id_categoria int NULL;
-ALTER TABLE EMPRE_SA.dbo.Transactional_Valoracion
-ADD CONSTRAINT Transactional_Valoracion_categoria_FK FOREIGN KEY (id_categoria) REFERENCES EMPRE_SA.dbo.Catalogo_Categoria(id_categoria);
+ALTER TABLE
+    EMPRE_SA.dbo.Transactional_Valoracion
+ADD
+    id_categoria int NULL;
+
+go
+ALTER TABLE
+    EMPRE_SA.dbo.Transactional_Valoracion
+ADD
+    CONSTRAINT Transactional_Valoracion_categoria_FK FOREIGN KEY (id_categoria) REFERENCES EMPRE_SA.dbo.Catalogo_Categoria(id_categoria);
+go
+
+ALTER TABLE
+    EMPRE_SA.dbo.Detail_Prendas
+ADD
+    id_categoria int NULL;
+
+go
+ALTER TABLE
+    EMPRE_SA.dbo.Detail_Prendas
+ADD
+    CONSTRAINT Detail_Prendas_categoria_FK FOREIGN KEY (id_categoria) REFERENCES EMPRE_SA.dbo.Catalogo_Categoria(id_categoria);

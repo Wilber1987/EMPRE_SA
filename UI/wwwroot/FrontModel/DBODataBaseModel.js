@@ -1,3 +1,4 @@
+import { WForm } from "../WDevCore/WComponents/WForm.js";
 import { EntityClass } from "../WDevCore/WModules/EntityClass.js";
 import { WAjaxTools } from "../WDevCore/WModules/WComponentsTools.js";
 class Catalogo_Estados_Articulos extends EntityClass {
@@ -30,7 +31,18 @@ class Transactional_Valoracion extends EntityClass {
     Serie = { type: 'text', require: false };
     Marca = { type: 'text' };
     Modelo = { type: 'text' };
-    Catalogo_Categoria = { type: 'WSELECT', ModelObject: () => new Catalogo_Categoria(), action: () => { } };
+
+      Catalogo_Categoria = {
+        type: 'WSELECT', ModelObject: () => new Catalogo_Categoria(), action: (ObjectF, /**@type {WForm} */ form, InputControl, prop) => {            
+            console.log( ObjectF.Catalogo_Categoria.plazo_limite);
+            this.Plazo.max = ObjectF.Catalogo_Categoria.plazo_limite;
+            if (ObjectF.Plazo >  this.Plazo.max) {
+                ObjectF.Plazo = this.Plazo.max;
+            }
+            form.DrawComponent();
+        }
+    };
+
     Plazo = { type: 'number', hiddenInTable: true, max: 24, min: 1, hiddenFilter: true };
     Tasa_interes = { type: 'number', hiddenInTable: true, enabled: false, Dataset: [], hiddenFilter: true };
     Fecha = { type: 'date', hiddenInTable: true, hiddenFilter: true };
@@ -273,6 +285,12 @@ class Detail_Prendas extends EntityClass {
     servicio = { type: 'text' };
     v_porcentage_etiqueta = { type: 'number' };
     Detail_Prendas_Vehiculos = { type: 'WSELECT', ModelObject: () => new Detail_Prendas_Vehiculos() };
+    Catalogo_Categoria = {
+        type: 'WSELECT', ModelObject: () => new Catalogo_Categoria(), action: (ObjectF, form, InputControl, prop) => {
+            console.log(this);
+            console.log(ObjectF);
+        }
+    };
 }
 export { Detail_Prendas }
 class Detail_Prendas_Vehiculos extends EntityClass {
