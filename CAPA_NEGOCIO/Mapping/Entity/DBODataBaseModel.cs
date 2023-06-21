@@ -52,7 +52,10 @@ namespace DataBaseModel
                 this.BeginGlobalTransaction();
                 foreach (Transactional_Valoracion valoracion in valoraciones)
                 {
-                    valoracion.Save();
+                    if (valoracion.id_valoracion == null)
+                    {
+                        valoracion.Save();
+                    }                    
                 }
                 this.CommitGlobalTransaction();
                 return valoraciones;

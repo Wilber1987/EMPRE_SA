@@ -32,14 +32,15 @@ class Transactional_Valoracion extends EntityClass {
     Marca = { type: 'text' };
     Modelo = { type: 'text' };
     Catalogo_Categoria = {
-        type: 'WSELECT', ModelObject: () => new Catalogo_Categoria(), action: (ObjectF, /**@type {WForm} */ form, InputControl, prop) => {
+        type: 'WSELECT', 
+        ModelObject: () => new Catalogo_Categoria(), action: (ObjectF, /**@type {WForm} */ form, InputControl, prop) => {
             console.log(ObjectF.Catalogo_Categoria.plazo_limite);
             this.Plazo.max = ObjectF.Catalogo_Categoria.plazo_limite;
             if (ObjectF.Plazo > this.Plazo.max) {
                 ObjectF.Plazo = this.Plazo.max;
             }
             form.DrawComponent();
-        }
+        }, hiddenFilter: true
     };
     Plazo = { type: 'number', hiddenInTable: true, max: 24, min: 1, hiddenFilter: true };
     Tasa_interes = { type: 'number', hiddenInTable: true, enabled: false, Dataset: [], hiddenFilter: true };

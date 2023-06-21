@@ -21,15 +21,16 @@ class Transaction_Valoraciones_View extends HTMLElement {
         this.valoracionesContainer = WRender.Create({ className: "valoraciones-container" });
         this.append(this.CustomStyle);
         this.Cliente = {}
-
         this.valoresObject = {
             Valoracion_1: 0, dolares_1: 0,
             Valoracion_2: 0, dolares_2: 0,
             Valoracion_3: 0, dolares_3: 0,
         }
         this.valoracionesDataset = [];
+        this.selectedClientDetail = WRender.Create({ tagName: "label", className: "selected-client" });
         this.amortizacionResumen = WRender.Create({ tagName: "label", innerText: this.valoracionResumen(0, 0, 0, 0) });
         this.Draw();
+
     }
     Draw = async () => {
         this.valoracionesContainer.innerHTML = "";
@@ -89,7 +90,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
             }, CustomStyle: css`
                 .divForm{
                     display: "grid";
-                    grid-template-columns: repeat(6, calc(16% - 15px));
+                    grid-template-columns: repeat(5, calc(20% - 15px));
                     grid-template-rows: repeat(3, auto)
                 } .textAreaContainer{
                     grid-row: span 1 !important;
@@ -104,11 +105,11 @@ class Transaction_Valoraciones_View extends HTMLElement {
         this.valoracionesTable = new WTableComponent({
             Dataset: this.valoracionesDataset,
             ModelObject: new Transactional_Valoracion({}),
-            paginate: false,
+            paginate: true,
             AutoSave: false,
             id: "valoracionesTable",
             Options: {
-                Select: true, MultiSelect: true,
+                Select: true, 
                 Delete: true,
                 DeleteAction: () => this.calculoAmortizacion(),
             }
@@ -162,6 +163,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
         })
 
         this.valoracionesContainer.append(
+            this.selectedClientDetail,
             this.valoracionesForm,
             this.valoresForm,
             this.multiSelectEstadosArticulos,
@@ -266,7 +268,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
             Tasa_interes: { type: 'number', disabled: true, defaultValue: this.InteresBase + 6 },
             Plazo: {
                 // @ts-ignore
-                type: "number", action: () => { }, min: 1, max: this.Categorias[0].plazo_limite, defaultValue: 1
+                type: "number", action: () => this.calculoAmortizacion(), min: 1, max: this.Categorias[0].plazo_limite, defaultValue: 1
             }, Catalogo_Estados_Articulos: { type: 'WSELECT', hidden: true },
             valoracion_compra_cordobas: {
                 type: 'operation', action: (/**@type {Transactional_Valoracion} */ valoracion) => {
@@ -300,19 +302,19 @@ class Transaction_Valoraciones_View extends HTMLElement {
     }
     SetOption() {
         this.OptionContainer.append(WRender.Create({
-            tagName: 'button', className: 'Block-Basic', innerText: 'Nueva valoración',
+            tagName: 'button', className: 'Block-Primary', innerText: 'Nueva valoración',
             onclick: () => this.Manager.NavigateFunction("valoraciones")
         }))
         this.OptionContainer.append(WRender.Create({
-            tagName: 'button', className: 'Block-Basic', innerText: 'Buscar cliente',
+            tagName: 'button', className: 'Block-Secundary', innerText: 'Buscar cliente',
             onclick: () => this.Manager.NavigateFunction("buscar-cliente", clientSearcher(this.selectCliente))
         }))
         this.OptionContainer.append(WRender.Create({
-            tagName: 'button', className: 'Block-Basic', innerText: 'Buscar valoraciones',
+            tagName: 'button', className: 'Block-Tertiary', innerText: 'Buscar valoraciones',
             onclick: () => this.Manager.NavigateFunction("Searcher", new ValoracionesSearch(this.selectValoracion))
         }))
         this.OptionContainer.append(WRender.Create({
-            tagName: 'button', className: 'Block-Success', innerText: 'Añadir',
+            tagName: 'button', className: 'Block-Fourth', innerText: 'Añadir',
             onclick: () => {
                 if (!this.valoracionesForm?.Validate()) {
                     return;
@@ -339,7 +341,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
             }
         }))
         this.OptionContainer.append(WRender.Create({
-            tagName: 'button', className: 'Block-Basic', innerText: 'Guardar valoraciones',
+            tagName: 'button', className: 'Block-Fifth', innerText: 'Guardar valoraciones',
             onclick: async () => {
                 if (this.valoracionesTable?.Dataset.length == 0) {
                     this.append(ModalMessege("Agregue valoraciones para poder continuar"));
@@ -352,9 +354,9 @@ class Transaction_Valoraciones_View extends HTMLElement {
             }
         }))
         this.OptionContainer.append(WRender.Create({
-            tagName: 'button', className: 'Block-Basic', innerText: 'Generar Contrato',
+            tagName: 'button', className: 'Block-Success', innerText: 'Generar Contrato',
             onclick: async () => {
-                 if (this.valoracionesTable?.Dataset.length == 0) {
+                if (this.valoracionesTable?.Dataset.length == 0) {
                     this.append(ModalMessege("Agregue valoraciones para poder continuar"));
                     return;
                 }
@@ -367,13 +369,15 @@ class Transaction_Valoraciones_View extends HTMLElement {
             }
         }))
     }
-    selectCliente = (selectCliente) => {
+    selectCliente = (/**@type {Catalogo_Clientes} */ selectCliente) => {
         this.Cliente = selectCliente;
         if (this.valoracionesForm != undefined) {
             this.valoracionesForm.FormObject.Tasa_interes = this.getTasaInteres();
-
         }
         this.calculoAmortizacion();
+        this.selectedClientDetail.innerText = `
+            Cliente seleccionado: ${selectCliente.primer_nombre} ${selectCliente.segundo_nombre ?? ''} ${selectCliente.primer_apellido} ${selectCliente.segundo_apellidio ?? ''}
+        `;
         this.Manager.NavigateFunction("valoraciones");
     }
     getTasaInteres = () => {
@@ -385,7 +389,6 @@ class Transaction_Valoraciones_View extends HTMLElement {
             // @ts-ignore
             return 6 + this.InteresBase;
         }
-
     }
     selectValoracion = (valoracion) => {
         if (this.valoracionesForm != undefined) {
@@ -430,13 +433,13 @@ class Transaction_Valoraciones_View extends HTMLElement {
             Detail_Prendas: this.valoracionesTable?.Dataset.map(
                 // @ts-ignore
                 /**@type {Transactional_Valoracion}*/valoracion => new Detail_Prendas({
-                    Descripcion: valoracion.descripcion,
-                    modelo: valoracion.model,
-                    marca: valoracion.marca,
-                    serie: valoracion.serie,
-                    Catalogo_Categoria: valoracion.Catalogo_Categoria,
-                    Transactional_Valoracion: valoracion
-                })
+                Descripcion: valoracion.descripcion,
+                modelo: valoracion.model,
+                marca: valoracion.marca,
+                serie: valoracion.serie,
+                Catalogo_Categoria: valoracion.Catalogo_Categoria,
+                Transactional_Valoracion: valoracion
+            })
             ),
             Catalogo_Clientes: this.Cliente
         })
@@ -472,9 +475,14 @@ class Transaction_Valoraciones_View extends HTMLElement {
             padding: 20px;
             display: grid;
             grid-template-columns: 400px calc(100% - 430px);
-            gap: 30px;
+            gap: 20px 30px;
         }
-        #valoracionesForm, #valoracionesTable, #cuotasTable, .TabContainerTables,.nav-header{
+        #valoracionesForm, 
+        #valoracionesTable,
+        #cuotasTable,
+        .TabContainerTables,
+        .nav-header,
+        .selected-client{
             grid-column: span 2;
         }
         .nav-header {
@@ -513,7 +521,7 @@ class ValoracionesSearch extends HTMLElement {
         this.DrawComponent();
     }
     DrawComponent = async () => {
-        const model = new Transactional_Valoracion({ requiere_valoracion: { type: "TEXT" } });
+        const model = new Transactional_Valoracion({ requiere_valoracion: { type: "TEXT", hiddenFilter: true } });
         const dataset = await model.Get();
 
         this.SearchContainer = WRender.Create({
