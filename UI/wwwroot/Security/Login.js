@@ -32,11 +32,6 @@ const OnLoad = async () => {
                     tagName: 'input', type: 'button', className: 'Btn', value: 'Ok',
                     onclick: async () => WSecurity.Login(UserData)
                 }]
-            }, {
-                children: [{
-                    tagName: 'input', type: 'button', className: 'Btn', value: 'Postularse',
-                    onclick: async () => { window.location = "./Register"; }
-                }]
             }
         ]
     })

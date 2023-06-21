@@ -9,12 +9,12 @@ class CuotaComponent {
     /**@type {ModelProperty} */
     fecha = { type: "date",  label: "FECHA" };    
     /**@type {ModelProperty} */
-    interes = { type: "number",  label: "IDCP" };
+    total = { type: "number",  label: "IDCP" };
     /**@type {ModelProperty} */
-    abono_capital = { type: "number", label: "ABONO AL CAPITAL"  };    
+    interes = { type: "number", label: "ABONO AL CAPITAL"  };    
     /**@type {ModelProperty} */
-    cuotaFija = { type: "number", label: "CUOTA A PAGAR" };
+    abono_capital = { type: "number", label: "CUOTA A PAGAR" };
     /**@type {ModelProperty} */
-    capital = { type: "number", label: "MONTO RESTANTE" };
+    capital_restante = { type: "number", label: "MONTO RESTANTE" };
 }
 export { CuotaComponent }

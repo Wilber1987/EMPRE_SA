@@ -8,7 +8,7 @@ import { ModalMessege, WForm } from "../WDevCore/WComponents/WForm.js";
 import { Catalogo_Cambio_Dolar, Catalogo_Categoria, Catalogo_Clientes, Catalogo_Estados_Articulos, Transactional_Valoracion } from "../FrontModel/DBODataBaseModel.js";
 import { MultiSelect } from "../WDevCore/WComponents/WMultiSelect.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
-import { Cuota, ValoracionesContrato } from "../FrontModel/Model.js";
+import { Cuota, Detail_Prendas, ValoracionesContrato } from "../FrontModel/Model.js";
 import { CuotaComponent } from "../FrontModel/ModelComponents.js";
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
 import { Transactional_Configuraciones } from "../FrontModel/ADMINISTRATIVE_ACCESSDataBaseModel.js";
@@ -43,7 +43,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
 
         this.multiSelectEstadosArticulos = new WTableComponent({
             Dataset: estadosArticulos,
-            
+
             ModelObject: new Catalogo_Estados_Articulos({
                 porcentaje_compra: { type: 'number', hidden: true },
                 porcentaje_empeno: { type: 'number', hidden: true },
@@ -69,7 +69,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
             selectedItems: [estadosArticulos[0]],
             paginate: false,
             Options: {
-                Select: true, MultiSelect: false, SelectAction: () => {                    
+                Select: true, MultiSelect: false, SelectAction: () => {
                     this.valoracionesForm?.DrawComponent();
                     this.calculoAmortizacion();
                 }
@@ -266,7 +266,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
             Tasa_interes: { type: 'number', disabled: true, defaultValue: this.InteresBase + 6 },
             Plazo: {
                 // @ts-ignore
-                type: "number", action: () => {}, min: 1, max: this.Categorias[0].plazo_limite , defaultValue: 1
+                type: "number", action: () => { }, min: 1, max: this.Categorias[0].plazo_limite, defaultValue: 1
             }, Catalogo_Estados_Articulos: { type: 'WSELECT', hidden: true },
             valoracion_compra_cordobas: {
                 type: 'operation', action: (/**@type {Transactional_Valoracion} */ valoracion) => {
@@ -307,12 +307,10 @@ class Transaction_Valoraciones_View extends HTMLElement {
             tagName: 'button', className: 'Block-Basic', innerText: 'Buscar cliente',
             onclick: () => this.Manager.NavigateFunction("buscar-cliente", clientSearcher(this.selectCliente))
         }))
-
         this.OptionContainer.append(WRender.Create({
             tagName: 'button', className: 'Block-Basic', innerText: 'Buscar valoraciones',
             onclick: () => this.Manager.NavigateFunction("Searcher", new ValoracionesSearch(this.selectValoracion))
         }))
-
         this.OptionContainer.append(WRender.Create({
             tagName: 'button', className: 'Block-Success', innerText: 'Añadir',
             onclick: () => {
@@ -343,9 +341,28 @@ class Transaction_Valoraciones_View extends HTMLElement {
         this.OptionContainer.append(WRender.Create({
             tagName: 'button', className: 'Block-Basic', innerText: 'Guardar valoraciones',
             onclick: async () => {
+                if (this.valoracionesTable?.Dataset.length == 0) {
+                    this.append(ModalMessege("Agregue valoraciones para poder continuar"));
+                    return;
+                }
                 const valoracionesGuardadas = await this.valoracionModel?.GuardarValoraciones(this.valoracionesTable?.Dataset);
                 if (valoracionesGuardadas?.length > 0) {
                     this.append(ModalMessege("Valoraciones guardadas correctamente"));
+                }
+            }
+        }))
+        this.OptionContainer.append(WRender.Create({
+            tagName: 'button', className: 'Block-Basic', innerText: 'Generar Contrato',
+            onclick: async () => {
+                 if (this.valoracionesTable?.Dataset.length == 0) {
+                    this.append(ModalMessege("Agregue valoraciones para poder continuar"));
+                    return;
+                }
+                const valoracionesGuardadas = await this.valoracionModel?.GuardarValoraciones(this.valoracionesTable?.Dataset);
+                const response = await this.calculoAmortizacion().SaveDataContract();
+                if (response) {
+                    // @ts-ignore
+                    window.location = "/PagesViews/Transaction_ContratosView";
                 }
             }
         }))
@@ -354,21 +371,21 @@ class Transaction_Valoraciones_View extends HTMLElement {
         this.Cliente = selectCliente;
         if (this.valoracionesForm != undefined) {
             this.valoracionesForm.FormObject.Tasa_interes = this.getTasaInteres();
-                
+
         }
         this.calculoAmortizacion();
         this.Manager.NavigateFunction("valoraciones");
     }
-    getTasaInteres = ()=>{
+    getTasaInteres = () => {
         if (this.Cliente.Catalogo_Clasificacion_Cliente) {
             return parseFloat(this.Cliente.Catalogo_Clasificacion_Cliente.porcentaje)
-            // @ts-ignore
+                // @ts-ignore
                 + this.InteresBase;
         } else {
             // @ts-ignore
             return 6 + this.InteresBase;
         }
-       
+
     }
     selectValoracion = (valoracion) => {
         if (this.valoracionesForm != undefined) {
@@ -392,9 +409,13 @@ class Transaction_Valoraciones_View extends HTMLElement {
         }
         this.Manager.NavigateFunction("valoraciones");
     }
+    /**
+     * 
+     * @returns {ValoracionesContrato}
+     */
     calculoAmortizacion = () => {
         if (this.valoracionesTable?.Dataset.length == 0) {
-            return;
+            return new ValoracionesContrato();
         }
         // const total = this.valoracionesTable?.Dataset.reduce((sum, value) => (typeof value.Edad == "number" ? sum + value.Edad : sum), 0);
         const constrato = new ValoracionesContrato({
@@ -405,28 +426,37 @@ class Transaction_Valoraciones_View extends HTMLElement {
             tasas_interes: this.getTasaInteres() / 100,
             plazo: this.valoracionesForm?.FormObject.Plazo ?? 1,
             fecha: new Date(),
-            cuotas: new Array(),
-            prendas: this.valoracionesTable?.Dataset,
-            cliente: this.Cliente
+            Transaction_Facturas: new Array(),
+            Detail_Prendas: this.valoracionesTable?.Dataset.map(
+                // @ts-ignore
+                /**@type {Transactional_Valoracion}*/valoracion => new Detail_Prendas({
+                    Descripcion: valoracion.descripcion,
+                    modelo: valoracion.model,
+                    marca: valoracion.marca,
+                    serie: valoracion.serie,
+                    Catalogo_Categoria: valoracion.Catalogo_Categoria,
+                    Transactional_Valoracion: valoracion
+                })
+            ),
+            Catalogo_Clientes: this.Cliente
         })
         const cuotaFija = this.getPago(constrato);
         let capital = constrato.valoracion_empeño_cordobas;
         for (let index = 0; index < constrato.plazo; index++) {
             const abono_capital = cuotaFija - (capital * constrato.tasas_interes);
             const cuota = new Cuota({
-                // @ts-ignore
                 fecha: constrato.fecha.modifyMonth(index + 1),
-                cuotaFija: cuotaFija.toFixed(2),
+                total: cuotaFija.toFixed(2),
                 interes: (capital * constrato.tasas_interes).toFixed(2),
                 abono_capital: abono_capital.toFixed(2),
-                capital: (capital - abono_capital).toFixed(2)
+                capital_restante: (capital - abono_capital).toFixed(2)
             })
             capital = capital - abono_capital;
-            constrato.cuotas.push(cuota)
+            constrato.Transaction_Facturas.push(cuota)
         }
         //console.log(constrato);
         if (this.CuotasTable != undefined) {
-            this.CuotasTable.Dataset = constrato.cuotas;
+            this.CuotasTable.Dataset = constrato.Transaction_Facturas;
             this.CuotasTable?.Draw();
         }
         this.amortizacionResumen.innerText = this.valoracionResumen(
@@ -513,7 +543,7 @@ class ValoracionesSearch extends HTMLElement {
             FilterFunction: (DFilt) => {
                 this.MainComponent?.DrawTable(DFilt.map(x => {
                     // @ts-ignore
-                    x.requiere_valoracion = (new Date().subtractDays(40) < new Date(x.Fecha)) ?"NO" : "SI";
+                    x.requiere_valoracion = (new Date().subtractDays(40) < new Date(x.Fecha)) ? "NO" : "SI";
                     return x;
                 }));
             }
