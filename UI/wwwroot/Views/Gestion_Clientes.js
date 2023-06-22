@@ -182,6 +182,9 @@ class Gestion_ClientesForm extends HTMLElement {
     CustomStyle = css`
         w-form {
             margin: 20px;
+            border: 1px solid #cacaca;
+            border-radius: 20px;
+            padding: 20px;
         }
     `
 }

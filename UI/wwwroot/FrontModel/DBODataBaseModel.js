@@ -91,6 +91,20 @@ class Catalogo_Clasificacion_Cliente extends EntityClass {
 }
 export { Catalogo_Clasificacion_Cliente }
 
+class Catalogo_Clasificacion_Interes extends EntityClass {
+    constructor(props) {
+        super(props, 'EntityDBO');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
+    id_clasificacion_interes = { type: 'number', primary: true };
+    Descripcion = { type: 'text' };
+    porcentaje = { type: 'number' };
+    Estado = { type: 'select', Dataset: ["ACTIVO", "INACTIVO"] };
+}
+export { Catalogo_Clasificacion_Interes }
+
 class Catalogo_Clientes extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
@@ -125,6 +139,7 @@ class Catalogo_Clientes extends EntityClass {
 
     promedio = { type: 'number', hiddenInTable: true, hiddenFilter: true };
     Catalogo_Clasificacion_Cliente = { type: 'WSELECT', ModelObject: () => new Catalogo_Clasificacion_Cliente(), hiddenFilter: true };
+    Catalogo_Clasificacion_Interes = { type: 'WSELECT', ModelObject: () => new Catalogo_Clasificacion_Interes(), hiddenFilter: true };
     Catalogo_Tipo_Identificacion = { type: 'WSELECT', ModelObject: () => new Catalogo_Tipo_Identificacion(), hiddenFilter: true, hiddenInTable: true };
     Catalogo_Profesiones = { type: 'WSELECT', ModelObject: () => new Catalogo_Profesiones(), hiddenInTable: true, hiddenFilter: true };
     Condicion_Laboral_Cliente = { type: 'WSELECT', ModelObject: () => new Condicion_Laboral_Cliente(), hiddenInTable: true, hiddenFilter: true, hidden: true };

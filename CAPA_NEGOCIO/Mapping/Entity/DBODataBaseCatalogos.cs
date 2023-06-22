@@ -47,6 +47,19 @@ namespace DataBaseModel
         //[OneToMany(TableName = "Catalogo_Clientes", KeyColumn = "id_clasificacion", ForeignKeyColumn = "id_clasificacion")]
         public List<Catalogo_Clientes>? Catalogo_Clientes { get; set; }
     }
+
+    public class Catalogo_Clasificacion_Interes : EntityClass
+    {
+        [PrimaryKey(Identity = true)]
+        public int? id_clasificacion_interes { get; set; }
+        public string? Descripcion { get; set; }
+        public string? Estado { get; set; }
+        public Double? porcentaje { get; set; }
+
+        //[OneToMany(TableName = "Catalogo_Clientes", KeyColumn = "id_clasificacion", ForeignKeyColumn = "id_clasificacion")]
+        public List<Catalogo_Clientes>? Catalogo_Clientes { get; set; }
+    }
+
     public class Catalogo_Clientes : EntityClass
     {
         [PrimaryKey(Identity = true)]
@@ -77,8 +90,11 @@ namespace DataBaseModel
         public string? solo_acreedor { get; set; }
         public Double? promedio { get; set; }
         public int? id_clasificacion { get; set; }
+        public int? id_clasificacion_interes { get; set; }
         [ManyToOne(TableName = "Catalogo_Clasificacion_Cliente", KeyColumn = "id_clasificacion", ForeignKeyColumn = "id_clasificacion")]
         public Catalogo_Clasificacion_Cliente? Catalogo_Clasificacion_Cliente { get; set; }
+         [ManyToOne(TableName = "Catalogo_Clasificacion_Interes", KeyColumn = "id_clasificacion_interes", ForeignKeyColumn = "id_clasificacion_interes")]
+        public Catalogo_Clasificacion_Interes? Catalogo_Clasificacion_Interes { get; set; }
         [ManyToOne(TableName = "Catalogo_Tipo_Identificacion", KeyColumn = "id_tipo_identificacion", ForeignKeyColumn = "id_tipo_identificacion")]
         public Catalogo_Tipo_Identificacion? Catalogo_Tipo_Identificacion { get; set; }
         [ManyToOne(TableName = "Catalogo_Profesiones", KeyColumn = "id_profesion", ForeignKeyColumn = "id_profesion")]
