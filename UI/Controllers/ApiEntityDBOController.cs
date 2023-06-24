@@ -2,12 +2,17 @@ using DataBaseModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using CAPA_NEGOCIO.Services;
 namespace API.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
     public class ApiEntityDBOController : ControllerBase
     {
+        [HttpPost]
+        public object test(){            
+            return FileService.upload("asdsa","asdasd");
+        }
         [HttpPost]
         [AuthController]
         public List<Catalogo_Estados_Articulos> getCatalogo_Estados_Articulos(Catalogo_Estados_Articulos Inst)
