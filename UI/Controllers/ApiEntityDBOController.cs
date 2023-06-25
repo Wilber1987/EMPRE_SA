@@ -10,8 +10,26 @@ namespace API.Controllers
     public class ApiEntityDBOController : ControllerBase
     {
         [HttpPost]
-        public object test(){            
-            return FileService.upload("asdsa","asdasd");
+        public object test(){              
+            return FileService.upload(Request.Form["path"],Request.Form["base64"]);
+        }
+        [HttpPost]
+        [AuthController]
+        public List<Catalogo_Clasificacion_Interes> getCatalogo_Clasificacion_Interes(Catalogo_Clasificacion_Interes Inst)
+        {
+            return Inst.Get<Catalogo_Clasificacion_Interes>();
+        }
+        [HttpPost]
+        [AuthController]
+        public object saveCatalogo_Clasificacion_Interes(Catalogo_Clasificacion_Interes inst)
+        {
+            return inst.Save();
+        }
+        [HttpPost]
+        [AuthController]
+        public object updateCatalogo_Clasificacion_Interes(Catalogo_Clasificacion_Interes inst)
+        {
+            return inst.Update();
         }
         [HttpPost]
         [AuthController]

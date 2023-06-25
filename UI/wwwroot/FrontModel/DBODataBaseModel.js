@@ -31,18 +31,17 @@ class Transactional_Valoracion extends EntityClass {
     Serie = { type: 'text', require: false };
     Marca = { type: 'text' };
     Modelo = { type: 'text' };
-
-      Catalogo_Categoria = {
-        type: 'WSELECT', ModelObject: () => new Catalogo_Categoria(), action: (ObjectF, /**@type {WForm} */ form, InputControl, prop) => {            
-            console.log( ObjectF.Catalogo_Categoria.plazo_limite);
+    Catalogo_Categoria = {
+        type: 'WSELECT', 
+        ModelObject: () => new Catalogo_Categoria(), action: (ObjectF, /**@type {WForm} */ form, InputControl, prop) => {
+            console.log(ObjectF.Catalogo_Categoria.plazo_limite);
             this.Plazo.max = ObjectF.Catalogo_Categoria.plazo_limite;
-            if (ObjectF.Plazo >  this.Plazo.max) {
+            if (ObjectF.Plazo > this.Plazo.max) {
                 ObjectF.Plazo = this.Plazo.max;
             }
             form.DrawComponent();
-        }
+        }, hiddenFilter: true
     };
-
     Plazo = { type: 'number', hiddenInTable: true, max: 24, min: 1, hiddenFilter: true };
     Tasa_interes = { type: 'number', hiddenInTable: true, enabled: false, Dataset: [], hiddenFilter: true };
     Fecha = { type: 'date', hiddenInTable: true, hiddenFilter: true };
@@ -92,6 +91,20 @@ class Catalogo_Clasificacion_Cliente extends EntityClass {
 }
 export { Catalogo_Clasificacion_Cliente }
 
+class Catalogo_Clasificacion_Interes extends EntityClass {
+    constructor(props) {
+        super(props, 'EntityDBO');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
+    id_clasificacion_interes = { type: 'number', primary: true };
+    Descripcion = { type: 'text' };
+    porcentaje = { type: 'number' };
+    Estado = { type: 'select', Dataset: ["ACTIVO", "INACTIVO"] };
+}
+export { Catalogo_Clasificacion_Interes }
+
 class Catalogo_Clientes extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
@@ -126,6 +139,7 @@ class Catalogo_Clientes extends EntityClass {
 
     promedio = { type: 'number', hiddenInTable: true, hiddenFilter: true };
     Catalogo_Clasificacion_Cliente = { type: 'WSELECT', ModelObject: () => new Catalogo_Clasificacion_Cliente(), hiddenFilter: true };
+    Catalogo_Clasificacion_Interes = { type: 'WSELECT', ModelObject: () => new Catalogo_Clasificacion_Interes(), hiddenFilter: true };
     Catalogo_Tipo_Identificacion = { type: 'WSELECT', ModelObject: () => new Catalogo_Tipo_Identificacion(), hiddenFilter: true, hiddenInTable: true };
     Catalogo_Profesiones = { type: 'WSELECT', ModelObject: () => new Catalogo_Profesiones(), hiddenInTable: true, hiddenFilter: true };
     Condicion_Laboral_Cliente = { type: 'WSELECT', ModelObject: () => new Condicion_Laboral_Cliente(), hiddenInTable: true, hiddenFilter: true, hidden: true };
@@ -193,7 +207,9 @@ class Catalogo_Tipo_Identificacion extends EntityClass {
     Estado = { type: 'select', Dataset: ["ACTIVO", "INACTIVO"] };
 }
 export { Catalogo_Tipo_Identificacion }
-class Transaction_Contratos extends EntityClass {
+
+
+class Transaction_ContratosModel extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
         for (const prop in props) {
@@ -252,10 +268,10 @@ class Transaction_Contratos extends EntityClass {
     dias_para_baja = { type: 'number' };
     Catalogo_Agentes = { type: 'WSELECT', ModelObject: () => new Catalogo_Agentes() };
     Catalogo_Clientes = { type: 'WSELECT', ModelObject: () => new Catalogo_Clientes() };
-    Detail_Prendas = { type: 'MasterDetail', ModelObject: () => new Detail_Prendas() };
+    Detail_Prendas = { type: 'MasterDetail', ModelObject: () => new Detail_PrendasModel() };
 }
-export { Transaction_Contratos }
-class Detail_Prendas extends EntityClass {
+export { Transaction_ContratosModel }
+class Detail_PrendasModel extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
         for (const prop in props) {
@@ -284,16 +300,15 @@ class Detail_Prendas extends EntityClass {
     uso = { type: 'text' };
     servicio = { type: 'text' };
     v_porcentage_etiqueta = { type: 'number' };
-    Detail_Prendas_Vehiculos = { type: 'WSELECT', ModelObject: () => new Detail_Prendas_Vehiculos() };
+    Detail_Prendas_Vehiculos = { type: 'WSELECT', ModelObject: () => new Detail_Prendas_VehiculosModel() };
     Catalogo_Categoria = {
         type: 'WSELECT', ModelObject: () => new Catalogo_Categoria(), action: (ObjectF, form, InputControl, prop) => {
-            console.log(this);
-            console.log(ObjectF);
+
         }
     };
 }
-export { Detail_Prendas }
-class Detail_Prendas_Vehiculos extends EntityClass {
+export { Detail_PrendasModel }
+class Detail_Prendas_VehiculosModel extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
         for (const prop in props) {
@@ -314,9 +329,49 @@ class Detail_Prendas_Vehiculos extends EntityClass {
     porcentage_descuento_maximo = { type: 'number' };
     fecha_seguro = { type: 'date' };
     combustible = { type: 'text' };
-    Detail_Prendas = { type: 'WSELECT', ModelObject: () => new Detail_Prendas() };
+    Detail_Prendas = { type: 'WSELECT', ModelObject: () => new Detail_PrendasModel() };
 }
-export { Detail_Prendas_Vehiculos }
+export { Detail_Prendas_VehiculosModel }
+
+class Transaction_FacturasModel extends EntityClass {
+    constructor(props) {
+        super(props, 'EntityDBO');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
+    numero_factura = { type: 'number', primary: true };
+    abono_de_cuota = { type: 'number' };
+    mora = { type: 'number' };
+    interes = { type: 'number' };
+    total = { type: 'number' };
+    fecha = { type: 'date' };
+    fecha_pago = { type: 'date' };
+    pago_contado = { type: 'number' };
+    saldo_monto = { type: 'number' };
+    fecha_mora = { type: 'date' };
+    fecha_interes = { type: 'date' };
+    taza_cambio = { type: 'number' };
+    //interes_actual = { type: 'number' };
+    //Id_User_OLD = { type: 'number' };
+    fecha_grabado = { type: 'date' };
+    mes_pagado = { type: 'date' };
+    ultima_visita = { type: 'date' };
+    dmpagadas = { type: 'number' };
+    tipo = { type: 'text' };
+    morac = { type: 'number' };
+    interesc = { type: 'number' };
+    abonoc = { type: 'number' };
+    totalc = { type: 'number' };
+    parciales = { type: 'number' };
+    moraparcial = { type: 'number' };
+    interesparcial = { type: 'number' };
+    motivo_anulacion = { type: 'text' };
+    Transaction_Contratos = { type: 'WSELECT', ModelObject: () => new Transaction_ContratosModel() };
+}
+export { Transaction_FacturasModel }
+
+
 class Catalogo_Cambio_Dolar extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
@@ -470,57 +525,7 @@ class Transaction_Egresos extends EntityClass {
     fanulado = { type: 'date' };
 }
 export { Transaction_Egresos }
-class Transaction_Facturas extends EntityClass {
-    constructor(props) {
-        super(props, 'EntityDBO');
-        for (const prop in props) {
-            this[prop] = props[prop];
-        }
-    }
-    numero_factura = { type: 'number', primary: true };
-    abono_de_cuota = { type: 'number' };
-    mora = { type: 'number' };
-    interes = { type: 'number' };
-    total = { type: 'number' };
-    fecha = { type: 'date' };
-    fecha_pago = { type: 'date' };
-    inte = { type: 'number' };
-    mor = { type: 'number' };
-    dm = { type: 'number' };
-    es = { type: 'text' };
-    tot = { type: 'number' };
-    an = { type: 'text' };
-    pago_contado = { type: 'number' };
-    saldo_monto = { type: 'number' };
-    ABONO = { type: 'number' };
-    descuento = { type: 'number' };
-    fecha_mora = { type: 'date' };
-    fecha_interes = { type: 'date' };
-    taza_cambio = { type: 'number' };
-    interes_actual = { type: 'number' };
-    Id_User_OLD = { type: 'number' };
-    fecha_grabado = { type: 'date' };
-    mes_pagado = { type: 'date' };
-    ultima_visita = { type: 'date' };
-    dmpagadas = { type: 'number' };
-    tipo = { type: 'text' };
-    morac = { type: 'number' };
-    interesc = { type: 'number' };
-    abonoc = { type: 'number' };
-    totalc = { type: 'number' };
-    parciales = { type: 'number' };
-    moraparcial = { type: 'number' };
-    interesparcial = { type: 'number' };
-    motivo_anulacion = { type: 'text' };
-    reestructuraciond = { type: 'number' };
-    reestructuracionc = { type: 'number' };
-    numero_reestructuracion = { type: 'number' };
-    fecha_cancelacion = { type: 'date' };
-    docnoentregadod = { type: 'number' };
-    docnoentregadoc = { type: 'number' };
-    Transaction_Contratos = { type: 'WSELECT', ModelObject: () => new Transaction_Contratos() };
-}
-export { Transaction_Facturas }
+
 class Transaction_Ingresos extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');

@@ -143,8 +143,11 @@ class Gestion_InversionistaForm extends HTMLElement {
         this.Manager?.NavigateFunction("formularioCliente", this.FormularioCliente)
     }
     CustomStyle = css`
-        w-form {
+         w-form {
             margin: 20px;
+            border: 1px solid #cacaca;
+            border-radius: 20px;
+            padding: 20px;
         }
     `
 }
