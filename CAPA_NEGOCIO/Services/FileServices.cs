@@ -6,16 +6,15 @@ using CAPA_DATOS;
 namespace CAPA_NEGOCIO.Services
 {
     public class FileService
-    {        
+    {
         public static ResponseService upload(string path, string base64String)//exampl(e imagenes,"ascd41asd==")
         {
             try
             {
-
-                DirectoryInfo dir = Directory.CreateDirectory(@"../Files/"+path+"/");//se crea la carpeta, segun documentacion no es necesario validar si ya existe
-
+                DirectoryInfo dir = Directory.CreateDirectory(@"/Files/" + path + "/");//se crea la carpeta, segun documentacion no es necesario validar si ya existe
                 string[] subs = base64String.Split(',');
-                if(!IsBase64String(subs[1]) || subs.Count() <= 1){
+                if (!IsBase64String(subs[1]) || subs.Count() <= 1)
+                {
                     return new ResponseService()
                     {
                         status = 403,
@@ -23,14 +22,11 @@ namespace CAPA_NEGOCIO.Services
                         message = "Formato incorrecto, bse64 invalido"
                     };
                 }
-                
-                String extension = ".pdf";              
-                if (subs[0].Contains("data:image/")) {
+                String extension = ".pdf";
+                if (subs[0].Contains("data:image/"))
+                {
                     extension = ".png";
                 }
-
-
-                
                 Guid myuuid = Guid.NewGuid();//genero el nombre del archivo                
                 string myuuidAsString = myuuid.ToString();
                 String fileName = myuuid.ToString() + extension;
@@ -63,8 +59,8 @@ namespace CAPA_NEGOCIO.Services
 
         public static bool IsBase64String(string base64)
         {
-        Span<byte> buffer = new Span<byte>(new byte[base64.Length]);
-        return Convert.TryFromBase64String(base64, buffer , out int bytesParsed);
+            Span<byte> buffer = new Span<byte>(new byte[base64.Length]);
+            return Convert.TryFromBase64String(base64, buffer, out int bytesParsed);
         }
     }
 }
