@@ -15,6 +15,7 @@ import { Cuota, Detail_Prendas, ValoracionesContrato } from "../FrontModel/Model
 import { CuotaComponent } from "../FrontModel/ModelComponents.js";
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
 import { Transactional_Configuraciones } from "../FrontModel/ADMINISTRATIVE_ACCESSDataBaseModel.js";
+import { ValoracionesSearch, clientSearcher } from "../modules/SerchersModules.js";
 class Transaction_Valoraciones_View extends HTMLElement {
     // @ts-ignore
     constructor(props) {
@@ -544,90 +545,3 @@ export { Transaction_Valoraciones_View }
 // @ts-ignore
 window.addEventListener('load', async () => { MainBody.append(new Transaction_Valoraciones_View()) })
 
-class ValoracionesSearch extends HTMLElement {
-    constructor(/** @type {Function} */ action) {
-        super();
-        this.TabContainer = WRender.Create({ className: "TabContainer", id: 'TabContainer' });
-        this.Manager = new ComponentsManager({ MainContainer: this.TabContainer, SPAManage: false });
-        this.action = action;
-        this.DrawComponent();
-    }
-    DrawComponent = async () => {
-        const model = new Transactional_Valoracion({ requiere_valoracion: { type: "TEXT", hiddenFilter: true } });
-        const dataset = await model.Get();
-
-        this.SearchContainer = WRender.Create({
-            className: "search-container"
-        })
-        this.MainComponent = new WTableComponent({
-            ModelObject: model,
-            Dataset: dataset.map(x => {
-                // @ts-ignore
-                x.requiere_valoracion = (new Date().subtractDays(40) < new Date(x.Fecha)) ? "NO" : "SI";
-                return x;
-            }),
-            Options: {
-                UserActions: [
-                    {
-                        name: "seleccionar", action: (/**@type {Transactional_Valoracion}*/ selected) => {
-                            this.action(selected);
-                        }
-                    }
-                ]
-            }
-        })
-        this.FilterOptions = new WFilterOptions({
-            Dataset: dataset,
-            ModelObject: model,
-            Display: true,
-            FilterFunction: (DFilt) => {
-                // @ts-ignore
-                this.MainComponent.Dataset = DFilt.map(x => {
-                    // @ts-ignore
-                    x.requiere_valoracion = (new Date().subtractDays(40) < new Date(x.Fecha)) ? "NO" : "SI";
-                    return x;
-                });
-                this.MainComponent?.DrawTable();
-            }
-        });
-        this.append(
-            StylesControlsV2.cloneNode(true),
-            StyleScrolls.cloneNode(true),
-            StylesControlsV3.cloneNode(true),
-            this.FilterOptions,
-            this.TabContainer,
-            this.MainComponent
-        );
-    }
-}
-customElements.define('w-component', ValoracionesSearch);
-export { ValoracionesSearch }
-/**
- * 
- * @param { Function } action 
- * @returns { HTMLElement }
- */
-const clientSearcher = (action) => {
-    const model = new Catalogo_Clientes();
-    const TableComponent = new WTableComponent({
-        ModelObject: model, Dataset: [], Options: {
-            UserActions: [{
-                name: "Selecionar",
-                action: async (cliente) => {
-                    await action(cliente);
-                }
-            }]
-        }
-    })
-    const FilterOptions = new WFilterOptions({
-        Dataset: [],
-        ModelObject: model,
-        Display: true,
-        FilterFunction: (DFilt) => {
-            TableComponent.Dataset = DFilt;
-            TableComponent?.DrawTable();
-        }
-    });
-    return WRender.Create({ className: "main-container", children: [FilterOptions, TableComponent] });
-}
-export { clientSearcher }

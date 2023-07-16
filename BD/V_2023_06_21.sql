@@ -22,7 +22,7 @@ CREATE TABLE dbo.Catalogo_Clasificacion_Interes (
 	Descripcion nvarchar(50) COLLATE Modern_Spanish_CI_AS NULL,
 	Estado nvarchar(50) COLLATE Modern_Spanish_CI_AS NULL,
 	porcentaje float NULL,
-	CONSTRAINT PK_Catalogo_Clasificacion_Cliente PRIMARY KEY (id_clasificacion_interes)
+	CONSTRAINT PK_Catalogo_Clasificacion_interes PRIMARY KEY (id_clasificacion_interes)
 );
 
 INSERT INTO dbo.Catalogo_Clasificacion_Interes
