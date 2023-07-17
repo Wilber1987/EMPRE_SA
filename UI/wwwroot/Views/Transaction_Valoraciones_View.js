@@ -318,11 +318,11 @@ class Transaction_Valoraciones_View extends HTMLElement {
         }))
         this.OptionContainer.append(WRender.Create({
             tagName: 'button', className: 'Block-Secundary', innerText: 'Buscar cliente',
-            onclick: () => { 
+            onclick: () => {
                 if (!this.clientSercher) {
                     this.clientSercher = clientSearcher(this.selectCliente);
                 }
-                this.Manager.NavigateFunction("buscar-cliente", this.clientSercher) 
+                this.Manager.NavigateFunction("buscar-cliente", this.clientSercher)
             }
         }))
         this.OptionContainer.append(WRender.Create({
@@ -378,12 +378,15 @@ class Transaction_Valoraciones_View extends HTMLElement {
                     return;
                 }
                 // @ts-ignore
-                const valoracionesGuardadas = await this.valoracionModel?.GuardarValoraciones(this.valoracionesTable?.Dataset);
-                const response = await this.calculoAmortizacion().SaveDataContract();
-                if (response) {
-                    // @ts-ignore
-                    window.location = "/PagesViews/Transaction_ContratosView";
-                }
+                //const valoracionesGuardadas = await this.valoracionModel?.GuardarValoraciones(this.valoracionesTable?.Dataset);
+                const contract = this.calculoAmortizacion();
+                console.log(JSON.stringify(WArrayF.replacer(contract)));
+                console.log(contract);
+                // const response = await this.calculoAmortizacion().SaveDataContract();
+                // if (response) {
+                //     // @ts-ignore
+                //     window.location = "/PagesViews/Transaction_ContratosView";
+                // }
             }
         }))
     }
@@ -459,13 +462,17 @@ class Transaction_Valoraciones_View extends HTMLElement {
             plazo: this.valoracionesForm?.FormObject.Plazo ?? 1,
             fecha: new Date(),
             Transaction_Facturas: new Array(),
+            
+            taza_interes_cargos: this.InteresBase,
             Detail_Prendas: this.valoracionesTable?.Dataset.map(
                 // @ts-ignore
                 /**@type {Transactional_Valoracion}*/valoracion => new Detail_Prendas({
-                Descripcion: valoracion.descripcion,
-                modelo: valoracion.model,
-                marca: valoracion.marca,
-                serie: valoracion.serie,
+                Descripcion: valoracion.Descripcion,
+                modelo: valoracion.Modelo,
+                mara: valoracion.Marca,
+                serie: valoracion.Serie,
+                pprenda: valoracion.valoracion_empeño_cordobas,
+                en_manos_de: undefined,
                 Catalogo_Categoria: valoracion.Catalogo_Categoria,
                 Transactional_Valoracion: valoracion
             })

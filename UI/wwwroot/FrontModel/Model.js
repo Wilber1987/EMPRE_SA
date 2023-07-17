@@ -1,5 +1,5 @@
 import { EntityClass } from "../WDevCore/WModules/EntityClass.js";
-import { Catalogo_Categoria } from "./DBODataBaseModel.js";
+import { Catalogo_Categoria, Catalogo_Clientes } from "./DBODataBaseModel.js";
 
 //@ts-check
 class ValoracionesContrato extends EntityClass {
@@ -23,8 +23,12 @@ class ValoracionesContrato extends EntityClass {
     plazo;
     /**@type {Date} */
     fecha;
-    /**@type {Array} */
+    /**@type {Catalogo_Clientes} */
+    Catalogo_Clientes;
+    /**@type {Array<Cuota>} */
     Transaction_Facturas;
+    /**@type {Array<Detail_Prendas>} */
+    Detail_Prendas;
     SaveDataContract = async () => {
         await this.SaveData("Transactional_Contrato/SaveDataContract", this)
         return true;
@@ -131,12 +135,13 @@ export { Transaction_Contratos }
 class Detail_Prendas extends EntityClass {
     /**
      * 
-     * @param {Detail_Prendas} props 
+     * @param {Object} props 
      */
     constructor(props) {
         super(props, 'EntityDBO');
         for (const prop in props) {
             this[prop] = props[prop];
+            //console.log(this[prop], props[prop]);
         }
     }
     /**@type {Number} */ numero_prenda;

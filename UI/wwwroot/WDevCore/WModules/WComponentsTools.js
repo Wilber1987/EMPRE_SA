@@ -132,7 +132,22 @@ class WAjaxTools {
         return {};
     }
 }
+/**
+ * 
+ * @param {TemplateStringsArray} body 
+ * @returns {HTMLElement}
+ */
+function html(body) {
+    // @ts-ignore
+    return WRender.CreateStringNode(body);
+}
+export {html}
 class WRender {
+    /**
+     * 
+     * @param {*} string 
+     * @returns {HTMLElement}
+     */
     static CreateStringNode = (string) => {
         let node = document.createRange().createContextualFragment(string);
         return node.childNodes[0];
