@@ -323,11 +323,11 @@ class WTableComponent extends HTMLElement {
                 case "COLOR":
                     td.append(WRender.Create({
                         style: {
-                            background: value, width: "30px", height: "30px",
+                            background: (value == "" ? "#000" : value ), width: "30px", height: "30px",
                             borderRadius: "50%", boxShadow: "0 0 3px 0 #888", margin: "auto"
                         }
                     }))
-                    tr.append();
+                    tr.append(td);
                     break;
                 case "MODEL": case "WSELECT":
                     tr.append(WRender.Create({

@@ -279,28 +279,28 @@ class Detail_PrendasModel extends EntityClass {
         }
     }
     numero_prenda = { type: 'number', primary: true };
-    numero_contrato_OLD = { type: 'number', hiddenInTable: true };
+    numero_contrato_OLD = { type: 'number', hidden: true };
     Descripcion = { type: 'text' };   
-    Tipo = { type: 'text' ,  hiddenInTable: true};
+    Tipo = { type: 'text' ,  hidden: true};
     marca = { type: 'text' };
     serie = { type: 'text' };
     modelo = { type: 'text' };
     pprenda = { type: 'number', label: "Monto aprob."};
-    iva = { type: 'text' , hiddenInTable: true};
-    margen = { type: 'text', hiddenInTable: true };
+    iva = { type: 'text' , hidden: true};
+    //margen = { type: 'text', hiddenInTable: true };
     estado = { type: 'select', Dataset: ["ACTIVO", "INACTIVO"] , hiddenInTable: true};
-    interesl = { type: 'number' , hiddenInTable: true};
-    moral = { type: 'number' , hiddenInTable: true};
-    fliquidacion = { type: 'date', hiddenInTable: true };
+    //interesl = { type: 'number' , hiddenInTable: true};
+    //moral = { type: 'number' , hiddenInTable: true};
+    //fliquidacion = { type: 'date', hiddenInTable: true };
     precio_venta = { type: 'number' , hiddenInTable: true};
-    en_manos_de = { type: 'text' };
-    color = { type: 'text' };
-    factura = { type: 'text' };
-    tipo_movimiento = { type: 'text' , hiddenInTable: true};
-    uso = { type: 'text', hiddenInTable: true };
-    servicio = { type: 'text' , hiddenInTable: true};
-    v_porcentage_etiqueta = { type: 'number' , hiddenInTable: true};
-    Detail_Prendas_Vehiculos = { hiddenInTable: true,  type: 'WSELECT', ModelObject: () => new Detail_Prendas_VehiculosModel() };
+    en_manos_de = { type: 'select', Dataset: ["ACREEDOR", "DEUDOR"] , hiddenInTable: true};
+    color = { type: 'COLOR' };
+    //factura = { type: 'text' };
+    //tipo_movimiento = { type: 'text' , hiddenInTable: true};
+    uso = { type: 'select', Dataset: ["PRIVADO", "PARTICULAR"], hiddenInTable: true };
+    servicio = {type: 'select', Dataset: ["PRIVADO", "PARTICULAR"] , hiddenInTable: true};
+    //v_porcentage_etiqueta = { type: 'number' , hiddenInTable: true};
+    Detail_Prendas_Vehiculos = { hiddenInTable: true,  type: 'Model', ModelObject: () => new Detail_Prendas_VehiculosModel() };
     Catalogo_Categoria = {
         hiddenInTable: true,
         type: 'WSELECT', ModelObject: () => new Catalogo_Categoria(), action: (ObjectF, form, InputControl, prop) => {

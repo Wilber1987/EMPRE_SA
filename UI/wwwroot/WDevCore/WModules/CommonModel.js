@@ -344,6 +344,7 @@ class ElementStyle {
  *  * @property {Array} Dataset
     * @property {Array} [selectedItems]
     * @property {Object} [ModelObject]  
+    * @property {Object} [EntityModel] 
     * @property {Object} [ParentModel]    
     * @property {Boolean} [DarkMode]
     * @property {Boolean} [paginate]

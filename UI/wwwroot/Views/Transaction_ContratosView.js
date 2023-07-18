@@ -4,10 +4,10 @@ import { WRender, ComponentsManager, WAjaxTools } from "../WDevCore/WModules/WCo
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js"
 // @ts-ignore
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
-import { Catalogo_Cambio_Dolar, Catalogo_Clientes, Detail_PrendasModel, Transaction_ContratosModel } from "../FrontModel/DBODataBaseModel.js"
+import { Catalogo_Cambio_Dolar, Catalogo_Clientes, Detail_PrendasModel, Detail_Prendas_VehiculosModel, Transaction_ContratosModel } from "../FrontModel/DBODataBaseModel.js"
 // @ts-ignore
 import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
-import { Detail_Prendas, Transaction_Contratos, ValoracionesContrato } from "../FrontModel/Model.js";
+import { Detail_Prendas, Detail_Prendas_Vehiculos, Transaction_Contratos, ValoracionesContrato } from "../FrontModel/Model.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 import { ValoracionesSearch, clientSearcher } from "../modules/SerchersModules.js";
 /**
@@ -53,9 +53,23 @@ class Transaction_ContratosView extends HTMLElement {
         this.tasasCambio = await new Catalogo_Cambio_Dolar().Get();
         /**@type  {Catalogo_Cambio_Dolar}*/
         this.tasaActual = this.tasasCambio[0];
+        const isVehiculo = this.entity.Detail_Prendas.find(p => p.Catalogo_Categoria.id_categoria == 2);
+        console.log(isVehiculo);
+        console.log( new Detail_PrendasModel({
+            Detail_Prendas_VehiculosModel: {
+                type: 'Model', ModelObject: () => new Detail_Prendas_VehiculosModel(),
+                hidden: isVehiculo == undefined ? true : false
+            }
+        }));
         this.prendasTable = new WTableComponent({
             Dataset: this.entity.Detail_Prendas,
-            ModelObject: new Detail_PrendasModel({})
+            EntityModel: new Detail_Prendas_Vehiculos(),
+            ModelObject: new Detail_PrendasModel({
+                Detail_Prendas_VehiculosModel: {
+                    type: 'Model', ModelObject: () => new Detail_Prendas_VehiculosModel(),
+                    hidden: isVehiculo == undefined ? true : false
+                }
+            })
         })
         this.contratosForm.append(this.prendasTable);
         this.Manager.NavigateFunction("valoraciones", this.contratosForm);

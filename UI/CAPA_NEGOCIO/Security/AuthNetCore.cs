@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using CAPA_DATOS;
+﻿using CAPA_DATOS;
 using CAPA_NEGOCIO.Services;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using CAPA_NEGOCIO.Security;
 
 namespace API.Controllers
@@ -67,6 +60,7 @@ namespace API.Controllers
         {
             //SqlADOConexion.SQLM = null;
             //security_User = null;
+            //SeasonServices.ClearSeason(idetify);
             return true;
 
         }

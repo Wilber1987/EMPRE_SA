@@ -18,9 +18,9 @@ namespace API.Controllers
 
         [HttpPost]
         [AuthController]
-        public object GetDataContract(ValoracionesTransaction Inst)
+        public object GetDataContract()
         {           
-            return Inst.GetDataContract(HttpContext.Session.GetString("SessionKeyName"));           
+            return new ValoracionesTransaction().GetDataContract(HttpContext.Session.GetString("SessionKeyName"));           
         }
     }
 }
