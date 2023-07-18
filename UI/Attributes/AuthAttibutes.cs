@@ -8,10 +8,10 @@ namespace API.Controllers
     {
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
-            if (!AuthNetCore.Authenticate())
+            if (!AuthNetCore.Authenticate( filterContext.HttpContext.Session.GetString("seassonKey")))
             {
                 Authenticate Aut = new Authenticate();
-                Aut.AuthVal = AuthNetCore.Authenticate();
+                Aut.AuthVal = AuthNetCore.Authenticate(filterContext.HttpContext.Session.GetString("seassonKey"));
                 filterContext.Result = new ObjectResult(Aut);
             }
         }
@@ -21,7 +21,7 @@ namespace API.Controllers
     {
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
-            if (!AuthNetCore.HavePermission(PermissionsEnum.ADMIN_ACCESS.ToString()))
+            if (!AuthNetCore.HavePermission(PermissionsEnum.ADMIN_ACCESS.ToString(), filterContext.HttpContext.Session.GetString("seassonKey")))
             {
                 Authenticate Aut = new Authenticate();
                 Aut.AuthVal = false;
@@ -34,13 +34,7 @@ namespace API.Controllers
     {
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
-            if (!AuthNetCore.Authenticate())
-            {
-                if (!AuthNetCore.Authenticate())
-                {
-                    AuthNetCore.AnonymousAuthenticate();
-                }
-            }
+            AuthNetCore.AnonymousAuthenticate();
         }
     }
     class Authenticate

@@ -2,7 +2,7 @@
 @using API.Controllers
 @using CAPA_NEGOCIO.Security
 @{
-    @if (!SecurityController.HavePermission(PermissionsEnum.GESTION_CLIENTES.ToString()) )
+    @if (!SecurityController.HavePermission(PermissionsEnum.GESTION_CLIENTES.ToString(), HttpContext.Session.GetString("seassonKey")) )
     {
         Response.Redirect("../LoginView");
         return;

@@ -10,7 +10,8 @@ namespace API.Controllers
         [HttpPost]
         public object Login(UserModel Inst)
         {
-            return AuthNetCore.loginIN(Inst.mail, Inst.password);
+            HttpContext.Session.SetString("seassonKey", Guid.NewGuid().ToString());
+            return AuthNetCore.loginIN(Inst.mail, Inst.password, HttpContext.Session.GetString("seassonKey"));
         }
         public object LogOut()
         {
@@ -18,19 +19,20 @@ namespace API.Controllers
         }
         public bool Verification()
         {
-            return AuthNetCore.Authenticate();
+            return AuthNetCore.Authenticate(HttpContext.Session.GetString("seassonKey"));
         }
-        public static bool IsAdmin()
+       
+        public static bool Auth(string identfy)
         {
-            return AuthNetCore.HavePermission(PermissionsEnum.ADMIN_ACCESS.ToString());
+            return AuthNetCore.Authenticate(identfy);
         }
-        public static bool Auth()
+        public static bool IsAdmin(string identfy)
         {
-            return AuthNetCore.Authenticate();
-        }
-        public static bool HavePermission(string permission)
+            return AuthNetCore.HavePermission(PermissionsEnum.ADMIN_ACCESS.ToString(), identfy);
+        }       
+        public static bool HavePermission(string permission, string identfy)
         {
-            return AuthNetCore.HavePermission(permission);
+            return AuthNetCore.HavePermission(permission, identfy);
         }
 
     }

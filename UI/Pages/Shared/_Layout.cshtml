@@ -1,6 +1,9 @@
 ﻿@using API.Controllers
 @using CAPA_NEGOCIO.Security
 @using DataBaseModel
+@{
+    string identify = Context.Session.GetString("seassonKey");
+}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -50,7 +53,8 @@
             <h3>TRANSACCIONES</h3>
 
             <a class="" id="Home" asp-area="" asp-page="/">HOME</a>
-            @if (SecurityController.HavePermission(PermissionsEnum.GESTION_PRESTAMOS_Y_EMPEÑOS.ToString()))
+            @if (SecurityController.HavePermission(PermissionsEnum.GESTION_PRESTAMOS_Y_EMPEÑOS.ToString(),
+            identify))
             {
                 <a class="title-collapse" id="PrestamosClientesMenu" onclick="changeActive(this)">PRESTAMOS Y EMPEÑOS</a>
                 <div class="collapse">
@@ -58,14 +62,16 @@
                         asp-page="/PagesViews/Transaction_Valoraciones_View">VALORACIONES</a>
                     <a class="" id="Transaction_ContratosView" asp-area=""
                         asp-page="/PagesViews/Transaction_ContratosView">CONTRATOS</a>
-                    @if (SecurityController.HavePermission(PermissionsEnum.GESTION_CLIENTES.ToString()))
+                    @if (SecurityController.HavePermission(PermissionsEnum.GESTION_CLIENTES.ToString(),
+                   identify))
                     {
                         <a class="" id="Gestion_Clientes" asp-area="" asp-page="/PagesViews/Gestion_Clientes">Gestión de
                             clientes</a>
                     }
                 </div>
             }
-            @if (SecurityController.HavePermission(PermissionsEnum.GESTION_CONTRATOS.ToString()))
+            @if (SecurityController.HavePermission(PermissionsEnum.GESTION_CONTRATOS.ToString(),
+            identify))
             {
                 <a class="title-collapse" id="GestionContratosMenu" onclick="changeActive(this)">GESTIÓN DE CONTRATOS</a>
                 <div class="collapse">
@@ -75,7 +81,8 @@
                         asp-page="/PagesViews/Gestion_Inversionistas">GESTIÓN DE PERSONAS NATURALES</a>
                 </div>
             }
-            @* @if (SecurityController.HavePermission(PermissionsEnum.GESTION_INGRESOS.ToString()))
+            @* @if (SecurityController.HavePermission(PermissionsEnum.GESTION_INGRESOS.ToString(),
+            identify))
             {
             <a class="title-collapse" id="GestionIngresosMenu" onclick="changeActive(this)">GESTIÓN DE CONTRATOS</a>
             <div class="collapse">
@@ -83,7 +90,8 @@
             asp-page="/PagesViews/Transaction_FacturasView">FACTURAS</a>
             </div>
             } *@
-            @if (SecurityController.HavePermission(PermissionsEnum.GESTION_MOVIMIENTOS.ToString()))
+            @if (SecurityController.HavePermission(PermissionsEnum.GESTION_MOVIMIENTOS.ToString(),
+            identify))
             {
                 <a class="title-collapse" id="GestionMovimientosMenu" onclick="changeActive(this)">GESTIÓN DE
                     MOVIMIENTOS</a>
@@ -92,7 +100,8 @@
             asp-page="/PagesViews/Transaction_Ingresos_EgresosView">EGRESOS/INGRESOS</a>
             </div> *@
             }
-            @if (SecurityController.HavePermission(PermissionsEnum.GESTION_SUCURSALES.ToString()))
+            @if (SecurityController.HavePermission(PermissionsEnum.GESTION_SUCURSALES.ToString(),
+            identify))
             {
                 <a class="title-collapse" id="SucursalesMenu" onclick="changeActive(this)"
                     href="#SucursalesConfig">CONFIGURACIÓN DE
@@ -111,7 +120,7 @@
             <label for="" class="sub-title">@Config.PageConfig.SUB_TITULO</label>
         </div>
 
-        @if (SecurityController.IsAdmin())
+        @if (SecurityController.IsAdmin(identify))
         {
             <a href="~/Admin/Index">Admin Panel</a>
         }

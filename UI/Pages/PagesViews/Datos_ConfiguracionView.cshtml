@@ -1,7 +1,7 @@
 @page
 @using API.Controllers
 @{
-    if (!SecurityController.Auth())
+    if (!SecurityController.Auth(HttpContext.Session.GetString("seassonKey")))
     {
         Response.Redirect("../LoginView");
         return;

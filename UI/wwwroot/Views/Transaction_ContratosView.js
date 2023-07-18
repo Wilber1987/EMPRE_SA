@@ -1,10 +1,10 @@
 //@ts-check
 // @ts-ignore
-import { WRender, ComponentsManager, WAjaxTools, html } from "../WDevCore/WModules/WComponentsTools.js";
+import { WRender, ComponentsManager, WAjaxTools } from "../WDevCore/WModules/WComponentsTools.js";
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js"
 // @ts-ignore
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
-import { Catalogo_Clientes, Detail_PrendasModel, Transaction_ContratosModel } from "../FrontModel/DBODataBaseModel.js"
+import { Catalogo_Cambio_Dolar, Catalogo_Clientes, Detail_PrendasModel, Transaction_ContratosModel } from "../FrontModel/DBODataBaseModel.js"
 // @ts-ignore
 import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
 import { Detail_Prendas, Transaction_Contratos, ValoracionesContrato } from "../FrontModel/Model.js";
@@ -31,14 +31,13 @@ class Transaction_ContratosView extends HTMLElement {
         this.append(this.CustomStyle);
         this.Cliente = {}
         this.valoracionesDataset = [];
-        this.selectedClientDetail = WRender.Create({ tagName: "label", className: "selected-client" });
-        this.selectCliente(this.entity.Catalogo_Clientes)
-        this.amortizacionResumen = WRender.Create({ tagName: "label", innerText: this.valoracionResumen(this.entity) });
-        this.contratosForm = WRender.Create({ className: "contratos-form", children: [this.selectedClientDetail, this.amortizacionResumen] });
+        this.selectedClientDetail = WRender.Create({ tagName: "div", className: "client-container" });
+        this.amortizacionResumen = WRender.Create({ tagName: "div", className: "resumen-container" });
 
-
-
-
+        this.contratosForm = WRender.Create({
+            className: "contratos-form",
+            children: [this.selectedClientDetail, this.amortizacionResumen]
+        });
         this.SetOption();
         this.append(
             StylesControlsV2.cloneNode(true),
@@ -47,28 +46,21 @@ class Transaction_ContratosView extends HTMLElement {
             this.OptionContainer,
             this.TabContainer
         );
+
         this.Draw();
     }
-    /**
-     * 
-     * @param {ValoracionesContrato} entity 
-     * @returns 
-     */
-    valoracionResumen(entity) {
-        // @ts-ignore
-        return `Compra C$: ${entity.valoracion_compra_cordobas?.toFixed(2)} - Compra $: ${entity.valoracion_compra_dolares?.toFixed(2)}
-         Empeño C$: ${entity.valoracion_empeño_cordobas?.toFixed(2)} - Empeño $: ${entity.valoracion_empeño_dolares?.toFixed(2)}`;
-
-    }
     Draw = async () => {
-        //const dataset = await this.model.Get();
-        console.log(this.entity.Detail_Prendas);
+        this.tasasCambio = await new Catalogo_Cambio_Dolar().Get();
+        /**@type  {Catalogo_Cambio_Dolar}*/
+        this.tasaActual = this.tasasCambio[0];
         this.prendasTable = new WTableComponent({
             Dataset: this.entity.Detail_Prendas,
             ModelObject: new Detail_PrendasModel({})
         })
         this.contratosForm.append(this.prendasTable);
-        this.Manager.NavigateFunction("valoraciones", this.contratosForm)
+        this.Manager.NavigateFunction("valoraciones", this.contratosForm);
+        this.selectCliente(this.entity.Catalogo_Clientes)
+        this.valoracionResumen(this.entity)
 
     }
     SetOption() {
@@ -99,42 +91,105 @@ class Transaction_ContratosView extends HTMLElement {
     }
     selectCliente = (/**@type {Catalogo_Clientes} */ selectCliente) => {
         this.Cliente = selectCliente;
-        this.selectedClientDetail = WRender.CreateStringNode(`<div class="detail-cliente">
+        this.selectedClientDetail.innerHTML = "";
+        this.selectedClientDetail.append(WRender.CreateStringNode(`<div class="detail-container">
             <label class="name"> Cliente seleccionado: ${selectCliente.primer_nombre} ${selectCliente.segundo_nombre ?? ''} 
             ${selectCliente.primer_apellido} ${selectCliente.segundo_apellidio ?? ''}</label>
             <label>Tipo de indentificación: ${selectCliente.Catalogo_Tipo_Identificacion.Descripcion}</label>
             <label>Número de documento: ${selectCliente.identificacion}</label>
             <label>Teléfono: ${selectCliente.telefono}</label>
-        </div>`);
-        //this.Manager.NavigateFunction("valoraciones");
+        </div>`));
+        this.Manager.NavigateFunction("valoraciones");
+    }
+    /**
+     * 
+     * @param {ValoracionesContrato} entity 
+     * @returns 
+     */
+    valoracionResumen(entity) {
+        this.amortizacionResumen.innerHTML = "";
+        this.amortizacionResumen.append(WRender.CreateStringNode(`<div class="detail-container"> 
+            <div>
+                <label class="value-container">
+                    CARGOS A PAGAR: 
+                    <span>${entity.taza_interes_cargos}</span>
+                </label>
+                <label class="value-container">
+                    GESTIÓN CREDITICIA: 
+                    <span>${entity.gestion_crediticia}</span>
+                </label>
+                
+                <label class="value-container">
+                    CAMBIO DE DÓLAR A CÓRDOBAS: 
+                    <span>${this.tasaActual?.valor_de_venta}</span>
+                </label>
+                <label class="value-container">
+                    CAMBIO DE CÓRDOBAS A DÓLAR: 
+                    <span>${this.tasaActual?.valor_de_compra}</span>
+                </label>
+            </div>
+            <div>
+                <label class="value-container">
+                     Valor Capital C$: 
+                     <span>${entity.valoracion_empeño_cordobas?.toFixed(2)}</span>
+                </label>
+                <label class="value-container">
+                     Int. y demas cargo $: 
+                     <span>${entity.valoracion_empeño_cordobas?.toFixed(2)}</span>
+                </label>
+                <label class="value-container">
+                     Cuota fija C$: 
+                     <span>${entity.valoracion_empeño_cordobas?.toFixed(2)}</span>
+                </label>
+                <label class="value-container">
+                     Total a pagar C$: 
+                     <span>${entity.valoracion_empeño_cordobas?.toFixed(2)}</span>
+                </label>
+            </div>
+            <div>
+                <label class="value-container">
+                     Valor Capital $: 
+                     <span>${entity.valoracion_empeño_dolares?.toFixed(2)}</span>
+                </label>
+                <label class="value-container">
+                     Int. y demas cargos $: 
+                     <span>${entity.valoracion_empeño_cordobas?.toFixed(2)}</span>
+                </label>
+                <label class="value-container">
+                     Cuota fija $: 
+                     <span>${entity.valoracion_empeño_cordobas?.toFixed(2)}</span>
+                </label>
+                <label class="value-container">
+                     Total a pagar  $: 
+                     <span>${entity.valoracion_empeño_cordobas?.toFixed(2)}</span>
+                </label>
+            </div>
+        </div>`));
+        this.Manager.NavigateFunction("valoraciones");
     }
     // @ts-ignore
     selectValoracion = (valoracion) => {
         this.Manager.NavigateFunction("valoraciones");
     }
     CustomStyle = css`
-        .valoraciones-container{
+        .detail-container{
             padding: 20px;
             display: grid;
-            grid-template-columns: 400px calc(100% - 430px);
+            grid-template-columns:  repeat(4, auto);
             gap: 20px 30px;
-        }
-        #valoracionesForm, 
-        #valoracionesTable,
-        #cuotasTable,
-        .TabContainerTables,
-        .nav-header,
-        .selected-client{
-            grid-column: span 2;
-        }
-        .nav-header {
+            border: solid 1px #b1b1b1;
+            border-radius: 20px;
+            font-size: 12px;
+            margin: 20px;
+        }    
+        .value-container {
             display: flex;
-            width: 100%;
             justify-content: space-between;
-            font-size: 14px;
-            font-weight: bold;
-            color: #00238a
-        }        
+        }
+        .detail-container div {
+            display: flex;
+            flex-direction: column;
+        } 
         .OptionContainer{
             display: flex;
         } w-filter-option {
@@ -143,15 +198,22 @@ class Transaction_ContratosView extends HTMLElement {
     `
 }
 customElements.define('w-transaction_contratos', Transaction_ContratosView);
-// @ts-ignore
-window.addEventListener('load', async () => { MainBody.append(new Transaction_ContratosView({})) })
+
+window.addEventListener('load', async () => {
+    const contrato = await new ValoracionesContrato().GetValoracionContrato();
+    // @ts-ignore
+    MainBody.append(new Transaction_ContratosView(contrato))
+})
 /**@type {ValoracionesContrato} */
 const testData = new ValoracionesContrato({
     "valoracion_compra_cordobas": 10400,
     "valoracion_compra_dolares": 289.7,
     "valoracion_empeño_cordobas": 8000,
     "valoracion_empeño_dolares": 222.84,
-    "tasas_interes": 0.11, "plazo": "6",
+    "tasas_interes": 0.11,
+    taza_interes_cargos: 0.9,
+    gestion_crediticia: 0.1,
+    "plazo": "6",
     "fecha": "2023-07-16T20:21:50.052Z",
     "Transaction_Facturas": [{
         "fecha": "2023-08-16T20:21:50.000Z", "total": "1891.01", "interes": "880.00", "abono_capital": "1011.01", "capital_restante": "6988.99"
@@ -204,28 +266,28 @@ const testData = new ValoracionesContrato({
                 "Plazo": "6", "Tasa_interes": 234, "Fecha": "2023-05-28", "Tasa_de_cambio": 35.9,
                 "Detail_Valores": { "Valoracion_1": "10000", "dolares_1": 278.5515320334262, "Valoracion_2": "10000", "dolares_2": 278.5515320334262, "Valoracion_3": "10000", "dolares_3": 278.5515320334262 }
             }
-        }], 
-        "Catalogo_Clientes": {
-            "codigo_cliente": 3193, "primer_nombre": "WILFREDO",
-            "segundo_nombre": "",
-            "primer_apellido": "ALEMAN",
-            "segundo_apellidio": "PAVON",
-            "identificacion": "043-180962-0000J",
-            "sexo": "Femenino  ",
-            "fecha_nacimiento": "1962-09-18T00:00:00",
-            "id_departamento": 6, "id_municipio": 10,
-            "id_tipo_identificacion": 1,
-            "correo": null, "telefono": "86087647  ", "direccion": "rpt guillermo salazar", "hora": "08:44:43",
-            "fecha": "2022-06-15T00:00:00", "observaciones": null, "estado_civil": "Casado (a). ", "tipo_firma": "Ilegible",
-            "valor_cliente": "MP", "operadora_celular": "Claro", "valor_interes": 0.02, "solo_acreedor": "No ", "promedio": null,
-            "Catalogo_Clasificacion_Cliente": { "id_clasificacion": 2, "Descripcion": "MUY BUENO", "Estado": "ACTIVO", "porcentaje": null, "Catalogo_Clientes": null, "filterData": null },
-            "Catalogo_Clasificacion_Interes": { "id_clasificacion_interes": 2, "Descripcion": "RANGO 2", "Estado": "ACTIVO", "porcentaje": 2, "Catalogo_Clientes": null, "filterData": null },
-            "Catalogo_Tipo_Identificacion": { "id_tipo_identificacion": 1, "Descripcion": "CÉDULA", "Estado": "ACTIVO", "filterData": null },
-            "Catalogo_Profesiones": { "id_profesion": 49, "nombre": "Albañil", "filterData": null }, "Condicion_Laboral_Cliente": null,
-            "Catalogo_Municipio": { "id_municipio": 10, "nombre": "San Marcos", "id_departamento": 6, "Catalogo_Departamento": null, "Catalogo_Inversores": null, "filterData": null },
-            "Catalogo_Departamento": {
-                "id_departamento": 6, "nombre": "Carazo", "id_nacionalidad": 1, "ponderacion": 20, "puntaje": 2, "clasificacion": "MEDIO",
-                "Catalogo_Nacionalidad": null, "Catalogo_Municipio": null, "filterData": null
-            }, "id_profesion": 49, "tipoc": 1, "id_clasificacion": 2, "id_clasificacion_interes": 2, "Transaction_Contratos": null, "filterData": null
-        }
+        }],
+    "Catalogo_Clientes": {
+        "codigo_cliente": 3193, "primer_nombre": "WILFREDO",
+        "segundo_nombre": "",
+        "primer_apellido": "ALEMAN",
+        "segundo_apellidio": "PAVON",
+        "identificacion": "043-180962-0000J",
+        "sexo": "Femenino  ",
+        "fecha_nacimiento": "1962-09-18T00:00:00",
+        "id_departamento": 6, "id_municipio": 10,
+        "id_tipo_identificacion": 1,
+        "correo": null, "telefono": "86087647  ", "direccion": "rpt guillermo salazar", "hora": "08:44:43",
+        "fecha": "2022-06-15T00:00:00", "observaciones": null, "estado_civil": "Casado (a). ", "tipo_firma": "Ilegible",
+        "valor_cliente": "MP", "operadora_celular": "Claro", "valor_interes": 0.02, "solo_acreedor": "No ", "promedio": null,
+        "Catalogo_Clasificacion_Cliente": { "id_clasificacion": 2, "Descripcion": "MUY BUENO", "Estado": "ACTIVO", "porcentaje": null, "Catalogo_Clientes": null, "filterData": null },
+        "Catalogo_Clasificacion_Interes": { "id_clasificacion_interes": 2, "Descripcion": "RANGO 2", "Estado": "ACTIVO", "porcentaje": 2, "Catalogo_Clientes": null, "filterData": null },
+        "Catalogo_Tipo_Identificacion": { "id_tipo_identificacion": 1, "Descripcion": "CÉDULA", "Estado": "ACTIVO", "filterData": null },
+        "Catalogo_Profesiones": { "id_profesion": 49, "nombre": "Albañil", "filterData": null }, "Condicion_Laboral_Cliente": null,
+        "Catalogo_Municipio": { "id_municipio": 10, "nombre": "San Marcos", "id_departamento": 6, "Catalogo_Departamento": null, "Catalogo_Inversores": null, "filterData": null },
+        "Catalogo_Departamento": {
+            "id_departamento": 6, "nombre": "Carazo", "id_nacionalidad": 1, "ponderacion": 20, "puntaje": 2, "clasificacion": "MEDIO",
+            "Catalogo_Nacionalidad": null, "Catalogo_Municipio": null, "filterData": null
+        }, "id_profesion": 49, "tipoc": 1, "id_clasificacion": 2, "id_clasificacion_interes": 2, "Transaction_Contratos": null, "filterData": null
+    }
 })

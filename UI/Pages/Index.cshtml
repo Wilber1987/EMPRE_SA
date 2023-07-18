@@ -2,7 +2,7 @@
 @using API.Controllers
 @{
     //Layout = null;
-    if (!SecurityController.Auth())
+    if (!SecurityController.Auth(HttpContext.Session.GetString("seassonKey")))
     {
         Response.Redirect("./Security/Login");
         return;

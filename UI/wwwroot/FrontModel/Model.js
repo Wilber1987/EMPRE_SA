@@ -20,6 +20,12 @@ class ValoracionesContrato extends EntityClass {
     /**@type {Number} */
     tasas_interes;
     /**@type {Number} */
+    taza_interes_cargos;    
+    /**@type {Number} */
+    tasas_interes;
+    /**@type {Number} */
+    gestion_crediticia;
+    /**@type {Number} */
     plazo;
     /**@type {Date} */
     fecha;
@@ -32,6 +38,9 @@ class ValoracionesContrato extends EntityClass {
     SaveDataContract = async () => {
         await this.SaveData("Transactional_Contrato/SaveDataContract", this)
         return true;
+    }
+    GetValoracionContrato = async ()=>{
+        return await this.SaveData("Transactional_Contrato/GetDataContract", this)
     }
 }
 export { ValoracionesContrato }
