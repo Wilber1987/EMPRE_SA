@@ -1,6 +1,7 @@
 import { WForm } from "../WDevCore/WComponents/WForm.js";
 import { EntityClass } from "../WDevCore/WModules/EntityClass.js";
 import { WAjaxTools } from "../WDevCore/WModules/WComponentsTools.js";
+import { Detail_Prendas_Vehiculos } from "./Model.js";
 class Catalogo_Estados_Articulos extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
@@ -300,13 +301,14 @@ class Detail_PrendasModel extends EntityClass {
     uso = { type: 'select', Dataset: ["PRIVADO", "PARTICULAR"], hiddenInTable: true };
     servicio = {type: 'select', Dataset: ["PRIVADO", "PARTICULAR"] , hiddenInTable: true};
     //v_porcentage_etiqueta = { type: 'number' , hiddenInTable: true};
-    Detail_Prendas_Vehiculos = { hiddenInTable: true,  type: 'Model', ModelObject: () => new Detail_Prendas_VehiculosModel() };
     Catalogo_Categoria = {
         hiddenInTable: true,
         type: 'WSELECT', ModelObject: () => new Catalogo_Categoria(), action: (ObjectF, form, InputControl, prop) => {
 
         }
     };
+    Detail_Prendas_Vehiculos = { hiddenInTable: true,  type: 'Model', ModelObject: () => new Detail_Prendas_VehiculosModel(), EntityModel: ()=> new Detail_Prendas_Vehiculos() };
+   
 }
 export { Detail_PrendasModel }
 class Detail_Prendas_VehiculosModel extends EntityClass {
@@ -330,7 +332,6 @@ class Detail_Prendas_VehiculosModel extends EntityClass {
     porcentage_descuento_maximo = { type: 'number' };
     fecha_seguro = { type: 'date' };
     combustible = { type: 'text' };
-    Detail_Prendas = { type: 'WSELECT', ModelObject: () => new Detail_PrendasModel() };
 }
 export { Detail_Prendas_VehiculosModel }
 

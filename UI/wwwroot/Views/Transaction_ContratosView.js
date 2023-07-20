@@ -10,6 +10,8 @@ import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
 import { Detail_Prendas, Detail_Prendas_Vehiculos, Transaction_Contratos, ValoracionesContrato } from "../FrontModel/Model.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 import { ValoracionesSearch, clientSearcher } from "../modules/SerchersModules.js";
+import { ModalMessege } from "../WDevCore/WComponents/WForm.js";
+import { AmoritizationModule } from "../modules/AmortizacionModule.js";
 /**
  * @typedef {Object} ContratosConfig
  * * @property {ValoracionesContrato} [Entity]
@@ -23,6 +25,7 @@ class Transaction_ContratosView extends HTMLElement {
         super();
         //models
         this.entity = testData //props?.Entity ?? new ValoracionesContrato();
+        AmoritizationModule.calculoAmortizacion(this.entity);
         this.componentsModel = new Transaction_ContratosModel();
         this.OptionContainer = WRender.Create({ className: "OptionContainer" });
         this.TabContainer = WRender.Create({ className: "TabContainer", id: 'TabContainer' });
@@ -33,7 +36,6 @@ class Transaction_ContratosView extends HTMLElement {
         this.valoracionesDataset = [];
         this.selectedClientDetail = WRender.Create({ tagName: "div", className: "client-container" });
         this.amortizacionResumen = WRender.Create({ tagName: "div", className: "resumen-container" });
-
         this.contratosForm = WRender.Create({
             className: "contratos-form",
             children: [this.selectedClientDetail, this.amortizacionResumen]
@@ -54,22 +56,18 @@ class Transaction_ContratosView extends HTMLElement {
         /**@type  {Catalogo_Cambio_Dolar}*/
         this.tasaActual = this.tasasCambio[0];
         const isVehiculo = this.entity.Detail_Prendas.find(p => p.Catalogo_Categoria.id_categoria == 2);
-        console.log(isVehiculo);
-        console.log( new Detail_PrendasModel({
-            Detail_Prendas_VehiculosModel: {
-                type: 'Model', ModelObject: () => new Detail_Prendas_VehiculosModel(),
+        const modelPrendas = new Detail_PrendasModel({
+            Detail_Prendas_Vehiculos: {
+                type: 'Model', 
+                ModelObject: () => new Detail_Prendas_VehiculosModel(),
+                EntityModel: () => new Detail_Prendas_Vehiculos(),
                 hidden: isVehiculo == undefined ? true : false
             }
-        }));
+        });
         this.prendasTable = new WTableComponent({
             Dataset: this.entity.Detail_Prendas,
-            EntityModel: new Detail_Prendas_Vehiculos(),
-            ModelObject: new Detail_PrendasModel({
-                Detail_Prendas_VehiculosModel: {
-                    type: 'Model', ModelObject: () => new Detail_Prendas_VehiculosModel(),
-                    hidden: isVehiculo == undefined ? true : false
-                }
-            })
+            EntityModel: new Detail_Prendas({}),
+            ModelObject: modelPrendas
         })
         this.contratosForm.append(this.prendasTable);
         this.Manager.NavigateFunction("valoraciones", this.contratosForm);
@@ -79,7 +77,7 @@ class Transaction_ContratosView extends HTMLElement {
     }
     SetOption() {
         this.OptionContainer.append(WRender.Create({
-            tagName: 'button', className: 'Block-Primary', innerText: 'Nueva valoración',
+            tagName: 'button', className: 'Block-Primary', innerText: 'Nueva contrato',
             onclick: () => this.Manager.NavigateFunction("valoraciones")
         }))
         this.OptionContainer.append(WRender.Create({
@@ -103,16 +101,9 @@ class Transaction_ContratosView extends HTMLElement {
             }
         }))
     }
-    selectCliente = (/**@type {Catalogo_Clientes} */ selectCliente) => {
-        this.Cliente = selectCliente;
-        this.selectedClientDetail.innerHTML = "";
-        this.selectedClientDetail.append(WRender.CreateStringNode(`<div class="detail-container">
-            <label class="name"> Cliente seleccionado: ${selectCliente.primer_nombre} ${selectCliente.segundo_nombre ?? ''} 
-            ${selectCliente.primer_apellido} ${selectCliente.segundo_apellidio ?? ''}</label>
-            <label>Tipo de indentificación: ${selectCliente.Catalogo_Tipo_Identificacion.Descripcion}</label>
-            <label>Número de documento: ${selectCliente.identificacion}</label>
-            <label>Teléfono: ${selectCliente.telefono}</label>
-        </div>`));
+    selectCliente = (/**@type {Catalogo_Clientes} */ selectCliente) => {        
+        this.entity.Catalogo_Clientes = selectCliente;   
+        this.update();
         this.Manager.NavigateFunction("valoraciones");
     }
     /**
@@ -126,20 +117,20 @@ class Transaction_ContratosView extends HTMLElement {
             <div>
                 <label class="value-container">
                     CARGOS A PAGAR: 
-                    <span>${entity.taza_interes_cargos}</span>
+                    <span>${entity.taza_interes_cargos} %</span>
                 </label>
                 <label class="value-container">
                     GESTIÓN CREDITICIA: 
-                    <span>${entity.gestion_crediticia}</span>
+                    <span>${entity.gestion_crediticia} %</span>
                 </label>
                 
                 <label class="value-container">
                     CAMBIO DE DÓLAR A CÓRDOBAS: 
-                    <span>${this.tasaActual?.valor_de_venta}</span>
+                    <span>$ ${this.tasaActual?.valor_de_venta}</span>
                 </label>
                 <label class="value-container">
                     CAMBIO DE CÓRDOBAS A DÓLAR: 
-                    <span>${this.tasaActual?.valor_de_compra}</span>
+                    <span>$ ${this.tasaActual?.valor_de_compra}</span>
                 </label>
             </div>
             <div>
@@ -149,15 +140,15 @@ class Transaction_ContratosView extends HTMLElement {
                 </label>
                 <label class="value-container">
                      Int. y demas cargo $: 
-                     <span>${entity.valoracion_empeño_cordobas?.toFixed(2)}</span>
+                     <span>${entity.interes?.toFixed(2)}</span>
                 </label>
                 <label class="value-container">
                      Cuota fija C$: 
-                     <span>${entity.valoracion_empeño_cordobas?.toFixed(2)}</span>
+                     <span>${entity.cuotafija?.toFixed(2)}</span>
                 </label>
                 <label class="value-container">
                      Total a pagar C$: 
-                     <span>${entity.valoracion_empeño_cordobas?.toFixed(2)}</span>
+                     <span>${entity.total_pagar_cordobas?.toFixed(2)}</span>
                 </label>
             </div>
             <div>
@@ -167,23 +158,60 @@ class Transaction_ContratosView extends HTMLElement {
                 </label>
                 <label class="value-container">
                      Int. y demas cargos $: 
-                     <span>${entity.valoracion_empeño_cordobas?.toFixed(2)}</span>
+                     <span>${entity.interes_dolares?.toFixed(2)}</span>
                 </label>
                 <label class="value-container">
                      Cuota fija $: 
-                     <span>${entity.valoracion_empeño_cordobas?.toFixed(2)}</span>
+                     <span>${entity.cuotafija_dolares?.toFixed(2)}</span>
                 </label>
                 <label class="value-container">
                      Total a pagar  $: 
-                     <span>${entity.valoracion_empeño_cordobas?.toFixed(2)}</span>
+                     <span>${entity.total_pagar_dolares?.toFixed(2)}</span>
                 </label>
             </div>
         </div>`));
         this.Manager.NavigateFunction("valoraciones");
     }
+    clientResumen(/**@type {Catalogo_Clientes} */ selectCliente){
+        this.selectedClientDetail.innerHTML = "";
+        this.selectedClientDetail.append(WRender.CreateStringNode(`<div class="detail-container">
+            <label class="name"> Cliente seleccionado: ${selectCliente.primer_nombre} ${selectCliente.segundo_nombre ?? ''} 
+            ${selectCliente.primer_apellido} ${selectCliente.segundo_apellidio ?? ''}</label>
+            <label>Tipo de indentificación: ${selectCliente.Catalogo_Tipo_Identificacion.Descripcion}</label>
+            <label>Número de documento: ${selectCliente.identificacion}</label>
+            <label>Teléfono: ${selectCliente.telefono}</label>
+        </div>`));
+    }
     // @ts-ignore
     selectValoracion = (valoracion) => {
+        const existVehiculo = this.entity.Detail_Prendas.find(p => p.Catalogo_Categoria.id_categoria == 2);
+        if (existVehiculo != undefined && valoracion.Catalogo_Categoria.id_categoria != 2) {
+            this.append(ModalMessege("Anteriormente valoro un vehículo por lo tanto no puede agregar valoraciones de diferente categoría"));
+            return;
+        }
+        const notExistVehiculo = this.entity.Detail_Prendas.find(p => p.Catalogo_Categoria.id_categoria != 2);
+        if (notExistVehiculo != undefined && valoracion.Catalogo_Categoria.id_categoria == 2) {
+            this.append(ModalMessege("Anteriormente valoro un artículo distinto de vehículo por lo tanto no puede agregar valoraciones de esta categoría"));
+            return;
+        } 
+        this.entity.Detail_Prendas.push(new Detail_Prendas({
+            Descripcion: valoracion.Descripcion,
+            modelo: valoracion.Modelo,
+            mara: valoracion.Marca,
+            serie: valoracion.Serie,
+            pprenda: valoracion.valoracion_empeño_cordobas,
+            en_manos_de: undefined,
+            Catalogo_Categoria: valoracion.Catalogo_Categoria,
+            Transactional_Valoracion: valoracion
+        }))
+        this.update();
         this.Manager.NavigateFunction("valoraciones");
+    }
+    update(){
+        AmoritizationModule.calculoAmortizacion(this.entity);
+        this.prendasTable?.DrawTable();
+        this.clientResumen(this.entity.Catalogo_Clientes);
+        this.valoracionResumen(this.entity);   
     }
     CustomStyle = css`
         .detail-container{
@@ -224,10 +252,13 @@ const testData = new ValoracionesContrato({
     "valoracion_compra_dolares": 289.7,
     "valoracion_empeño_cordobas": 8000,
     "valoracion_empeño_dolares": 222.84,
-    "tasas_interes": 0.11,
-    taza_interes_cargos: 0.9,
-    gestion_crediticia: 0.1,
+    "tasas_interes":11,
+    taza_interes_cargos: 9,
+    gestion_crediticia: 1,
+    cuotafija: 100,
+    interes: 100,
     "plazo": "6",
+    taza_cambio: 36.2,
     "fecha": "2023-07-16T20:21:50.052Z",
     "Transaction_Facturas": [{
         "fecha": "2023-08-16T20:21:50.000Z", "total": "1891.01", "interes": "880.00", "abono_capital": "1011.01", "capital_restante": "6988.99"

@@ -62,7 +62,7 @@ class WNode {
  *  * @property {int} [status]
     * @property {String} [message]
 **/
-class ResponseServices {}
+class ResponseServices { }
 function ModelFunction() { }
 /**
  * @typedef {Object} ModelProperty 
@@ -84,6 +84,7 @@ function ModelFunction() { }
     * @property {String | Number} [max] para rangos de tipo number y date
     * @property {String} [fieldRequire] CAMBIA UN ESTADO DE UNA PROPIEDAD A REQUERIDO
     * @property {Object | EntityClass | ModelFunction} [ModelObject]
+    * @property { EntityClass | ModelFunction} [EntityModel]
     * @property {Array} [Dataset]
     * @property {Function} [action] Accion adicional que realizara el control cuando exista un cambio de valor recibe como parametro el objeto editado
     * @property {Function} [CalendarFunction] (obj) => {  }
@@ -95,7 +96,8 @@ class ModelProperty { }
     * @property {Object} [EditObject]
     * @property {Object} [ParentModel]
     * @property {Object} [UserActions]
-    * @property {Object} [ModelObject]    
+    * @property {Object} [ModelObject]
+    * @property {Object} [EntityModel]     
     * @property {Boolean} [DarkMode]
     * @property {Boolean} [AutoSave]
     * @property {Boolean} [DataRequire]
@@ -308,7 +310,7 @@ class FormConfig { };
      * @property {?String | undefined} [gridGap]
      */
 class ElementStyle {
-    
+
 }
 /**
  * @typedef {Object} Actions 
@@ -371,6 +373,7 @@ class TableConfig { };
     * @property {String} [StyleForm]   columnX1 | columnX3 | columnX3
     * @property {String} [ImageUrlPath] 
     * @property {Object} [ModelObject]
+    * @property {Object} [EntityModel] 
     * @property {Object} [ObjectDetail]
     * @property {Object} [EditObject] 
     * @property {Object} [ParentModel]     
@@ -398,7 +401,7 @@ class ModalConfig {
     * @property {String} [FilterType]
     * @property {Array<any>} [Values]
 **/
-class FilterData {}
+class FilterData { }
 
 export {
     WNode,
