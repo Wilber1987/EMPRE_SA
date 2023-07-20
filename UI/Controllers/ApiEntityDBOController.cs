@@ -9,6 +9,12 @@ namespace API.Controllers
     [ApiController]
     public class ApiEntityDBOController : ControllerBase
     {
+
+        [HttpPost]
+        public object SendMail(){              
+            //return MailServices.SendMail(Request.Form["path"],Request.Form["base64"]);
+            return ContractService.SendContract();
+        }
         [HttpPost]
         public object test(){              
             return FileService.upload(Request.Form["path"],Request.Form["base64"]);
