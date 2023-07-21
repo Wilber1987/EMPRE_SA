@@ -394,8 +394,8 @@ class Transaction_Valoraciones_View extends HTMLElement {
                 // @ts-ignore
                 //const valoracionesGuardadas = await this.valoracionModel?.GuardarValoraciones(this.valoracionesTable?.Dataset);
                 const contract = this.calculoAmortizacion();
-                console.log(JSON.stringify(WArrayF.replacer(contract)));
-                console.log(contract);
+                //console.log(JSON.stringify(WArrayF.replacer(contract)));
+               // console.log(contract);
                 // const response = await this.calculoAmortizacion().SaveDataContract();
                 // if (response) {
                 //     // @ts-ignore
@@ -476,6 +476,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
             plazo: this.valoracionesForm?.FormObject.Plazo ?? 1,
             fecha: new Date(),
             Transaction_Facturas: new Array(),  
+            // @ts-ignore
             taza_cambio: this.tasasCambio[0].valor_de_compra,      
             taza_interes_cargos: this.InteresBase,
             gestion_crediticia: this.Cliente.Catalogo_Clasificacion_Interes.porcentaje ,

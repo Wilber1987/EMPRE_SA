@@ -343,7 +343,7 @@ class ElementStyle {
  * **/
 /**
  * @typedef {Object} TableConfig 
- *  * @property {Array} Dataset
+ *  * @property {Array} [Dataset]
     * @property {Array} [selectedItems]
     * @property {Object} [ModelObject]  
     * @property {Object} [EntityModel] 

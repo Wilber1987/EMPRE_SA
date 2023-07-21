@@ -26,22 +26,12 @@ class WAppNavigator extends HTMLElement {
         for (const p in Config) {
             this[p] = Config[p];
         }
+        this.DrawAppNavigator();
     }
     attributeChangedCallBack() {
         this.DrawAppNavigator();
     }
-    connectedCallback() {
-        if (this.shadowRoot.innerHTML != "") {
-            return;
-        }
-        if (this.id == undefined) {
-            const Rand = Math.random();
-            this.id = "Menu" + Rand;
-        }
-        this.DrawAppNavigator();
-        if (this.Inicialize == true && this.InitialNav != undefined) {
-            this.InitialNav();
-        }
+    connectedCallback() {        
     }
     ActiveMenu = (ev) => {
         var navs = this.parentNode.querySelectorAll("w-app-navigator");
@@ -58,6 +48,14 @@ class WAppNavigator extends HTMLElement {
         }
     }
     DrawAppNavigator() {
+        this.shadowRoot.innerHTML = "";      
+        if (this.id == undefined) {
+            const Rand = Math.random();
+            this.id = "Menu" + Rand;
+        }
+        if (this.Inicialize == true && this.InitialNav != undefined) {
+            this.InitialNav();
+        }
         this.DarkMode = this.DarkMode ?? false;
         this.DisplayMode = this.DisplayMode ?? "left";
         this.shadowRoot.append(WRender.createElement(this.Style()));

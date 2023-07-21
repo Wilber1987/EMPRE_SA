@@ -39,6 +39,9 @@ class ValoracionesContrato extends EntityClass {
     Transaction_Facturas;
     /**@type {Array<Detail_Prendas>} */
     Detail_Prendas;
+    /**@type {String} */
+    observaciones;
+
 
     //?????????????????
     /**@type {Number} */
