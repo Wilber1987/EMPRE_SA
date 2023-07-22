@@ -3,6 +3,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using CAPA_NEGOCIO.Services;
+using iText.IO.Source;
+using iText.Kernel.Pdf;
+using iText.Html2pdf;
+using iText.Kernel.Geom;
+using System.Text;
+using iText.Layout;
+using Aspose.Pdf;
+
 namespace API.Controllers
 {
     [Route("api/[controller]/[action]")]
@@ -13,8 +21,45 @@ namespace API.Controllers
         [HttpPost]
         public object SendMail(){              
             //return MailServices.SendMail(Request.Form["path"],Request.Form["base64"]);
-            return ContractService.SendContract();
+            //return ContractService.SendContract();
+
+            //return ContractService.SendContract();
+
+            return this.Export();
         }
+        //[HttpGet]
+        public object Export()
+        {
+            //return null;
+            //var carajo =  File.ReadAllText(System.IO.Path.GetFullPath("../UI/Pages/Contracts/contrato_empeno.cshtml"));
+            String content = ContractService.SendContract();
+            using (MemoryStream stream = new MemoryStream(Encoding.ASCII.GetBytes(content)))
+            {
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                PdfWriter writer = new PdfWriter(byteArrayOutputStream);
+                iText.Kernel.Pdf.PdfDocument pdfDocument = new iText.Kernel.Pdf.PdfDocument(writer);                
+                pdfDocument.SetDefaultPageSize(iText.Kernel.Geom.PageSize.LEGAL);
+                iText.Layout.Document document = new iText.Layout.Document(pdfDocument);
+                document.SetLeftMargin(0);
+                document.SetRightMargin(0);
+                
+                
+                HtmlConverter.ConvertToPdf(stream, pdfDocument);
+                pdfDocument.Close();
+                return File(byteArrayOutputStream.ToArray(), "application/pdf", "Grid.pdf");                
+            }
+            
+            HtmlConverter.ConvertToPdf(content, new FileStream(System.IO.Path.GetFullPath("../UI/Pages/Contracts/test2.pdf"), FileMode.Create));
+            return "listo";
+
+            //ASpose pdf
+           /* HtmlLoadOptions htmloptions = new HtmlLoadOptions();            
+            Aspose.Pdf.Document doc = new Aspose.Pdf.Document(System.IO.Path.GetFullPath("../UI/Pages/Contracts/contrato_empeno.cshtml"), htmloptions);            
+            doc.Save("HTML-to-PDF.pdf");
+            
+            return "asd";*/
+        }
+
         [HttpPost]
         public object test(){              
             return FileService.upload(Request.Form["path"],Request.Form["base64"]);
