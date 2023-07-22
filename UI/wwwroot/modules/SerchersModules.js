@@ -96,3 +96,32 @@ const clientSearcher = (action) => {
     return WRender.Create({ className: "main-container", children: [FilterOptions, TableComponent] });
 }
 export { clientSearcher }
+
+/**
+ * 
+ * @param { Function } [action] 
+ * @returns { HTMLElement }
+ */
+const contratosSearcher = (action) => {
+    const model = new Transaction_Contratos();
+    const TableComponent = new WTableComponent({
+        EntityModel: model,
+        ModelObject: new Transaction_ContratosModel(),
+        AddItemsFromApi: true,
+        Options: {
+           Show: true
+        }
+    })
+    const FilterOptions = new WFilterOptions({
+        Dataset: [],
+        EntityModel: model,
+        ModelObject: new Transaction_ContratosModel(),
+        Display: true,
+        FilterFunction: (DFilt) => {
+            TableComponent.Dataset = DFilt;
+            TableComponent?.DrawTable();
+        }
+    });
+    return WRender.Create({ className: "main-contratos-searcher", children: [FilterOptions, TableComponent] });
+}
+export { contratosSearcher }

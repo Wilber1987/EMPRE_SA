@@ -66,11 +66,12 @@ class WTableComponent extends HTMLElement {
         this.SearchItemsFromApi = this.TableConfig.SearchItemsFromApi;
         this.Colors = ["#ff6699", "#ffbb99", "#adebad"];
         this.Options = this.TableConfig?.Options;
-        if ((this.Dataset == undefined || this.Dataset == null) && this.AddItemsFromApi) {
+        if ((this.Dataset.length == 0 || this.Dataset == undefined || this.Dataset == null) && this.AddItemsFromApi) {
             if (isWithtUrl) {
                 this.Dataset = await WAjaxTools.PostRequest(this.TableConfig?.Options?.UrlSearch);
             } else if (isWithtModel) {
-                this.Dataset = await this.TableConfig.ModelObject.Get();
+                const model = this.TableConfig.EntityModel ?? this.TableConfig.ModelObject;
+                this.Dataset = await model.Get();
             }
         }
         if (this.Dataset == undefined) {
@@ -461,6 +462,7 @@ class WTableComponent extends HTMLElement {
         this.shadowRoot?.append(
             new WModalForm({
                 ModelObject: this.ModelObject,
+                EntityModel: this.TableConfig.EntityModel,
                 AutoSave: this.TableConfig.AutoSave ?? false,
                 ParentModel: this.TableConfig.ParentModel,
                 EditObject: element,

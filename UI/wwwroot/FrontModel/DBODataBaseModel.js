@@ -1,6 +1,7 @@
 import { WForm } from "../WDevCore/WComponents/WForm.js";
 import { EntityClass } from "../WDevCore/WModules/EntityClass.js";
 import { WAjaxTools } from "../WDevCore/WModules/WComponentsTools.js";
+import { Detail_Prendas_Vehiculos } from "./Model.js";
 class Catalogo_Estados_Articulos extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
@@ -32,7 +33,7 @@ class Transactional_Valoracion extends EntityClass {
     Marca = { type: 'text' };
     Modelo = { type: 'text' };
     Catalogo_Categoria = {
-        type: 'WSELECT', 
+        type: 'WSELECT',
         ModelObject: () => new Catalogo_Categoria(), action: (ObjectF, /**@type {WForm} */ form, InputControl, prop) => {
             console.log(ObjectF.Catalogo_Categoria.plazo_limite);
             this.Plazo.max = ObjectF.Catalogo_Categoria.plazo_limite;
@@ -118,7 +119,8 @@ class Catalogo_Clientes extends EntityClass {
     primer_apellido = { type: 'text' };
     segundo_apellidio = { type: 'text', require: false };
     identificacion = { type: 'text' };
-    sexo = { type: 'select', Dataset: [{ id: "Masculino", Descripcion: "Masculino" }, { id: "Femenino", Descripcion: "Femenino" }], hiddenInTable: true, hiddenFilter: true };
+    sexo = { type: 'select', 
+    Dataset: [{ id: "Masculino", Descripcion: "Masculino" }, { id: "Femenino", Descripcion: "Femenino" }], hiddenInTable: true, hiddenFilter: true };
     fecha_nacimiento = { type: 'date', hiddenInTable: true, hiddenFilter: true, hiddenInTable: true };
     id_departamento = { type: 'number', hiddenInTable: true, hiddenFilter: true, hidden: true };
     id_municipio = { type: 'number', hiddenInTable: true, hiddenFilter: true, hidden: true };
@@ -216,58 +218,58 @@ class Transaction_ContratosModel extends EntityClass {
             this[prop] = props[prop];
         }
     }
+    Catalogo_Clientes = { type: 'WSELECT', ModelObject: () => new Catalogo_Clientes() };
     numero_contrato = { type: 'number', primary: true };
     fecha_contrato = { type: 'date' };
-    fecha_cancelar = { type: 'date' };
-    monto = { type: 'number' };
-    interes = { type: 'number' };
-    mora = { type: 'number' };
+    fecha_cancelar = { type: 'date', hiddenInTable: true, hiddenFilter: true };
+    monto = { type: 'number', hiddenFilter: true  };
+    interes = { type: 'number' , hiddenFilter: true };
+    mora = { type: 'number', hiddenInTable: true, hiddenFilter: true };
     estado = { type: 'select', Dataset: ["ACTIVO", "INACTIVO"] };
     fecha_vencimiento = { type: 'date' };
-    saldo = { type: 'number' };
     dias_mora = { type: 'number' };
-    saldo_mora = { type: 'number' };
-    fecha_baja = { type: 'date' };
-    abonos = { type: 'number' };
-    ultima_visita = { type: 'date' };
-    tipo = { type: 'number' };
-    entregado = { type: 'text' };
-    interes_actual = { type: 'number' };
-    observaciones = { type: 'text' };
-    iva = { type: 'number' };
-    margen = { type: 'number' };
-    interesl = { type: 'number' };
-    moral = { type: 'number' };
-    descuento = { type: 'number' };
-    util = { type: 'number' };
-    taza_interes_cargos = { type: 'number' };
-    taza_mora = { type: 'number' };
-    fecha_mora = { type: 'date' };
-    fecha_interes = { type: 'date' };
-    taza_gestion_crediticia = { type: 'number' };
-    Id_User_OLD = { type: 'number' };
-    taza_cambio = { type: 'number' };
-    dkm = { type: 'number' };
-    gasolinamonto = { type: 'number' };
-    valorcad = { type: 'number' };
-    plazo = { type: 'number' };
-    cuotafija = { type: 'number' };
-    montocuotaatrazadas = { type: 'number' };
-    mes_pagado = { type: 'date' };
-    tasa_hoy = { type: 'number' };
-    numero_protocolo = { type: 'number' };
-    valor_dolar = { type: 'number' };
-    parciales = { type: 'number' };
-    mora_parcial = { type: 'number' };
-    interes_parcial = { type: 'number' };
-    motivo_anulacion = { type: 'text' };
-    idcatemp = { type: 'number' };
-    cuota_fija_inicial = { type: 'number' };
-    fecha_cancelar_inicial = { type: 'date' };
-    plazo_inicial = { type: 'number' };
-    dias_para_baja = { type: 'number' };
-    Catalogo_Agentes = { type: 'WSELECT', ModelObject: () => new Catalogo_Agentes() };
-    Catalogo_Clientes = { type: 'WSELECT', ModelObject: () => new Catalogo_Clientes() };
+    saldo_mora = { type: 'number', hiddenInTable: true, hiddenFilter: true };
+    saldo = { type: 'number', hiddenInTable: true, hiddenFilter: true };
+    fecha_baja = { type: 'date', hiddenInTable: true, hiddenFilter: true };
+    abonos = { type: 'number', hiddenInTable: true, hiddenFilter: true };
+    ultima_visita = { type: 'date', hiddenInTable: true, hiddenFilter: true };
+    tipo = { type: 'number', hiddenInTable: true, hiddenFilter: true };
+    entregado = { type: 'text', hiddenInTable: true, hiddenFilter: true };
+    interes_actual = { type: 'number', hiddenInTable: true, hiddenFilter: true };
+    observaciones = { type: 'text', hiddenInTable: true, hiddenFilter: true };
+    iva = { type: 'number', hiddenInTable: true, hiddenFilter: true };
+    margen = { type: 'number', hiddenInTable: true, hiddenFilter: true };
+    interesl = { type: 'number', hiddenInTable: true, hiddenFilter: true };
+    moral = { type: 'number', hiddenInTable: true, hiddenFilter: true };
+    descuento = { type: 'number', hiddenInTable: true, hiddenFilter: true };
+    util = { type: 'number', hiddenInTable: true, hiddenFilter: true };
+    taza_interes_cargos = { type: 'number', hiddenInTable: true, hiddenFilter: true };
+    taza_mora = { type: 'number', hiddenInTable: true, hiddenFilter: true };
+    fecha_mora = { type: 'date', hiddenInTable: true, hiddenFilter: true };
+    fecha_interes = { type: 'date', hiddenInTable: true, hiddenFilter: true };
+    taza_gestion_crediticia = { type: 'number', hiddenInTable: true, hiddenFilter: true };
+    Id_User_OLD = { type: 'number', hiddenInTable: true, hiddenFilter: true };
+    taza_cambio = { type: 'number', hiddenInTable: true, hiddenFilter: true };
+    dkm = { type: 'number', hiddenInTable: true, hiddenFilter: true };
+    gasolinamonto = { type: 'number', hiddenInTable: true, hiddenFilter: true };
+    valorcad = { type: 'number', hiddenInTable: true, hiddenFilter: true };
+    plazo = { type: 'number', hiddenInTable: true, hiddenFilter: true };
+    cuotafija = { type: 'number', hiddenInTable: true, hiddenFilter: true };
+    montocuotaatrazadas = { type: 'number', hiddenInTable: true, hiddenFilter: true };
+    mes_pagado = { type: 'date', hiddenInTable: true, hiddenFilter: true };
+    tasa_hoy = { type: 'number', hiddenInTable: true, hiddenFilter: true };
+    numero_protocolo = { type: 'number', hiddenInTable: true, hiddenFilter: true };
+    valor_dolar = { type: 'number', hiddenInTable: true, hiddenFilter: true };
+    parciales = { type: 'number', hiddenInTable: true, hiddenFilter: true };
+    mora_parcial = { type: 'number', hiddenInTable: true, hiddenFilter: true };
+    interes_parcial = { type: 'number', hiddenInTable: true, hiddenFilter: true };
+    motivo_anulacion = { type: 'text', hiddenInTable: true, hiddenFilter: true };
+    idcatemp = { type: 'number', hiddenInTable: true, hiddenFilter: true };
+    cuota_fija_inicial = { type: 'number', hiddenInTable: true, hiddenFilter: true };
+    fecha_cancelar_inicial = { type: 'date', hiddenInTable: true, hiddenFilter: true };
+    plazo_inicial = { type: 'number', hiddenInTable: true, hiddenFilter: true };
+    dias_para_baja = { type: 'number', hiddenInTable: true, hiddenFilter: true };
+    Catalogo_Agentes = { type: 'WSELECT', ModelObject: () => new Catalogo_Agentes(), hiddenInTable: true, hiddenFilter: true };
     Detail_Prendas = { type: 'MasterDetail', ModelObject: () => new Detail_PrendasModel() };
 }
 export { Transaction_ContratosModel }
@@ -280,33 +282,34 @@ class Detail_PrendasModel extends EntityClass {
     }
     numero_prenda = { type: 'number', primary: true };
     numero_contrato_OLD = { type: 'number', hidden: true };
-    Descripcion = { type: 'text' };   
-    Tipo = { type: 'text' ,  hidden: true};
+    Descripcion = { type: 'text' };
+    Tipo = { type: 'text', hidden: true };
     marca = { type: 'text' };
     serie = { type: 'text' };
     modelo = { type: 'text' };
-    pprenda = { type: 'number', label: "Monto aprob."};
-    iva = { type: 'text' , hidden: true};
+    pprenda = { type: 'number', label: "Monto aprob." };
+    iva = { type: 'text', hidden: true };
     //margen = { type: 'text', hiddenInTable: true };
-    estado = { type: 'select', Dataset: ["ACTIVO", "INACTIVO"] , hiddenInTable: true};
+    estado = { type: 'select', Dataset: ["ACTIVO", "INACTIVO"], hiddenInTable: true };
     //interesl = { type: 'number' , hiddenInTable: true};
     //moral = { type: 'number' , hiddenInTable: true};
     //fliquidacion = { type: 'date', hiddenInTable: true };
-    precio_venta = { type: 'number' , hiddenInTable: true};
-    en_manos_de = { type: 'select', Dataset: ["ACREEDOR", "DEUDOR"] , hiddenInTable: true};
+    precio_venta = { type: 'number', hiddenInTable: true };
+    en_manos_de = { type: 'select', Dataset: ["ACREEDOR", "DEUDOR"], hiddenInTable: true };
     color = { type: 'COLOR' };
     //factura = { type: 'text' };
     //tipo_movimiento = { type: 'text' , hiddenInTable: true};
     uso = { type: 'select', Dataset: ["PRIVADO", "PARTICULAR"], hiddenInTable: true };
-    servicio = {type: 'select', Dataset: ["PRIVADO", "PARTICULAR"] , hiddenInTable: true};
+    servicio = { type: 'select', Dataset: ["PRIVADO", "PARTICULAR"], hiddenInTable: true };
     //v_porcentage_etiqueta = { type: 'number' , hiddenInTable: true};
-    Detail_Prendas_Vehiculos = { hiddenInTable: true,  type: 'Model', ModelObject: () => new Detail_Prendas_VehiculosModel() };
     Catalogo_Categoria = {
         hiddenInTable: true,
         type: 'WSELECT', ModelObject: () => new Catalogo_Categoria(), action: (ObjectF, form, InputControl, prop) => {
 
         }
     };
+    Detail_Prendas_Vehiculos = { hiddenInTable: true, type: 'Model', ModelObject: () => new Detail_Prendas_VehiculosModel(), EntityModel: () => new Detail_Prendas_Vehiculos() };
+
 }
 export { Detail_PrendasModel }
 class Detail_Prendas_VehiculosModel extends EntityClass {
@@ -330,7 +333,6 @@ class Detail_Prendas_VehiculosModel extends EntityClass {
     porcentage_descuento_maximo = { type: 'number' };
     fecha_seguro = { type: 'date' };
     combustible = { type: 'text' };
-    Detail_Prendas = { type: 'WSELECT', ModelObject: () => new Detail_PrendasModel() };
 }
 export { Detail_Prendas_VehiculosModel }
 

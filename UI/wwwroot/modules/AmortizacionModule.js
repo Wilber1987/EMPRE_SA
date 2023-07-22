@@ -1,70 +1,63 @@
 //@ts-check
-import { ValoracionesContrato } from "../FrontModel/Model";
+import { Cuota, ValoracionesContrato } from "../FrontModel/Model.js";
+import { WArrayF } from "../WDevCore/WModules/WComponentsTools.js";
 
 
 class AmoritizationModule {
     /**
-     * 
+     * @param {ValoracionesContrato} contrato
      * @returns {ValoracionesContrato}
      */
-    static calculoAmortizacion = () => {
-        if (this.valoracionesTable?.Dataset.length == 0) {
-            this.amortizacionResumen.innerText = this.valoracionResumen(0, 0, 0, 0);
-            return new ValoracionesContrato();
-        }
-        // const total = this.valoracionesTable?.Dataset.reduce((sum, value) => (typeof value.Edad == "number" ? sum + value.Edad : sum), 0);
-        const constrato = new ValoracionesContrato({
-            valoracion_compra_cordobas: WArrayF.SumValAtt(this.valoracionesTable?.Dataset, "valoracion_compra_cordobas"),
-            valoracion_compra_dolares: WArrayF.SumValAtt(this.valoracionesTable?.Dataset, "valoracion_compra_dolares"),
-            valoracion_empeño_cordobas: WArrayF.SumValAtt(this.valoracionesTable?.Dataset, "valoracion_empeño_cordobas"),
-            valoracion_empeño_dolares: WArrayF.SumValAtt(this.valoracionesTable?.Dataset, "valoracion_empeño_dolares"),
-            tasas_interes: this.getTasaInteres() / 100,
-            plazo: this.valoracionesForm?.FormObject.Plazo ?? 1,
-            fecha: new Date(),
-            Transaction_Facturas: new Array(),
-            Detail_Prendas: this.valoracionesTable?.Dataset.map(
-                // @ts-ignore
-                /**@type {Transactional_Valoracion}*/valoracion => new Detail_Prendas({
-                Descripcion: valoracion.descripcion,
-                modelo: valoracion.model,
-                marca: valoracion.marca,
-                serie: valoracion.serie,
-                Catalogo_Categoria: valoracion.Catalogo_Categoria,
-                Transactional_Valoracion: valoracion
-            })
-            ),
-            Catalogo_Clientes: this.Cliente
-        })
-        const cuotaFija = this.getPago(constrato);
-        let capital = constrato.valoracion_empeño_cordobas;
-        for (let index = 0; index < constrato.plazo; index++) {
-            const abono_capital = cuotaFija - (capital * constrato.tasas_interes);
+    static calculoAmortizacion = (contrato) => {
+        //console.log(contrato.Detail_Prendas);
+
+        contrato.valoracion_compra_cordobas = WArrayF.SumValAtt(contrato.Detail_Prendas.map(p => p.Transactional_Valoracion), "valoracion_compra_cordobas");
+        contrato.valoracion_compra_dolares = WArrayF.SumValAtt(contrato.Detail_Prendas.map(p => p.Transactional_Valoracion), "valoracion_compra_dolares");
+        contrato.valoracion_empeño_cordobas = WArrayF.SumValAtt(contrato.Detail_Prendas.map(p => p.Transactional_Valoracion), "valoracion_empeño_cordobas");
+        contrato.valoracion_empeño_dolares = WArrayF.SumValAtt(contrato.Detail_Prendas.map(p => p.Transactional_Valoracion), "valoracion_empeño_dolares");
+        contrato.taza_interes_cargos = contrato.taza_interes_cargos ?? 0.9
+        contrato.tasas_interes = (parseFloat(contrato.Catalogo_Clientes.Catalogo_Clasificacion_Interes.porcentaje) + contrato.taza_interes_cargos) / 100;
+        contrato.plazo = contrato.plazo ?? 1;
+        contrato.fecha = new Date();
+        contrato.Transaction_Facturas = new Array();
+        contrato.Detail_Prendas = contrato.Detail_Prendas;
+        contrato.gestion_crediticia = contrato.Catalogo_Clientes.Catalogo_Clasificacion_Interes.porcentaje ?? 6;
+
+        contrato.cuotafija = this.getPago(contrato);
+        contrato.cuotafija_dolares = contrato.cuotafija / contrato.taza_cambio;
+        let capital = contrato.valoracion_empeño_cordobas;
+        for (let index = 0; index < contrato.plazo; index++) {
+            const abono_capital = contrato.cuotafija - (capital * contrato.tasas_interes);
             const cuota = new Cuota({
                 // @ts-ignore
-                fecha: constrato.fecha.modifyMonth(index + 1),
+                fecha: contrato.fecha.modifyMonth(index + 1),
                 // @ts-ignore
-                total: cuotaFija.toFixed(2),
+                total: contrato.cuotafija.toFixed(2),
                 // @ts-ignore
-                interes: (capital * constrato.tasas_interes).toFixed(2),
+                interes: (capital * contrato.tasas_interes).toFixed(2),
                 // @ts-ignore
                 abono_capital: abono_capital.toFixed(2),
                 // @ts-ignore
                 capital_restante: (capital - abono_capital).toFixed(2)
             })
             capital = capital - abono_capital;
-            constrato.Transaction_Facturas.push(cuota)
+            contrato.Transaction_Facturas.push(cuota)
         }
-        //console.log(constrato);
-        if (this.CuotasTable != undefined) {
-            this.CuotasTable.Dataset = constrato.Transaction_Facturas;
-            this.CuotasTable?.Draw();
-        }
-        this.amortizacionResumen.innerText = this.valoracionResumen(
-            constrato.valoracion_compra_cordobas,
-            constrato.valoracion_compra_dolares,
-            constrato.valoracion_empeño_cordobas,
-            constrato.valoracion_empeño_dolares);
-        return constrato;
+
+        contrato.total_pagar_cordobas = WArrayF.SumValAtt(contrato.Transaction_Facturas, "total");
+        contrato.total_pagar_dolares = WArrayF.SumValAtt(contrato.Transaction_Facturas, "total") / contrato.taza_cambio;
+
+        contrato.interes = WArrayF.SumValAtt(contrato.Transaction_Facturas, "interes");
+        contrato.interes_dolares = WArrayF.SumValAtt(contrato.Transaction_Facturas, "interes") / contrato.taza_cambio;
+        return contrato;
+    }
+
+    static getPago = (contrato) => {
+        const monto = contrato.valoracion_empeño_cordobas;
+        const cuotas = contrato.plazo;
+        const tasa = contrato.tasas_interes;
+        const payment = ((tasa * Math.pow(1 + tasa, cuotas)) * monto) / (Math.pow(1 + tasa, cuotas) - 1);
+        return payment;
     }
 }
-export { AmoritizationModule}
+export { AmoritizationModule }

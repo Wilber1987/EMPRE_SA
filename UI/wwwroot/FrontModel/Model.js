@@ -20,9 +20,13 @@ class ValoracionesContrato extends EntityClass {
     /**@type {Number} */
     tasas_interes;
     /**@type {Number} */
-    taza_interes_cargos;    
+    taza_interes_cargos;
     /**@type {Number} */
     tasas_interes;
+    /**@type {Number} */
+    cuotafija;
+    /**@type {Number} */
+    cuotafija_dolares;
     /**@type {Number} */
     gestion_crediticia;
     /**@type {Number} */
@@ -35,11 +39,30 @@ class ValoracionesContrato extends EntityClass {
     Transaction_Facturas;
     /**@type {Array<Detail_Prendas>} */
     Detail_Prendas;
+    /**@type {String} */
+    observaciones;
+
+
+    //?????????????????
+    /**@type {Number} */
+    monto;
+
+    /**@type {Number} */
+    total_pagar_cordobas;
+    /**@type {Number} */
+    total_pagar_dolares;
+    /**@type {Number} */
+    interes;
+    /**@type {Number} */
+    interes_dolares;
+    /**@type {Number} cuota del abono*/
+    taza_cambio;
+
     SaveDataContract = async () => {
         await this.SaveData("Transactional_Contrato/SaveDataContract", this)
         return true;
     }
-    GetValoracionContrato = async ()=>{
+    GetValoracionContrato = async () => {
         return await this.SaveData("Transactional_Contrato/GetDataContract", this)
     }
 }

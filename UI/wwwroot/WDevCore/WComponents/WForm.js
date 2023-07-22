@@ -360,7 +360,7 @@ class WForm extends HTMLElement {
                 if (ModelProperty.ModelObject?.__proto__ == Function.prototype) {
                     ModelProperty.ModelObject = await WArrayF.isModelFromFunction(Model, prop);
                     /**@type {EntityClass} */
-                    const entity = ModelProperty.ModelObject;
+                    const entity = ModelProperty.EntityModel ?? ModelProperty.ModelObject;
                     ModelProperty.Dataset = await entity.Get();
                 }
                 if (ObjectF[prop] == null && ModelProperty.require != false &&
