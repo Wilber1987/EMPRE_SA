@@ -1,38 +1,72 @@
+using RazorLight;
 using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Net.Mail;
-using System.Net.Security;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using DataBaseModel;
-using iText.IO.Source;
-using iText.Kernel.Geom;
-using iText.Kernel.Pdf;
+using System.IO;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
+using iTextSharp.text.html.simpleparser;
+using UI.Controllers;
 
 namespace CAPA_NEGOCIO.Services
 {
     public class ContractService
     {
-        public static String SendContract()
+        public class MyModel
         {
-            
-            Transaction_Contratos test = new Transaction_Contratos();
+            public string Title { get; set; }
+            public string Content { get; set; }
+        }
+        public static async Task<byte[]> GeneratePdfFromRazorTemplateAsync<TModel>(string razorTemplate, TModel model)
+        {
 
-            String dir = Directory.GetDirectoryRoot("/UI/");
+            var engine = new RazorLightEngineBuilder()
+                .UseFileSystemProject(System.IO.Path.GetFullPath("../UI/Pages/Contracts"))
+                .UseMemoryCachingProvider()
+                .Build();
 
-            //var baseUrl = System.IO.Path.GetFullPath("../UI/Contracts");
-            //var projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName;
-            var carajo =  File.ReadAllText(System.IO.Path.GetFullPath("../UI/Pages/Contracts/contrato_empeno.cshtml"));
+            string renderedHtml = await engine.CompileRenderAsync(razorTemplate, model);
 
+            var renderedHtmlBytes = System.Text.Encoding.UTF8.GetBytes(renderedHtml);
+            return renderedHtmlBytes;
+        }
 
-            return carajo;
+        public static void generaPDF(String rutaArchivo)
+        {
+            var model = new Person
+            {
+                Name = "John Doe",
+                Age = 30
+            };
 
-            
+            var templatePath = Path.Combine(System.IO.Path.GetFullPath("../UI/Pages/Contracts"), rutaArchivo);
+            var templateContent = File.ReadAllText(templatePath);
 
-            
+            var renderedHtml = RenderTemplate(templateContent, model);
+
+            // Generar el PDF
+            var pdfFilePath = Path.Combine(System.IO.Path.GetFullPath("../UI/Pages/Contracts"), "output.pdf");
+            GeneratePdfFromHtml(renderedHtml, pdfFilePath);
+
+        }
+        static string RenderTemplate(string templateContent, Person model)
+        {
+            return templateContent
+               .Replace("{Name}", model.Name)
+               .Replace("{Age}", model.Age.ToString());
+        }
+
+        static void GeneratePdfFromHtml(string html, string outputPath)
+        {
+            using var stream = new FileStream(outputPath, FileMode.Create);
+            using var document = new Document(PageSize.A4);
+            using var writer = PdfWriter.GetInstance(document, stream);
+
+            document.Open();
+            using var htmlWorker = new HTMLWorker(document);
+            using var sr = new StringReader(html);
+            htmlWorker.Parse(sr);
+            document.Close();
         }
     }
 
-    
+
 }

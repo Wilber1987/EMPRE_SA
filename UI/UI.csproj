@@ -5,19 +5,21 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
+  
 
   <ItemGroup>
-    <PackageReference Include="Aspose.PDF" Version="23.7.0" />
-    <PackageReference Include="HtmlRenderer.PdfSharp" Version="1.5.0.6" />
     <PackageReference Include="itext7" Version="8.0.0" />
     <PackageReference Include="itext7.bouncy-castle-adapter" Version="8.0.0" />
     <PackageReference Include="itext7.pdfhtml" Version="5.0.0" />
+    <!-- <PackageReference Include="itextsharp.xmlworker" Version="5.5.13.3" /> -->
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.20" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="iTextSharp" Version="5.5.13.2" />
+    <PackageReference Include="RazorLight" Version="2.0.0" />
   </ItemGroup>
 
   <ItemGroup>
