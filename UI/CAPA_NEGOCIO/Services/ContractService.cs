@@ -5,6 +5,7 @@ using iTextSharp.text;
 using iTextSharp.text.pdf;
 using iTextSharp.text.html.simpleparser;
 using UI.Controllers;
+using iTextSharp.tool.xml;
 
 namespace CAPA_NEGOCIO.Services
 {
@@ -15,7 +16,7 @@ namespace CAPA_NEGOCIO.Services
             public string Title { get; set; }
             public string Content { get; set; }
         }
-        public static async Task<byte[]> GeneratePdfFromRazorTemplateAsync<TModel>(string razorTemplate, TModel model)
+       /* public static async Task<byte[]> GeneratePdfFromRazorTemplateAsync<TModel>(string razorTemplate, TModel model)
         {
 
             var engine = new RazorLightEngineBuilder()
@@ -27,7 +28,24 @@ namespace CAPA_NEGOCIO.Services
 
             var renderedHtmlBytes = System.Text.Encoding.UTF8.GetBytes(renderedHtml);
             return renderedHtmlBytes;
+        }*/
+        public static async Task<byte[]> GeneratePdfFromRazorTemplateAsync<TModel>(string razorTemplate, TModel model)
+        {
+            var engine = new RazorLightEngineBuilder()
+                .UseFileSystemProject(System.IO.Path.GetFullPath("../UI/Pages/Contracts"))
+                .UseMemoryCachingProvider()
+                .Build();
+
+            string renderedHtml = await engine.CompileRenderAsync(razorTemplate, model);
+
+            // Generar el PDF a partir del HTML renderizado
+            var pdfFilePath = Path.Combine(System.IO.Path.GetFullPath("../UI/Pages/Contracts"), "output.pdf");
+            GeneratePdfFromHtml(renderedHtml, pdfFilePath);
+
+            // Leer el contenido del archivo PDF generado y devolverlo como un arreglo de bytes
+            return File.ReadAllBytes(pdfFilePath);
         }
+
 
         public static void generaPDF(String rutaArchivo)
         {
@@ -54,7 +72,7 @@ namespace CAPA_NEGOCIO.Services
                .Replace("{Age}", model.Age.ToString());
         }
 
-        static void GeneratePdfFromHtml(string html, string outputPath)
+        /*static void GeneratePdfFromHtml(string html, string outputPath)
         {
             using var stream = new FileStream(outputPath, FileMode.Create);
             using var document = new Document(PageSize.A4);
@@ -65,6 +83,28 @@ namespace CAPA_NEGOCIO.Services
             using var sr = new StringReader(html);
             htmlWorker.Parse(sr);
             document.Close();
+        }*/
+
+        static void GeneratePdfFromHtml(string html, string outputPath)
+        {
+            using (var stream = new FileStream(outputPath, FileMode.Create))
+            {
+                using (var document = new Document(PageSize.A4))
+                {
+                    using (var writer = PdfWriter.GetInstance(document, stream))
+                    {
+                        document.Open();
+
+                        using (var sr = new StringReader(html))
+                        {
+                            // Use XMLWorkerHelper to parse the HTML with CSS support
+                            XMLWorkerHelper.GetInstance().ParseXHtml(writer, document, sr);
+                        }
+
+                        document.Close();
+                    }
+                }
+            }
         }
     }
 

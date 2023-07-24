@@ -10,8 +10,7 @@ namespace UI.Controllers
         [HttpPost]
         public String GeneratePdfContract()
         {
-            ContractService.generaPDF("contrato_empeno.cshtml");
-            //PdfGenerator.generaPDF();
+            ContractService.generaPDF("contrato_empeno.cshtml");            
             return "ruta del archivo";
         }
     }

@@ -1,31 +1,45 @@
 <!DOCTYPE html>
-<html>
-  <style>
-    .justify{
-      text-align: justify; font-size:9.5px;
-      colo:red;
-      font-weight: bold;
-    }
-  </style>
+<html> 
 <head>    
 </head>
-<body>
-     <h1>Hello, {Name}!</h1>
-    <p>You are {Age} years old.</p>
-    <p class="nombreEmpresa"></p>
+<body>   
 
-    <p style="text-align: justify; font-size:9.5px;">Nosotros: Juan José Villavicencio Navarro, mayor de edad, casado, ingeniero Industrial, con cédula Nº 043-240688-0001M, Nicaragüense y de este domicilio de San Marcos, actuando en calidad de apoderado generalísimo 
+    
+
+    <p style="font-size:9.5px; margin-top:0px; margin-bottom:0px; text-align:center; padding-bottom:0px">EMPEÑOS Y PRÉSTAMOS S.A "EMPRE SA"</p>
+    <p style="font-size:9.5px; margin-top:0px; margin-bottom:0px; text-align:center; padding-bottom:0px">“Tu  Prosperidad,  Es  Nuestro Éxito….”</p>
+  
+      <p style="font-size: 9.5px; margin-top: 0px; margin-bottom: 0px; text-align: left; padding-bottom: 0px;">No Contrato: {{numero_contrato}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RUC J0310000300895</p>    
+          
+      
+  
+    <p style="font-size:9.5px; margin-top:0px; margin-bottom:0px; text-align:center; padding-bottom:0px">Oficina Central 82572062 (Mov); 57199497 (Cl), 25353613 (Planta)</p>
+    <p style="font-size:9.5px; margin-top:0px; margin-bottom:0px; text-align:center; padding-bottom:0px">CONTRATO DE MUTUO GARANTIZADO CON PRENDA COMERCIAL</p>
+    
+
+
+    <p style="text-align: justify; font-size:9.5px; margin-top:20px">Nosotros: Juan José Villavicencio Navarro, mayor de edad, casado, ingeniero Industrial, con cédula Nº 043-240688-0001M, Nicaragüense y de este domicilio de San Marcos, actuando en calidad de apoderado generalísimo 
       de la sociedad Anónima  denominada: " EMPEÑOS Y PRESTAMOS S.A " EMPRE S.A, Sociedad que es de este domicilio, constituida, autorizada y existente de conformidad a las leyes de la República de Nicaragua, en escritura pública #51, Constitución de Sociedad Anónima y estatutos,
        y bajo el asiento #10011, Pág. 229/245, Tomo 97, Libro segundo de sociedades del Registro público de Carazo, que por brevedad en lo sucesivo del presente contrato  se le podrá  denominar el ACREEDOR; siendo el domicilio: Del Instituto Juan XXIII, 20 varas al Oeste, 
-       en el municipio de San Marcos, Departamento de Carazo, Dirección electrónica: empresociedadanonima@gmail.com; y por otra parte  el / la señor (a) : mayor de edad, con número de cédula: con domicilio: , Estado civil:  quien habita en el municipio de: , Departamento de , 
+       en el municipio de San Marcos, Departamento de Carazo, Dirección electrónica: empresociedadanonima@gmail.com; y por otra parte  el / la señor (a) : {{Catalogo_Clientes.primer_nombre}} {{Catalogo_Clientes.segundo_nombre}} {{Catalogo_Clientes.primer_apellido}} {{Catalogo_Clientes.segundo_apellido}} mayor de edad,
+        con número de cédula: {{Catalogo_Clientes.identificacion}}  con domicilio: {{Catalogo_Clientes.direccion}} , Estado civil: {{Catalogo_Clientes.estado_civil}}  quien habita en el municipio de: {{Catalogo_Clientes.Catalogo_Municipio.nombre}}, Departamento de {{Catalogo_Clientes.Catalogo_Departamento.nombre}}, 
        a quien en sucesivo se le denominará el "DEUDOR", hemos convenido en celebrar el presente    "CONTRATO DE MUTUO GARANTIZADO  CON PRENDA COMERCIAL" , el cual se regirá conforme las cláusulas siguientes:
       1. PRIMERA (MONTO DE EMPEÑO): El  deudor confiesa tener recibido de parte del acreedor, la cantidad de: C$   , (  )  equivalente a moneda de los Estados Unidos de América: $ , (  ), Según el valor de la compra del dólar a la fecha de hoy    de: C$ 
       2. SEGUNDA (DESCRIPCION DE LOS BIENES EMPEÑADOS): En garantía del pago a la cantidad debida, el deudor constituye a favor del acreedor prenda (s) comercial (es) sobre  el/los siguiente (s) bien (es):	
       </p>
 
       {{tabla_articulos}}
-    <p style="text-align: left; font-weight:bold">Observaciones:</p>    
-    <p style="text-align: justify; font-size:10px0; font-weight:bold;">{{observaciones}}</p>
+
+    <p style="text-align: left; font-weight:bold;margin-top:10px;">Observaciones:</p>    
+
+    <p style="font-size:9.5px;">{{observaciones}}</p>
 
     <p style="text-align: justify; font-size:9.5px;"> <u>3. TERCERA (RESPONSABILIDAD LIMITADA DEL ACREEDOR):</u> El acreedor no se responsabiliza por deterioros de los bienes empeñados por consecuencias de  terremotos, inundaciones, incendios,  derrumbes, erupciones, y cualquier otro hecho social, natural o delictivo que atente contra la integridad física y funcional 
       de los bienes durante el tiempo de almacenamiento en las instalaciones del acreedor. Al momento de empeñar los bienes estos serán inspeccionados física y funcionalmente por el personal de atención a clientes, pero al momento de cancelación y entrega de los bienes, estos no serán probados funcionalmente,
