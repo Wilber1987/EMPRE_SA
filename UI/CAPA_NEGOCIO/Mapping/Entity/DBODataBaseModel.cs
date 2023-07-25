@@ -142,6 +142,23 @@ namespace DataBaseModel
         public DateTime? fecha_cancelar_inicial { get; set; }
         public int? plazo_inicial { get; set; }
         public int? dias_para_baja { get; set; }
+
+
+        /****new properties ***/
+        public Double? valoracion_compra_dolares  { get; set; }
+        public Double? valoracion_compra_cordobas  { get; set; }
+        public Double? valoracion_empeño_cordobas  { get; set; }
+        public Double? valoracion_empeño_dolares  { get; set; }
+        public Double? tasas_interes  { get; set; }
+        public Double? gestion_crediticia  { get; set; }
+        public Double? cuotafija_dolares  { get; set; }
+        public Double? fecha  { get; set; }
+        public Double? total_pagar_cordobas  { get; set; }
+        public Double? total_pagar_dolares  { get; set; }
+        public Double? interes_dolares  { get; set; }
+        /***end new properties***/
+
+
         public int? Id_User { get; set; }
         [ManyToOne(TableName = "Catalogo_Agentes", KeyColumn = "id_agente", ForeignKeyColumn = "id_agente")]
         public Catalogo_Agentes? Catalogo_Agentes { get; set; }
