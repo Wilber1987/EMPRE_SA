@@ -60,6 +60,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
                     }
                 }, valor_compra_dolares: {
                     type: "operation", action: (element) => {
+                        // @ts-ignore
                         return this.calculoDolares(element.porcentaje_compra, this.tasasCambio[0].valor_de_compra);
                     }
                 },
@@ -69,6 +70,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
                     }
                 }, valor_empeño_dolares: {
                     type: "operation", action: (element) => {
+                        // @ts-ignore
                         return this.calculoDolares(element.porcentaje_empeno, this.tasasCambio[0].valor_de_compra);
                     }
                 }
@@ -113,8 +115,9 @@ class Transaction_Valoraciones_View extends HTMLElement {
             Dataset: this.valoracionesDataset,
             ModelObject: new Transactional_Valoracion({}),
             paginate: true,
-            AutoSave: false,
+            AutoSave: false,            
             id: "valoracionesTable",
+            AddItemsFromApi: false,
             Options: {
                 //Select: true,
                 Delete: true,
@@ -125,7 +128,8 @@ class Transaction_Valoraciones_View extends HTMLElement {
         this.CuotasTable = new WTableComponent({
             Dataset: [],
             ModelObject: new CuotaComponent(),
-            paginate: false,
+            paginate: false,            
+            AddItemsFromApi: false,
             AutoSave: false,
             id: "cuotasTable",
             Options: {
@@ -393,14 +397,14 @@ class Transaction_Valoraciones_View extends HTMLElement {
                 }
                 // @ts-ignore
                 //const valoracionesGuardadas = await this.valoracionModel?.GuardarValoraciones(this.valoracionesTable?.Dataset);
-                const contract = this.calculoAmortizacion();
+               // const contract = this.calculoAmortizacion();
                 //console.log(JSON.stringify(WArrayF.replacer(contract)));
                // console.log(contract);
-                // const response = await this.calculoAmortizacion().SaveDataContract();
-                // if (response) {
-                //     // @ts-ignore
-                //     window.location = "/PagesViews/Transaction_ContratosView";
-                // }
+                const response = await this.calculoAmortizacion().SaveDataContract();
+                if (response) {
+                    // @ts-ignore
+                    window.location = "/PagesViews/Transaction_ContratosView";
+                }
             }
         }))
     }
@@ -430,7 +434,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
         if (this.valoracionesForm != undefined) {
             for (const prop in this.valoracionesForm?.FormObject) {
                 if (prop == "Detail_Valores") continue;
-                if (prop == "Tasa_interes" && this.Cliente.codigo_cliente) continue;
+                if (prop == "Tasa_interes") continue;
                 this.valoracionesForm.FormObject[prop] = valoracion[prop]
             }
             this.valoracionesForm.DrawComponent();
@@ -479,7 +483,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
             // @ts-ignore
             taza_cambio: this.tasasCambio[0].valor_de_compra,      
             taza_interes_cargos: this.InteresBase,
-            gestion_crediticia: this.Cliente.Catalogo_Clasificacion_Interes.porcentaje ,
+            gestion_crediticia: this.Cliente.Catalogo_Clasificacion_Interes?.porcentaje ?? 6 ,
             Detail_Prendas: this.valoracionesTable?.Dataset.map(
                 // @ts-ignore
                 /**@type {Transactional_Valoracion}*/valoracion => new Detail_Prendas({
@@ -493,7 +497,8 @@ class Transaction_Valoraciones_View extends HTMLElement {
                 Transactional_Valoracion: valoracion
             })
             ),
-            Catalogo_Clientes: this.Cliente
+            Catalogo_Clientes: this.Cliente,
+            valoraciones: this.valoracionesTable?.Dataset
         })
         const cuotaFija = AmoritizationModule.getPago(contrato);
         contrato.cuotafija = cuotaFija;
