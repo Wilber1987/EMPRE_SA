@@ -152,7 +152,7 @@ namespace DataBaseModel
         public Double? tasas_interes  { get; set; }
         public Double? gestion_crediticia  { get; set; }
         public Double? cuotafija_dolares  { get; set; }
-        public Double? fecha  { get; set; }
+        public DateTime? fecha  { get; set; }
         public Double? total_pagar_cordobas  { get; set; }
         public Double? total_pagar_dolares  { get; set; }
         public Double? interes_dolares  { get; set; }

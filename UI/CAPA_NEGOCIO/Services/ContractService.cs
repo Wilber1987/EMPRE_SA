@@ -56,7 +56,23 @@ namespace CAPA_NEGOCIO.Services
             return templateContent
                .Replace("{{numero_contrato}}", model.numero_contrato.ToString())
                .Replace("{{monto}}", model.monto.ToString())
-               .Replace("{{observaciones}}}}", model.observaciones)
+               .Replace("{{observaciones}}", model.observaciones)
+               .Replace("{{tasa_hoy}}", model.tasa_hoy.ToString())
+               .Replace("{{taza_cambio}}", model.taza_cambio.ToString())
+               .Replace("{{monto}}", model.monto.ToString())
+               .Replace("{{valor_dolar}}", model.valor_dolar.ToString())
+               .Replace("{{fecha}}", model.fecha.ToString())
+               .Replace("{{deudor}}", model.Catalogo_Clientes.primer_nombre + " " + model.Catalogo_Clientes.segundo_nombre + " " + model.Catalogo_Clientes.primer_apellido + " " + model.Catalogo_Clientes.segundo_apellidio)
+               .Replace("{{cedula}}", model.Catalogo_Clientes.identificacion)
+               .Replace("{{telefono}}", model.Catalogo_Clientes.telefono.ToString())
+               .Replace("{{fecha}}", model.fecha.ToString())
+               .Replace("{{departamento}}", model.Catalogo_Clientes.Catalogo_Municipio.nombre.ToString())
+               .Replace("{{municipio}}", model.Catalogo_Clientes.Catalogo_Departamento.nombre.ToString())
+               .Replace("{{direccion}}", model.Catalogo_Clientes.direccion.ToString())
+               .Replace("{{estado_civil}}", model.Catalogo_Clientes.estado_civil.ToString())
+               .Replace("{{dias}}", DateTime.Now.Day.ToString())
+               .Replace("{{mes}}", DateTime.Now.Month.ToString())
+               .Replace("{{anio}}", DateTime.Now.Year.ToString())
                .Replace("{{tabla_articulos}}",GenerateTableHtml(model.Detail_Prendas));
         }
 
