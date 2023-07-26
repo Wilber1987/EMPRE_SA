@@ -25,7 +25,8 @@ class Transaction_ContratosView extends HTMLElement {
     constructor(props) {
         super();
         //models
-        this.entity = testData //props?.Entity ?? new ValoracionesContrato();
+        this.entity = props?.Entity ?? new ValoracionesContrato();
+        this.entity = testData
         AmoritizationModule.calculoAmortizacion(this.entity);
         this.componentsModel = new Transaction_ContratosModel();
         this.OptionContainer = WRender.Create({ className: "OptionContainer" });
@@ -315,7 +316,7 @@ class MainContract extends HTMLElement {
         super();
         if (contrato.Detail_Prendas != null) {
             this.ElementsNav.unshift({
-                name: "Contrato valorado", action: () =>  this.Manager.NavigateFunction("contrato-valorado", new Transaction_ContratosView(contrato))
+                name: "Contrato valorado", action: () => this.Manager.NavigateFunction("contrato-valorado", new Transaction_ContratosView(contrato))
             });
         }
         this.componentsModel = new Transaction_ContratosModel();
@@ -333,16 +334,35 @@ class MainContract extends HTMLElement {
             name: "Contratos", action: () => {
                 this.Manager.NavigateFunction("contratos", contratosSearcher())
             }
-        },  {
+        }, {
             name: "Nuevo Contrato", action: () => {
                 const date = new Date();
-                this.navigator.Elements.push({
-                    name: "contrato" + date, 
-                    deleteOption: true,
-                    action : ()=> this.Manager.NavigateFunction("contrato-" + this.indexContract, new Transaction_ContratosView({}))
-                })                
-                this.Manager.NavigateFunction("contrato-" +  this.indexContract, new Transaction_ContratosView({}))
+                // @ts-ignore
+                const element = this.navigator.Elements.find(n => n.name == "Contratos en proceso");
+                // @ts-ignore
+                if (element != undefined) {
+                    // @ts-ignore
+                    element.SubNav.Elements.push({
+                        // @ts-ignore
+                        name: "contrato  -  " + (this.indexContract + 1),
+                        deleteOption: true,
+                        action: () => this.Manager.NavigateFunction("contrato-" + this.indexContract, new Transaction_ContratosView({}))
+                    })
+                } else {
+                    // @ts-ignore
+                    this.navigator.Elements.push({
+                        name: "Contratos en proceso", SubNav: {
+                            Elements: [{
+                                // @ts-ignore
+                                name: "contrato  -  " + (this.indexContract + 1),
+                                deleteOption: true,
+                                action: () => this.Manager.NavigateFunction("contrato-" + this.indexContract, new Transaction_ContratosView({}))
+                            }]
+                        }
+                    })
+                }
                 this.navigator.DrawAppNavigator();
+                this.Manager.NavigateFunction("contrato-" + this.indexContract, new Transaction_ContratosView({}))
                 this.indexContract++;
             }
         }

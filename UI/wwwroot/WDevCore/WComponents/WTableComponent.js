@@ -215,7 +215,7 @@ class WTableComponent extends HTMLElement {
         this.shadowRoot?.append(WRender.createElement(this.MediaStyleResponsive()));
         return tbodys;
     }
-    DrawTRow = async (tr, element, index) => {
+    DrawTRow = async (tr, element, index) => {       
         tr.innerHTML = "";
         for (const prop in this.ModelObject) {
             if (this.IsDrawableRow(element, prop)) {
@@ -282,6 +282,7 @@ class WTableComponent extends HTMLElement {
     }
 
     async EvalModelPrototype(Model, prop, tr, element, index) {
+
         let value = element[prop] != null && element[prop] != undefined ? element[prop] : "";
         let td = WRender.Create({ tagName: "td", id: "td_" + prop + "_" + index, class: "td_" + prop });
         if (Model != undefined && Model[prop] != undefined && Model[prop].__proto__ == Object.prototype && Model[prop].type) {
@@ -356,7 +357,7 @@ class WTableComponent extends HTMLElement {
                     td.append(element[prop] != null || element[prop] != undefined ? value.toString() : Model[prop].action(element));
                     tr.append(td);
                     break;
-                default:
+                default:                 
                     td.append(WRender.Create({
                         tagName: "label", htmlFor: "select" + index,
                         style: this.Options?.Select ? "cursor: pointer" : "",

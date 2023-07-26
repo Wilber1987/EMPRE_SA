@@ -13,14 +13,14 @@ namespace API.Controllers
         [AuthController]
         public object SaveDataContract(ValoracionesTransaction Inst)
         {           
-            return Inst.SaveDataContract(HttpContext.Session.GetString("SessionKeyName"));           
+            return Inst.SaveDataContract(HttpContext.Session.GetString("seassonKey"));           
         }
 
         [HttpPost]
         [AuthController]
         public object GetDataContract()
         {           
-            return new ValoracionesTransaction().GetDataContract(HttpContext.Session.GetString("SessionKeyName"));           
+            return new ValoracionesTransaction().GetDataContract(HttpContext.Session.GetString("seassonKey"));           
         }
     }
 }
