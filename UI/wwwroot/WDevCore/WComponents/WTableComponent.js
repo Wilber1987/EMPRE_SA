@@ -5,6 +5,7 @@ import { WAjaxTools, WArrayF, WRender } from "../WModules/WComponentsTools.js";
 import { ControlBuilder } from "../WModules/WControlBuilder.js";
 import { WOrtograficValidation } from "../WModules/WOrtograficValidation.js";
 import { WCssClass, WStyledRender, css } from "../WModules/WStyledRender.js";
+import { WDetailObject } from "./WDetailObject.js";
 import { ModalVericateAction } from "./WForm.js";
 import { WModalForm } from "./WModalForm.js";
 
@@ -419,7 +420,7 @@ class WTableComponent extends HTMLElement {
                         icon: this.TableConfig.icon,
                         ImageUrlPath: this.TableConfig.ImageUrlPath,
                         title: "Detalle",
-                        ObjectDetail: element,
+                        ObjectModal: new WDetailObject({ObjectDetail :element,  ModelObject: this.ModelObject }) ,
                     }));
                 }
             }));

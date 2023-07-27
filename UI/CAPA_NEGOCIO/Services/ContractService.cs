@@ -47,7 +47,7 @@ namespace CAPA_NEGOCIO.Services
             var renderedHtml = RenderTemplate(templateContent, model);
 
             // Generar el PDF
-            var pdfFilePath = Path.Combine(System.IO.Path.GetFullPath("../UI/Pages/Contracts"), "output.pdf");
+            var pdfFilePath = Path.Combine(System.IO.Path.GetFullPath("../UI/wwwroot/Contracts"), "output.pdf");
             GeneratePdfFromHtml(renderedHtml, pdfFilePath);
 
         }

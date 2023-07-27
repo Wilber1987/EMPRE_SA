@@ -65,6 +65,9 @@ class ValoracionesContrato extends EntityClass {
     GetValoracionContrato = async () => {
         return await this.SaveData("Transactional_Contrato/GetDataContract", this)
     }
+    VerContrato = async () => {
+        return await this.SaveData("PDF/GeneratePdfContract", this)
+    }
 }
 export { ValoracionesContrato }
 class Cuota extends EntityClass {

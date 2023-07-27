@@ -9,6 +9,9 @@ class AmoritizationModule {
      * @returns {ValoracionesContrato}
      */
     static calculoAmortizacion = (contrato) => {
+        if (contrato.Catalogo_Clientes == undefined || contrato.Detail_Prendas == undefined) {
+            return new ValoracionesContrato();
+        }
         //console.log(contrato.Detail_Prendas);
 
         contrato.valoracion_compra_cordobas = WArrayF.SumValAtt(contrato.Detail_Prendas.map(p => p.Transactional_Valoracion), "valoracion_compra_cordobas");

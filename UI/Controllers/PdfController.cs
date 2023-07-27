@@ -1,6 +1,7 @@
 ﻿using CAPA_NEGOCIO.Services;
 using DataBaseModel;
 using Microsoft.AspNetCore.Mvc;
+using CAPA_DATOS;
 
 namespace UI.Controllers
 {
@@ -9,10 +10,14 @@ namespace UI.Controllers
     public class PdfController : ControllerBase
     {
         [HttpPost]
-        public String GeneratePdfContract(Transaction_Contratos model)
+        public ResponseService GeneratePdfContract(Transaction_Contratos model)
         {
-            ContractService.generaPDF(model,"contrato_empeno.cshtml");            
-            return "ruta del archivo";
+            ContractService.generaPDF(model, "contrato_empeno.cshtml");
+            return new ResponseService()
+            {
+                message = "success",
+                value = "../Contracts/output.pdf"
+            };
         }
     }
 }
