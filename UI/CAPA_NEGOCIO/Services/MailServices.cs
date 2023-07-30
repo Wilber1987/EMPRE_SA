@@ -152,5 +152,41 @@ namespace CAPA_NEGOCIO.Services
             }
 
         }
+
+        
+        public static async Task SendMail2()
+        {
+            // Configuración de la aplicación
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+
+            IConfigurationRoot configuration = builder.Build();
+
+            // Configuración del servicio de correo
+            var serviceProvider = new ServiceCollection()
+                .Configure<EmailSettings>(configuration.GetSection("EmailSettings"))
+                .AddTransient<IEmailSender, EmailSender>()
+                .BuildServiceProvider();
+
+            var emailSender = serviceProvider.GetService<IEmailSender>();
+
+            // Cargar el contenido del archivo CSHTML
+            string templatePath = Path.Combine(Directory.GetCurrentDirectory(), "Pages/Mails", "example.cshtml");
+            string htmlBody = File.ReadAllText(templatePath);
+
+            // Aquí puedes definir el destinatario y el asunto del correo
+            string toEmail = "alderhernandez@gmail.com";
+            string subject = "Correo de prueba";
+
+            // Envía el correo con el template CSHTML
+            await emailSender.SendEmailAsync(toEmail, subject, htmlBody);
+
+            Console.WriteLine("Correo enviado correctamente.");
+
+            // Esto detendrá la aplicación de forma adecuada, si estás trabajando con una aplicación de consola
+            await serviceProvider.DisposeAsync();
+        }
+
     }
 }
