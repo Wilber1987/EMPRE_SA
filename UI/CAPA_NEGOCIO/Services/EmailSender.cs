@@ -1,13 +1,11 @@
 using Microsoft.Extensions.Options;
-using MimeKit;
-using MailKit.Net.Smtp;
 
-public interface IEmailSender
-{
-    Task SendEmailAsync(string email, string subject, string htmlMessage);
-}
+// public interface IEmailSender
+// {
+//     Task SendEmailAsync(string email, string subject, string htmlMessage);
+// }
 
-public class EmailSender : IEmailSender
+public class EmailSender //: IEmailSender
 {
     private readonly EmailSettings _emailSettings;
 
