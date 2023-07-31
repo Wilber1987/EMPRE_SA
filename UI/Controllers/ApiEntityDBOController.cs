@@ -24,8 +24,9 @@ namespace API.Controllers
 
         [HttpPost]
         public object SendMail(){              
+            return null;
             //return MailServices.SendMail(Request.Form["path"],new List<String>(),Request.Form["base64"],null);
-            return SendEmail();
+            //return SendEmail();
             //return ContractService.generaPDF();
         }
 
