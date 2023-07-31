@@ -16,11 +16,11 @@ namespace API.Controllers
     [ApiController]
     public class ApiEntityDBOController : ControllerBase
     {
-        private readonly IEmailSender _emailSender;
-        public ApiEntityDBOController(IEmailSender emailSender)
-        {
-            _emailSender = emailSender;
-        }
+        // private readonly IEmailSender _emailSender;
+        // public ApiEntityDBOController(IEmailSender emailSender)
+        // {
+        //     _emailSender = emailSender;
+        // }
 
         [HttpPost]
         public object SendMail(){              
@@ -41,7 +41,7 @@ namespace API.Controllers
             string subject = "Correo de prueba";
 
             // Envía el correo con el template CSHTML
-            _emailSender.SendEmailAsync(toEmail, subject, htmlBody).Wait();
+           // _emailSender.SendEmailAsync(toEmail, subject, htmlBody).Wait();
 
             return "se envio"; // Redirecciona a la página de inicio u otra acción después de enviar el correo
         }
