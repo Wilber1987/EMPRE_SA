@@ -498,7 +498,7 @@ const testData = new ValoracionesContrato({
         "id_tipo_identificacion": 1,
         "correo": null, "telefono": "86087647  ", "direccion": "rpt guillermo salazar", "hora": "08:44:43",
         "fecha": "2022-06-15T00:00:00", "observaciones": null, "estado_civil": "Casado (a). ", "tipo_firma": "Ilegible",
-        "valor_cliente": "MP", "operadora_celular": "Claro", "valor_interes": 0.02, "solo_acreedor": "No ", "promedio": null,
+        "valor_cliente": "Más prestamos", "operadora_celular": "Claro", /*"valor_interes": 0.02,*/ "solo_acreedor": "No ", "promedio": null,
         "Catalogo_Clasificacion_Cliente": { "id_clasificacion": 2, "Descripcion": "MUY BUENO", "Estado": "ACTIVO", "porcentaje": null, "Catalogo_Clientes": null, "filterData": null },
         "Catalogo_Clasificacion_Interes": { "id_clasificacion_interes": 2, "Descripcion": "RANGO 2", "Estado": "ACTIVO", "porcentaje": 2, "Catalogo_Clientes": null, "filterData": null },
         "Catalogo_Tipo_Identificacion": { "id_tipo_identificacion": 1, "Descripcion": "CÉDULA", "Estado": "ACTIVO", "filterData": null },

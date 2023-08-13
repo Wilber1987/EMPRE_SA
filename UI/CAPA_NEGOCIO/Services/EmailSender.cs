@@ -1,9 +1,9 @@
 using Microsoft.Extensions.Options;
 
-// public interface IEmailSender
-// {
-//     Task SendEmailAsync(string email, string subject, string htmlMessage);
-// }
+ public interface IEmailSender
+ {
+     Task SendEmailAsync(string email, string subject, string htmlMessage);
+ }
 
 public class EmailSender //: IEmailSender
 {
