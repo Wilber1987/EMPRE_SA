@@ -128,10 +128,17 @@ class Gestion_ClientesForm extends HTMLElement {
         this.OptionContainerBottom.append(WRender.Create({
             tagName: 'button', className: 'Block-Success', innerText: 'Guardar',
             onclick: async () => {
-                if (!this.FormularioCliente?.Validate() || !this.FormularioDatos?.Validate()) {
+                if (!this.FormularioCliente?.Validate()) {
+                    this.Manager?.NavigateFunction("formularioCliente", this.FormularioCliente)
                     this.append(ModalMessege("Necesita llenar todos los datos del cliente primeramente"));
                     return;
                 }
+                if (!this.FormularioDatos?.Validate()) {
+                    this.Manager?.NavigateFunction("formularioDatosLaborales", this.FormularioDatos)
+                    this.append(ModalMessege("Necesita llenar todos los datos laborales del cliente primeramente"));
+                    return;
+                }
+
                 if (this.cliente.codigo_cliente == null || this.cliente.codigo_cliente == undefined) {
                     /**@type {Catalogo_Clientes} */
                     const result = await new Catalogo_Clientes(this.cliente).Save();
