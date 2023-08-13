@@ -425,9 +425,10 @@ class WForm extends HTMLElement {
                 const masterDetailModel = await WArrayF.isModelFromFunction(Model, prop);
                 ControlLabel.className += " formHeader";
                 ControlContainer.classList.add("tableContainer");
-                ObjectF[prop] = ObjectF[prop] != "" ? this.CreateProxy(Model, ObjectF[prop]) :
+                ObjectF[prop] = ObjectF[prop] != "" && ObjectF[prop] != undefined ? this.CreateProxy(Model, ObjectF[prop]) :
                     this.CreateProxy(Model, []);
-
+                console.log(prop);
+                console.log(ObjectF[prop]);
                 InputControl = new WTableComponent({
                     Dataset: ObjectF[prop],
                     AddItemsFromApi: false,
