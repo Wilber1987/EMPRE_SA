@@ -21,7 +21,7 @@ class Transactional_ConfiguracionesView extends HTMLElement {
                         name: "Editar", action: (element) => {
                             this.append(new WModalForm({
                                 ModelObject: new Transactional_Configuraciones({
-                                    Valor: { type: element.Tipo_Configuracion == "INTERESES" ? "NUMBER" : "TEXT" }
+                                    Valor: { type: this.IsNumber(element) ? "NUMBER" : "TEXT" }
                                 }),
                                 EditObject: element
                             }))
@@ -45,6 +45,10 @@ class Transactional_ConfiguracionesView extends HTMLElement {
             this.FilterOptions,
             this.TabContainer
         );
+    }
+
+    IsNumber(element) {
+        return element.Tipo_Configuracion == "INTERESES" || element.Tipo_Configuracion == "BENEFICIOS";
     }
 }
 customElements.define('w-transactional_configuraciones', Transactional_ConfiguracionesView);

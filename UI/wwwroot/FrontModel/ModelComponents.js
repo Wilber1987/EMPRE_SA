@@ -7,13 +7,13 @@ class CuotaComponent {
         }
     }
     /**@type {ModelProperty} */
-    fecha = { type: "date",  label: "FECHA" };    
+    fecha = { type: "date",  label: "FECHA" };   
     /**@type {ModelProperty} */
-    total = { type: "number",  label: "IDCP" };
+    interes = { type: "number", label: "IDCP"  };    
     /**@type {ModelProperty} */
-    interes = { type: "number", label: "ABONO AL CAPITAL"  };    
+    abono_capital = { type: "number", label: "ABONO AL CAPITAL" };
     /**@type {ModelProperty} */
-    abono_capital = { type: "number", label: "CUOTA A PAGAR" };
+    total = { type: "number",  label: "CUOTA A PAGAR" };
     /**@type {ModelProperty} */
     capital_restante = { type: "number", label: "MONTO RESTANTE" };
 }

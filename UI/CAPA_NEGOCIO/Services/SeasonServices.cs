@@ -14,6 +14,11 @@ namespace CAPA_NEGOCIO.Services
         public static List<SeassonData> SeassonDatas = new List<SeassonData>();
         public static void Set(string key, Object value, string identfy)
         {
+            var seasonInfos = SeassonDatas.Where(s => s.KeyName.Equals(key) && s.idetify.Equals(identfy)).ToList();
+            foreach (var item in seasonInfos)
+            {
+                SeassonDatas.Remove(item);
+            } 
             SeassonDatas.Add(new SeassonData()
             {
                 KeyName = key,

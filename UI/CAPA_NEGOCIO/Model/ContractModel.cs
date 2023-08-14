@@ -82,7 +82,6 @@ namespace Model
             ValoracionesTransaction? valoracionesTransaction
              = SeasonServices.Get<ValoracionesTransaction>("ValoracionesTransaction", seasonKey);
             return valoracionesTransaction ?? new ValoracionesTransaction();
-
         }
     }
 

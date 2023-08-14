@@ -62,5 +62,13 @@ class AmoritizationModule {
         const payment = ((tasa * Math.pow(1 + tasa, cuotas)) * monto) / (Math.pow(1 + tasa, cuotas) - 1);
         return payment;
     }
+    static getPagoValoracion = (valoracion) => {
+        const monto = valoracion.valoracion_empeño_cordobas;
+        const cuotas = valoracion.Plazo ?? 0;
+        const tasa = (valoracion.Tasa_interes ?? 0) / 100;
+        console.log(monto, cuotas, tasa);
+        const payment = ((tasa * Math.pow(1 + tasa, cuotas)) * monto) / (Math.pow(1 + tasa, cuotas) - 1);
+        return payment.toString() == "NaN" ? 0 : payment;
+    }
 }
 export { AmoritizationModule }

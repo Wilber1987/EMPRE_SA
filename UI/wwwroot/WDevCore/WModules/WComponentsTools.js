@@ -626,8 +626,8 @@ class WArrayF {
     }
     /**
      * 
-     * @param {*} DataArry 
-     * @param {*} EvalValue 
+     * @param {Array} DataArry 
+     * @param {String} EvalValue 
      * @returns {Number}
      */
     static SumValAtt(DataArry, EvalValue) {//retorna la suma 

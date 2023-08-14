@@ -24,7 +24,7 @@ namespace CAPA_DATOS
 
          /*static string SQLServer = "localhost";
          private static string SGBD_USER = "sa";
-        private static string SWGBD_PASSWORD = "123";*/
+        private static string SWGBD_PASSWORD = "zaxscd";*/
         static public bool IniciarConexion()
         {
             try
