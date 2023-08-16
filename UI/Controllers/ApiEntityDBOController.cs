@@ -23,11 +23,8 @@ namespace API.Controllers
         // }
 
         [HttpPost]
-        public object SendMail(){              
-            return null;
-            //return MailServices.SendMail(Request.Form["path"],new List<String>(),Request.Form["base64"],null);
-            //return SendEmail();
-            //return ContractService.generaPDF();
+        public object SendMail(){
+            return MailServices.SendMail(new List<String>(){"alderhernandez@gmail.com"},"noreply@noreply","Este es el asunto","example.cstml");            
         }
 
         public object SendEmail()
