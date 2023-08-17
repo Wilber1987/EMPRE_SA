@@ -134,9 +134,9 @@ class Catalogo_Clientes extends EntityClass {
     observaciones = { type: 'text', hiddenInTable: true, hiddenFilter: true, hidden: true };
     estado_civil = { type: 'select', Dataset: ["Soltero", "Casado"], hiddenInTable: true, hiddenFilter: true };
     tipo_firma = { type: 'select', Dataset: ["Iletrado", "Ilegible", "Legible"], hiddenInTable: true, hiddenFilter: true };
-    valor_cliente = { type: 'text', hiddenInTable: true, hiddenFilter: true };
+    valor_cliente = { type: 'select', Dataset: [{ id: "MP", Descripcion: "Más prestamos" }, { id: "NMP", Descripcion: "No más prestamos" }], hiddenInTable: true, hiddenFilter: true };   
     operadora_celular = { type: 'select', Dataset: ["Tigo", "Claro"], hiddenInTable: true, hiddenFilter: true };
-    valor_interes = { type: 'number', hiddenInTable: true, hiddenFilter: true };
+    //valor_interes = { type: 'number', hiddenInTable: true, hiddenFilter: true };
     solo_acreedor = { type: 'radio', Dataset: ["Si", "Ambos"], hiddenInTable: true, hiddenFilter: true };
 
     promedio = { type: 'number', hiddenInTable: true, hiddenFilter: true };

@@ -57,15 +57,16 @@
             {
                 <a class="title-collapse" id="PrestamosClientesMenu" onclick="changeActive(this)">PRESTAMOS Y EMPEÑOS</a>
                 <div class="collapse">
-                    @if (SecurityController.HavePermission(PermissionsEnum.GESTION_CLIENTES.ToString(), identify))
+                    @if (SecurityController.HavePermission(PermissionsEnum.GESTION_CLIENTES.ToString(),
+                   identify))
+
                     {
                         <a class="" id="Gestion_Clientes" asp-area="" asp-page="/PagesViews/Gestion_Clientes">Gestión de
                             clientes</a>
                     }
                     <a class="" id="Transaction_Valoraciones_View" asp-area=""
                         asp-page="/PagesViews/Transaction_Valoraciones_View">VALORACIONES</a>
-                    <a class="" id="Transaction_ContratosView" asp-area=""
-                        asp-page="/PagesViews/Transaction_ContratosView">CONTRATOS</a>                  
+                    <a class="" id="Transaction_ContratosView" asp-area="" asp-page="/PagesViews/Transaction_ContratosView">CONTRATOS</a>
                 </div>
             }
             @if (SecurityController.HavePermission(PermissionsEnum.GESTION_CONTRATOS.ToString(), identify))

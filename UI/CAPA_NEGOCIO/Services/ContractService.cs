@@ -8,6 +8,7 @@ using UI.Controllers;
 using iTextSharp.tool.xml;
 using DataBaseModel;
 using System.Text;
+using System.Reflection;
 
 namespace CAPA_NEGOCIO.Services
 {
@@ -39,20 +40,42 @@ namespace CAPA_NEGOCIO.Services
 
         public static void generaPDF(Transaction_Contratos model, String rutaArchivo)
         {
-          
-
-            var templatePath = Path.Combine(System.IO.Path.GetFullPath("../UI/Pages/Contracts"), rutaArchivo);
-            var templateContent = File.ReadAllText(templatePath);
-
-            var renderedHtml = RenderTemplate(templateContent, model);
+            var renderedHtml = RenderTemplate(Path.Combine(System.IO.Path.GetFullPath("../UI/Pages/Contracts"), rutaArchivo), model);
 
             // Generar el PDF
             var pdfFilePath = Path.Combine(System.IO.Path.GetFullPath("../UI/wwwroot/Contracts"), "output.pdf");
             GeneratePdfFromHtml(renderedHtml, pdfFilePath);
 
         }
-        static string RenderTemplate(string templateContent, Transaction_Contratos model)
+
+         public static string RenderTemplate(string rutaArchivo, object model)
         {
+            var templatePath = rutaArchivo;
+            var templateContent = File.ReadAllText(templatePath);
+            
+            PropertyInfo[] properties = model.GetType().GetProperties();
+
+            string renderedTemplate = templateContent;
+            foreach (PropertyInfo property in properties)
+            {
+                string propertyName = property.Name;
+                object propertyValue = property.GetValue(model, null);
+                string placeholder = $"{{{{{propertyName}}}}}";
+                if (propertyValue != null)
+                {
+                    renderedTemplate = renderedTemplate.Replace(placeholder, propertyValue.ToString());
+                }
+            }
+            
+            return renderedTemplate;
+        }
+
+
+        /*public static string RenderTemplate(String rutaArchivo, Transaction_Contratos model)
+        {
+            var templatePath = rutaArchivo;
+            var templateContent = File.ReadAllText(templatePath);
+            
             return templateContent
                .Replace("{{numero_contrato}}", model.numero_contrato.ToString())
                .Replace("{{monto}}", model.monto.ToString())
@@ -74,9 +97,10 @@ namespace CAPA_NEGOCIO.Services
                .Replace("{{mes}}", DateTime.Now.Month.ToString())
                .Replace("{{anio}}", DateTime.Now.Year.ToString())
                .Replace("{{tabla_articulos}}",GenerateTableHtml(model.Detail_Prendas));
-        }
+        }*/
 
 
+       
         static void GeneratePdfFromHtml(string html, string outputPath)
         {
             using (var stream = new FileStream(outputPath, FileMode.Create))

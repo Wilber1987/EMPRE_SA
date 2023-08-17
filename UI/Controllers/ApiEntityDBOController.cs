@@ -23,29 +23,11 @@ namespace API.Controllers
         // }
 
         [HttpPost]
-        public object SendMail(){              
-            return null;
-            //return MailServices.SendMail(Request.Form["path"],new List<String>(),Request.Form["base64"],null);
-            //return SendEmail();
-            //return ContractService.generaPDF();
+        public object SendMail(){
+            return MailServices.SendMail(new List<String>(){"wilberj1987@gmail.com","alderhernandez@gmail.com"},"noreply@noreply","Usted es un mela","example.cshtml");            
         }
 
-        public object SendEmail()
-        {
-            // Cargar el contenido del archivo CSHTML
-            string templatePath = System.IO.Path.Combine("Pages", "Mails", "example.cshtml");
-            string htmlBody = System.IO.File.ReadAllText(templatePath);
 
-            // Aquí puedes definir el destinatario y el asunto del correo
-            string toEmail = "alderhernandez@gmail.com";
-            string subject = "Correo de prueba";
-
-            // Envía el correo con el template CSHTML
-           // _emailSender.SendEmailAsync(toEmail, subject, htmlBody).Wait();
-
-            return "se envio"; // Redirecciona a la página de inicio u otra acción después de enviar el correo
-        }
-      
         [HttpPost]
         [AuthController]
         public List<Catalogo_Clasificacion_Interes> getCatalogo_Clasificacion_Interes(Catalogo_Clasificacion_Interes Inst)

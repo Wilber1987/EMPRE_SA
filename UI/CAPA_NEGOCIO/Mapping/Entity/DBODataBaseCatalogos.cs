@@ -86,7 +86,7 @@ namespace DataBaseModel
         public string? tipo_firma { get; set; }
         public string? valor_cliente { get; set; }
         public string? operadora_celular { get; set; }
-        public Double? valor_interes { get; set; }
+        //public Double? valor_interes { get; set; }
         public string? solo_acreedor { get; set; }
         public Double? promedio { get; set; }
         public int? id_clasificacion { get; set; }

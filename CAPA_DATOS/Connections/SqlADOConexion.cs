@@ -19,12 +19,13 @@ namespace CAPA_DATOS
 
         // static string SQLServer = ".\\SQLEXPRESS";
         // private static string SGBD_USER = "sa";
-        // private static string SWGBD_PASSWORD = "123";
+        // private static string SWGBD_PASSWORD = "zaxscd";
         
 
-         /*static string SQLServer = "localhost";
-         private static string SGBD_USER = "sa";
-        private static string SWGBD_PASSWORD = "zaxscd";*/
+        /*static string SQLServer = ".\\SQLEXPRESS";
+        private static string SGBD_USER = "sa";
+        private static string SWGBD_PASSWORD = "123";*/
+
         static public bool IniciarConexion()
         {
             try
