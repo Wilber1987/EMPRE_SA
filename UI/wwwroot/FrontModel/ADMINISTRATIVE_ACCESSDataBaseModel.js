@@ -15,5 +15,8 @@ class Transactional_Configuraciones extends EntityClass {
     getTransactional_Configuraciones_Intereses =  async () => {
         return await this.GetData("ApiEntityADMINISTRATIVE_ACCESS/getTransactional_Configuraciones_Intereses");
     }
+    getTransactional_Configuraciones_Beneficios =  async () => {
+        return await this.GetData("ApiEntityADMINISTRATIVE_ACCESS/getTransactional_Configuraciones_Beneficios");
+    }
 }
 export { Transactional_Configuraciones }
