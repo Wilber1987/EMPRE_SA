@@ -147,12 +147,33 @@ namespace DataBaseModel
         public int? id_sucursal { get; set; }
         [ManyToOne(TableName = "Catalogo_Sucursales", KeyColumn = "Id_Sucursal", ForeignKeyColumn = "id_sucursal")]
         public Catalogo_Sucursales? Catalogo_Sucursales { get; set; }
+        public int? id_categoria { get; set; }
+        [ManyToOne(TableName = "Categoria_Cuentas", KeyColumn = "id_categoria", ForeignKeyColumn = "id_categoria")]
+        public Categoria_Cuentas? Categoria_Cuentas { get; set; }
 
         /*[ManyToOne(TableName = "Catalogo_Tipo_Transaccion", KeyColumn = "id_tipo_transaccion", ForeignKeyColumn = "id_tipo_transaccion")]
         public Catalogo_Tipo_Transaccion? Catalogo_Tipo_Transaccion { get; set; }*/
 
         // [OneToMany(TableName = "Transaction_Ingresos_Egresos", KeyColumn = "id_cuentas", ForeignKeyColumn = "id_cuenta")]
         // public List<Transaction_Ingresos_Egresos>? Transaction_Ingresos_Egresos { get; set; }
+    }
+    public class Categoria_Cuentas : EntityClass
+    {
+        [PrimaryKey(Identity = true)]
+        public int? id_categoria { get; set; }
+        public string? descripcion { get; set; }        
+    }
+
+    public class Permisos_Cuentas: EntityClass {
+        [PrimaryKey(Identity = true)]
+        public int id_permiso { get; set; }
+        public int? id_cuenta_origen { get; set; }
+        public int? id_cuenta_destino { get; set; }
+        public bool? permite_debito { get; set; }
+        public bool? permite_credito { get; set; }
+        public int? id_categoria { get; set; }
+        [ManyToOne(TableName = "Categoria_Cuentas", KeyColumn = "id_categoria", ForeignKeyColumn = "id_categoria")]
+        public Categoria_Cuentas? Categoria_Cuentas { get; set; }
     }
 
     public class Catalogo_Categoria : EntityClass

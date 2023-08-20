@@ -397,11 +397,41 @@ class Catalogo_Cuentas extends EntityClass {
     }
     id_cuentas = { type: 'number', primary: true };
     nombre = { type: 'text' };
-    tipo_cuenta = { type: 'select', Dataset: ['PROPIA', 'PAGO'] };
+    tipo_cuenta = { type: 'select', Dataset: ['PROPIA', 'PAGO'] };    
     Catalogo_Sucursales = { type: 'WSELECT', ModelObject: () => new Catalogo_Sucursales() };
+    Categoria_Cuentas = { type: 'WSELECT', ModelObject: () => new Categoria_Cuentas() };
     /*Catalogo_Tipo_Transaccion = { type: 'WSELECT', ModelObject: () => new Catalogo_Tipo_Transaccion() };*/
 }
 export { Catalogo_Cuentas }
+
+class Categoria_Cuentas  extends EntityClass {
+	constructor(props) {
+        super(props, 'EntityDBO');
+		for (const prop in props) {
+			this[prop] = props[prop];
+		}
+	}
+	id_categoria = { type: "number" , primary: true  };
+	descripcion = { type: "text"  };
+}
+export{Categoria_Cuentas}
+
+class Permisos_Cuentas extends EntityClass {    
+	constructor(props) {
+        super(props, 'EntityDBO');
+		for (const prop in props) {
+			this[prop] = props[prop];
+		}
+	}
+	id_permiso = { type: "number" , primary: true  };
+    categoria_cuenta_origen = { type: 'WSELECT', ModelObject: () => new Catalogo_Cuentas() };
+	categoria_cuenta_destino = { type: 'WSELECT', ModelObject: () => new Catalogo_Cuentas() };
+	permite_debito = { type: "checkbox"  };
+	permite_credito = { type: "checkbox"  };
+    Categoria_Cuentas = { type: 'WSELECT', ModelObject: () => new Categoria_Cuentas() };
+}
+export{Permisos_Cuentas}
+
 class Catalogo_Departamento extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');

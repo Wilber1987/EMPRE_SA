@@ -22,8 +22,8 @@ CREATE TABLE Permisos_Cuentas (
     id_permiso INT PRIMARY KEY,
     id_cuenta_origen INT,
     id_cuenta_destino INT,
-    permite_debito BIT,
-    permite_credito BIT,
+    permite_debito BIT null,
+    permite_credito BIT null,
     FOREIGN KEY (id_cuenta_origen) REFERENCES Catalogo_Cuentas(id_tipo_cuenta),
     FOREIGN KEY (id_cuenta_destino) REFERENCES Catalogo_Cuentas(id_tipo_cuenta)
 );
