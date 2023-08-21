@@ -40,18 +40,22 @@ namespace CAPA_DATOS
             return da;
         }
         protected override List<EntityProps> DescribeEntity(string entityName)
-        {
-            string DescribeQuery = @"SELECT COLUMN_NAME, IS_NULLABLE, DATA_TYPE, TABLE_SCHEMA
-                                    from [INFORMATION_SCHEMA].[COLUMNS] 
-                                    WHERE [TABLE_NAME] = '" + entityName
-                                   + "' order by [ORDINAL_POSITION]";
-            DataTable Table = TraerDatosSQL(DescribeQuery);
-            List<EntityProps> entityProps = ConvertDataTable<EntityProps>(Table, new EntityProps());
-            if (entityProps.Count == 0)
+        {          
+            if (entityProps == null)
+            {
+                string DescribeQuery = @"SELECT TABLE_NAME, COLUMN_NAME, IS_NULLABLE, DATA_TYPE, TABLE_SCHEMA
+                                    from [INFORMATION_SCHEMA].[COLUMNS]";
+                // WHERE [TABLE_NAME] = '" + entityName
+                // + "' order by [ORDINAL_POSITION]";
+                DataTable Table = TraerDatosSQL(DescribeQuery);
+                entityProps = ConvertDataTable<EntityProps>(Table, new EntityProps());
+            }
+            List<EntityProps> props = entityProps.Where(e => e.TABLE_NAME.Equals(entityName)).ToList();
+            if (props.Count == 0)
             {
                 throw new Exception("La entidad buscada no existe: " + entityName);
             }
-            return entityProps;
+            return props;
         }
         protected override string BuildInsertQueryByObject(object Inst)
         {
@@ -92,7 +96,8 @@ namespace CAPA_DATOS
                             Values = Values + AtributeValue.ToString() + ",";
                             break;
                         case "bit":
-                            Values = Values + AtributeName + "= '" + (AtributeValue.ToString() == "True" ? "1" : "0") + "',";
+                            ColumnNames = ColumnNames + AtributeName.ToString() + ",";
+                            Values = Values +  "'" + (AtributeValue.ToString() == "True" ? "1" : "0") + "',";
                             break;
                         case "datetime":
                         case "date":

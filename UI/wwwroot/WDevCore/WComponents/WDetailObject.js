@@ -84,6 +84,7 @@ class WDetailObject extends HTMLElement {
                             action: async (ev) => {
                                 this.TabManager.NavigateFunction(prop, new WTableComponent({
                                     Options: { Search: true },
+                                    ImageUrlPath:  this.Config.ImageUrlPath,
                                     ModelObject: Model[prop].ModelObject.__proto__ == Function.prototype ? Model[prop].ModelObject() : Model[prop].ModelObject,
                                     Dataset: ObjectDetail[prop] ?? []
                                 }));

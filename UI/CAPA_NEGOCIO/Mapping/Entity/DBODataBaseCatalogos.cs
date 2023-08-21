@@ -177,7 +177,7 @@ namespace DataBaseModel
         public string? clasificacion { get; set; }
         [ManyToOne(TableName = "Catalogo_Nacionalidad", KeyColumn = "id_nacionalidad", ForeignKeyColumn = "id_nacionalidad")]
         public Catalogo_Nacionalidad? Catalogo_Nacionalidad { get; set; }
-        [OneToMany(TableName = "Catalogo_Municipio", KeyColumn = "id_departamento", ForeignKeyColumn = "id_departamento")]
+        //[OneToMany(TableName = "Catalogo_Municipio", KeyColumn = "id_departamento", ForeignKeyColumn = "id_departamento")]
         public List<Catalogo_Municipio>? Catalogo_Municipio { get; set; }
     }
     public class Catalogo_Inversores : EntityClass
@@ -206,8 +206,8 @@ namespace DataBaseModel
         public int? id_departamento { get; set; }
         [ManyToOne(TableName = "Catalogo_Departamento", KeyColumn = "id_departamento", ForeignKeyColumn = "id_departamento")]
         public Catalogo_Departamento? Catalogo_Departamento { get; set; }
-        [OneToMany(TableName = "Catalogo_Inversores", KeyColumn = "id_municipio", ForeignKeyColumn = "id_municipio")]
-        public List<Catalogo_Inversores>? Catalogo_Inversores { get; set; }
+        //[OneToMany(TableName = "Catalogo_Inversores", KeyColumn = "id_municipio", ForeignKeyColumn = "id_municipio")]
+       // public List<Catalogo_Inversores>? Catalogo_Inversores { get; set; }
     }
     public class Catalogo_Nacionalidad : EntityClass
     {
@@ -218,10 +218,10 @@ namespace DataBaseModel
         public int? ponderacion { get; set; }
         public int? puntaje { get; set; }
         public string? clasificacion { get; set; }
-        [OneToMany(TableName = "Catalogo_Departamento", KeyColumn = "id_nacionalidad", ForeignKeyColumn = "id_nacionalidad")]
-        public List<Catalogo_Departamento>? Catalogo_Departamento { get; set; }
-        [OneToMany(TableName = "Catalogo_Inversores", KeyColumn = "id_nacionalidad", ForeignKeyColumn = "id_nacionalidad")]
-        public List<Catalogo_Inversores>? Catalogo_Inversores { get; set; }
+        //[OneToMany(TableName = "Catalogo_Departamento", KeyColumn = "id_nacionalidad", ForeignKeyColumn = "id_nacionalidad")]
+        //public List<Catalogo_Departamento>? Catalogo_Departamento { get; set; }
+        //[OneToMany(TableName = "Catalogo_Inversores", KeyColumn = "id_nacionalidad", ForeignKeyColumn = "id_nacionalidad")]
+       // public List<Catalogo_Inversores>? Catalogo_Inversores { get; set; }
     }
     public class Catalogo_Profesiones : EntityClass
     {

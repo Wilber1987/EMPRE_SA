@@ -75,6 +75,7 @@ namespace DataBaseModel
         public int? codigo_cliente { get; set; }
         public DateTime? fecha_ingreso { get; set; }
         public string? ocupacion_cargo { get; set; }
+        public string? nombre_empresa { get; set; }
         public Double? ingresos_mensuales { get; set; }
         public string? direccion { get; set; }
         public int? id_municipio { get; set; }

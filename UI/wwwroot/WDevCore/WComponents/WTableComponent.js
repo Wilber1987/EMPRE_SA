@@ -96,7 +96,6 @@ class WTableComponent extends HTMLElement {
     //BASIC TABLE-----------------------------------------------------------------------
     //#region tabla basica --------------------------------------------------------------
     /**
-     * 
      * @param {Array} [Dataset] 
      */
     DefineModelObject(Dataset = this.Dataset) {
@@ -109,7 +108,6 @@ class WTableComponent extends HTMLElement {
         }
     }
     /**
-     * 
      * @param {Array} Dataset 
      */
     DrawTable(Dataset = this.Dataset) {
@@ -216,7 +214,7 @@ class WTableComponent extends HTMLElement {
         this.shadowRoot?.append(WRender.createElement(this.MediaStyleResponsive()));
         return tbodys;
     }
-    DrawTRow = async (tr, element, index) => {       
+    DrawTRow = async (tr, element, index) => {
         tr.innerHTML = "";
         for (const prop in this.ModelObject) {
             if (this.IsDrawableRow(element, prop)) {
@@ -326,7 +324,7 @@ class WTableComponent extends HTMLElement {
                 case "COLOR":
                     td.append(WRender.Create({
                         style: {
-                            background: (value == "" ? "#000" : value ), width: "30px", height: "30px",
+                            background: (value == "" ? "#000" : value), width: "30px", height: "30px",
                             borderRadius: "50%", boxShadow: "0 0 3px 0 #888", margin: "auto"
                         }
                     }))
@@ -358,7 +356,7 @@ class WTableComponent extends HTMLElement {
                     td.append(element[prop] != null || element[prop] != undefined ? value.toString() : Model[prop].action(element));
                     tr.append(td);
                     break;
-                default:                 
+                default:
                     td.append(WRender.Create({
                         tagName: "label", htmlFor: "select" + index,
                         style: this.Options?.Select ? "cursor: pointer" : "",
@@ -372,7 +370,7 @@ class WTableComponent extends HTMLElement {
         }
     }
 
-    DeleteBTN(Options, element, tr) {
+    DeleteBTN = (Options, element, tr) => {
         if (this.Options?.Delete != undefined && this.Options.Delete == true) {
             Options.append(WRender.Create({
                 tagName: "button",
@@ -387,6 +385,11 @@ class WTableComponent extends HTMLElement {
                             //tr.parentNode.removeChild(tr);                                                  
                             if (this.Options?.DeleteAction) {
                                 this.Options?.DeleteAction(element)
+                            }
+                            if (this.Options?.UrlDelete) {
+                                WAjaxTools.PostRequest(this.Options?.UrlDelete, element);
+                            } else if (element.Delete) {
+                                element.Delete();
                             }
                             this.DrawTable();
                         } else { console.log("No Object"); }
@@ -420,7 +423,7 @@ class WTableComponent extends HTMLElement {
                         icon: this.TableConfig.icon,
                         ImageUrlPath: this.TableConfig.ImageUrlPath,
                         title: "Detalle",
-                        ObjectModal: new WDetailObject({ObjectDetail :element,  ModelObject: this.ModelObject }) ,
+                        ObjectModal: new WDetailObject({ ObjectDetail: element, ModelObject: this.ModelObject }),
                     }));
                 }
             }));
@@ -467,6 +470,7 @@ class WTableComponent extends HTMLElement {
                 EntityModel: this.TableConfig.EntityModel,
                 AutoSave: this.TableConfig.AutoSave ?? false,
                 ParentModel: this.TableConfig.ParentModel,
+                ParentEntity: this.TableConfig.ParentEntity,
                 EditObject: element,
                 icon: this.TableConfig.icon,
                 ImageUrlPath: this.TableConfig.ImageUrlPath,
