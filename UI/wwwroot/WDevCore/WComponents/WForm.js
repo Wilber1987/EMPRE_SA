@@ -257,6 +257,8 @@ class WForm extends HTMLElement {
                     }, 1000);
                 }
             }
+        } else if ((Model[prop].type == "checkbox" || Model[prop].type == "radio") && (targetControl?.type == "checkbox" || targetControl?.type == "radio")) {
+            ObjectF[prop] = targetControl?.checked;
         } else if (targetControl?.type == "checkbox" || targetControl?.type == "radio") {
             ObjectF[prop] = targetControl?.value;
         } else {

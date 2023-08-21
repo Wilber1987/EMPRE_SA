@@ -166,14 +166,18 @@ namespace DataBaseModel
 
     public class Permisos_Cuentas: EntityClass {
         [PrimaryKey(Identity = true)]
-        public int id_permiso { get; set; }
-        public int? id_cuenta_origen { get; set; }
-        public int? id_cuenta_destino { get; set; }
+        public int? id_permiso { get; set; }
+        public int? id_categoria_cuenta_origen { get; set; }        
+        [ManyToOne(TableName = "Categoria_Cuentas", KeyColumn = "id_categoria", ForeignKeyColumn = "id_categoria_cuenta_origen")]
+        public Categoria_Cuentas? Categoria_Cuentas_Origen { get; set; }        
+        public int? id_categoria_cuenta_destino { get; set; }        
+        [ManyToOne(TableName = "Categoria_Cuentas", KeyColumn = "id_categoria", ForeignKeyColumn = "id_categoria_cuenta_destino")]
+        public Categoria_Cuentas? Categoria_Cuentas_Destino { get; set; }
         public bool? permite_debito { get; set; }
         public bool? permite_credito { get; set; }
-        public int? id_categoria { get; set; }
+        /*public int? id_categoria { get; set; }
         [ManyToOne(TableName = "Categoria_Cuentas", KeyColumn = "id_categoria", ForeignKeyColumn = "id_categoria")]
-        public Categoria_Cuentas? Categoria_Cuentas { get; set; }
+        public Categoria_Cuentas? Categoria_Cuentas { get; set; }*/
     }
 
     public class Catalogo_Categoria : EntityClass

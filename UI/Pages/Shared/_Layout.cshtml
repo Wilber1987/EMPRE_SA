@@ -92,10 +92,10 @@
             {
                 <a class="title-collapse" id="GestionMovimientosMenu" onclick="changeActive(this)">GESTIÓN DE
                     MOVIMIENTOS</a>
-                @* <div class="collapse">
+                 <div class="collapse">
             <a class="" id="Transaction_Ingresos_EgresosView" asp-area=""
             asp-page="/PagesViews/Transaction_Ingresos_EgresosView">EGRESOS/INGRESOS</a>
-            </div> *@
+            </div>
             }
             @if (SecurityController.HavePermission(PermissionsEnum.GESTION_SUCURSALES.ToString(),  identify))
             {

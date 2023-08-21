@@ -424,11 +424,11 @@ class Permisos_Cuentas extends EntityClass {
 		}
 	}
 	id_permiso = { type: "number" , primary: true  };
-    categoria_cuenta_origen = { type: 'WSELECT', ModelObject: () => new Catalogo_Cuentas() };
-	categoria_cuenta_destino = { type: 'WSELECT', ModelObject: () => new Catalogo_Cuentas() };
-	permite_debito = { type: "checkbox"  };
-	permite_credito = { type: "checkbox"  };
-    Categoria_Cuentas = { type: 'WSELECT', ModelObject: () => new Categoria_Cuentas() };
+    Categoria_Cuentas_Origen = { type: 'WSELECT', ModelObject: () => new Categoria_Cuentas() };
+	Categoria_Cuentas_Destino = { type: 'WSELECT', ModelObject: () => new Categoria_Cuentas() };
+	permite_debito = { type: "checkbox", require: false  };
+	permite_credito = { type: "checkbox", require: false  };
+    //Categoria_Cuentas = { type: 'WSELECT', ModelObject: () => new Categoria_Cuentas() };//todo eliminar
 }
 export{Permisos_Cuentas}
 

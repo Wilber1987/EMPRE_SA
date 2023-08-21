@@ -92,7 +92,8 @@ namespace CAPA_DATOS
                             Values = Values + AtributeValue.ToString() + ",";
                             break;
                         case "bit":
-                            Values = Values + AtributeName + "= '" + (AtributeValue.ToString() == "True" ? "1" : "0") + "',";
+                            ColumnNames = ColumnNames + AtributeName.ToString() + ",";
+                            Values = Values +  "'" + (AtributeValue.ToString() == "True" ? "1" : "0") + "',";
                             break;
                         case "datetime":
                         case "date":
