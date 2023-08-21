@@ -76,8 +76,9 @@ namespace CAPA_NEGOCIO.Security
         public List<Security_Users_Roles>? Security_Users_Roles { get; set; }
         public Security_Users? GetUserData()
         {
+
             Security_Users? user = this.Find<Security_Users>();
-            if (user != null)
+            if (user != null && user.Estado == "ACTIVO")
             {
                 user.Security_Users_Roles = new Security_Users_Roles()
                 {
@@ -87,8 +88,13 @@ namespace CAPA_NEGOCIO.Security
                 {
                     role.Security_Role?.GetRolData();
                 }
+                return user;
             }
-            return user;
+            if (user.Estado == "INACTIVO")
+            {
+                throw new Exception("usuario inactivo");
+            }
+            return null;
         }
         public object SaveUser()
         {
@@ -169,7 +175,7 @@ namespace CAPA_NEGOCIO.Security
         public int? Id_User { get; set; }
         public string? Estado { get; set; }
         [ManyToOne(TableName = "Security_Role", KeyColumn = "Id_Role", ForeignKeyColumn = "Id_Role")]
-        public Security_Roles? Security_Role { get; set; }      
+        public Security_Roles? Security_Role { get; set; }
 
     }
 }
