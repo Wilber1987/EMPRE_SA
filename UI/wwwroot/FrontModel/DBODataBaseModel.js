@@ -118,7 +118,8 @@ class Catalogo_Clientes extends EntityClass {
     segundo_nombre = { type: 'text', hiddenFilter: true, require: false };
     primer_apellido = { type: 'text' };
     segundo_apellidio = { type: 'text', require: false };
-    Catalogo_Tipo_Identificacion = { type: 'WSELECT', ModelObject: () => new Catalogo_Tipo_Identificacion(), hiddenFilter: true, hiddenInTable: true };
+    Catalogo_Tipo_Identificacion = { type: 'WSELECT', ModelObject: () => new Catalogo_Tipo_Identificacion(), label: "Tipo Identificación",
+     hiddenFilter: true, hiddenInTable: true };
     identificacion = { type: 'text' };
     sexo = {
         type: 'select',
