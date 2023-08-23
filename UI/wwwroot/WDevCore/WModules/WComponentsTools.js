@@ -610,7 +610,7 @@ class WArrayF {
         return DataArraySR;
     }
     static MaxValue(Data, MaxParam) {
-        var Maxvalue = Data[0][MaxParam];
+        var Maxvalue = Data[0][MaxParam] ?? 0;
         for (let index = 0; index < Data.length; index++) {
             if (parseInt(Data[index][MaxParam]) > Maxvalue) {
                 Maxvalue = Data[index][MaxParam];

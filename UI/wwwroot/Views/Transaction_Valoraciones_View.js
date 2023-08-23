@@ -572,7 +572,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
                 total: contrato.cuotafija_dolares.toFixed(2),
                 // @ts-ignore
                 interes: (capital * contrato.tasas_interes).toFixed(2),
-                // @ts-ignore
+                // @ts-ignoreº
                 abono_capital: abono_capital.toFixed(2),
                 // @ts-ignore
                 capital_restante: (capital - abono_capital).toFixed(2)

@@ -123,7 +123,7 @@ class Transaction_ContratosView extends HTMLElement {
             // @ts-ignore
             return new Date().toString().toDateFormatEs();
         }
-        const prioridad = WArrayF.MaxValue(this.entity.Transaction_Facturas, "fecha_pago");
+        const prioridad = WArrayF.MaxDateValue(this.entity.Transaction_Facturas, "fecha");
         // @ts-ignore
         return prioridad.toString().toDateFormatEs();
 
