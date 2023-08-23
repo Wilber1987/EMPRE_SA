@@ -69,6 +69,18 @@
                     <a class="" id="Transaction_ContratosView" asp-area="" asp-page="/PagesViews/Transaction_ContratosView">CONTRATOS</a>
                 </div>
             }
+            @if (SecurityController.HavePermission(PermissionsEnum.GESTION_PRESTAMOS_Y_EMPEÑOS.ToString(), identify))
+            {
+                <a class="title-collapse" id="PrestamosClientesMenu" onclick="changeActive(this)">GESTIÓN DE CUENTAS</a>
+                <div class="collapse">
+                    @if (SecurityController.HavePermission(PermissionsEnum.GESTION_CLIENTES.ToString(),//TODO
+                   identify))
+                    {
+                        <a class="" id="Gestion_Cuentas" asp-area="" asp-page="/PagesViews/Movimientos_Cuentas">Gestión de
+                            Cuentas</a>
+                    }                    
+                </div>
+            }
             @if (SecurityController.HavePermission(PermissionsEnum.GESTION_CONTRATOS.ToString(), identify))
             {
                 <a class="title-collapse" id="GestionContratosMenu" onclick="changeActive(this)">GESTIÓN DE CONTRATOS</a>
