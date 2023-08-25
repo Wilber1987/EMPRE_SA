@@ -22,9 +22,9 @@ namespace API.Controllers
         //     _emailSender = emailSender;
         // }
 
-        [HttpPost]
+        [HttpGet]
         public object SendMail(){
-            return MailServices.SendMail(new List<String>(){"wilberj1987@gmail.com","alderhernandez@gmail.com"},"noreply@noreply","Usted es un mela","example.cshtml");            
+            return MailServices.SendMailContract(new List<String>(){"wilberj1987@gmail.com","alderhernandez@gmail.com"},"noreply@noreply","Usted es un mela","example.cshtml");            
         }
 
 

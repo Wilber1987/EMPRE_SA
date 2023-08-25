@@ -38,6 +38,10 @@ namespace DataBaseModel
         public Double? valoracion_empeño_cordobas { get; set; }
         public Double? valoracion_empeño_dolares { get; set; }
 
+        public Double? precio_venta_empeño_cordobas { get; set; }
+        public Double? precio_venta_empeño_dolares { get; set; }
+
+
         [ManyToOne(TableName = "Catalogo_Estados_Articulos", KeyColumn = "id_estado_articulo", ForeignKeyColumn = "id_estado")]
         public Catalogo_Estados_Articulos? Catalogo_Estados_Articulos { get; set; }
         [ManyToOne(TableName = "Catalogo_Categoria", KeyColumn = "id_categoria", ForeignKeyColumn = "id_categoria")]
@@ -55,7 +59,7 @@ namespace DataBaseModel
                     if (valoracion?.id_valoracion == null)
                     {
                         valoracion?.Save();
-                    }                    
+                    }
                 }
                 this.CommitGlobalTransaction();
                 return valoraciones;
@@ -146,17 +150,17 @@ namespace DataBaseModel
 
 
         /****new properties ***/
-        public Double? valoracion_compra_dolares  { get; set; }
-        public Double? valoracion_compra_cordobas  { get; set; }
-        public Double? valoracion_empeño_cordobas  { get; set; }
-        public Double? valoracion_empeño_dolares  { get; set; }
-        public Double? tasas_interes  { get; set; }
-        public Double? gestion_crediticia  { get; set; }
-        public Double? cuotafija_dolares  { get; set; }
-        public DateTime? fecha  { get; set; }
-        public Double? total_pagar_cordobas  { get; set; }
-        public Double? total_pagar_dolares  { get; set; }
-        public Double? interes_dolares  { get; set; }
+        public Double? valoracion_compra_dolares { get; set; }
+        public Double? valoracion_compra_cordobas { get; set; }
+        public Double? valoracion_empeño_cordobas { get; set; }
+        public Double? valoracion_empeño_dolares { get; set; }
+        public Double? tasas_interes { get; set; }
+        public Double? gestion_crediticia { get; set; }
+        public Double? cuotafija_dolares { get; set; }
+        public DateTime? fecha { get; set; }
+        public Double? total_pagar_cordobas { get; set; }
+        public Double? total_pagar_dolares { get; set; }
+        public Double? interes_dolares { get; set; }
         /***end new properties***/
 
 

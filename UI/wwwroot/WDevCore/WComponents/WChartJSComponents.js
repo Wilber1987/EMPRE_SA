@@ -796,7 +796,10 @@ class GanttChart extends HTMLElement {
     }
     DrawComponent = async () => {
         this.TimeLine.innerHTML = "";
-      console.log(this.Dataset)
+        if (this.Dataset == undefined || this.Dataset == null || this.Dataset.length == 0) {
+            this.TimeLine.innerHTML = "NO DATA";
+            return;
+        }     
         const min = WArrayF.MinDateValue(this.Dataset, "Fecha_Inicio");
         const max = WArrayF.MaxDateValue(this.Dataset, "Fecha_Finalizacion");
         console.log(min);

@@ -76,6 +76,7 @@ class WForm extends HTMLElement {
                 this.SetOperationValues(Model, target)
                 const control = this.shadowRoot?.querySelector("#ControlValue" + property);
                 if (control) {
+                    // @ts-ignore
                     control.value = target[property];
                 }
                 if (this.Config.ProxyAction != undefined) {
@@ -458,7 +459,10 @@ class WForm extends HTMLElement {
             case "MODEL":
                 ControlLabel.className += " formHeader";
                 ControlContainer.classList.add("tableContainer");
-                ObjectF[prop] = ObjectF[prop] != "" ? ObjectF[prop] : {};
+                ObjectF[prop] = ObjectF[prop] == ""
+                    || ObjectF[prop] == undefined
+                    || ObjectF[prop] == null
+                    ? {} : ObjectF[prop];
                 InputControl = new WForm({
                     StyleForm: this.StyleForm,
                     EditObject: ObjectF[prop],
@@ -957,6 +961,7 @@ class WForm extends HTMLElement {
         return DivOptions;
     }
     Save = async (ObjectF = this.FormObject) => {
+        console.log(ObjectF);
         if (this.Config.ValidateFunction != undefined &&
             typeof this.Config.ValidateFunction === "function") {
             const response = this.Config.ValidateFunction(ObjectF);
@@ -1082,7 +1087,6 @@ class WForm extends HTMLElement {
                 } else if (this.Config.ObjectOptions?.SaveFunction != undefined) {
                     this.Config.ObjectOptions?.SaveFunction(ObjectF);
                 }
-                ModalCheck.close();
             } catch (error) {
                 ModalCheck.close();
                 console.log(error);

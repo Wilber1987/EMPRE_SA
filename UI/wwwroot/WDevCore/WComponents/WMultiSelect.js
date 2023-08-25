@@ -186,7 +186,7 @@ class MultiSelect extends HTMLElement {
         if (typeof element === "string") {
            return element
         }
-        return element.Descripcion ??
+        return  element.tipo ?? element.Descripcion ??
             element.descripcion ??
             element.desc ??
             element.name ??
@@ -292,6 +292,7 @@ const MainMenu = css`
     .toolActive {       
         border: solid 1px #9b9b9b;
         max-height: 600px;
+        min-width: 300px;
     }
     .toolInactive {
         max-height: 0px !important;
@@ -387,7 +388,7 @@ const MainMenu = css`
     }
     .ElementDetail {
         display: grid;
-        grid-template-columns: auto auto auto auto;
+        grid-template-columns: 100px calc(100% - 110px);
         padding: 10px;
         background-color: #eeeeee;
         border-radius: 10px;
