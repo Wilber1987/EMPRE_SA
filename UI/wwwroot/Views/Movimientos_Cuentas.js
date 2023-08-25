@@ -18,7 +18,7 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
         const model = new Movimientos_Cuentas();
         const dataset = await model.Get();
 
-        model.tasa_cambio = await new Catalogo_Cambio_Dolar().Get();
+        //model.tasa_cambio = await new Catalogo_Cambio_Dolar().Get();
 
         this.OptionContainer = WRender.Create({ className: "OptionContainer" });
         this.TabContainer = WRender.Create({ className: "TabContainer", id: 'TabContainer' });
