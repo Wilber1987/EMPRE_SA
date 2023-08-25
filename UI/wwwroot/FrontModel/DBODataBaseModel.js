@@ -388,6 +388,7 @@ class Catalogo_Cambio_Dolar extends EntityClass {
     valor_de_venta = { type: 'number', hiddenFilter: true };
 }
 export { Catalogo_Cambio_Dolar }
+
 class Catalogo_Cuentas extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
@@ -639,3 +640,25 @@ class Datos_Configuracion extends EntityClass {
     Catalogo_Sucursales = { type: 'WSELECT', ModelObject: () => new Catalogo_Sucursales() };
 }
 export { Datos_Configuracion }
+
+class Movimientos_Cuentas extends EntityClass {
+	constructor(props) {
+        super(props, 'EntityDBO');
+		for (const prop in props) {
+			this[prop] = props[prop];
+		}
+	}
+	id_movimiento = { type: "number" , primary: true  };	
+	/*id_cuenta_origen = { type: "number" };
+	id_cuenta_destino = { type: "number" };*/
+    Catalogo_Cuentas_Origen = { type: 'WSELECT', ModelObject: () => new Catalogo_Cuentas() };
+	Catalogo_Cuentas_Destino = { type: 'WSELECT', ModelObject: () => new Catalogo_Cuentas() };
+	monto = { type: "number" };
+	tasa_cambio = { type: "number", disabled: true };
+	total = { type: "number", disabled: true };
+	id_usuario_crea = { type: "number", hidden: true };
+	fecha = { type: "date", disabled: true};
+    descripcion = { type: "textarea" };
+	concepto = { type: "textarea" };
+}
+export{Movimientos_Cuentas}

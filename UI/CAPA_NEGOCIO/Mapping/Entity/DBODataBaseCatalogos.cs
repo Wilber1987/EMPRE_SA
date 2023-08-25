@@ -180,6 +180,27 @@ namespace DataBaseModel
         public Categoria_Cuentas? Categoria_Cuentas { get; set; }*/
     }
 
+    public class Movimientos_Cuentas: EntityClass 
+    {
+        [PrimaryKey(Identity = true)]
+        public int? id_movimiento { get; set; }
+        public string? descripcion { get; set; }
+        public string? concepto { get; set; }
+        //public int id_cuenta_origen { get; set; }
+        //public int id_cuenta_destino { get; set; }
+        public string? monto { get; set; }
+        public string? tasa_cambio { get; set; }
+        public string? total { get; set; }
+        public int? id_usuario_crea { get; set; }
+        public DateTime? fecha { get; set; }
+
+        [ManyToOne(TableName = "Catalogo_Cuentas", KeyColumn = "id_categoria", ForeignKeyColumn = "id_cuenta_origen")]
+        public Catalogo_Cuentas? Catalogo_Cuentas_Origen { get; set; }        
+        public int? id_categoria_cuenta_destino { get; set; }        
+        [ManyToOne(TableName = "Catalogo_Cuentas", KeyColumn = "id_categoria", ForeignKeyColumn = "id_cuenta_destino")]
+        public Catalogo_Cuentas? Catalogo_Cuentas_Destino { get; set; }
+    }
+ 
     public class Catalogo_Categoria : EntityClass
     {
         [PrimaryKey(Identity = true)]
