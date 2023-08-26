@@ -68,7 +68,6 @@ class MultiSelect extends HTMLElement {
         }
         this.shadowRoot.append(this.SetOptions());
         this.LabelMultiselect.onclick = this.DisplayOptions;
-        
     }
 
     connectedCallback() {

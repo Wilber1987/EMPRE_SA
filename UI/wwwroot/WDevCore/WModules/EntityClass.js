@@ -82,11 +82,10 @@ class EntityClass {
     }
     SaveWithModel = async (Object, Edit = false) => {
         if (Edit == false) {
-            await this.SaveData(this.ApiMethods.Set, Object);
+          return  await this.SaveData(this.ApiMethods.Set, Object);
         } else {
-            await this.SaveData(this.ApiMethods.Update, Object);
-        }
-        return true;
+           return await this.SaveData(this.ApiMethods.Update, Object);
+        }        
     }
     SaveData = async (Path, Data) => {
         return await WAjaxTools.PostRequest(this.ApiMethods.ApiRoute + Path, Data)

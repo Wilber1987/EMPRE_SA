@@ -2,6 +2,7 @@
 using System.Data.SqlClient;
 using System.Reflection;
 using System.Text.Json;
+using Newtonsoft.Json;
 
 namespace CAPA_DATOS
 {
@@ -40,22 +41,18 @@ namespace CAPA_DATOS
             return da;
         }
         protected override List<EntityProps> DescribeEntity(string entityName)
-        {          
-            if (entityProps == null)
-            {
-                string DescribeQuery = @"SELECT TABLE_NAME, COLUMN_NAME, IS_NULLABLE, DATA_TYPE, TABLE_SCHEMA
-                                    from [INFORMATION_SCHEMA].[COLUMNS]";
-                // WHERE [TABLE_NAME] = '" + entityName
-                // + "' order by [ORDINAL_POSITION]";
-                DataTable Table = TraerDatosSQL(DescribeQuery);
-                entityProps = ConvertDataTable<EntityProps>(Table, new EntityProps());
-            }
-            List<EntityProps> props = entityProps.Where(e => e.TABLE_NAME.Equals(entityName)).ToList();
-            if (props.Count == 0)
+        {
+            string DescribeQuery = @"SELECT COLUMN_NAME, IS_NULLABLE, DATA_TYPE, TABLE_SCHEMA
+                                    from [INFORMATION_SCHEMA].[COLUMNS] 
+                                    WHERE [TABLE_NAME] = '" + entityName
+                                   + "' order by [ORDINAL_POSITION]";
+            DataTable Table = TraerDatosSQL(DescribeQuery);
+            List<EntityProps> entityProps = ConvertDataTable<EntityProps>(Table, new EntityProps());
+            if (entityProps.Count == 0)
             {
                 throw new Exception("La entidad buscada no existe: " + entityName);
             }
-            return props;
+            return entityProps;
         }
         protected override string BuildInsertQueryByObject(object Inst)
         {
@@ -78,7 +75,16 @@ namespace CAPA_DATOS
                         case "varchar":
                         case "char":
                             ColumnNames = ColumnNames + AtributeName.ToString() + ",";
-                            Values = Values + "'" + AtributeValue.ToString() + "',";
+                            JsonProp? json = (JsonProp?)Attribute.GetCustomAttribute(oProperty, typeof(JsonProp));
+                            if (json != null)
+                            {
+                                Values = Values + "'" + JsonConvert.SerializeObject(AtributeValue) + "',";
+                            }
+                            else
+                            {
+                                Values = Values + "'" + AtributeValue.ToString() + "',";
+                            }
+
                             break;
                         case "int":
                         case "float":
@@ -96,13 +102,12 @@ namespace CAPA_DATOS
                             Values = Values + AtributeValue.ToString() + ",";
                             break;
                         case "bit":
-                            ColumnNames = ColumnNames + AtributeName.ToString() + ",";
-                            Values = Values +  "'" + (AtributeValue.ToString() == "True" ? "1" : "0") + "',";
+                            Values = Values + AtributeName + "= '" + (AtributeValue.ToString() == "True" ? "1" : "0") + "',";
                             break;
                         case "datetime":
                         case "date":
                             ColumnNames = ColumnNames + AtributeName.ToString() + ",";
-                            Values = Values + "'" + ((DateTime)AtributeValue).ToString("yyyy/MM/dd HH:mm:ss") + "',";
+                            Values = Values + "CONVERT(DATETIME,'" + ((DateTime)AtributeValue).ToString("yyyyMMdd HH:mm:ss") + "'),";
                             break;
                     }
                 }
@@ -133,7 +138,7 @@ namespace CAPA_DATOS
                 {
                     if (IdObject != AtributeName)
                     {
-                        Values = BuildSetsForUpdate(Values, AtributeName, AtributeValue, EntityProp);
+                        Values = BuildSetsForUpdate(Values, AtributeName, AtributeValue, EntityProp, oProperty);
                     }
                     else WhereConstruction(ref Conditions, ref index, AtributeName, AtributeValue);
                 }
@@ -162,7 +167,7 @@ namespace CAPA_DATOS
                 {
                     if ((from O in WhereProps where O == AtributeName select O).ToList().Count == 0)
                     {
-                        Values = BuildSetsForUpdate(Values, AtributeName, AtributeValue, EntityProp);
+                        Values = BuildSetsForUpdate(Values, AtributeName, AtributeValue, EntityProp, oProperty);
                     }
                     else WhereConstruction(ref Conditions, ref index, AtributeName, AtributeValue);
                 }
@@ -282,14 +287,23 @@ namespace CAPA_DATOS
             }
             return queryString;
         }
-        private static string BuildSetsForUpdate(string Values, string AtributeName, object AtributeValue, EntityProps EntityProp)
+        private static string BuildSetsForUpdate(string Values, string AtributeName,
+        object AtributeValue, EntityProps EntityProp, PropertyInfo oProperty)
         {
             switch (EntityProp.DATA_TYPE)
             {
                 case "nvarchar":
                 case "varchar":
                 case "char":
-                    Values = Values + AtributeName + "= '" + AtributeValue.ToString() + "',";
+                    JsonProp? json = (JsonProp?)Attribute.GetCustomAttribute(oProperty, typeof(JsonProp));
+                    if (json != null)
+                    {
+                        Values = Values + AtributeName + "= '" + JsonConvert.SerializeObject(AtributeValue) + "',";
+                    }
+                    else
+                    {
+                        Values = Values + AtributeName + "= '" + AtributeValue.ToString() + "',";
+                    }
                     break;
                 case "int":
                 case "float":
@@ -308,7 +322,7 @@ namespace CAPA_DATOS
                     break;
                 case "datetime":
                 case "date":
-                    Values = Values + AtributeName + "= '" + ((DateTime)AtributeValue).ToString("yyyy/MM/dd") + "',";
+                    Values = Values + AtributeName + "=  CONVERT(DATETIME,'" + ((DateTime)AtributeValue).ToString("yyyyMMdd HH:mm:ss") + "'),";
                     break;
             }
 

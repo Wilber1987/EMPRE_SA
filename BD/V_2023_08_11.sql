@@ -19,11 +19,11 @@ ALTER TABLE [dbo].[Catalogo_Cuentas] ADD CONSTRAINT [cuentas_sucursales_fk] FORE
 GO
 
 CREATE TABLE Permisos_Cuentas (
-    id_permiso INT PRIMARY KEY,
-    id_cuenta_origen INT,
-    id_cuenta_destino INT,
-    permite_debito BIT,
-    permite_credito BIT,
-    FOREIGN KEY (id_cuenta_origen) REFERENCES Catalogo_Cuentas(id_tipo_cuenta),
-    FOREIGN KEY (id_cuenta_destino) REFERENCES Catalogo_Cuentas(id_tipo_cuenta)
+    id_permiso int  IDENTITY(1,1) PRIMARY KEY,
+    id_categoria_cuenta_origen INT,
+    id_categoria_cuenta_destino INT,
+    permite_debito BIT null,
+    permite_credito BIT null,
+    FOREIGN KEY (id_categoria_cuenta_origen) REFERENCES Categoria_Cuentas(id_categoria),
+    FOREIGN KEY (id_categoria_cuenta_destino) REFERENCES Categoria_Cuentas(id_categoria)
 );

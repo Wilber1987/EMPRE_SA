@@ -289,6 +289,57 @@ namespace API.Controllers
         {
             return inst.Update();
         }
+        //Categoria_Cuentas
+        [HttpPost]
+        [AuthController]
+        public List<Categoria_Cuentas> getCategoria_Cuentas(Categoria_Cuentas Inst)
+        {
+            return Inst.Get<Categoria_Cuentas>();
+        }
+        [HttpPost]
+        [AuthController]
+        public object saveCategoria_Cuentas(Categoria_Cuentas inst)
+        {
+            return inst.Save();
+        }
+        [HttpPost]
+        [AuthController]
+        public object updateCategoria_Cuentas(Categoria_Cuentas inst)
+        {
+            return inst.Update();
+        }
+        //Permisos_Cuentas
+        [HttpPost]
+        [AuthController]
+        public List<Permisos_Cuentas> getPermisos_Cuentas(Permisos_Cuentas Inst)
+        {
+            return Inst.Get<Permisos_Cuentas>();
+        }
+        [HttpPost]
+        [AuthController]
+        public object savePermisos_Cuentas(Permisos_Cuentas inst)
+        {
+            return inst.Save();
+        }
+        [HttpPost]
+        [AuthController]
+        public object updatePermisos_Cuentas(Permisos_Cuentas inst)
+        {
+            return inst.Update();
+        }
+        //Movimientos_Cuentas
+        [HttpPost]
+        [AuthController]
+        public List<Movimientos_Cuentas> getMovimientos_Cuentas(Movimientos_Cuentas Inst)
+        {
+            return Inst.Get();
+        }        
+        [HttpPost]
+        [AuthController]
+        public object saveMovimientos_Cuentas(Movimientos_Cuentas inst)
+        {            
+            return inst.Save(HttpContext.Session.GetString("seassonKey"));
+        }       
         //Catalogo_Departamento
         [HttpPost]
         [AuthController]

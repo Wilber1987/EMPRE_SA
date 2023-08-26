@@ -10,9 +10,9 @@ namespace CAPA_DATOS
         public static SqlServerGDatos? SQLM;
         public static string DataBaseName = "EMPRE_SA";
         public static bool Anonimo = true;
-        private static string SGBD_USER = "empresa";
+        /*private static string SGBD_USER = "empresa";
         private static string SWGBD_PASSWORD = "Wmatus09%";
-        static string SQLServer = "tcp:empresa-sa.database.windows.net";
+        static string SQLServer = "tcp:empresa-sa.database.windows.net";*/
         
         //static string SQLServer = "DESKTOP-I58J01U";
 
@@ -22,9 +22,9 @@ namespace CAPA_DATOS
         // private static string SWGBD_PASSWORD = "zaxscd";
         
 
-        /*static string SQLServer = ".\\SQLEXPRESS";
+        static string SQLServer = ".\\SQLEXPRESS";
         private static string SGBD_USER = "sa";
-        private static string SWGBD_PASSWORD = "123";*/
+        private static string SWGBD_PASSWORD = "123";
 
         static public bool IniciarConexion()
         {

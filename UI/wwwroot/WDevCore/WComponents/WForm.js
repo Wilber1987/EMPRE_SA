@@ -373,13 +373,16 @@ class WForm extends HTMLElement {
                     ModelProperty.ModelObject = await WArrayF.isModelFromFunction(Model, prop);
                     /**@type {EntityClass} */
                     const entity = ModelProperty.EntityModel ?? ModelProperty.ModelObject;
-                    if (this.Config.ParentEntity != undefined && ModelProperty.SelfChargeDataset) {
-                        ModelProperty.Dataset = this.Config.ParentEntity[ModelProperty.SelfChargeDataset] ?? [];
-                    } else {
-                        ModelProperty.Dataset = await entity.Get();
+                    if (ModelProperty.Dataset == undefined) {
+                        if (this.Config.ParentEntity != undefined && ModelProperty.SelfChargeDataset) {
+                            ModelProperty.Dataset = this.Config.ParentEntity[ModelProperty.SelfChargeDataset] ?? [];
+                        } else {
+                            ModelProperty.Dataset = await entity.Get();
+                        }
                     }
+
                 }
-                if (ObjectF[prop] == null && ModelProperty.require != false &&
+                if ((ObjectF[prop] == null || ObjectF[prop] == undefined) && ModelProperty.require != false &&
                     ModelProperty.Dataset &&
                     ModelProperty.Dataset?.length > 0) {
                     ObjectF[prop] = ModelProperty?.Dataset[0];
@@ -1079,9 +1082,12 @@ class WForm extends HTMLElement {
             try {
                 if (withModel) {
                     const response = await this.Config.ModelObject?.SaveWithModel(ObjectF, this.Config.EditObject != undefined);
+                    this.ExecuteSaveFunction(ObjectF,response);
                 } else if (this.Config.ObjectOptions?.Url != undefined) {
                     const response = await WAjaxTools.PostRequest(this.Config.ObjectOptions?.Url, ObjectF);
-                }
+                    this.ExecuteSaveFunction(ObjectF,response);
+                }                
+                ModalCheck.close();
                 if (this.Config.SaveFunction != undefined) {
                     this.Config.SaveFunction(ObjectF);
                 } else if (this.Config.ObjectOptions?.SaveFunction != undefined) {
@@ -1114,6 +1120,15 @@ class WForm extends HTMLElement {
         });
         return ModalCheck;
     }
+    ExecuteSaveFunction(ObjectF,response) {
+        console.log(response);
+        if (this.Config.SaveFunction != undefined) {
+            this.Config.SaveFunction(ObjectF,response);
+        } else if (this.Config.ObjectOptions?.SaveFunction != undefined) {
+            this.Config.ObjectOptions?.SaveFunction(ObjectF,response);
+        }
+    }
+
     async SelectedFile(value, multiple = false) {
         if (multiple) {
             for (const file in value) {

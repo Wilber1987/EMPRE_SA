@@ -404,6 +404,7 @@ class Catalogo_Cambio_Dolar extends EntityClass {
     valor_de_venta = { type: 'number', hiddenFilter: true };
 }
 export { Catalogo_Cambio_Dolar }
+
 class Catalogo_Cuentas extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
@@ -413,11 +414,42 @@ class Catalogo_Cuentas extends EntityClass {
     }
     id_cuentas = { type: 'number', primary: true };
     nombre = { type: 'text' };
-    tipo_cuenta = { type: 'select', Dataset: ['PROPIA', 'PAGO'] };
+    saldo = { type: 'number', disabled: true, hiddenInTable: true, required: false };
+    tipo_cuenta = { type: 'select', Dataset: ['PROPIA', 'PAGO', 'EXTERNA'] };    
     Catalogo_Sucursales = { type: 'WSELECT', ModelObject: () => new Catalogo_Sucursales() };
+    Categoria_Cuentas = { type: 'WSELECT', ModelObject: () => new Categoria_Cuentas() };
     /*Catalogo_Tipo_Transaccion = { type: 'WSELECT', ModelObject: () => new Catalogo_Tipo_Transaccion() };*/
 }
 export { Catalogo_Cuentas }
+
+class Categoria_Cuentas  extends EntityClass {
+	constructor(props) {
+        super(props, 'EntityDBO');
+		for (const prop in props) {
+			this[prop] = props[prop];
+		}
+	}
+	id_categoria = { type: "number" , primary: true  };
+	descripcion = { type: "text"  };
+}
+export{Categoria_Cuentas}
+
+class Permisos_Cuentas extends EntityClass {    
+	constructor(props) {
+        super(props, 'EntityDBO');
+		for (const prop in props) {
+			this[prop] = props[prop];
+		}
+	}
+	id_permiso = { type: "number" , primary: true  };
+    Categoria_Cuentas_Origen = { type: 'WSELECT', ModelObject: () => new Categoria_Cuentas() };
+	Categoria_Cuentas_Destino = { type: 'WSELECT', ModelObject: () => new Categoria_Cuentas() };
+	permite_debito = { type: "checkbox", require: false  };
+	permite_credito = { type: "checkbox", require: false  };
+    //Categoria_Cuentas = { type: 'WSELECT', ModelObject: () => new Categoria_Cuentas() };//todo eliminar
+}
+export{Permisos_Cuentas}
+
 class Catalogo_Departamento extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
@@ -625,3 +657,29 @@ class Datos_Configuracion extends EntityClass {
     Catalogo_Sucursales = { type: 'WSELECT', ModelObject: () => new Catalogo_Sucursales() };
 }
 export { Datos_Configuracion }
+
+class Movimientos_Cuentas extends EntityClass {
+	constructor(props) {
+        super(props, 'EntityDBO');
+		for (const prop in props) {
+			this[prop] = props[prop];
+		}
+	}
+	id_movimiento = { type: "number" , primary: true  };	
+	/*id_cuenta_origen = { type: "number" };
+	id_cuenta_destino = { type: "number" };*/
+    Catalogo_Cuentas_Origen = { type: 'WSELECT', ModelObject: () => new Catalogo_Cuentas() };
+	Catalogo_Cuentas_Destino = { type: 'WSELECT', ModelObject: () => new Catalogo_Cuentas() };
+	monto = { type: "number", action: (movimiento)=>{
+        movimiento.total = (movimiento.monto / movimiento.tasa_cambio).toFixed(2).toString();
+    } };
+	tasa_cambio = { type: "number", disabled: true };
+	total = { type: "number", action: (movimiento)=>{
+        movimiento.monto = (movimiento.total / movimiento.tasa_cambio).toFixed(2).toString();
+    } };
+	id_usuario_crea = { type: "number", hidden: true };
+	fecha = { type: "date", disabled: true, required: false,hidden:true};
+    descripcion = { type: "textarea" };
+	concepto = { type: "textarea" };
+}
+export{Movimientos_Cuentas}
