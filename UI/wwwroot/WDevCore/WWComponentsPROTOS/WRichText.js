@@ -4,58 +4,47 @@ class WRichText extends HTMLElement {
     constructor() {
         super();
         this.value = "";
-    }
-    attributeChangedCallBack() {
-        this.DrawSlide();
-    }
-    connectedCallback() {
-        if (this.innerHTML != "") {
-            return;
-        }
+        this.Files = [];
         this.DrawComponent();
     }
+    connectedCallback() {        
+    }
     DrawComponent = async () => {
+        this.innerHTML != "";
         this.append(WRender.createElement(WRichTextStyle))
         this.DrawOptions();
-        this.append(WRender.createElement({
-            type: "div",
-            props: { contentEditable: true, class: "WREditor" },
-            events: {
-                input: () => {
-                    this.value = this.querySelector(".WREditor").innerHTML;
-                }
-            },
-            children: []
-        }));
+        this.Divinput = WRender.Create({
+            contentEditable: true,
+            class: "WREditor",
+            oninput: () => {
+                this.value = this.querySelector(".WREditor").innerHTML;
+            }
+        })
+        this.append(this.Divinput);
     }
     DrawOptions() {
-        const OptionsSection = {
-            type: "section",
-            props: { class: "WOptionsSection" },
-            children: []
-        }
+        const OptionsSection = WRender.Create({
+            tagName: "section",class: "WOptionsSection" 
+        })
         this.Commands.forEach(command => {
-            let CommandBtn = {
-                type: "input",
-                props: {
-                    type: command.type,
-                    class: "ROption tooltip",
-                    id: "ROption" + command.commandName,
-                    title: command.commandName,
-                    value: command.commandName
-                },
-            };
-            CommandBtn.props[command.event] = () => {
+            let CommandBtn = WRender.Create({
+                tagName: "input",
+                type: command.type,
+                class: "ROption tooltip",
+                id: "ROption" + command.commandName,
+                title: command.commandName,
+                value: command.commandName
+            });
+            CommandBtn[command.event] = () => {
                 const ROption = this.querySelector("#ROption" + command.commandName);
                 //console.log( ROption.value );   
                 document.execCommand(command.commandName, false, ROption.value);
             }
-            OptionsSection.children.push({
-                type: "div", props: { class: "tooltip" },
-                children: [CommandBtn, { type: "span", props: { class: "tooltiptext" }, children: [command.commandName] }]
-            })
+            OptionsSection.append(WRender.Create({ class: "tooltip" ,
+                children: [CommandBtn, { tagName: "span", class: "tooltiptext", children: [command.commandName] }]
+            }))
         });
-        this.append(WRender.createElement(OptionsSection));
+        this.append(OptionsSection);
     }
     Commands = [
         { commandName: "backColor", icon: "", type: "color", commandOptions: null, state: 1, event: "onchange" },
@@ -133,7 +122,7 @@ const WRichTextStyle = {
                 "z-index": "1",
                 "bottom": "150%",
                 "left": "50%",
-                padding:"5px",
+                padding: "5px",
                 "margin-left": "-60px",
             }),
             new WCssClass(" .tooltiptext::after", {
@@ -153,3 +142,4 @@ const WRichTextStyle = {
     }
 }
 customElements.define("w-rich-text", WRichText);
+export { WRichText }

@@ -321,7 +321,6 @@ class WSimpleModalForm extends HTMLElement {
             class: 'BtnClose', //class: 'Btn',
             onclick: this.close
         });
-        console.log(this.title);
         const Section = WRender.Create({
             className: "ModalHeader",
             innerHTML: this.title

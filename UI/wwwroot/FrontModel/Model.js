@@ -100,7 +100,7 @@ class Cuota extends EntityClass {
     /**@type {Number} cuota del abono*/
     descuento;
     /**@type {Number} cuota del abono*/
-    taza_cambio;
+    tasa_cambio;
 
 }
 export { Cuota }

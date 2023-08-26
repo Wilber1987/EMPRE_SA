@@ -45,7 +45,7 @@ class WCommentsComponent extends HTMLElement {
     }
     update = async () => {
         const Message = {
-            Id_User: this.User.UserId
+            Id_Case: this.CommentsIdentify
         }
         const response = await WAjaxTools.PostRequest(this.UrlSearch, Message);
         this.Dataset = response;

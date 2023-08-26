@@ -38,6 +38,10 @@ namespace DataBaseModel
         public Double? valoracion_empeño_cordobas { get; set; }
         public Double? valoracion_empeño_dolares { get; set; }
 
+        public Double? precio_venta_empeño_cordobas { get; set; }
+        public Double? precio_venta_empeño_dolares { get; set; }
+
+
         [ManyToOne(TableName = "Catalogo_Estados_Articulos", KeyColumn = "id_estado_articulo", ForeignKeyColumn = "id_estado")]
         public Catalogo_Estados_Articulos? Catalogo_Estados_Articulos { get; set; }
         [ManyToOne(TableName = "Catalogo_Categoria", KeyColumn = "id_categoria", ForeignKeyColumn = "id_categoria")]

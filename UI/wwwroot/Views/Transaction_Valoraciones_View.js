@@ -1,22 +1,19 @@
 //@ts-check
 // @ts-ignore
-import { WRender, ComponentsManager, WAjaxTools, WArrayF } from "../WDevCore/WModules/WComponentsTools.js";
-import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js"
-import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
-import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
+import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js";
+import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js";
+import { ComponentsManager, WArrayF, WRender } from "../WDevCore/WModules/WComponentsTools.js";
 // @ts-ignore
-import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
-import { ModalMessege, WForm } from "../WDevCore/WComponents/WForm.js";
 import { Catalogo_Cambio_Dolar, Catalogo_Categoria, Catalogo_Clientes, Catalogo_Estados_Articulos, Transactional_Valoracion } from "../FrontModel/DBODataBaseModel.js";
+import { ModalMessege, WForm } from "../WDevCore/WComponents/WForm.js";
 // @ts-ignore
-import { MultiSelect } from "../WDevCore/WComponents/WMultiSelect.js";
-import { css } from "../WDevCore/WModules/WStyledRender.js";
-import { Cuota, Detail_Prendas, ValoracionesContrato } from "../FrontModel/Model.js";
-import { CuotaComponent } from "../FrontModel/ModelComponents.js";
-import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
 import { Transactional_Configuraciones } from "../FrontModel/ADMINISTRATIVE_ACCESSDataBaseModel.js";
-import { ValoracionesSearch, clientSearcher } from "../modules/SerchersModules.js";
+import { Detail_Prendas, ValoracionesContrato } from "../FrontModel/Model.js";
+import { CuotaComponent } from "../FrontModel/ModelComponents.js";
 import { AmoritizationModule } from "../modules/AmortizacionModule.js";
+import { clientSearcher, ValoracionesSearch } from "../modules/SerchersModules.js";
+import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
+import { css } from "../WDevCore/WModules/WStyledRender.js";
 class Transaction_Valoraciones_View extends HTMLElement {
     // @ts-ignore
     constructor(props) {
@@ -191,7 +188,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
         if (!this.clientSercher) {
             this.clientSercher = clientSearcher(this.selectCliente);
         }
-        this.Manager.NavigateFunction("buscar-cliente",this.clientSercher);
+        this.Manager.NavigateFunction("buscar-cliente", this.clientSercher);
         this.append(
             StylesControlsV2.cloneNode(true),
             StyleScrolls.cloneNode(true),
@@ -210,7 +207,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
      * @returns {string}
      */
     valoracionResumen(valoracion_compra_cordobas, valoracion_compra_dolares, valoracion_empeño_cordobas, valoracion_empeño_dolares) {
-        return `Compra C$: ${valoracion_compra_cordobas.toFixed(2)} - Compra $: ${valoracion_compra_dolares.toFixed(2)} - Empeño C$: ${valoracion_empeño_cordobas.toFixed(2)} - Empeño $: ${valoracion_empeño_dolares.toFixed(2)}`;
+        return `Compra C$: ${valoracion_compra_cordobas} - Compra $: ${valoracion_compra_dolares} - Empeño C$: ${valoracion_empeño_cordobas} - Empeño $: ${valoracion_empeño_dolares}`;
     }
     buildValoresModel(tasasCambio) {
         this.valoresModel = {
@@ -220,7 +217,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
                     /** @type {HTMLInputElement|undefined|null} */
                     const control = this.valoresForm?.shadowRoot?.querySelector(".dolares_1");
                     if (control != undefined || control != null) {
-                        control.value = this.valoresObject.dolares_1.toFixed(2).toString();
+                        control.value = this.valoresObject.dolares_1.toString();
                     }
                     this.multiSelectEstadosArticulos?.SetOperationValues()
                     this.beneficiosDetailUpdate();
@@ -232,7 +229,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
                     /** @type {HTMLInputElement|undefined|null} */
                     const control = this.valoresForm?.shadowRoot?.querySelector(".Valoracion_1");
                     if (control != undefined || control != null) {
-                        control.value = this.valoresObject.Valoracion_1.toFixed(2).toString();
+                        control.value = this.valoresObject.Valoracion_1.toString();
                     }
                     this.multiSelectEstadosArticulos?.SetOperationValues()
                     this.beneficiosDetailUpdate();
@@ -244,7 +241,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
                     /** @type {HTMLInputElement|undefined|null} */
                     const control = this.valoresForm?.shadowRoot?.querySelector(".dolares_2");
                     if (control != undefined || control != null) {
-                        control.value = this.valoresObject.dolares_2.toFixed(2).toString();
+                        control.value = this.valoresObject.dolares_2.toString();
                     }
                     this.multiSelectEstadosArticulos?.SetOperationValues()
                     this.beneficiosDetailUpdate();
@@ -256,7 +253,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
                     /** @type {HTMLInputElement|undefined|null} */
                     const control = this.valoresForm?.shadowRoot?.querySelector(".Valoracion_2");
                     if (control != undefined || control != null) {
-                        control.value = this.valoresObject.Valoracion_2.toFixed(2).toString();
+                        control.value = this.valoresObject.Valoracion_2.toString();
                     }
                     this.multiSelectEstadosArticulos?.SetOperationValues()
                     this.beneficiosDetailUpdate();
@@ -268,7 +265,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
                     /** @type {HTMLInputElement|undefined|null} */
                     const control = this.valoresForm?.shadowRoot?.querySelector(".dolares_3");
                     if (control != undefined || control != null) {
-                        control.value = this.valoresObject.dolares_3.toFixed(2).toString();
+                        control.value = this.valoresObject.dolares_3.toString();
                     }
                     this.multiSelectEstadosArticulos?.SetOperationValues()
                     this.beneficiosDetailUpdate();
@@ -280,18 +277,18 @@ class Transaction_Valoraciones_View extends HTMLElement {
                     /** @type {HTMLInputElement|undefined|null} */
                     const control = this.valoresForm?.shadowRoot?.querySelector(".Valoracion_3");
                     if (control != undefined || control != null) {
-                        control.value = this.valoresObject.Valoracion_3.toFixed(2).toString();
+                        control.value = this.valoresObject.Valoracion_3.toString();
                     }
                     this.multiSelectEstadosArticulos?.SetOperationValues()
                     this.beneficiosDetailUpdate();
                 }
             }, total_cordobas: {
                 type: "operation", label: "Total - C$", disabled: true, action: (data) => {
-                     return ((parseFloat(data.Valoracion_1) + parseFloat(data.Valoracion_2) + parseFloat(data.Valoracion_3))/3).toFixed(2)
+                    return ((parseFloat(data.Valoracion_1) + parseFloat(data.Valoracion_2) + parseFloat(data.Valoracion_3)) / 3).toFixed(2)
                 }
-            },  total_dolares: {
+            }, total_dolares: {
                 type: "operation", label: "$:", disabled: true, action: (data) => {
-                    return ((parseFloat(data.dolares_1) + parseFloat(data.dolares_2) + parseFloat(data.dolares_3))/3).toFixed(2)
+                    return ((parseFloat(data.dolares_1) + parseFloat(data.dolares_2) + parseFloat(data.dolares_3)) / 3).toFixed(2)
                 }
             }
         };
@@ -330,20 +327,20 @@ class Transaction_Valoraciones_View extends HTMLElement {
         });
     }
     calculoCordobas = (porcentaje) => {
-        return (this.avgValores() * (porcentaje / 100)).toFixed(2);
+        return AmoritizationModule.round(this.avgValores() * (porcentaje / 100)).toFixed(2);
     }
     calculoDolares = (porcentaje, tasa_cambio) => {
-        return ((this.avgValores() * (porcentaje / 100)) / tasa_cambio).toFixed(2);
+        return AmoritizationModule.round((this.avgValores() * (porcentaje / 100)) / tasa_cambio).toFixed(2);
     }
     avgValores() {
-        return (parseFloat(this.valoresObject.Valoracion_1.toString()) +
+        return AmoritizationModule.round((parseFloat(this.valoresObject.Valoracion_1.toString()) +
             parseFloat(this.valoresObject.Valoracion_2.toString()) +
-            parseFloat(this.valoresObject.Valoracion_3.toString())) / 3;
+            parseFloat(this.valoresObject.Valoracion_3.toString())) / 3);
     }
     SetOption() {
         this.OptionContainer.append(WRender.Create({
             tagName: 'button', className: 'Block-Secundary', innerText: 'Buscar cliente',
-            onclick: () => {                
+            onclick: () => {
                 this.Manager.NavigateFunction("buscar-cliente", this.clientSercher)
             }
         }))
@@ -351,7 +348,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
             tagName: 'button', className: 'Block-Primary', innerText: 'Valoración',
             onclick: () => this.Manager.NavigateFunction("valoraciones", this.valoracionesContainer)
         }))
-    
+
         this.OptionContainer.append(WRender.Create({
             tagName: 'button', className: 'Block-Tertiary', innerText: 'Buscar valoraciones',
             onclick: () => this.Manager.NavigateFunction("Searcher", new ValoracionesSearch(this.selectValoracion))
@@ -468,12 +465,12 @@ class Transaction_Valoraciones_View extends HTMLElement {
             if (this.valoresForm != undefined) {
                 // @ts-ignore
                 if (new Date().subtractDays(40) < new Date(valoracion.Fecha)) {
-                    this.valoresObject.Valoracion_1 = valoracion.Detail_Valores?.Valoracion_1.toFixed(2) ?? 0;
-                    this.valoresObject.dolares_1 = valoracion.Detail_Valores?.dolares_1.toFixed(2) ?? 0;
-                    this.valoresObject.Valoracion_2 = valoracion.Detail_Valores?.Valoracion_2.toFixed(2) ?? 0;
-                    this.valoresObject.dolares_2 = valoracion.Detail_Valores?.dolares_2.toFixed(2) ?? 0;
-                    this.valoresObject.Valoracion_3 = valoracion.Detail_Valores?.Valoracion_3.toFixed(2) ?? 0;
-                    this.valoresObject.dolares_3 = valoracion.Detail_Valores?.dolares_3.toFixed(2) ?? 0;
+                    this.valoresObject.Valoracion_1 = valoracion.Detail_Valores?.Valoracion_1 ?? 0;
+                    this.valoresObject.dolares_1 = valoracion.Detail_Valores?.dolares_1 ?? 0;
+                    this.valoresObject.Valoracion_2 = valoracion.Detail_Valores?.Valoracion_2 ?? 0;
+                    this.valoresObject.dolares_2 = valoracion.Detail_Valores?.dolares_2 ?? 0;
+                    this.valoresObject.Valoracion_3 = valoracion.Detail_Valores?.Valoracion_3 ?? 0;
+                    this.valoresObject.dolares_3 = valoracion.Detail_Valores?.dolares_3 ?? 0;
                     this.valoresForm.DrawComponent();
                 } else {
                     this.valoresObject.Valoracion_1 = 0;
@@ -487,7 +484,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
             }
         }
         this.beneficiosDetailUpdate();
-        this.Manager.NavigateFunction("valoraciones",  this.valoracionesContainer);
+        this.Manager.NavigateFunction("valoraciones", this.valoracionesContainer);
     }
     beneficiosDetailUpdate() {
         // @ts-ignore
@@ -496,8 +493,14 @@ class Transaction_Valoraciones_View extends HTMLElement {
         const beneficioVentaC = this.Beneficios?.find(b => b.Nombre == "BENEFICIO_VENTA_ARTICULO_COMPRADO");
         const beneficioVentaE = this.Beneficios?.find(b => b.Nombre == "BENEFICIO_VENTA_ARTICULO_EMPENO");
         const mora = detail.Tasa_interes * 2 / 100;
-        const valor = ((parseFloat(detail.valoracion_empeño_cordobas) * (mora  + 1)) * (beneficioVentaE.Valor / 100 + 1)) ;
+        const precio_venta_empeño = ((parseFloat(detail.valoracion_empeño_cordobas) * (mora + 1)) * (beneficioVentaE.Valor / 100 + 1));
 
+
+        // @ts-ignore
+        this.valoracionesForm.FormObject.precio_venta_empeño_cordobas = (precio_venta_empeño);
+
+        // @ts-ignore
+        this.valoracionesForm.FormObject.precio_venta_empeño_dolares = (precio_venta_empeño / this.tasasCambio[0].valor_de_compra)
         // @ts-ignore
         //const moraDolares =  mora / this.tasasCambio[0].valor_de_compra;    
         this.BeneficioDetail?.append(WRender.CreateStringNode(`<div>
@@ -509,10 +512,12 @@ class Transaction_Valoraciones_View extends HTMLElement {
             </div> 
             <div class="column-venta">
                 <label>VENTA DE EMPEÑO</label>
-                <span>C$ ${valor.toString() == "NaN" ? "0.00" : valor.toFixed(2)}</span>
-                <span>$ ${valor.toString() == "NaN" ? "0.00" : (valor / 
-                // @ts-ignore
-                this.tasasCambio[0].valor_de_compra).toFixed(2)}</span>
+                <span>C$ ${precio_venta_empeño.toString() == "NaN" ? "0.00"
+                : precio_venta_empeño.toFixed(2)}</span>
+                <span>$ ${precio_venta_empeño.toString() == "NaN" ? "0.00"
+                : (precio_venta_empeño /
+                    // @ts-ignore
+                    this.tasasCambio[0].valor_de_compra).toFixed(2)}</span>
             </div> 
         </div>`));
     }
@@ -528,13 +533,13 @@ class Transaction_Valoraciones_View extends HTMLElement {
         // const total = this.valoracionesTable?.Dataset.reduce((sum, value) => (typeof value.Edad == "number" ? sum + value.Edad : sum), 0);
         const contrato = new ValoracionesContrato({
             // @ts-ignore
-            valoracion_compra_cordobas: WArrayF.SumValAtt(this.valoracionesTable?.Dataset, "valoracion_compra_cordobas"),
+            valoracion_compra_cordobas: AmoritizationModule.round(WArrayF.SumValAtt(this.valoracionesTable?.Dataset, "valoracion_compra_cordobas")),
             // @ts-ignore
-            valoracion_compra_dolares: WArrayF.SumValAtt(this.valoracionesTable?.Dataset, "valoracion_compra_dolares"),
+            valoracion_compra_dolares: AmoritizationModule.round(WArrayF.SumValAtt(this.valoracionesTable?.Dataset, "valoracion_compra_dolares")),
             // @ts-ignore
-            valoracion_empeño_cordobas: WArrayF.SumValAtt(this.valoracionesTable?.Dataset, "valoracion_empeño_cordobas"),
+            valoracion_empeño_cordobas: AmoritizationModule.round(WArrayF.SumValAtt(this.valoracionesTable?.Dataset, "valoracion_empeño_cordobas")),
             // @ts-ignore
-            valoracion_empeño_dolares: WArrayF.SumValAtt(this.valoracionesTable?.Dataset, "valoracion_empeño_dolares"),
+            valoracion_empeño_dolares: AmoritizationModule.round(WArrayF.SumValAtt(this.valoracionesTable?.Dataset, "valoracion_empeño_dolares")),
             tasas_interes: this.getTasaInteres() / 100,
             plazo: this.valoracionesForm?.FormObject.Plazo ?? 1,
             fecha: new Date(),
@@ -548,38 +553,40 @@ class Transaction_Valoraciones_View extends HTMLElement {
                 /**@type {Transactional_Valoracion}*/valoracion => new Detail_Prendas({
                 Descripcion: valoracion.Descripcion,
                 modelo: valoracion.Modelo,
-                mara: valoracion.Marca,
+                marca: valoracion.Marca,
                 serie: valoracion.Serie,
                 pprenda: valoracion.valoracion_empeño_cordobas,
+                color: "#000",
                 en_manos_de: undefined,
+                precio_venta: valoracion.precio_venta_empeño_dolares,
                 Catalogo_Categoria: valoracion.Catalogo_Categoria,
                 Transactional_Valoracion: valoracion
-            })
-            ),
+            })),
             Catalogo_Clientes: this.Cliente,
             valoraciones: this.valoracionesTable?.Dataset
         })
-        const cuotaFija = AmoritizationModule.getPago(contrato);
-        contrato.cuotafija = cuotaFija;
-        contrato.cuotafija_dolares = contrato.cuotafija / contrato.taza_cambio;
-        let capital = contrato.valoracion_empeño_dolares;
-        for (let index = 0; index < contrato.plazo; index++) {
-            const abono_capital = contrato.cuotafija_dolares - (capital * contrato.tasas_interes);
-            const cuota = new Cuota({
-                // @ts-ignore
-                fecha: contrato.fecha.modifyMonth(index + 1),
-                // @ts-ignore
-                total: contrato.cuotafija_dolares.toFixed(2),
-                // @ts-ignore
-                interes: (capital * contrato.tasas_interes).toFixed(2),
-                // @ts-ignoreº
-                abono_capital: abono_capital.toFixed(2),
-                // @ts-ignore
-                capital_restante: (capital - abono_capital).toFixed(2)
-            })
-            capital = capital - abono_capital;
-            contrato.Transaction_Facturas.push(cuota)
-        }
+        // const cuotaFija = AmoritizationModule.getPago(contrato);
+        // contrato.cuotafija = cuotaFija;
+        // contrato.cuotafija_dolares = contrato.cuotafija / contrato.taza_cambio;
+        // let capital = contrato.valoracion_empeño_dolares;
+        // for (let index = 0; index < contrato.plazo; index++) {
+        //     const abono_capital = contrato.cuotafija_dolares - (capital * contrato.tasas_interes);
+        //     const cuota = new Cuota({
+        //         // @ts-ignore
+        //         fecha: contrato.fecha.modifyMonth(index + 1),
+        //         // @ts-ignore
+        //         total: contrato.cuotafija_dolares,
+        //         // @ts-ignore
+        //         interes: (capital * contrato.tasas_interes),
+        //         // @ts-ignoreº
+        //         abono_capital: abono_capital,
+        //         // @ts-ignore
+        //         capital_restante: (capital - abono_capital)
+        //     })
+        //     capital = capital - abono_capital;
+        //     contrato.Transaction_Facturas.push(cuota)
+        // }
+        AmoritizationModule.crearCuotas(contrato);
         //console.log(contrato);
         if (this.CuotasTable != undefined) {
             this.CuotasTable.Dataset = contrato.Transaction_Facturas;
@@ -655,7 +662,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
     `
 }
 customElements.define('w-valoraciones-view', Transaction_Valoraciones_View);
-export { Transaction_Valoraciones_View }
+export { Transaction_Valoraciones_View };
 // @ts-ignore
 window.addEventListener('load', async () => { MainBody.append(new Transaction_Valoraciones_View()) })
 

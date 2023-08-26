@@ -54,6 +54,10 @@ class Transactional_Valoracion extends EntityClass {
     Catalogo_Estados_Articulos = { type: 'WSELECT', hiddenInTable: true, ModelObject: () => new Catalogo_Estados_Articulos(), hiddenFilter: true };
     //TASAS DE INTERES
     valoracion_empeño_dolares = { type: 'operation' };
+
+    precio_venta_empeño_cordobas = { type: 'number', hidden: true };
+    precio_venta_empeño_dolares = { type: 'number', hidden: true };
+    
     GuardarValoraciones = async (valoraciones) => {
         return await this.SaveData("Transactional_Valoracion/GuardarValoraciones", { valoraciones: valoraciones })
     }
@@ -118,8 +122,10 @@ class Catalogo_Clientes extends EntityClass {
     segundo_nombre = { type: 'text', hiddenFilter: true, require: false };
     primer_apellido = { type: 'text' };
     segundo_apellidio = { type: 'text', require: false };
-    Catalogo_Tipo_Identificacion = { type: 'WSELECT', ModelObject: () => new Catalogo_Tipo_Identificacion(), label: "Tipo Identificación",
-     hiddenFilter: true, hiddenInTable: true };
+    Catalogo_Tipo_Identificacion = {
+        type: 'WSELECT', ModelObject: () => new Catalogo_Tipo_Identificacion(), label: "Tipo Identificación",
+        hiddenFilter: true, hiddenInTable: true
+    };
     identificacion = { type: 'text' };
     sexo = {
         type: 'select',
@@ -168,7 +174,7 @@ class Catalogo_Categoria extends EntityClass {
     tipo = { type: 'text' };
     descripcion = { type: 'text', hiddenFilter: true, require: false };
     plazo_limite = { type: 'number' };
-    prioridad = { type: 'number' };
+    prioridad = { type: 'number', hiddenInTable: true };
 }
 export { Catalogo_Categoria }
 
@@ -314,7 +320,11 @@ class Detail_PrendasModel extends EntityClass {
 
         }
     };
-    Detail_Prendas_Vehiculos = { hiddenInTable: true, type: 'Model', ModelObject: () => new Detail_Prendas_VehiculosModel(), EntityModel: () => new Detail_Prendas_Vehiculos() };
+    Detail_Prendas_Vehiculos = {
+        type: 'Model',
+        ModelObject: () => new Detail_Prendas_VehiculosModel(),
+        EntityModel: () => new Detail_Prendas_Vehiculos()
+    };
 
 }
 export { Detail_PrendasModel }

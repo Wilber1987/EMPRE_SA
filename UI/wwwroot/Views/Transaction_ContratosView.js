@@ -65,7 +65,6 @@ class Transaction_ContratosView extends HTMLElement {
             Detail_Prendas_Vehiculos: {
                 type: 'Model',
                 ModelObject: () => new Detail_Prendas_VehiculosModel(),
-                EntityModel: () => new Detail_Prendas_Vehiculos(),
                 hidden: isVehiculo == undefined ? true : false
             }
         });
@@ -73,7 +72,12 @@ class Transaction_ContratosView extends HTMLElement {
             Dataset: this.entity.Detail_Prendas,
             EntityModel: new Detail_Prendas({}),
             ModelObject: modelPrendas,
-            AddItemsFromApi: false
+            AddItemsFromApi: false,
+            Options: {
+                Delete: true,
+                Edit: true,
+                Search: true
+            }
         })
 
         this.inputPlazo = WRender.Create({
@@ -260,13 +264,13 @@ class Transaction_ContratosView extends HTMLElement {
         // @ts-ignore
         const existVehiculo = this.entity.Detail_Prendas?.find(p => p.Catalogo_Categoria.id_categoria == 2);
         if (existVehiculo != undefined && valoracion.Catalogo_Categoria.id_categoria != 2) {
-            this.append(ModalMessege("Anteriormente valoro un vehículo por lo tanto no puede agregar valoraciones de diferente categoría"));
+            this.shadowRoot?.append(ModalMessege("Anteriormente valoro un vehículo por lo tanto no puede agregar valoraciones de diferente categoría"));
             return;
         }
         // @ts-ignore
         const notExistVehiculo = this.entity.Detail_Prendas?.find(p => p.Catalogo_Categoria.id_categoria != 2);
         if (notExistVehiculo != undefined && valoracion.Catalogo_Categoria.id_categoria == 2) {
-            this.append(ModalMessege("Anteriormente valoro un artículo distinto de vehículo por lo tanto no puede agregar valoraciones de esta categoría"));
+            this.shadowRoot?.append(ModalMessege("Anteriormente valoro un artículo distinto de vehículo por lo tanto no puede agregar valoraciones de esta categoría"));
             return;
         }
         this.entity.Detail_Prendas = this.entity.Detail_Prendas ?? [];
@@ -286,7 +290,6 @@ class Transaction_ContratosView extends HTMLElement {
     update() {
         AmoritizationModule.calculoAmortizacion(this.entity);
         if (this.prendasTable != undefined && this.entity.Detail_Prendas != undefined) {
-            console.log(this.entity.Detail_Prendas);
             this.prendasTable.Dataset = this.entity.Detail_Prendas;
             this.prendasTable?.DrawTable();
         }
