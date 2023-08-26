@@ -29,8 +29,8 @@
                 Transaction_ContratosView.className = "active";
             } else if (location.href.includes("Transaction_FacturasView")) {
                 Transaction_FacturasView.className = "active";
-            } else if (location.href.includes("Transaction_Ingresos_EgresosView")) {
-                Transaction_Ingresos_EgresosView.className = "active";
+            } else if (location.href.includes("Movimientos_Cuentas")) {
+                Movimientos_Cuentas.className = "active";
             } else if (location.href.includes("Gestion_Clientes")) {
                 Gestion_Clientes.className = "active";
             } else if (location.href.includes("Gestion_Inversionistas")) {
@@ -76,7 +76,7 @@
                     @if (SecurityController.HavePermission(PermissionsEnum.GESTION_CLIENTES.ToString(),//TODO
                    identify))
                     {
-                        <a class="" id="Gestion_Cuentas" asp-area="" asp-page="/PagesViews/Movimientos_Cuentas">Movimientos a
+                        <a class="" id="Movimientos_Cuentas" asp-area="" asp-page="/PagesViews/Movimientos_Cuentas">Movimientos a
                             Cuentas</a>
                     }                    
                 </div>
