@@ -426,6 +426,7 @@ class WFilterOptions extends HTMLElement {
             overflow: inherit;
             max-height: inherit;
             padding: 10px  5px;
+            transition: all 0.3s;
         }
 
         .OptionContainer label {

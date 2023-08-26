@@ -15,6 +15,9 @@ namespace CAPA_DATOS
     {
         public bool Identity { get; set; }
     }
+    public class JsonProp : Attribute
+    {
+    }
     public class OneToMany : Attribute
     {
         public string TableName { get; set; }

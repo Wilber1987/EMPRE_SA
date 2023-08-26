@@ -16,14 +16,14 @@ class Gestion_ClientesView extends HTMLElement {
     }
     Draw = async () => {
         const model = new Catalogo_Clientes();
-        const dataset = await model.Get();
+        //const dataset = await model.Get();
 
         this.OptionContainer = WRender.Create({ className: "OptionContainer" });
         this.TabContainer = WRender.Create({ className: "TabContainer", id: 'TabContainer' });
 
         this.Manager = new ComponentsManager({ MainContainer: this.TabContainer, SPAManage: false });
         this.TableComponent = new WTableComponent({
-            ModelObject: model, Dataset: dataset, Options: {
+            ModelObject: model, Dataset: [], Options: {
                 UserActions: [
                     {
                         name: "Editar", action: (cliente) => {
@@ -36,7 +36,7 @@ class Gestion_ClientesView extends HTMLElement {
             }
         })
         this.FilterOptions = new WFilterOptions({
-            Dataset: dataset,
+            Dataset: [],
             ModelObject: model,
             Display: true,
             FilterFunction: (DFilt) => {
@@ -45,16 +45,17 @@ class Gestion_ClientesView extends HTMLElement {
         });
         this.MainComponent = WRender.Create({ className: "main-container", children: [this.FilterOptions, this.TableComponent] })
 
-        //this.MainComponent.shadowRoot?.prepend(this.FilterOptions);
-
-
         this.OptionContainer.append(WRender.Create({
             tagName: 'button', className: 'Block-Basic', innerText: 'Ingresar Cliente',
             onclick: () => this.NewTransaction()
         }))
         this.OptionContainer.append(WRender.Create({
             tagName: 'button', className: 'Block-Secundary', innerText: 'Editar cliente',
-            onclick: () => { this.Manager?.NavigateFunction("tabla", this.MainComponent) }
+            onclick: async () => { 
+                const datasetUpdated = await model.Get();
+                this.TableComponent?.DrawTable(datasetUpdated);
+                this.Manager?.NavigateFunction("tabla", this.MainComponent);
+            }
         }))
 
         this.NewTransaction()
@@ -159,7 +160,7 @@ class Gestion_ClientesForm extends HTMLElement {
             tagName: 'button', className: 'Block-Basic', innerText: 'Limpiar',
             onclick: () => {
                 for (const prop in this.cliente) {
-                    this.cliente[prop] = undefined;
+                    this.cliente[prop] = {};
                 }
                 this.FormularioCliente?.DrawComponent();
             }

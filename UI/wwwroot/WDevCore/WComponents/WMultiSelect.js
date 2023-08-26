@@ -68,7 +68,6 @@ class MultiSelect extends HTMLElement {
         }
         this.shadowRoot.append(this.SetOptions());
         this.LabelMultiselect.onclick = this.DisplayOptions;
-        
     }
 
     connectedCallback() {
@@ -248,7 +247,8 @@ class WToolTip extends HTMLElement {
                 transition: all .1s;
                 max-height: 0px;
                 background-color: #fff;
-                overflow: hidden;               
+                overflow: hidden;  
+                left: 0;             
             }
             w-tooltip.active {
                 max-height: 600px;
@@ -342,6 +342,7 @@ const MainMenu = css`
         width: 100%;
         cursor: pointer;
         padding: 10px 10px;
+        text-align: justify;
     }
     .SubMenu {
         max-height: 0px;

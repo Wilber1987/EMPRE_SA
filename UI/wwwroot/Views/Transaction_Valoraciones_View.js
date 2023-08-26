@@ -151,7 +151,8 @@ class Transaction_Valoraciones_View extends HTMLElement {
                 this.valoracionesForm?.SetOperationValues();
             }, CustomStyle: css`
                 .ModalElement {
-                    display: flex;
+                    display: grid;
+                    grid-template-columns: auto 120px;
                     align-items: center;
                 } .ModalElement label {
                     display: block;
@@ -187,7 +188,10 @@ class Transaction_Valoraciones_View extends HTMLElement {
             WRender.Create({ className: "nav-header", children: [this.TableNavigator, this.amortizacionResumen] }),
             this.TabContainerTables
         );
-        this.Manager.NavigateFunction("valoraciones", this.valoracionesContainer);
+        if (!this.clientSercher) {
+            this.clientSercher = clientSearcher(this.selectCliente);
+        }
+        this.Manager.NavigateFunction("buscar-cliente",this.clientSercher);
         this.append(
             StylesControlsV2.cloneNode(true),
             StyleScrolls.cloneNode(true),
@@ -281,7 +285,15 @@ class Transaction_Valoraciones_View extends HTMLElement {
                     this.multiSelectEstadosArticulos?.SetOperationValues()
                     this.beneficiosDetailUpdate();
                 }
-            },
+            }, total_cordobas: {
+                type: "operation", label: "Total - C$", disabled: true, action: (data) => {
+                     return ((parseFloat(data.Valoracion_1) + parseFloat(data.Valoracion_2) + parseFloat(data.Valoracion_3))/3).toFixed(2)
+                }
+            },  total_dolares: {
+                type: "operation", label: "$:", disabled: true, action: (data) => {
+                    return ((parseFloat(data.dolares_1) + parseFloat(data.dolares_2) + parseFloat(data.dolares_3))/3).toFixed(2)
+                }
+            }
         };
     }
     valoracionesModel(tasasCambio, multiSelectEstadosArticulos) {
@@ -330,18 +342,16 @@ class Transaction_Valoraciones_View extends HTMLElement {
     }
     SetOption() {
         this.OptionContainer.append(WRender.Create({
-            tagName: 'button', className: 'Block-Primary', innerText: 'Nueva valoración',
-            onclick: () => this.Manager.NavigateFunction("valoraciones")
-        }))
-        this.OptionContainer.append(WRender.Create({
             tagName: 'button', className: 'Block-Secundary', innerText: 'Buscar cliente',
-            onclick: () => {
-                if (!this.clientSercher) {
-                    this.clientSercher = clientSearcher(this.selectCliente);
-                }
+            onclick: () => {                
                 this.Manager.NavigateFunction("buscar-cliente", this.clientSercher)
             }
         }))
+        this.OptionContainer.append(WRender.Create({
+            tagName: 'button', className: 'Block-Primary', innerText: 'Valoración',
+            onclick: () => this.Manager.NavigateFunction("valoraciones", this.valoracionesContainer)
+        }))
+    
         this.OptionContainer.append(WRender.Create({
             tagName: 'button', className: 'Block-Tertiary', innerText: 'Buscar valoraciones',
             onclick: () => this.Manager.NavigateFunction("Searcher", new ValoracionesSearch(this.selectValoracion))
@@ -434,7 +444,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
         this.selectedClientDetail.innerText = `
             Cliente seleccionado: ${selectCliente.primer_nombre} ${selectCliente.segundo_nombre ?? ''} ${selectCliente.primer_apellido} ${selectCliente.segundo_apellidio ?? ''}
         `;
-        this.Manager.NavigateFunction("valoraciones");
+        this.Manager.NavigateFunction("valoraciones", this.valoracionesContainer);
         this.beneficiosDetailUpdate();
     }
     getTasaInteres = () => {
@@ -477,7 +487,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
             }
         }
         this.beneficiosDetailUpdate();
-        this.Manager.NavigateFunction("valoraciones");
+        this.Manager.NavigateFunction("valoraciones",  this.valoracionesContainer);
     }
     beneficiosDetailUpdate() {
         // @ts-ignore
@@ -499,8 +509,8 @@ class Transaction_Valoraciones_View extends HTMLElement {
             </div> 
             <div class="column-venta">
                 <label>VENTA DE EMPEÑO</label>
-                <span>C$ ${valor.toFixed(2)}</span>
-                <span>$ ${valor.toString() == "NaN" ? 0 : (valor / 
+                <span>C$ ${valor.toString() == "NaN" ? "0.00" : valor.toFixed(2)}</span>
+                <span>$ ${valor.toString() == "NaN" ? "0.00" : (valor / 
                 // @ts-ignore
                 this.tasasCambio[0].valor_de_compra).toFixed(2)}</span>
             </div> 
@@ -552,17 +562,17 @@ class Transaction_Valoraciones_View extends HTMLElement {
         const cuotaFija = AmoritizationModule.getPago(contrato);
         contrato.cuotafija = cuotaFija;
         contrato.cuotafija_dolares = contrato.cuotafija / contrato.taza_cambio;
-        let capital = contrato.valoracion_empeño_cordobas;
+        let capital = contrato.valoracion_empeño_dolares;
         for (let index = 0; index < contrato.plazo; index++) {
-            const abono_capital = cuotaFija - (capital * contrato.tasas_interes);
+            const abono_capital = contrato.cuotafija_dolares - (capital * contrato.tasas_interes);
             const cuota = new Cuota({
                 // @ts-ignore
                 fecha: contrato.fecha.modifyMonth(index + 1),
                 // @ts-ignore
-                total: cuotaFija.toFixed(2),
+                total: contrato.cuotafija_dolares.toFixed(2),
                 // @ts-ignore
                 interes: (capital * contrato.tasas_interes).toFixed(2),
-                // @ts-ignore
+                // @ts-ignoreº
                 abono_capital: abono_capital.toFixed(2),
                 // @ts-ignore
                 capital_restante: (capital - abono_capital).toFixed(2)

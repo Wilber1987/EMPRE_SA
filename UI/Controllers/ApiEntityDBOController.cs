@@ -332,20 +332,14 @@ namespace API.Controllers
         [AuthController]
         public List<Movimientos_Cuentas> getMovimientos_Cuentas(Movimientos_Cuentas Inst)
         {
-            return Inst.Get<Movimientos_Cuentas>();
-        }
+            return Inst.Get();
+        }        
         [HttpPost]
         [AuthController]
         public object saveMovimientos_Cuentas(Movimientos_Cuentas inst)
-        {
-            return inst.Save();
-        }
-        [HttpPost]
-        [AuthController]
-        public object updateMovimientos_Cuentas(Movimientos_Cuentas inst)
-        {
-            return inst.Update();
-        }
+        {            
+            return inst.Save(HttpContext.Session.GetString("seassonKey"));
+        }       
         //Catalogo_Departamento
         [HttpPost]
         [AuthController]

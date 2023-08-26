@@ -1,3 +1,4 @@
+using API.Controllers;
 using CAPA_DATOS;
 using CAPA_NEGOCIO.Security;
 using System;
@@ -93,7 +94,7 @@ namespace DataBaseModel
         public int? id_clasificacion_interes { get; set; }
         [ManyToOne(TableName = "Catalogo_Clasificacion_Cliente", KeyColumn = "id_clasificacion", ForeignKeyColumn = "id_clasificacion")]
         public Catalogo_Clasificacion_Cliente? Catalogo_Clasificacion_Cliente { get; set; }
-         [ManyToOne(TableName = "Catalogo_Clasificacion_Interes", KeyColumn = "id_clasificacion_interes", ForeignKeyColumn = "id_clasificacion_interes")]
+        [ManyToOne(TableName = "Catalogo_Clasificacion_Interes", KeyColumn = "id_clasificacion_interes", ForeignKeyColumn = "id_clasificacion_interes")]
         public Catalogo_Clasificacion_Interes? Catalogo_Clasificacion_Interes { get; set; }
         [ManyToOne(TableName = "Catalogo_Tipo_Identificacion", KeyColumn = "id_tipo_identificacion", ForeignKeyColumn = "id_tipo_identificacion")]
         public Catalogo_Tipo_Identificacion? Catalogo_Tipo_Identificacion { get; set; }
@@ -144,6 +145,7 @@ namespace DataBaseModel
         public int? id_cuentas { get; set; }
         public string? nombre { get; set; }
         public string? tipo_cuenta { get; set; }
+        public double? saldo { get; set; }
         public int? id_sucursal { get; set; }
         [ManyToOne(TableName = "Catalogo_Sucursales", KeyColumn = "Id_Sucursal", ForeignKeyColumn = "id_sucursal")]
         public Catalogo_Sucursales? Catalogo_Sucursales { get; set; }
@@ -161,16 +163,17 @@ namespace DataBaseModel
     {
         [PrimaryKey(Identity = true)]
         public int? id_categoria { get; set; }
-        public string? descripcion { get; set; }        
+        public string? descripcion { get; set; }
     }
 
-    public class Permisos_Cuentas: EntityClass {
+    public class Permisos_Cuentas : EntityClass
+    {
         [PrimaryKey(Identity = true)]
         public int? id_permiso { get; set; }
-        public int? id_categoria_cuenta_origen { get; set; }        
+        public int? id_categoria_cuenta_origen { get; set; }
         [ManyToOne(TableName = "Categoria_Cuentas", KeyColumn = "id_categoria", ForeignKeyColumn = "id_categoria_cuenta_origen")]
-        public Categoria_Cuentas? Categoria_Cuentas_Origen { get; set; }        
-        public int? id_categoria_cuenta_destino { get; set; }        
+        public Categoria_Cuentas? Categoria_Cuentas_Origen { get; set; }
+        public int? id_categoria_cuenta_destino { get; set; }
         [ManyToOne(TableName = "Categoria_Cuentas", KeyColumn = "id_categoria", ForeignKeyColumn = "id_categoria_cuenta_destino")]
         public Categoria_Cuentas? Categoria_Cuentas_Destino { get; set; }
         public bool? permite_debito { get; set; }
@@ -180,7 +183,7 @@ namespace DataBaseModel
         public Categoria_Cuentas? Categoria_Cuentas { get; set; }*/
     }
 
-    public class Movimientos_Cuentas: EntityClass 
+    public class Movimientos_Cuentas
     {
         [PrimaryKey(Identity = true)]
         public int? id_movimiento { get; set; }
@@ -188,19 +191,108 @@ namespace DataBaseModel
         public string? concepto { get; set; }
         //public int id_cuenta_origen { get; set; }
         //public int id_cuenta_destino { get; set; }
-        public string? monto { get; set; }
-        public string? tasa_cambio { get; set; }
-        public string? total { get; set; }
+        public double? monto { get; set; }
+        public double? tasa_cambio { get; set; }
+        public double? total { get; set; }
         public int? id_usuario_crea { get; set; }
         public DateTime? fecha { get; set; }
 
-        [ManyToOne(TableName = "Catalogo_Cuentas", KeyColumn = "id_categoria", ForeignKeyColumn = "id_cuenta_origen")]
-        public Catalogo_Cuentas? Catalogo_Cuentas_Origen { get; set; }        
-        public int? id_categoria_cuenta_destino { get; set; }        
-        [ManyToOne(TableName = "Catalogo_Cuentas", KeyColumn = "id_categoria", ForeignKeyColumn = "id_cuenta_destino")]
+        public int? id_cuenta_origen { get; set; }
+        [ManyToOne(TableName = "Catalogo_Cuentas", KeyColumn = "id_cuentas", ForeignKeyColumn = "id_cuenta_origen")]
+        public Catalogo_Cuentas? Catalogo_Cuentas_Origen { get; set; }
+        public int? id_cuenta_destino { get; set; }
+        [ManyToOne(TableName = "Catalogo_Cuentas", KeyColumn = "id_cuentas", ForeignKeyColumn = "id_cuenta_destino")]
         public Catalogo_Cuentas? Catalogo_Cuentas_Destino { get; set; }
+
+
+        public object? Save(string token)
+        {
+            try
+            {
+
+                var user = AuthNetCore.User(token);
+                var cuenta = new Catalogo_Cuentas()
+                {
+                    id_cuentas = this.Catalogo_Cuentas_Origen.id_cuentas
+                }.Find<Catalogo_Cuentas>();
+
+                if (cuenta.tipo_cuenta != Tipo_Cuenta.PROPIA.ToString() && cuenta?.saldo < this.monto)
+                {
+                    return new ResponseService()
+                    {
+                        status = 403,
+                        message = "La cuenta " + this.Catalogo_Cuentas_Origen.nombre + " no cuenta con saldo suficiente"
+                    };
+                }
+                var encabezado = new Transaction_Movimiento()
+                {
+                    descripcion = this.descripcion,
+                    concepto = this.concepto,
+                    id_usuario_crea = user.UserId,
+                    tipo = "pendiente",
+                    Detail_Movimiento = new List<Detail_Movimiento>(){
+                        new Detail_Movimiento(){
+                            id_cuenta = this.Catalogo_Cuentas_Origen.id_cuentas,
+                            debito = this.monto,
+                            credito = 0,
+                            tasa_cambio = this.tasa_cambio
+                        },new Detail_Movimiento(){
+                            id_cuenta = this.Catalogo_Cuentas_Destino.id_cuentas,
+                            debito = 0,
+                            credito = this.monto,
+                            tasa_cambio = this.tasa_cambio
+                        }
+                    }
+                };
+                var result = encabezado.Save();
+                return new ResponseService()
+                {
+                    status = 200,
+                    message = "Movimiento registrado correctamente"
+                };
+            }
+            catch (System.Exception ex)
+            {
+                return new ResponseService()
+                {
+                    message = "Error:" + ex.ToString(),
+                    status = 400
+                };
+            }
+
+        }
+
+        public List<Movimientos_Cuentas> Get()
+        {
+            return new Transaction_Movimiento().Get<Transaction_Movimiento>().Select(z =>
+            {
+
+                var constOrigen = z.Detail_Movimiento?.Find(x => x.credito == 0);
+                var constDestino = z.Detail_Movimiento?.Find(x => x.debito == 0);
+                return new Movimientos_Cuentas()
+                {
+                    id_movimiento = z.id_movimiento,
+                    descripcion = z.descripcion,
+                    concepto = z.concepto,
+                    monto = constDestino?.credito,
+                    tasa_cambio = constDestino?.tasa_cambio,
+                    total = constDestino?.credito/constDestino?.tasa_cambio,
+                    id_usuario_crea = z.id_usuario_crea,
+                    fecha = z.fecha,
+                    Catalogo_Cuentas_Origen = constOrigen?.catalogo_Cuentas,
+                    Catalogo_Cuentas_Destino = constDestino?.catalogo_Cuentas,
+                    id_cuenta_origen = constOrigen?.id_cuenta,
+                    id_cuenta_destino = constDestino?.id_cuenta,
+                };
+            }
+            ).ToList();
+        }
     }
- 
+
+    public enum Tipo_Cuenta
+    {
+        PROPIA, EXTERNA, PAGO
+    }
     public class Catalogo_Categoria : EntityClass
     {
         [PrimaryKey(Identity = true)]
@@ -223,7 +315,7 @@ namespace DataBaseModel
         public string? clasificacion { get; set; }
         [ManyToOne(TableName = "Catalogo_Nacionalidad", KeyColumn = "id_nacionalidad", ForeignKeyColumn = "id_nacionalidad")]
         public Catalogo_Nacionalidad? Catalogo_Nacionalidad { get; set; }
-        [OneToMany(TableName = "Catalogo_Municipio", KeyColumn = "id_departamento", ForeignKeyColumn = "id_departamento")]
+        //[OneToMany(TableName = "Catalogo_Municipio", KeyColumn = "id_departamento", ForeignKeyColumn = "id_departamento")]
         public List<Catalogo_Municipio>? Catalogo_Municipio { get; set; }
     }
     public class Catalogo_Inversores : EntityClass
@@ -252,8 +344,8 @@ namespace DataBaseModel
         public int? id_departamento { get; set; }
         [ManyToOne(TableName = "Catalogo_Departamento", KeyColumn = "id_departamento", ForeignKeyColumn = "id_departamento")]
         public Catalogo_Departamento? Catalogo_Departamento { get; set; }
-        [OneToMany(TableName = "Catalogo_Inversores", KeyColumn = "id_municipio", ForeignKeyColumn = "id_municipio")]
-        public List<Catalogo_Inversores>? Catalogo_Inversores { get; set; }
+        //[OneToMany(TableName = "Catalogo_Inversores", KeyColumn = "id_municipio", ForeignKeyColumn = "id_municipio")]
+        // public List<Catalogo_Inversores>? Catalogo_Inversores { get; set; }
     }
     public class Catalogo_Nacionalidad : EntityClass
     {
@@ -264,10 +356,10 @@ namespace DataBaseModel
         public int? ponderacion { get; set; }
         public int? puntaje { get; set; }
         public string? clasificacion { get; set; }
-        [OneToMany(TableName = "Catalogo_Departamento", KeyColumn = "id_nacionalidad", ForeignKeyColumn = "id_nacionalidad")]
-        public List<Catalogo_Departamento>? Catalogo_Departamento { get; set; }
-        [OneToMany(TableName = "Catalogo_Inversores", KeyColumn = "id_nacionalidad", ForeignKeyColumn = "id_nacionalidad")]
-        public List<Catalogo_Inversores>? Catalogo_Inversores { get; set; }
+        //[OneToMany(TableName = "Catalogo_Departamento", KeyColumn = "id_nacionalidad", ForeignKeyColumn = "id_nacionalidad")]
+        //public List<Catalogo_Departamento>? Catalogo_Departamento { get; set; }
+        //[OneToMany(TableName = "Catalogo_Inversores", KeyColumn = "id_nacionalidad", ForeignKeyColumn = "id_nacionalidad")]
+        // public List<Catalogo_Inversores>? Catalogo_Inversores { get; set; }
     }
     public class Catalogo_Profesiones : EntityClass
     {

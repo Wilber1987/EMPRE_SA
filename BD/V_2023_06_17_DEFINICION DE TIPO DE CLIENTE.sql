@@ -2,7 +2,7 @@
 UPDATE
 	EMPRE_SA.dbo.Catalogo_Clasificacion_Cliente
 SET
-	Descripcion = N'EXECELENTE',
+	Descripcion = N'EXCELENTE',
 	Estado = N'ACTIVO',
 	porcentaje = 1
 WHERE

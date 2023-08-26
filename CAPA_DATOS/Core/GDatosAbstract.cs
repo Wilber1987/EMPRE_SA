@@ -2,6 +2,9 @@
 using System.Data;
 using System.Reflection;
 using Newtonsoft.Json;
+using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Running;
+using System.Diagnostics;
 
 namespace CAPA_DATOS
 {
@@ -12,6 +15,7 @@ namespace CAPA_DATOS
         protected IDbTransaction? MTransaccion;
         protected bool globalTransaction;
         protected IDbConnection? MTConnection;
+        public List<EntityProps> entityProps;
         protected abstract IDbConnection CrearConexion(string cadena);
         protected abstract IDbCommand ComandoSql(string comandoSql, IDbConnection connection);
         protected abstract IDataAdapter CrearDataAdapterSql(string comandoSql, IDbConnection connection);
@@ -102,6 +106,7 @@ namespace CAPA_DATOS
             if (scalar == (object)DBNull.Value) return true;
             else return Convert.ToInt32(scalar);
         }
+        [Benchmark]
         public DataTable TraerDatosSQL(string queryString)
         {
             DataSet ObjDS = new DataSet();
@@ -204,7 +209,7 @@ namespace CAPA_DATOS
                         var FK = entity.GetType().GetProperty(ForeignKeyColumn.Name);
                         var keyVal = atributeValue?.GetType()?.GetProperty(KeyColumn?.Name)?.GetValue(atributeValue);
                         if (keyVal != null)
-                        {                            
+                        {
                             FK?.SetValue(entity, keyVal);
                         }
                     }
@@ -318,9 +323,14 @@ namespace CAPA_DATOS
         {
             try
             {
+
                 LoggerServices.AddMessageInfo("-- > TakeList<T>(" + Inst.GetType().Name + ",fullEntity: " + fullEntity.ToString() + ", condition: " + CondSQL + ")");
+                // Stopwatch timeMeasure = new Stopwatch();     
+                //timeMeasure.Start();
                 DataTable Table = BuildTable(Inst, ref CondSQL, fullEntity, false);
                 List<T> ListD = ConvertDataTable<T>(Table, Inst);
+                //  timeMeasure.Stop();              
+                //LoggerServices.AddMessageInfo($"Tiempo TakeList Entidad: {Inst.GetType().Name} - {timeMeasure.Elapsed.TotalMilliseconds} ms");
                 return ListD;
             }
             catch (Exception)
@@ -355,7 +365,8 @@ namespace CAPA_DATOS
             DataTable Table = TraerDatosSQL(queryString);
             return Table;
         }
-        //LECTURA Y CONVERSION DE DATOS       
+        //LECTURA Y CONVERSION DE DATOS         
+        [Benchmark]
         protected List<T> ConvertDataTable<T>(DataTable dt, object Inst)
         {
             List<T> data = new List<T>();
@@ -366,6 +377,7 @@ namespace CAPA_DATOS
             }
             return data;
         }
+        [Benchmark]
         private static T ConvertRow<T>(object Inst, DataRow dr)
         {
             var obj = Activator.CreateInstance<T>();
@@ -412,7 +424,7 @@ namespace CAPA_DATOS
             }
             return obj;
         }
-
+        [Benchmark]
         private static object GetValue(Object DefaultValue, Type type)
         {
             string? Literal = DefaultValue.ToString();
@@ -428,6 +440,7 @@ namespace CAPA_DATOS
                 return Convert.ChangeType(obj, type);
             }
         }
+        [Benchmark]
         private static object? GetListValue(Object DefaultValue, Type type)
         {
             string? Literal = DefaultValue.ToString();
