@@ -1,0 +1,47 @@
+import { EntityClass } from "../WDevCore/WModules/EntityClass.js";
+import { Catalogo_Cuentas } from "./DBODataBaseModel.js";
+
+class Movimientos_Cuentas extends EntityClass {
+	constructor(props) {
+		super(props, 'Cuentas');
+		for (const prop in props) {
+			this[prop] = props[prop];
+		}
+	}
+	id_movimiento = { type: "number", primary: true };
+	/*id_cuenta_origen = { type: "number" };
+	id_cuenta_destino = { type: "number" };*/
+	Catalogo_Cuentas_Origen = { type: 'WSELECT', ModelObject: () => new Catalogo_Cuentas() };
+	Catalogo_Cuentas_Destino = { type: 'WSELECT', ModelObject: () => new Catalogo_Cuentas() };
+	monto = {
+		type: "number", action: (movimiento) => {
+			movimiento.total = (movimiento.monto / movimiento.tasa_cambio).toFixed(2).toString();
+		}
+	};
+	tasa_cambio = { type: "number", disabled: true };
+	total = {
+		type: "number", action: (movimiento) => {
+			movimiento.monto = (movimiento.total / movimiento.tasa_cambio).toFixed(2).toString();
+		}
+	};
+	id_usuario_crea = { type: "number", hidden: true };
+	fecha = { type: "date", disabled: true, required: false, hidden: true };
+	descripcion = { type: "textarea" };
+	concepto = { type: "textarea" };
+}
+export { Movimientos_Cuentas }
+
+
+class Detail_Movimiento extends EntityClass {
+	constructor(props) {
+		super(props, 'Cuentas');
+		for (const prop in props) {
+			this[prop] = props[prop];
+		}
+	}
+	id_movimiento = { type: "number", primary: true };
+	fecha = { type: "date" };
+	debito = { type: "number" };
+	credito = { type: "number" };
+}
+export { Detail_Movimiento }

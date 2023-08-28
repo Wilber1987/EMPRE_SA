@@ -1,0 +1,12 @@
+@page
+@using API.Controllers
+@using CAPA_NEGOCIO.Security
+@{
+    @if (!SecurityController.HavePermission(PermissionsEnum.GESTION_MOVIMIENTOS.ToString(), HttpContext.Session.GetString("seassonKey")) )//todo
+    {
+        Response.Redirect("../LoginView");
+        return;
+    }    
+}
+<script src='~/Views/Gestion_CuentasView.js' type='module'></script>
+<div id='MainBody'></div>

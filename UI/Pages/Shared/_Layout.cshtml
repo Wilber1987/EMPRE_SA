@@ -29,8 +29,10 @@
                 Transaction_ContratosView.className = "active";
             } else if (location.href.includes("Transaction_FacturasView")) {
                 Transaction_FacturasView.className = "active";
-            } else if (location.href.includes("Movimientos_Cuentas")) {
-                Movimientos_Cuentas.className = "active";
+            } else if (location.href.includes("Movimientos_CuentasView")) {
+                Movimientos_CuentasView.className = "active";
+            }else if (location.href.includes("Gestion_CuentasView")) {
+                Gestion_CuentasView.className = "active";
             } else if (location.href.includes("Gestion_Clientes")) {
                 Gestion_Clientes.className = "active";
             } else if (location.href.includes("Gestion_Inversionistas")) {
@@ -71,13 +73,14 @@
             }
             @if (SecurityController.HavePermission(PermissionsEnum.GESTION_PRESTAMOS_Y_EMPEÑOS.ToString(), identify))
             {
-                <a class="title-collapse" id="PrestamosClientesMenu" onclick="changeActive(this)">GESTIÓN DE CUENTAS</a>
+                <a class="title-collapse" id="GestionCuentasMenu" onclick="changeActive(this)">GESTIÓN DE CUENTAS</a>
                 <div class="collapse">
                     @if (SecurityController.HavePermission(PermissionsEnum.GESTION_CLIENTES.ToString(),//TODO
                    identify))
                     {
-                        <a class="" id="Movimientos_Cuentas" asp-area="" asp-page="/PagesViews/Movimientos_Cuentas">Movimientos a
+                        <a class="" id="Gestion_CuentasView" asp-area="" asp-page="/PagesViews/Gestion_CuentasView">Gestión de
                             Cuentas</a>
+                        <a class="" id="Movimientos_CuentasView" asp-area="" asp-page="/PagesViews/Movimientos_CuentasView">Movimientos</a>
                     }                    
                 </div>
             }
