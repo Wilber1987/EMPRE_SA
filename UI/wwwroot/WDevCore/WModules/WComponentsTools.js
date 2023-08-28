@@ -61,6 +61,7 @@ class WAjaxTools {
             const ConfigRequest = {
                 method: 'POST',
                 //credentials: "same-origin",
+                cache: "force-cache",
                 headers: {
                     'Content-Type': ContentType,
                     'Accept': Accept,
@@ -436,17 +437,17 @@ class ComponentsManager {
             //         opacity: 1
             //     });
             // }, 100);
-            ventanaM.style.transition = "all ease 0.5s";
+            ventanaM.style.transition = "all ease 0.3s";
             ventanaM.style.display = "block";
             setTimeout(() => {
                 ventanaM.style.opacity = 1;
-            }, 100);
+            }, 333);
         } else {
-            ventanaM.style.transition = "all ease 0.5s";
+            ventanaM.style.transition = "all ease 0.3s";
             ventanaM.style.opacity = 0;
             setTimeout(() => {
                 ventanaM.style.display = "none";
-            }, 500);
+            }, 333);
         }
     }
     static DisplayUniqAcorden(elementId) {

@@ -51,16 +51,16 @@ class Gestion_ClientesView extends HTMLElement {
         }))
         this.OptionContainer.append(WRender.Create({
             tagName: 'button', className: 'Block-Secundary', innerText: 'Editar cliente',
-            onclick: async () => { 
+            onclick: async () => {
                 const datasetUpdated = await model.Get();
-                this.TableComponent?.DrawTable(datasetUpdated);
+                // @ts-ignore
+                this.TableComponent.Dataset = datasetUpdated;
+                this.TableComponent?.DrawTable();
                 this.Manager?.NavigateFunction("tabla", this.MainComponent);
             }
         }))
 
-        this.NewTransaction()
-
-
+        this.NewTransaction();
         this.append(
             StylesControlsV2.cloneNode(true),
             StyleScrolls.cloneNode(true),
@@ -134,11 +134,11 @@ class Gestion_ClientesForm extends HTMLElement {
                     this.append(ModalMessege("Necesita llenar todos los datos del cliente primeramente"));
                     return;
                 }
-                if (!this.FormularioDatos?.Validate()) {
-                    this.Manager?.NavigateFunction("formularioDatosLaborales", this.FormularioDatos)
-                    this.append(ModalMessege("Necesita llenar todos los datos laborales del cliente primeramente"));
-                    return;
-                }
+                // if (!this.FormularioDatos?.Validate()) {
+                //     this.Manager?.NavigateFunction("formularioDatosLaborales", this.FormularioDatos)
+                //     this.append(ModalMessege("Necesita llenar todos los datos laborales del cliente primeramente"));
+                //     return;
+                // }
 
                 if (this.cliente.codigo_cliente == null || this.cliente.codigo_cliente == undefined) {
                     /**@type {Catalogo_Clientes} */
@@ -147,6 +147,7 @@ class Gestion_ClientesForm extends HTMLElement {
                     if (result?.codigo_cliente != null) {
                         this.cliente.codigo_cliente = result?.codigo_cliente;
                         this.append(ModalMessege("Datos guardados correctamente"));
+                        this.updateForms();
                     } else {
                         this.append(ModalMessege("Error al guardar intentelo nuevamente"));
                     }
@@ -159,10 +160,7 @@ class Gestion_ClientesForm extends HTMLElement {
         this.OptionContainerBottom.append(WRender.Create({
             tagName: 'button', className: 'Block-Basic', innerText: 'Limpiar',
             onclick: () => {
-                for (const prop in this.cliente) {
-                    this.cliente[prop] = {};
-                }
-                this.FormularioCliente?.DrawComponent();
+                this.updateForms()
             }
         }));
         this.ClienteFormulario()
@@ -177,6 +175,17 @@ class Gestion_ClientesForm extends HTMLElement {
             this.OptionContainerBottom
         );
     }
+    updateForms() {
+        this.cliente = {};
+        this.cliente.Condicion_Laboral_Cliente = [{}];
+        // @ts-ignore
+        this.FormularioCliente.FormObject = this.cliente;
+        // @ts-ignore
+        this.FormularioDatos.FormObject = this.cliente.Condicion_Laboral_Cliente[0];
+        this.FormularioCliente?.DrawComponent();
+        this.FormularioDatos?.DrawComponent();
+    }
+
     /***formulario para creacion y edicion de cliente  */
     ClienteFormulario() {
         this.Manager?.NavigateFunction("formularioCliente", this.FormularioCliente)

@@ -57,6 +57,7 @@ class WForm extends HTMLElement {
                 Url: undefined
             };
         }
+        console.log( this.FormObject);
         this.FormObject = this.FormObject ?? this.Config.EditObject ?? {};
         const Model = this.Config.ModelObject ?? this.Config.EditObject;
         const ObjectProxy = this.CreateProxy(Model);
@@ -259,7 +260,7 @@ class WForm extends HTMLElement {
                     await this.SelectedFile(targetControl?.files[0]);
                     setTimeout(() => {
                         ObjectF[prop] = base64Type + photoB64.toString();
-                        console.log("#imgControl" + prop, this.shadowRoot?.querySelector("#imgControl" + prop));
+                        //console.log("#imgControl" + prop, this.shadowRoot?.querySelector("#imgControl" + prop));
                         if (this.shadowRoot?.querySelector("#imgControl" + prop) != null) {
                             // @ts-ignore
                             this.shadowRoot.querySelector("#imgControl" + prop).src = ObjectF[prop];
@@ -942,8 +943,13 @@ class WForm extends HTMLElement {
                 class: 'Btn',
                 type: "button",
                 innerText: 'CONFIRMAR',
-                onclick: async () => {
-                    await this.Save(ObjectF);
+                onclick: async (ev) => {
+                    try {
+                        ev.target.enabled = false
+                        await this.Save(ObjectF);
+                    } catch (error) {
+                        ev.target.enabled = true
+                    }
                 }
             });
             DivOptions.append(InputSave);
@@ -956,7 +962,12 @@ class WForm extends HTMLElement {
                     type: "button",
                     innerText: Action.name,
                     onclick: async (ev) => {
-                        Action.action(ev.target);
+                        try {
+                            ev.target.enabled = false
+                            Action.action(ev.target);
+                        } catch (error) {
+                            ev.target.enabled = true
+                        }
                     }
                 }));
             });
@@ -964,7 +975,6 @@ class WForm extends HTMLElement {
         return DivOptions;
     }
     Save = async (ObjectF = this.FormObject) => {
-        console.log(ObjectF);
         if (this.Config.ValidateFunction != undefined &&
             typeof this.Config.ValidateFunction === "function") {
             const response = this.Config.ValidateFunction(ObjectF);
@@ -1082,11 +1092,11 @@ class WForm extends HTMLElement {
             try {
                 if (withModel) {
                     const response = await this.Config.ModelObject?.SaveWithModel(ObjectF, this.Config.EditObject != undefined);
-                    this.ExecuteSaveFunction(ObjectF,response);
+                    this.ExecuteSaveFunction(ObjectF, response);
                 } else if (this.Config.ObjectOptions?.Url != undefined) {
                     const response = await WAjaxTools.PostRequest(this.Config.ObjectOptions?.Url, ObjectF);
-                    this.ExecuteSaveFunction(ObjectF,response);
-                }                
+                    this.ExecuteSaveFunction(ObjectF, response);
+                }
                 ModalCheck.close();
                 if (this.Config.SaveFunction != undefined) {
                     this.Config.SaveFunction(ObjectF);
@@ -1106,7 +1116,8 @@ class WForm extends HTMLElement {
                     {
                         style: { textAlign: "center" },
                         children: [{
-                            tagName: 'input', type: 'button', className: 'Btn', value: 'SI', onclick: async () => {
+                            tagName: 'input', type: 'button', className: 'Btn', value: 'SI', onclick: async (ev) => {
+                                ev.target.enabled = false;
                                 modalCheckFunction();
                             }
                         }, {
@@ -1120,12 +1131,11 @@ class WForm extends HTMLElement {
         });
         return ModalCheck;
     }
-    ExecuteSaveFunction(ObjectF,response) {
-        console.log(response);
+    ExecuteSaveFunction(ObjectF, response) {
         if (this.Config.SaveFunction != undefined) {
-            this.Config.SaveFunction(ObjectF,response);
+            this.Config.SaveFunction(ObjectF, response);
         } else if (this.Config.ObjectOptions?.SaveFunction != undefined) {
-            this.Config.ObjectOptions?.SaveFunction(ObjectF,response);
+            this.Config.ObjectOptions?.SaveFunction(ObjectF, response);
         }
     }
 

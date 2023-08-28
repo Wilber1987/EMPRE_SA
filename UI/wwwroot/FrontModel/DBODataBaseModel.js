@@ -135,7 +135,7 @@ class Catalogo_Clientes extends EntityClass {
     id_departamento = { type: 'number', hiddenInTable: true, hiddenFilter: true, hidden: true };
     id_municipio = { type: 'number', hiddenInTable: true, hiddenFilter: true, hidden: true };
     //id_tipo_identificacion = { type: 'number', hiddenInTable: true, hiddenFilter: true, hidden: true };
-    correo = { type: 'text', hiddenInTable: true, hiddenFilter: true };
+    correo = { type: 'text', hiddenInTable: true, hiddenFilter: true, require: false };
     operadora_celular = { type: 'select', Dataset: ["Tigo", "Claro"], hiddenInTable: true, hiddenFilter: true };
     telefono = { type: 'tel', hiddenInTable: true, hiddenFilter: true };
     direccion = { type: 'text', hiddenInTable: true, hiddenFilter: true };
