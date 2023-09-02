@@ -82,7 +82,7 @@ namespace CAPA_NEGOCIO.Security
             {
                 user.Security_Users_Roles = new Security_Users_Roles()
                 {
-                    Id_User = this.Id_User
+                    Id_User = user.Id_User
                 }.Get<Security_Users_Roles>();
                 foreach (Security_Users_Roles role in user.Security_Users_Roles ?? new List<Security_Users_Roles>())
                 {
@@ -90,7 +90,7 @@ namespace CAPA_NEGOCIO.Security
                 }
                 return user;
             }
-            if (user.Estado == "INACTIVO")
+            if (user?.Estado == "INACTIVO")
             {
                 throw new Exception("usuario inactivo");
             }

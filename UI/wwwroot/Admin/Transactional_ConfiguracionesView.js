@@ -20,6 +20,7 @@ class Transactional_ConfiguracionesView extends HTMLElement {
                     {
                         name: "Editar", action: (element) => {
                             this.append(new WModalForm({
+                                AutoSave: true,
                                 ModelObject: new Transactional_Configuraciones({
                                     Valor: { type: this.IsNumber(element) ? "NUMBER" : "TEXT" }
                                 }),

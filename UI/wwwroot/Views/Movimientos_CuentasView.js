@@ -5,10 +5,11 @@ import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
 import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { ModalMessege, WForm } from "../WDevCore/WComponents/WForm.js";
-import { Movimientos_Cuentas, Catalogo_Cambio_Dolar } from "../FrontModel/DBODataBaseModel.js";
+import { Catalogo_Cambio_Dolar } from "../FrontModel/DBODataBaseModel.js";
 import { WOrtograficValidation } from "../WDevCore/WModules/WOrtograficValidation.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
+import { Movimientos_Cuentas } from "../FrontModel/MovimientosCuentas.js";
 class Gestion_movimientos_CuentasView extends HTMLElement {
     constructor(props) {
         super();
@@ -91,7 +92,7 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
         //this.MainComponent.shadowRoot?.prepend(this.FilterOptions);
 
         this.OptionContainer.append(WRender.Create({
-            tagName: 'button', className: 'Block-Basic', innerText: 'Registrar Movimiento',
+            tagName: 'button', className: 'Block-Secundary', innerText: 'Registrar Movimiento',
             onclick: () => {
                 const modelExterno = new Movimientos_Cuentas();
                 modelExterno.Catalogo_Cuentas_Destino.Dataset =  model.Catalogo_Cuentas_Destino.Dataset.filter(x => x.tipo_cuenta == "PROPIA");
@@ -104,7 +105,7 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
 
 
         this.OptionContainer.append(WRender.Create({
-            tagName: 'button', className: 'Block-Basic', innerText: 'Ingreso',
+            tagName: 'button', className: 'Block-Primary', innerText: 'Ingreso',
             onclick: () => {
                 const modelExterno = new Movimientos_Cuentas();
                 modelExterno.Catalogo_Cuentas_Origen.Dataset = model.Catalogo_Cuentas_Origen.Dataset.filter(x => x.tipo_cuenta != "PROPIA");
@@ -115,7 +116,7 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
         }))
 
         this.OptionContainer.append(WRender.Create({
-            tagName: 'button', className: 'Block-Basic', innerText: 'Egreso',
+            tagName: 'button', className: 'Block-Tertiary', innerText: 'Egreso',
             onclick: () => {
                 const modelExterno = new Movimientos_Cuentas();
                 modelExterno.Catalogo_Cuentas_Origen.Dataset = model.Catalogo_Cuentas_Origen.Dataset.filter(x => x.tipo_cuenta == "PROPIA");
@@ -125,6 +126,19 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
                 this.append(new WModalForm({title:"Egreso", ModelObject: modelExterno, AutoSave: true }))
             }
         }))
+
+        this.OptionContainer.append(WRender.Create({
+            tagName: 'button', className: 'Block-Fourth', innerText: 'Realizar Pago',
+            onclick: () => {
+                const modelExterno = new Movimientos_Cuentas();
+                modelExterno.Catalogo_Cuentas_Origen.Dataset = model.Catalogo_Cuentas_Origen.Dataset.filter(x => x.tipo_cuenta == "PROPIA");
+                modelExterno.Catalogo_Cuentas_Destino.Dataset =  model.Catalogo_Cuentas_Destino.Dataset.filter(x => x.tipo_cuenta == "PAGO");
+                
+                modelExterno.tasa_cambio = model.tasa_cambio;
+                this.append(new WModalForm({title:"Egreso", ModelObject: modelExterno, AutoSave: true }))
+            }
+        }))
+
 
         this.Manager?.NavigateFunction("tabla", this.MainComponent)
 

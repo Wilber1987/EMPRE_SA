@@ -327,13 +327,13 @@ class Transaction_Valoraciones_View extends HTMLElement {
         });
     }
     calculoCordobas = (porcentaje) => {
-        return AmoritizationModule.round(this.avgValores() * (porcentaje / 100)).toFixed(2);
+        return (this.avgValores() * (porcentaje / 100)).toFixed(2);
     }
     calculoDolares = (porcentaje, tasa_cambio) => {
-        return AmoritizationModule.round((this.avgValores() * (porcentaje / 100)) / tasa_cambio).toFixed(2);
+        return Math.round((this.avgValores() * (porcentaje / 100)) / tasa_cambio).toFixed(2);
     }
     avgValores() {
-        return AmoritizationModule.round((parseFloat(this.valoresObject.Valoracion_1.toString()) +
+        return ((parseFloat(this.valoresObject.Valoracion_1.toString()) +
             parseFloat(this.valoresObject.Valoracion_2.toString()) +
             parseFloat(this.valoresObject.Valoracion_3.toString())) / 3);
     }
@@ -533,13 +533,13 @@ class Transaction_Valoraciones_View extends HTMLElement {
         // const total = this.valoracionesTable?.Dataset.reduce((sum, value) => (typeof value.Edad == "number" ? sum + value.Edad : sum), 0);
         const contrato = new ValoracionesContrato({
             // @ts-ignore
-            valoracion_compra_cordobas: AmoritizationModule.round(WArrayF.SumValAtt(this.valoracionesTable?.Dataset, "valoracion_compra_cordobas")),
+            valoracion_compra_cordobas: (WArrayF.SumValAtt(this.valoracionesTable?.Dataset, "valoracion_compra_cordobas")),
             // @ts-ignore
-            valoracion_compra_dolares: AmoritizationModule.round(WArrayF.SumValAtt(this.valoracionesTable?.Dataset, "valoracion_compra_dolares")),
+            valoracion_compra_dolares: (WArrayF.SumValAtt(this.valoracionesTable?.Dataset, "valoracion_compra_dolares")),
             // @ts-ignore
-            valoracion_empeño_cordobas: AmoritizationModule.round(WArrayF.SumValAtt(this.valoracionesTable?.Dataset, "valoracion_empeño_cordobas")),
+            valoracion_empeño_cordobas: (WArrayF.SumValAtt(this.valoracionesTable?.Dataset, "valoracion_empeño_cordobas")),
             // @ts-ignore
-            valoracion_empeño_dolares: AmoritizationModule.round(WArrayF.SumValAtt(this.valoracionesTable?.Dataset, "valoracion_empeño_dolares")),
+            valoracion_empeño_dolares: (WArrayF.SumValAtt(this.valoracionesTable?.Dataset, "valoracion_empeño_dolares")),
             tasas_interes: this.getTasaInteres() / 100,
             plazo: this.valoracionesForm?.FormObject.Plazo ?? 1,
             fecha: new Date(),
