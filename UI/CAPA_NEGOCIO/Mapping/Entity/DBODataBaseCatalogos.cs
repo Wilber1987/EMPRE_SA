@@ -207,7 +207,7 @@ namespace DataBaseModel
         public int? ponderacion { get; set; }
         public int? puntaje { get; set; }
         public string? clasificacion { get; set; }
-        [ManyToOne(TableName = "Catalogo_Nacionalidad", KeyColumn = "id_nacionalidad", ForeignKeyColumn = "id_nacionalidad")]
+       // [ManyToOne(TableName = "Catalogo_Nacionalidad", KeyColumn = "id_nacionalidad", ForeignKeyColumn = "id_nacionalidad")]
         public Catalogo_Nacionalidad? Catalogo_Nacionalidad { get; set; }
         //[OneToMany(TableName = "Catalogo_Municipio", KeyColumn = "id_departamento", ForeignKeyColumn = "id_departamento")]
         public List<Catalogo_Municipio>? Catalogo_Municipio { get; set; }

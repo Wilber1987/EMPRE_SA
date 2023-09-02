@@ -49,7 +49,10 @@ namespace DataBaseModel
 
     public class Config
     {
-        public static PageConfig PageConfig = new PageConfig();
+        public static PageConfig pageConfig()
+        {
+            return new PageConfig();
+        }
     }
 
     public class PageConfig

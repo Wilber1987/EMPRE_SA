@@ -37,7 +37,7 @@ class AmoritizationModule {
     }
 
     static getPago = (contrato) => {
-        const monto = contrato.valoracion_empeño_cordobas;
+        const monto = contrato.valoracion_empeño_dolares;
         console.log(monto);
         const cuotas = contrato.plazo;
         const tasa = contrato.tasas_interes;
@@ -45,7 +45,7 @@ class AmoritizationModule {
         return payment;
     }
     static getPagoValoracion = (valoracion) => {
-        const monto = valoracion.valoracion_empeño_cordobas;
+        const monto = valoracion.valor_compra_dolares;
         const cuotas = valoracion.Plazo ?? 0;
         const tasa = (valoracion.Tasa_interes ?? 0) / 100;
         //console.log(monto, cuotas, tasa);
@@ -54,8 +54,8 @@ class AmoritizationModule {
     }
 
     static crearCuotas(contrato) {
-        contrato.cuotafija = this.getPago(contrato);
-        contrato.cuotafija_dolares = contrato.cuotafija / contrato.taza_cambio;
+        contrato.cuotafija_dolares = this.getPago(contrato);
+        contrato.cuotafija = contrato.cuotafija_dolares * contrato.taza_cambio;
         let capital = (parseFloat(contrato.valoracion_empeño_dolares));
         for (let index = 0; index < contrato.plazo; index++) {
             const abono_capital = (parseFloat(contrato.cuotafija_dolares) - (capital * contrato.tasas_interes));
@@ -64,17 +64,17 @@ class AmoritizationModule {
                 // @ts-ignore
                 fecha: contrato.fecha.modifyMonth(index + 1),
                 // @ts-ignore
-                total: contrato.cuotafija_dolares.toFixed(2),
+                total: contrato.cuotafija_dolares.toFixed(3),
                 // @ts-ignore
-                interes: (capital * contrato.tasas_interes).toFixed(2),
+                interes: (capital * contrato.tasas_interes).toFixed(3),
                 // @ts-ignore
-                abono_capital: abono_capital.toFixed(2),
+                abono_capital: abono_capital.toFixed(3),
                 // @ts-ignore
-                capital_restante: ((capital - abono_capital) < 0 ? 0 : (capital - abono_capital)).toFixed(2),
+                capital_restante: ((capital - abono_capital) < 0 ? 0 : (capital - abono_capital)).toFixed(3),
                 // @ts-ignore
                 tasa_cambio: contrato.taza_cambio
             });
-            capital = parseFloat((capital - abono_capital).toFixed(2));
+            capital = parseFloat((capital - abono_capital).toFixed(3));
             contrato.Transaction_Facturas.push(cuota);
         }
     }

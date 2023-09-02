@@ -3,6 +3,7 @@
 @using DataBaseModel
 @{
     string identify = Context.Session.GetString("seassonKey");
+    var pageConfig = Config.pageConfig();
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -50,7 +51,7 @@
     <aside id="Aside">
         <nav>
             <div class="logo-container">
-                <img src="@Config.PageConfig.MEDIA_IMG_PATH@Config.PageConfig.LOGO_PRINCIPAL">
+                <img src="@pageConfig.MEDIA_IMG_PATH@pageConfig.LOGO_PRINCIPAL">
             </div>
             <h3>TRANSACCIONES</h3>
 
@@ -127,8 +128,8 @@
 
     <header id="Header" class="admin-header">
         <div class="title-container">
-            <label for="" class="title">@Config.PageConfig.TITULO</label>
-            <label for="" class="sub-title">@Config.PageConfig.SUB_TITULO</label>
+            <label for="" class="title">@pageConfig.TITULO</label>
+            <label for="" class="sub-title">@pageConfig.SUB_TITULO</label>
         </div>
 
         @if (SecurityController.IsAdmin(identify))
