@@ -802,6 +802,7 @@ class GanttChart extends HTMLElement {
         }     
         const min = WArrayF.MinDateValue(this.Dataset, "Fecha_Inicio");
         const max = WArrayF.MaxDateValue(this.Dataset, "Fecha_Finalizacion");
+        console.log(this.Dataset);
         console.log(min);
         console.log(max);        
         const inicio = new Date(min);

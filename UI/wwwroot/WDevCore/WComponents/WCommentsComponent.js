@@ -2,6 +2,7 @@
 import { StylesControlsV2, StyleScrolls } from "../StyleModules/WStyleComponents.js";
 import { WAjaxTools, WRender } from "../WModules/WComponentsTools.js";
 import { css } from "../WModules/WStyledRender.js";
+import { WRichText } from "../WWComponentsPROTOS/WRichText.js";
 
 class WCommentsComponent extends HTMLElement {
     constructor(props) {
@@ -16,6 +17,8 @@ class WCommentsComponent extends HTMLElement {
         this.attachShadow({ mode: 'open' });
         this.CommentsContainer = WRender.Create({ className: "CommentsContainer" })
         this.MessageInput = WRender.Create({ tagName: 'textarea' });
+
+        //this.style.backgroundColor = "#fff";
         this.OptionContainer = WRender.Create({
             className: "OptionContainer", children: [
                 this.MessageInput,
@@ -27,8 +30,35 @@ class WCommentsComponent extends HTMLElement {
                 }
             ]
         })
+
+        this.RitchInput = new WRichText();
+        this.RitchOptionContainer = WRender.Create({
+            className: "OptionContainer", children: [
+                this.RitchInput,
+                {
+                    tagName: 'input', type: 'button', className: 'Btn-Mini',
+                    value: 'Send', onclick: async () => {
+                        this.saveRitchComment();
+                    }
+                }
+            ]
+        })
+
+        this.TypetextContainer = WRender.Create({
+            className: "OptionContainer", children: [
+                this.RitchInput,
+                {
+                    tagName: 'input', type: 'button', className: 'Btn-Mini',
+                    value: 'Send', onclick: async () => {
+                        this.saveRitchComment();
+                    }
+                }
+            ]
+        })
+
+
         this.shadowRoot?.append(StyleScrolls.cloneNode(true), StylesControlsV2.cloneNode(true),
-            this.CustomStyle, this.CommentsContainer, this.OptionContainer)
+            this.CustomStyle, this.CommentsContainer, this.OptionContainer,  this.RitchOptionContainer)
         this.DrawWCommentsComponent();
     }
     saveComment = async () => {
@@ -41,6 +71,19 @@ class WCommentsComponent extends HTMLElement {
         const response = await WAjaxTools.PostRequest(this.UrlAdd, Message);
         // @ts-ignore
         this.MessageInput.value = "";
+        this.update();
+    }
+    saveRitchComment = async () => {
+        const Message = {
+            // @ts-ignore
+            Body: this.RitchInput.value,
+            AttachFiles: this.RitchInput.Files,
+            Id_Case: this.CommentsIdentify,
+            Id_User: this.User.UserId
+        }
+        const response = await WAjaxTools.PostRequest(this.UrlAdd, Message);
+        // @ts-ignore 
+        //this.MessageInput.value = ""; TODO REINICIAR EL RITTEXT
         this.update();
     }
     update = async () => {
