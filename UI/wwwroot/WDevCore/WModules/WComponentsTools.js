@@ -885,7 +885,7 @@ Date.prototype.addDays = function (days) {
  * @returns {Date}
  */
 Date.prototype.subtractDays = function (days) {
-    return this.setDate(this.getDate() - days);
+    return new Date(this.setDate(this.getDate() - days));
 };
 /**
  * 

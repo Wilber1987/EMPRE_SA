@@ -141,19 +141,22 @@ class GestionCuentaComponent extends HTMLElement {
         const detail = WRender.Create({ className: "detail" });
         /**@type {Array<Detail_Movimiento>} */
         const movimientos = await new Detail_Movimiento({ id_cuenta: cuenta.id_cuentas }).Get();
+        const filterModel = new Detail_Movimiento({
+            id_cuenta: cuenta.id_cuentas,
+            debito: undefined,
+            credito: undefined,
+            debito_dolares: undefined,
+            credito_dolares: undefined,
+            monto_inicial: undefined,
+            monto_final: undefined,
+            monto_inicial_dolares: undefined,
+            monto_final_dolares: undefined
+        })
+        filterModel.fecha.defaultValue = Date.now();
+        console.log(filterModel.fecha.defaultValue);
         const filterOptions = new WFilterOptions({
             Dataset: movimientos,
-            ModelObject: new Detail_Movimiento({
-                id_cuenta: cuenta.id_cuentas,
-                debito: undefined,
-                credito: undefined,
-                debito_dolares: undefined,
-                credito_dolares: undefined,
-                monto_inicial: undefined,
-                monto_final: undefined,
-                monto_inicial_dolares: undefined,
-                monto_final_dolares: undefined
-            }),
+            ModelObject: filterModel,
             Display: true,
             FilterFunction: (DFilt) => {
                 this.buildDetailMovimientos(DFilt, detalle, fecha, debito, creadito, saldo, displayType);
