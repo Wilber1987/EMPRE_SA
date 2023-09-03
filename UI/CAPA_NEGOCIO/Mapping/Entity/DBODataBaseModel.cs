@@ -393,11 +393,18 @@ namespace DataBaseModel
         public int? id_detalle { get; set; }
         public int? id_movimiento { get; set; }
         public double? debito { get; set; }
+        public double? debito_dolares { get; set; }
         public double? credito { get; set; }
+        public double? credito_dolares { get; set; }
         public double? tasa_cambio { get; set; }
+
+        public double? monto_inicial { get; set; }
+        public double? monto_final { get; set; }
+        public double? monto_inicial_dolares { get; set; }
+        public double? monto_final_dolares { get; set; }
         public DateTime? fecha { get; set; }
         [ManyToOne(TableName = "Transaction_Movimiento", KeyColumn = "id_movimiento", ForeignKeyColumn = "id_movimiento")]
-
+        public Transaction_Movimiento? Transaction_Movimiento { get; set; }
         public int? id_cuenta { get; set; }
         [ManyToOne(TableName = "Catalogo_Cuentas", KeyColumn = "id_cuentas", ForeignKeyColumn = "id_cuenta")]
         public Catalogo_Cuentas? catalogo_Cuentas { get; set; }

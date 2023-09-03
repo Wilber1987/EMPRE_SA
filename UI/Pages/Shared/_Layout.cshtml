@@ -4,6 +4,7 @@
 @{
     string identify = Context.Session.GetString("seassonKey");
     var pageConfig = Config.pageConfig();
+
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -32,7 +33,7 @@
                 Transaction_FacturasView.className = "active";
             } else if (location.href.includes("Movimientos_CuentasView")) {
                 Movimientos_CuentasView.className = "active";
-            }else if (location.href.includes("Gestion_CuentasView")) {
+            } else if (location.href.includes("Gestion_CuentasView")) {
                 Gestion_CuentasView.className = "active";
             } else if (location.href.includes("Gestion_Clientes")) {
                 Gestion_Clientes.className = "active";
@@ -69,7 +70,8 @@
                     }
                     <a class="" id="Transaction_Valoraciones_View" asp-area=""
                         asp-page="/PagesViews/Transaction_Valoraciones_View">VALORACIONES</a>
-                    <a class="" id="Transaction_ContratosView" asp-area="" asp-page="/PagesViews/Transaction_ContratosView">CONTRATOS</a>
+                    <a class="" id="Transaction_ContratosView" asp-area=""
+                        asp-page="/PagesViews/Transaction_ContratosView">CONTRATOS</a>
                 </div>
             }
             @if (SecurityController.HavePermission(PermissionsEnum.GESTION_PRESTAMOS_Y_EMPEÑOS.ToString(), identify))
@@ -81,8 +83,9 @@
                     {
                         <a class="" id="Gestion_CuentasView" asp-area="" asp-page="/PagesViews/Gestion_CuentasView">Gestión de
                             Cuentas</a>
-                        <a class="" id="Movimientos_CuentasView" asp-area="" asp-page="/PagesViews/Movimientos_CuentasView">Movimientos</a>
-                    }                    
+                        <a class="" id="Movimientos_CuentasView" asp-area=""
+                            asp-page="/PagesViews/Movimientos_CuentasView">Movimientos</a>
+                    }
                 </div>
             }
             @if (SecurityController.HavePermission(PermissionsEnum.GESTION_CONTRATOS.ToString(), identify))
@@ -104,16 +107,16 @@
             asp-page="/PagesViews/Transaction_FacturasView">FACTURAS</a>
             </div>
             } *@
-            @if (SecurityController.HavePermission(PermissionsEnum.GESTION_MOVIMIENTOS.ToString(),   identify))
+            @if (SecurityController.HavePermission(PermissionsEnum.GESTION_MOVIMIENTOS.ToString(), identify))
             {
                 <a class="title-collapse" id="GestionMovimientosMenu" onclick="changeActive(this)">GESTIÓN DE
                     MOVIMIENTOS</a>
-                 <div class="collapse">
-            <a class="" id="Transaction_Ingresos_EgresosView" asp-area=""
-            asp-page="/PagesViews/Transaction_Ingresos_EgresosView">EGRESOS/INGRESOS</a>
-            </div>
+                <div class="collapse">
+                    <a class="" id="Transaction_Ingresos_EgresosView" asp-area=""
+                        asp-page="/PagesViews/Transaction_Ingresos_EgresosView">EGRESOS/INGRESOS</a>
+                </div>
             }
-            @if (SecurityController.HavePermission(PermissionsEnum.GESTION_SUCURSALES.ToString(),  identify))
+            @if (SecurityController.HavePermission(PermissionsEnum.GESTION_SUCURSALES.ToString(), identify))
             {
                 <a class="title-collapse" id="SucursalesMenu" onclick="changeActive(this)"
                     href="#SucursalesConfig">CONFIGURACIÓN DE
@@ -165,7 +168,6 @@
         if (menuActive) {
             changeActive(menuActive)
         }
-
     </script>
 </body>
 

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CAPA_DATOS
 {
-    public abstract class EntityClass
+    public abstract class EntityClass: TransactionalClass
     {
         public List<FilterData>? filterData { get; set; }
         public List<T> Get<T>()
@@ -158,7 +158,10 @@ namespace CAPA_DATOS
                 SqlADOConexion.SQLM?.RollBackTransaction();
                 throw e;
             }
-        }
+        }      
+    }
+    public abstract class TransactionalClass
+    {
 
         //TRANSACCIONES
         public void BeginGlobalTransaction()
