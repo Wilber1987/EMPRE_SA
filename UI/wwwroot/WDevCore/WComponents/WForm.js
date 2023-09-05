@@ -57,7 +57,7 @@ class WForm extends HTMLElement {
                 Url: undefined
             };
         }
-        console.log( this.FormObject);
+        console.log(this.FormObject);
         this.FormObject = this.FormObject ?? this.Config.EditObject ?? {};
         const Model = this.Config.ModelObject ?? this.Config.EditObject;
         const ObjectProxy = this.CreateProxy(Model);
@@ -338,7 +338,7 @@ class WForm extends HTMLElement {
                 }
                 ControlContainer.className += " imgPhoto";
                 break;
-            case "DATE": case "FECHA": case "HORA":
+            case "DATE": case "FECHA":
                 let type = "date";
                 //@ts-ignore
                 let date_val = val == "" ? (new Date()).toISO() : ObjectF[prop];
@@ -352,9 +352,24 @@ class WForm extends HTMLElement {
                     disabled: ModelProperty.disabled,
                     min: ModelProperty.min,
                     max: ModelProperty.max,
+                    onchange: onChangeEvent
                 });
                 //@ts-ignore
                 ObjectF[prop] = InputControl.value = (new Date(date_val)).toISO();
+                break;
+            case "HORA":
+                //@ts-ignore
+                let time_val = val == "" ? "08:00" : ObjectF[prop];                
+                InputControl = WRender.Create({
+                    tagName: "input", className: prop, type: "time",
+                    placeholder: WArrayF.Capitalize(WOrtograficValidation.es(prop)),
+                    disabled: ModelProperty.disabled,
+                    min: ModelProperty.min,
+                    max: ModelProperty.max,
+                    onchange: onChangeEvent
+                });
+                //@ts-ignore
+                ObjectF[prop] = InputControl.value = time_val;
                 break;
             case "SELECT":
                 InputControl = this.CreateSelect(prop, ObjectF, ModelProperty.Dataset, onChangeEvent);
@@ -1019,7 +1034,10 @@ class WForm extends HTMLElement {
                             return false;
                         }
 
-                    } else if (this.Config.ModelObject[prop]?.type.toUpperCase() == "MASTERDETAIL") {
+                    } else if (this.Config.ModelObject[prop]?.type.toUpperCase() == "MASTERDETAIL" 
+                    || this.Config.ModelObject[prop]?.type.toUpperCase() == "CALENDAR") {
+                        console.log(this.Config.ModelObject[prop].require == true);
+                        console.log(ObjectF[prop]);
                         if (this.Config.ModelObject[prop].require == true) {
                             this.Config.ModelObject[prop].MinimunRequired = this.Config.ModelObject[prop]?.MinimunRequired ?? 1;
                         }
@@ -1098,11 +1116,12 @@ class WForm extends HTMLElement {
                     this.ExecuteSaveFunction(ObjectF, response);
                 }
                 ModalCheck.close();
-                if (this.Config.SaveFunction != undefined) {
-                    this.Config.SaveFunction(ObjectF);
-                } else if (this.Config.ObjectOptions?.SaveFunction != undefined) {
-                    this.Config.ObjectOptions?.SaveFunction(ObjectF);
-                }
+                // if (this.Config.SaveFunction != undefined) {
+                //     console.log("HEARE");
+                //     this.Config.SaveFunction(ObjectF);
+                // } else if (this.Config.ObjectOptions?.SaveFunction != undefined) {
+                //     this.Config.ObjectOptions?.SaveFunction(ObjectF);
+                // }
             } catch (error) {
                 ModalCheck.close();
                 console.log(error);

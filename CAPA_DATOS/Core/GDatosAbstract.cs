@@ -2,9 +2,6 @@
 using System.Data;
 using System.Reflection;
 using Newtonsoft.Json;
-using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Running;
-using System.Diagnostics;
 
 namespace CAPA_DATOS
 {
@@ -15,7 +12,6 @@ namespace CAPA_DATOS
         protected IDbTransaction? MTransaccion;
         protected bool globalTransaction;
         protected IDbConnection? MTConnection;
-        public List<EntityProps> entityProps;
         protected abstract IDbConnection CrearConexion(string cadena);
         protected abstract IDbCommand ComandoSql(string comandoSql, IDbConnection connection);
         protected abstract IDataAdapter CrearDataAdapterSql(string comandoSql, IDbConnection connection);
@@ -106,7 +102,6 @@ namespace CAPA_DATOS
             if (scalar == (object)DBNull.Value) return true;
             else return Convert.ToInt32(scalar);
         }
-        [Benchmark]
         public DataTable TraerDatosSQL(string queryString)
         {
             DataSet ObjDS = new DataSet();
@@ -242,54 +237,27 @@ namespace CAPA_DATOS
             SetManyToOnePropiertys(entity, manyToOneProps);
             string strQuery = BuildUpdateQueryByObject(entity, IdObject);
 
-            var methods = entity.GetType().GetMethods();
-            var method = methods.FirstOrDefault(mi => mi.Name == "Find" && mi.GetParameters().Count() == 0);
-            if (method != null)
+            List<PropertyInfo> oneToManyPropiertys = entityProps.Where(p =>
+                Attribute.GetCustomAttribute(p, typeof(OneToMany)) != null).ToList();
+            foreach (var oneToManyProp in oneToManyPropiertys)
             {
-                List<PropertyInfo> oneToManyPropiertys = entityProps.Where(p =>
-                    Attribute.GetCustomAttribute(p, typeof(OneToMany)) != null).ToList();
-                object? tempEntity = method?.GetGenericMethodDefinition()?.MakeGenericMethod(entity?.GetType())
-                    .Invoke(entity, new object[] { });
-                foreach (var oneToManyProp in oneToManyPropiertys)
+                string? atributeName = oneToManyProp.Name;
+                var atributeValue = oneToManyProp.GetValue(entity);
+                if (atributeValue != null)
                 {
-                    string? atributeName = oneToManyProp.Name;
-                    var atributeValue = oneToManyProp.GetValue(entity);
-                    if (atributeValue != null)
+                    List<PropertyInfo> atributeValueManyToOneProps =
+                        atributeValue.GetType().GetProperties().Where(p =>
+                        Attribute.GetCustomAttribute(p, typeof(ManyToOne)) != null).ToList();
+                    SetManyToOnePropiertys(atributeValue, atributeValueManyToOneProps);
+                    OneToMany? oneToMany = (OneToMany?)Attribute.GetCustomAttribute(oneToManyProp, typeof(OneToMany));
+                    foreach (var value in (IEnumerable)atributeValue)
                     {
-                        List<PropertyInfo> atributeValueManyToOneProps = atributeValue.GetType().GetProperties().Where(p => Attribute.GetCustomAttribute(p, typeof(ManyToOne)) != null).ToList();
-                        SetManyToOnePropiertys(atributeValue, atributeValueManyToOneProps);
-                        OneToMany? oneToMany = (OneToMany?)Attribute.GetCustomAttribute(oneToManyProp, typeof(OneToMany));
-                        if (tempEntity != null && oneToManyProp.GetValue(tempEntity) != null)
+                        PropertyInfo? KeyColumn = value.GetType().GetProperty(oneToMany?.KeyColumn);
+                        PropertyInfo? ForeignKeyColumn = value.GetType().GetProperty(oneToMany?.ForeignKeyColumn);
+                        if (ForeignKeyColumn != null)
                         {
-                            var tempAtributeValue = oneToManyProp.GetValue(tempEntity);
-                            if (tempAtributeValue != null)
-                            {
-                                foreach (var valueT in ((IEnumerable)tempAtributeValue))
-                                {
-                                    bool exists = false;
-                                    foreach (var valueE in ((IEnumerable)atributeValue))
-                                    {
-                                        if (JsonCompare(valueT, valueE))
-                                        {
-                                            exists = true;
-                                        }
-                                    }
-                                    if (!exists)
-                                    {
-                                        Delete(valueT);
-                                    }
-                                }
-                            }
-                        }
-                        foreach (var value in ((IEnumerable)atributeValue))
-                        {
-                            PropertyInfo? KeyColumn = value.GetType().GetProperty(oneToMany?.KeyColumn);
-                            PropertyInfo? ForeignKeyColumn = value.GetType().GetProperty(oneToMany?.ForeignKeyColumn);
-                            if (ForeignKeyColumn != null)
-                            {
-                                var primaryKeyValue = entity?.GetType()?.GetProperty(KeyColumn?.Name)?.GetValue(entity);
-                                InsertRelationatedObject(primaryKeyValue, value, ForeignKeyColumn);
-                            }
+                            var primaryKeyValue = entity?.GetType()?.GetProperty(KeyColumn?.Name)?.GetValue(entity);
+                            InsertRelationatedObject(primaryKeyValue, value, ForeignKeyColumn);
                         }
                     }
                 }
@@ -297,7 +265,6 @@ namespace CAPA_DATOS
 
             ExcuteSqlQuery(strQuery);
             return entity;
-
         }
         public object UpdateObject(Object Inst, string IdObject)
         {
@@ -323,14 +290,9 @@ namespace CAPA_DATOS
         {
             try
             {
-
                 LoggerServices.AddMessageInfo("-- > TakeList<T>(" + Inst.GetType().Name + ",fullEntity: " + fullEntity.ToString() + ", condition: " + CondSQL + ")");
-                // Stopwatch timeMeasure = new Stopwatch();     
-                //timeMeasure.Start();
                 DataTable Table = BuildTable(Inst, ref CondSQL, fullEntity, false);
                 List<T> ListD = ConvertDataTable<T>(Table, Inst);
-                //  timeMeasure.Stop();              
-                //LoggerServices.AddMessageInfo($"Tiempo TakeList Entidad: {Inst.GetType().Name} - {timeMeasure.Elapsed.TotalMilliseconds} ms");
                 return ListD;
             }
             catch (Exception)
@@ -339,8 +301,6 @@ namespace CAPA_DATOS
                 throw;
             }
         }
-
-
 
         public T? TakeObject<T>(Object Inst, string CondSQL = "")
         {
@@ -365,8 +325,7 @@ namespace CAPA_DATOS
             DataTable Table = TraerDatosSQL(queryString);
             return Table;
         }
-        //LECTURA Y CONVERSION DE DATOS         
-        [Benchmark]
+        //LECTURA Y CONVERSION DE DATOS       
         protected List<T> ConvertDataTable<T>(DataTable dt, object Inst)
         {
             List<T> data = new List<T>();
@@ -377,7 +336,6 @@ namespace CAPA_DATOS
             }
             return data;
         }
-        [Benchmark]
         private static T ConvertRow<T>(object Inst, DataRow dr)
         {
             var obj = Activator.CreateInstance<T>();
@@ -391,22 +349,13 @@ namespace CAPA_DATOS
                         if (oProperty.Name == column.ColumnName)
                         {
                             var val = dr[column.ColumnName];
+                            var jsonProp = (JsonProp?)Attribute.GetCustomAttribute(oProperty, typeof(JsonProp));
                             var oneToOne = (OneToOne?)Attribute.GetCustomAttribute(oProperty, typeof(OneToOne));
                             var manyToOne = (ManyToOne?)Attribute.GetCustomAttribute(oProperty, typeof(ManyToOne));
                             var oneToMany = (OneToMany?)Attribute.GetCustomAttribute(oProperty, typeof(OneToMany));
-                            if (manyToOne != null)
+                            if (oneToOne != null || manyToOne != null || oneToMany != null || jsonProp != null)
                             {
-                                var getVal = GetListValue(val, oProperty.PropertyType);
-                                oProperty.SetValue(obj, getVal);
-                            }
-                            else if (oneToMany != null)
-                            {
-                                var getVal = GetListValue(val, oProperty.PropertyType);
-                                oProperty.SetValue(obj, getVal);
-                            }
-                            else if (oneToOne != null)
-                            {
-                                var getVal = GetListValue(val, oProperty.PropertyType);
+                                var getVal = GetJsonValue(val, oProperty.PropertyType);
                                 oProperty.SetValue(obj, getVal);
                             }
                             else
@@ -424,7 +373,7 @@ namespace CAPA_DATOS
             }
             return obj;
         }
-        [Benchmark]
+
         private static object GetValue(Object DefaultValue, Type type)
         {
             string? Literal = DefaultValue.ToString();
@@ -440,8 +389,7 @@ namespace CAPA_DATOS
                 return Convert.ChangeType(obj, type);
             }
         }
-        [Benchmark]
-        private static object? GetListValue(Object DefaultValue, Type type)
+        private static object? GetJsonValue(Object DefaultValue, Type type)
         {
             string? Literal = DefaultValue.ToString();
             if (Literal == null || Literal == "" || Literal == string.Empty) return null;
