@@ -90,3 +90,16 @@ class ChangeStateModel {
 	Estado = { type: "radio", hiddenInTable: true, Dataset: ["ACTIVO", "INACTIVO"] };
 }
 export { ChangeStateModel }
+
+class ChangeRolesModel {
+	constructor(props) {
+		for (const prop in props) {
+			this[prop] = props[prop];
+		}
+	}
+	Id_User = { type: "number", primary: true };
+	Security_Users_Roles = {
+		type: "MULTISELECT", Dataset: [{ Descripcion: "Role 1" }]
+	};
+}
+export { ChangeRolesModel }

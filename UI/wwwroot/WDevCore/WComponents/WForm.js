@@ -1034,7 +1034,10 @@ class WForm extends HTMLElement {
                             return false;
                         }
 
-                    } else if (this.Config.ModelObject[prop]?.type.toUpperCase() == "MASTERDETAIL") {
+                    } else if (this.Config.ModelObject[prop]?.type.toUpperCase() == "MASTERDETAIL" 
+                    || this.Config.ModelObject[prop]?.type.toUpperCase() == "CALENDAR") {
+                        console.log(this.Config.ModelObject[prop].require == true);
+                        console.log(ObjectF[prop]);
                         if (this.Config.ModelObject[prop].require == true) {
                             this.Config.ModelObject[prop].MinimunRequired = this.Config.ModelObject[prop]?.MinimunRequired ?? 1;
                         }
@@ -1113,11 +1116,12 @@ class WForm extends HTMLElement {
                     this.ExecuteSaveFunction(ObjectF, response);
                 }
                 ModalCheck.close();
-                if (this.Config.SaveFunction != undefined) {
-                    this.Config.SaveFunction(ObjectF);
-                } else if (this.Config.ObjectOptions?.SaveFunction != undefined) {
-                    this.Config.ObjectOptions?.SaveFunction(ObjectF);
-                }
+                // if (this.Config.SaveFunction != undefined) {
+                //     console.log("HEARE");
+                //     this.Config.SaveFunction(ObjectF);
+                // } else if (this.Config.ObjectOptions?.SaveFunction != undefined) {
+                //     this.Config.ObjectOptions?.SaveFunction(ObjectF);
+                // }
             } catch (error) {
                 ModalCheck.close();
                 console.log(error);

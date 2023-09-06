@@ -3,6 +3,7 @@ using System.Data.SqlClient;
 using System.Reflection;
 using System.Text.Json;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace CAPA_DATOS
 {
@@ -78,13 +79,13 @@ namespace CAPA_DATOS
                             JsonProp? json = (JsonProp?)Attribute.GetCustomAttribute(oProperty, typeof(JsonProp));
                             if (json != null)
                             {
-                                Values = Values + "'" + JsonConvert.SerializeObject(AtributeValue) + "',";
+                                String jsonV = JsonConvert.SerializeObject(AtributeValue);
+                                Values = Values + "'" + JValue.Parse(jsonV).ToString(Formatting.Indented) + "',";
                             }
                             else
                             {
                                 Values = Values + "'" + AtributeValue.ToString() + "',";
                             }
-
                             break;
                         case "int":
                         case "float":
@@ -298,7 +299,8 @@ namespace CAPA_DATOS
                     JsonProp? json = (JsonProp?)Attribute.GetCustomAttribute(oProperty, typeof(JsonProp));
                     if (json != null)
                     {
-                        Values = Values + AtributeName + "= '" + JsonConvert.SerializeObject(AtributeValue) + "',";
+                        String jsonV = JsonConvert.SerializeObject(AtributeValue);
+                        Values = Values + AtributeName + "= '" + JValue.Parse(jsonV).ToString(Formatting.Indented) + "',";                   
                     }
                     else
                     {

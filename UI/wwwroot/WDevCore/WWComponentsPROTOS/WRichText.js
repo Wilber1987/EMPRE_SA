@@ -1,24 +1,27 @@
 //@ts-check
-import { WRender } from "../WModules/WComponentsTools.js";
-import { WCssClass, css } from "../WModules/WStyledRender.js";
-class modelFiles {
+import { WRender } from "../WModules/WComponentsTools.js"
+import {  css } from "../WModules/WStyledRender.js"
+class ModelFiles {
     constructor(name, value, type) {
-        this.name = name;
-        this.type = type;
-        this.value = value;
+        this.Name = name;
+        this.Type = type;
+        this.Value = value;
     }
-    name = "";
-    value = ""//base64,
-    type = "" //PDF,PNG,JPG
+    Name = "";
+    Value = "";
+    Type = "";
 }
 class WRichText extends HTMLElement {
     constructor() {
         super();
         this.value = "";
         /**
-         * @type {Array<modelFiles>}
+         * @type {Array<ModelFiles>}
          */
         this.Files = [];
+        this.style.backgroundColor = "#fff";
+        this.style.padding= "5px";
+        this.style.border= "1px solid rgb(222 222 222)"
         this.DrawComponent();
     }
     connectedCallback() {
@@ -70,17 +73,17 @@ class WRichText extends HTMLElement {
     }
 
     DrawAttached() {
-        const AttachedSection = WRender.Create({
+        this.AttachedSection = WRender.Create({
             tagName: "section", class: "InputFileSection", children: []
         })
-        const ButtonSection = WRender.Create({
+        this.ButtonSection = WRender.Create({
             tagName: "section", class: "AddInputFileSection", children: [
                 WRender.Create({
                     tagName: "label", htmlFor: "attachInput", class: "button", innerHTML: "Agregar Adjunto"
                 }),
             ]
         })
-        ButtonSection.append(WRender.Create({
+        this.ButtonSection.append(WRender.Create({
             tagName: "input", id: "attachInput", type: "file", class: "inputfile",
             onchange: (ev) => {
                 const targetControl = ev.target
@@ -103,9 +106,10 @@ class WRichText extends HTMLElement {
                 reader.onloadend = (e) => {
                     //@ts-ignore
                     fileB64 = e.target?.result?.split("base64,")[1];
-                    const fileClass = new modelFiles(file.name, fileB64, base64Type);
+                    const fileClass = new ModelFiles(file.name, fileB64, base64Type);
                     this.Files.push(fileClass);
-                    AttachedSection.innerHTML = "";
+                    //@ts-ignore
+                    this.AttachedSection.innerHTML = "";
                     this.Files.forEach(file => {
                         const AttachBtn = WRender.Create({
                             className: "AttachBtn", innerHTML: "X", onclick: () => {
@@ -113,7 +117,8 @@ class WRichText extends HTMLElement {
                                 AttachBtn.parentNode?.parentNode?.removeChild(AttachBtn.parentNode);
                             }
                         })
-                        AttachedSection.append(WRender.Create({ class: "AttachItem", children: [fileClass.name, AttachBtn] }))
+                        //@ts-ignore
+                        this.AttachedSection.append(WRender.Create({ class: "AttachItem", children: [fileClass.Name, AttachBtn] }))
                     });
 
                 };
@@ -126,12 +131,24 @@ class WRichText extends HTMLElement {
                     file = ev.target?.value;
                     const search = "C:\\fakepath\\";
                     const files = file.replace(search, "");
-                    this.Files.filter(obj => obj.name !== files);
+                    this.Files.filter(obj => obj.Name !== files);
                     ev.target.value = "";
                 }
             },
         }))       
-        this.append(ButtonSection, AttachedSection);
+        this.append(this.ButtonSection, this.AttachedSection);
+    }
+
+    FunctionClear() {
+        // @ts-ignore
+        this.value = this.Divinput.innerHTML= "";
+        // @ts-ignore
+        while(this.AttachedSection?.firstChild)
+        {
+            this.AttachedSection?.removeChild(this.AttachedSection.firstChild)
+        }
+        this.Files = [];
+        console.log(this.Files);
     }
     Commands = [
         //{ commandName: "backColor", icon: "", type: "color", commandOptions: null, state: 1, event: "onchange" },
@@ -191,6 +208,7 @@ const WRichTextStyle = css`
         display: flex;
         align-items: center;
         justify-content: center;
+        flex-wrap: wrap;
     }
 
     w-rich-text .InputFileSection {
