@@ -3,7 +3,7 @@ import { WRender, WArrayF, ComponentsManager, WAjaxTools, type } from '../WDevCo
 import { WCssClass } from '../WDevCore/WModules/WStyledRender.js';
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js";
 import { StylesControlsV2 } from "../WDevCore/StyleModules/WStyleComponents.js";
-import { ChangePasswordModel, ChangeStateModel, Security_Permissions, Security_Roles, Security_Users } from "../Model/SecurityModel.js";
+import { ChangePasswordModel, ChangeRolesModel, ChangeStateModel, Security_Permissions, Security_Roles, Security_Users } from "../Model/SecurityModel.js";
 import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 window.addEventListener("load", async () => {
@@ -59,6 +59,11 @@ function ElementTab(TabName = "Tab", DOMManager, Model) {
                             name: "Editar contraseña", action: (object) => {
                                 Main.append(ChangePassword(object));
                             }
+                        } : null,
+                        TabName == "Usuarios" ? {
+                            name: "Editar roles", action: async (object) => {
+                                Main.append(await ChangeRoles(object));
+                            }
                         } : null
                     ]
                 }
@@ -79,12 +84,26 @@ function ElementTab(TabName = "Tab", DOMManager, Model) {
         }
     };
 }
+const ChangeRoles = async (/**@type {Security_Users} */ object) => {
+    const Roles = await WAjaxTools.PostRequest("../api/ApiEntitySECURITY/getSecurity_Roles", {});   
+    return new WModalForm({
+        title: "CAMBIO DE CONTRASEÑA",
+        EditObject: { Id_User: object.Id_User, Security_Users_Roles: object.Security_Users_Roles },
+        ModelObject: new ChangeRolesModel({
+            Security_Users_Roles: {
+                type: "multiselect", Dataset: Roles
+            }
+        }),
+        StyleForm: "ColumnX1",
+        ObjectOptions: { Url: "../api/ApiEntitySECURITY/saveSecurity_Users" }
+    })
+}
 const ChangePassword = (/**@type {Security_Users} */ object) => {
     return new WModalForm({
         title: "CAMBIO DE CONTRASEÑA",
         EditObject: { Id_User: object.Id_User, Password: object.Password },
         ModelObject: new ChangePasswordModel(),
-        StyleForm:"ColumnX1" ,
+        StyleForm: "ColumnX1",
         ObjectOptions: { Url: "../api/ApiEntitySECURITY/saveSecurity_Users" }
     })
 }
@@ -93,7 +112,7 @@ const ChangeState = (/**@type {Security_Users} */ object) => {
         title: "CAMBIO DE ESTADO",
         EditObject: { Id_User: object.Id_User, Estado: object.Estado },
         ModelObject: new ChangeStateModel(),
-        StyleForm:"columnX1" ,
+        StyleForm: "columnX1",
         ObjectOptions: { Url: "../api/ApiEntitySECURITY/saveSecurity_Users" }
     })
 }
