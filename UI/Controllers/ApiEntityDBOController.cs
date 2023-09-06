@@ -24,7 +24,14 @@ namespace API.Controllers
 
         [HttpGet]
         public object SendMail(){
-            return MailServices.SendMailContract(new List<String>(){"wilberj1987@gmail.com","alderhernandez@gmail.com"},"noreply@noreply","Usted es un mela","example.cshtml");            
+            return MailServices.SendMailContract(new List<String>(){"wilberj1987@gmail.com","alderhernandez@gmail.com"},"noreply@noreply","Usted es un mela","example.cshtml",
+                    new {
+                        numero_contrato = 123,
+                        monto = 1000,
+                        observaciones = "Ejemplo de observaciones",
+                        // Otras propiedades...
+                    } as dynamic
+                );            
         }
 
 

@@ -11,12 +11,14 @@ class Movimientos_Cuentas extends EntityClass {
 	id_movimiento = { type: "number", primary: true }
 	Catalogo_Cuentas_Origen = { type: 'WSELECT', ModelObject: () => new Catalogo_Cuentas() };
 	Catalogo_Cuentas_Destino = { type: 'WSELECT', ModelObject: () => new Catalogo_Cuentas() };
+	//moneda = { type: 'select', Dataset: ["C$", "$"], hiddenInTable: false,hidden:true, disabled: true, require: false, };
 	monto = {
 		type: "number", action: (movimiento) => {
 			movimiento.total = (movimiento.monto / movimiento.tasa_cambio).toFixed(3).toString();
 		}
 	};
 	tasa_cambio = { type: "number", disabled: true };
+	tasa_cambio_compra = { type: "number", disabled: true };
 	total = {
 		type: "number", action: (movimiento) => {
 			movimiento.monto = (movimiento.total * movimiento.tasa_cambio).toFixed(3).toString();
@@ -26,6 +28,7 @@ class Movimientos_Cuentas extends EntityClass {
 	fecha = { type: "date", disabled: true, required: false, hidden: true };
 	descripcion = { type: "textarea" };
 	concepto = { type: "textarea" };
+	correo_enviado = { type: "checkbox", require: false,  hiddenInTable: true, hidden: true };
 }
 export { Movimientos_Cuentas }
 
@@ -39,6 +42,7 @@ class Detail_Movimiento extends EntityClass {
 	}
 	id_movimiento = { type: "number", primary: true };
 	fecha = { type: "date" };
+	//moneda = { type: 'select', Dataset: ["C$", "$"], hiddenInTable: false,hidden:true, disabled: true, require: false, };
 	debito = { type: "number" };
 	credito = { type: "number" };
 	debito_dolares = { type: "number" };

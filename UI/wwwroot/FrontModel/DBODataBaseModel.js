@@ -414,8 +414,10 @@ class Catalogo_Cuentas extends EntityClass {
     }
     id_cuentas = { type: 'number', primary: true };
     nombre = { type: 'text' };
-    saldo = { type: 'number', disabled: true, hiddenInTable: true, required: false };
-    tipo_cuenta = { type: 'select', Dataset: ['PROPIA', 'PAGO', 'EXTERNA'] };    
+    saldo = { type: 'number', disabled: true, hiddenInTable: true, require: false };
+    permite_dolares = { type: "checkbox", require: false  };
+	permite_cordobas = { type: "checkbox", require: false  };
+    tipo_cuenta = { type: 'select', Dataset: ['PROPIA', 'PAGO', 'EXTERNA'] };
     Catalogo_Sucursales = { type: 'WSELECT', ModelObject: () => new Catalogo_Sucursales() };
     Categoria_Cuentas = { type: 'WSELECT', ModelObject: () => new Categoria_Cuentas() };
     /*Catalogo_Tipo_Transaccion = { type: 'WSELECT', ModelObject: () => new Catalogo_Tipo_Transaccion() };*/

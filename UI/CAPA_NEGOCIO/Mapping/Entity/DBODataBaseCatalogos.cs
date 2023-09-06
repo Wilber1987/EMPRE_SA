@@ -147,6 +147,8 @@ namespace DataBaseModel
         public string? tipo_cuenta { get; set; }
         public double? saldo { get; set; }
         public double? saldo_dolares { get; set; }
+        public bool? permite_cordobas { get; set; }
+        public bool? permite_dolares { get; set; }
         public int? id_sucursal { get; set; }
         [ManyToOne(TableName = "Catalogo_Sucursales", KeyColumn = "Id_Sucursal", ForeignKeyColumn = "id_sucursal")]
         public Catalogo_Sucursales? Catalogo_Sucursales { get; set; }

@@ -383,6 +383,11 @@ namespace DataBaseModel
         public int? id_usuario_crea { get; set; }
         public DateTime? fecha { get; set; }
         public string? tipo { get; set; }
+        public string? moneda { get; set; }
+        public double? tasa_cambio { get; set; }
+        public bool? correo_enviado { get; set; }
+
+        public double? tasa_cambio_compra { get; set; }
 
         [OneToMany(TableName = "Detail_Movimiento", KeyColumn = "id_movimiento", ForeignKeyColumn = "id_movimiento")]
         public List<Detail_Movimiento>? Detail_Movimiento { get; set; }
@@ -397,6 +402,8 @@ namespace DataBaseModel
         public double? credito { get; set; }
         public double? credito_dolares { get; set; }
         public double? tasa_cambio { get; set; }
+        public double? tasa_cambio_compra { get; set; }
+        public string? moneda { get; set; }
 
         public double? monto_inicial { get; set; }
         public double? monto_final { get; set; }
