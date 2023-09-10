@@ -138,7 +138,7 @@ namespace BackgroundJob.Cron.Jobs
                 _log.LogInformation(":::::::::::ERROR... at {0}", ex);
             }
 
-            return Task.CompletedTask;
+            //return Task.CompletedTask;
         }
 
         private IEnumerable<object> Get<T>()

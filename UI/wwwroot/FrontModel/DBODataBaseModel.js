@@ -660,3 +660,42 @@ class Datos_Configuracion extends EntityClass {
 }
 export { Datos_Configuracion }
 
+
+class Recibos extends EntityClass {
+	constructor(props) {
+        super(props, 'EntityDBO');
+		for (const prop in props) {
+			this[prop] = props[prop];
+		}
+	}
+	id_recibo = { type: "number" , primary: true  };
+	consecutivo = { type: "number"  };
+	temporal = { type: "checkbox"  };
+	numero_contrato = { type: "number"  };
+	monto = { type: "string"  };
+	saldo_actual_cordobas = { type: "string"  };
+	saldo_actual_dolares = { type: "string"  };
+	plazo = { type: "string"  };
+	interes_cargos = { type: "string"  };
+	tasa_cambio = { type: "string", hiddenInTable: true  };
+	tasa_cambio_compra = { type: "string", hiddenInTable: true  };
+	interes_demas_cargos_pagar_cordobas = { type: "string", hiddenInTable: true  };
+	interes_demas_cargos_pagar_dolares = { type: "string", hiddenInTable: true  };
+	abono_capital_cordobas = { type: "string", hiddenInTable: true  };
+	abono_capital_dolares = { type: "string", hiddenInTable: true  };
+	cuota_pagar_cordobas = { type: "string", hiddenInTable: true  };
+	cuota_pagar_dolares = { type: "string", hiddenInTable: true  };
+	mora_cordobas = { type: "string", hiddenInTable: true  };
+	mora_dolares = { type: "string", hiddenInTable: true  };
+	mora_interes_cordobas = { type: "string", hiddenInTable: true  };
+	mora_interes_dolares = { type: "string", hiddenInTable: true  };
+	total_cordobas = { type: "string", hiddenInTable: true  };
+	total_dolares = { type: "string", hiddenInTable: true  };
+	total_parciales = { type: "string", hiddenInTable: true  };
+	fecha_roc = { type: "date"  };
+	paga_cordobas = { type: "string", hiddenInTable: true  };
+	paga_dolares = { type: "string" , hiddenInTable: true };
+	solo_abono = { type: "checkbox", hiddenInTable: true  };
+	cancelar = { type: "checkbox"  };
+}
+export{Recibos}

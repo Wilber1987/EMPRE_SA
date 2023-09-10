@@ -601,5 +601,24 @@ namespace API.Controllers
         {
             return inst.Update();
         }
+        //Recibos
+        [HttpPost]
+        [AuthController]
+        public List<Recibos> getRecibos(Recibos Inst)
+        {
+            return Inst.Get<Recibos>();
+        }
+        [HttpPost]
+        [AuthController]
+        public object saveRecibos(Recibos inst)
+        {
+            return inst.Save();
+        }
+        [HttpPost]
+        [AuthController]
+        public object updateRecibos(Recibos inst)
+        {
+            return inst.Update();
+        }
     }
 }
