@@ -1,5 +1,6 @@
 using CAPA_DATOS;
 using CAPA_NEGOCIO.Security;
+using Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -165,8 +166,8 @@ namespace DataBaseModel
 
 
         public int? Id_User { get; set; }
-        [ManyToOne(TableName = "Catalogo_Agentes", KeyColumn = "id_agente", ForeignKeyColumn = "id_agente")]
-        public Catalogo_Agentes? Catalogo_Agentes { get; set; }
+        //[ManyToOne(TableName = "Catalogo_Agentes", KeyColumn = "id_agente", ForeignKeyColumn = "id_agente")]
+       // public Catalogo_Agentes? Catalogo_Agentes { get; set; }
         [ManyToOne(TableName = "Catalogo_Clientes", KeyColumn = "codigo_cliente", ForeignKeyColumn = "codigo_cliente")]
         public Catalogo_Clientes? Catalogo_Clientes { get; set; }
         [ManyToOne(TableName = "Security_Users", KeyColumn = "Id_User", ForeignKeyColumn = "Id_User")]
@@ -175,6 +176,8 @@ namespace DataBaseModel
         public List<Detail_Prendas>? Detail_Prendas { get; set; }
         [OneToMany(TableName = "Transaction_Facturas", KeyColumn = "numero_contrato", ForeignKeyColumn = "numero_contrato")]
         public List<Transaction_Facturas>? Transaction_Facturas { get; set; }
+        [OneToMany(TableName = "Tbl_Cuotas", KeyColumn = "numero_contrato", ForeignKeyColumn = "numero_contrato")]
+        public List<Tbl_Cuotas>? Tbl_Cuotas { get; set; }
     }
     public class Detail_Prendas : EntityClass
     {

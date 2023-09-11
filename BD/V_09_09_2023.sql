@@ -37,3 +37,20 @@ CREATE TABLE Recibos (
     /****DETALLE de pago****/    
     FOREIGN KEY (numero_contrato) REFERENCES Transaction_Contratos(numero_contrato)
 );
+
+
+
+CREATE TABLE Tbl_Cuotas (    
+    id_cuota int  IDENTITY(1,1) PRIMARY KEY,
+    numero_contrato int,
+    fecha datetime,
+    total float,
+    interes float,
+    abono_capital float,
+    capital_restante float,
+    fecha_pago datetime,
+    pago_contado float,
+    descuento float,
+    tasa_cambio float,
+    FOREIGN KEY (numero_contrato) REFERENCES Transaction_Contratos(numero_contrato)
+);

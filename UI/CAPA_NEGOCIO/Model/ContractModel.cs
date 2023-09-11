@@ -6,7 +6,7 @@ namespace Model
     public class ValoracionesTransaction
     {
 
-        public Transaction_Contratos? contrato;
+        public Transaction_Contratos? Transaction_Contratos { get; set; }
         /**@type {Number} */
         public Double valoracion_compra_cordobas { get; set; }
         /**@type {Number} */
@@ -32,7 +32,7 @@ namespace Model
         /**@type {Catalogo_Clientes} */
         public Catalogo_Clientes? Catalogo_Clientes { get; set; }
         /**@type {Array<Cuota>} */
-        public List<Cuota>? Transaction_Facturas { get; set; }
+        public List<Tbl_Cuotas>? Transaction_Facturas { get; set; }
         /**@type {Array<Detail_Prendas>} */
         public List<Detail_Prendas>? Detail_Prendas { get; set; }
         /**@type {String} */
@@ -77,6 +77,26 @@ namespace Model
             }
         }
 
+        public ResponseService SaveContract(string seasonKey)
+        {
+            try
+            {
+                Transaction_Contratos.Save();
+                return new ResponseService()
+                {
+                    status = 200
+                };
+            }
+            catch (System.Exception)
+            {
+
+                return new ResponseService()
+                {
+                    status = 200
+                };
+            }
+        }
+
         public ValoracionesTransaction GetDataContract(string seasonKey)
         {
             ValoracionesTransaction? valoracionesTransaction
@@ -85,7 +105,33 @@ namespace Model
         }
     }
 
-    public class Cuota
+    public class Tbl_Cuotas : EntityClass
     {
+        [PrimaryKey(Identity = true)]
+        public int? id_cuota { get; set; }
+        /**@type {Date} */
+        public DateTime? fecha { get; set; }
+        /**@type {Number} Tbl_cuotas del abono*/
+        public double? total { get; set; }
+        /**@type {Number} valor del interes del capital*/
+        public double? interes { get; set; }
+        /**@type {Number} */
+        public double? abono_capital { get; set; }
+        /**@type {Number} capital restante*/
+        public double? capital_restante { get; set; }
+        /**DATOS DE LA FATURA */
+        /**@type {Date} */
+        public DateTime? fecha_pago { get; set; }
+        /**@type {Number} Tbl_cuotas del abono*/
+        public double? pago_contado { get; set; }
+        /**@type {Number} Tbl_cuotas del abono*/
+        public double? descuento { get; set; }
+        /**@type {Number} Tbl_cuotas del abono*/
+        public double? tasa_cambio { get; set; }
+        public int? numero_contrato { get; set; }
+
+        [ManyToOne(TableName = "Transaction_Contratos", KeyColumn = "numero_contrato", ForeignKeyColumn = "numero_contrato")]
+        public Transaction_Contratos? Transaction_Contratos { get; set; }
+
     }
 }

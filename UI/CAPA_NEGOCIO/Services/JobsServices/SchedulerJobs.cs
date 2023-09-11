@@ -94,7 +94,7 @@ namespace BackgroundJob.Cron.Jobs
             _log = log;
         }
 
-        protected override async Task DoWork(CancellationToken stoppingToken)
+        protected override Task DoWork(CancellationToken stoppingToken)
         {
             _log.LogInformation(":::::::::::Running...  SendMovimientoCuentaMailNotificationsSchedulerJob at {0}", DateTime.UtcNow);
             //Envio de mails cada vez que se realice un movimiento entre cuentas
@@ -119,17 +119,12 @@ namespace BackgroundJob.Cron.Jobs
                         Usuario = "todo usuario"
                     };
                     //MailServices.SendMailContract(new List<String>() { "wilberj1987@gmail.com", "alderhernandez@gmail.com" }, "noreply@noreply", "Notificación de movimiento entre cuentas", "NotificacionMovimientoCuentas.cshtml", modelo);//todo definir correos a enviar
-
                     var update = new Transaction_Movimiento()
                     {
                         id_movimiento = item.id_movimiento
                     }.Find<Transaction_Movimiento>();
-
                     update.correo_enviado = true;
-
                     update.Update();
-
-
                 }
                 
             }
@@ -138,7 +133,7 @@ namespace BackgroundJob.Cron.Jobs
                 _log.LogInformation(":::::::::::ERROR... at {0}", ex);
             }
 
-            //return Task.CompletedTask;
+            return Task.CompletedTask;
         }
 
         private IEnumerable<object> Get<T>()

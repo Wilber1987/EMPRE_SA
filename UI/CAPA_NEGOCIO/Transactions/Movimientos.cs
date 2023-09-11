@@ -80,7 +80,7 @@ namespace Transactions
                         concepto = this.concepto,
                         id_usuario_crea = user.UserId,
                         tipo = "pendiente",
-                        moneda = (bool)Catalogo_Cuentas_Destino?.permite_cordobas ? "C$" : "$",
+                        moneda = Catalogo_Cuentas_Destino?.permite_cordobas == true ? "C$" : "$",
                         tasa_cambio = this.tasa_cambio,
                         tasa_cambio_compra = this.tasa_cambio_compra,
                         correo_enviado = false,
@@ -97,7 +97,7 @@ namespace Transactions
                                 monto_final_dolares = cuentaOrigen?.saldo_dolares - (this.monto / this.tasa_cambio),
                                 tasa_cambio = this.tasa_cambio,
                                 tasa_cambio_compra = this.tasa_cambio_compra,
-                                moneda = (bool)Catalogo_Cuentas_Destino?.permite_cordobas ? "C$" : "$"
+                                moneda = Catalogo_Cuentas_Destino?.permite_cordobas == true ? "C$" : "$"
                             },new Detail_Movimiento(){
                                 id_cuenta = this.Catalogo_Cuentas_Destino?.id_cuentas,
                                 debito = 0,
@@ -110,7 +110,7 @@ namespace Transactions
                                 monto_final_dolares = cuentaDestino?.saldo_dolares + (this.monto / this.tasa_cambio),
                                 tasa_cambio = this.tasa_cambio,
                                 tasa_cambio_compra = this.tasa_cambio_compra,
-                                moneda = (bool)Catalogo_Cuentas_Destino?.permite_cordobas ? "C$" : "$"
+                                moneda = Catalogo_Cuentas_Destino?.permite_cordobas == true ? "C$" : "$"
                             }
                         }
                     };

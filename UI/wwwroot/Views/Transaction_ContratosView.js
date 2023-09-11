@@ -7,7 +7,7 @@ import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
 import { Catalogo_Cambio_Dolar, Catalogo_Clientes, Detail_PrendasModel, Detail_Prendas_VehiculosModel, Transaction_ContratosModel } from "../FrontModel/DBODataBaseModel.js"
 // @ts-ignore
 import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
-import { Detail_Prendas, Detail_Prendas_Vehiculos, Transaction_Contratos, ValoracionesContrato } from "../FrontModel/Model.js";
+import { Detail_Prendas, Detail_Prendas_Vehiculos, Transaction_Contratos, ValoracionesTransaction } from "../FrontModel/Model.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 import { ValoracionesSearch, clientSearcher, contratosSearcher } from "../modules/SerchersModules.js";
 import { ModalMessege } from "../WDevCore/WComponents/WForm.js";
@@ -17,7 +17,7 @@ import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 
 /**
  * @typedef {Object} ContratosConfig
- * * @property {ValoracionesContrato} [Entity]
+ * * @property {ValoracionesTransaction} [Entity]
  */
 class Transaction_ContratosView extends HTMLElement {
     /**
@@ -28,7 +28,7 @@ class Transaction_ContratosView extends HTMLElement {
         super();
         this.attachShadow({ mode: 'open' });
         //models
-        this.entity = new ValoracionesContrato(props?.Entity) ?? new ValoracionesContrato();
+        this.entity = new ValoracionesTransaction(props?.Entity) ?? new ValoracionesTransaction();
         //this.entity = testData
         AmoritizationModule.calculoAmortizacion(this.entity);
         this.componentsModel = new Transaction_ContratosModel();
@@ -156,6 +156,7 @@ class Transaction_ContratosView extends HTMLElement {
         this.OptionContainer.append(WRender.Create({
             tagName: 'button', className: 'Block-Fifth', innerText: 'Guardar contrato',
             onclick: async () => {
+                const respomse = await this.entity.SaveContract();
                 const contract = await this.entity.VerContrato();
                 this.shadowRoot?.append(new WModalForm({
                     ObjectModal: WRender.Create({
@@ -177,7 +178,7 @@ class Transaction_ContratosView extends HTMLElement {
     }
     /**
      * 
-     * @param {ValoracionesContrato} entity 
+     * @param {ValoracionesTransaction} entity 
      * @returns 
      */
     valoracionResumen(entity) {
@@ -417,14 +418,14 @@ customElements.define('w-main-contract', MainContract);
 export { MainContract }
 
 window.addEventListener('load', async () => {
-    const contrato = await new ValoracionesContrato().GetValoracionContrato();
+    const contrato = await new ValoracionesTransaction().GetValoracionContrato();
     // @ts-ignore
     //
     MainBody.append(new MainContract(contrato))
     //MainBody.append(new MainContract(testData))
 })
-/**@type {ValoracionesContrato} */
-const testData = new ValoracionesContrato({
+/**@type {ValoracionesTransaction} */
+const testData = new ValoracionesTransaction({
     "valoracion_compra_cordobas": 10400,
     "valoracion_compra_dolares": 289.7,
     "valoracion_empeño_cordobas": 8000,

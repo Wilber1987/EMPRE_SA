@@ -7,7 +7,7 @@ import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
 import { Catalogo_Clientes, Transaction_ContratosModel, Transactional_Valoracion } from "../FrontModel/DBODataBaseModel.js"
 // @ts-ignore
 import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
-import { Transaction_Contratos, ValoracionesContrato } from "../FrontModel/Model.js";
+import { Transaction_Contratos, ValoracionesTransaction } from "../FrontModel/Model.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 class ValoracionesSearch extends HTMLElement {
     constructor(/** @type {Function} */ action) {

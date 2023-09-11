@@ -8,7 +8,7 @@ import { Catalogo_Cambio_Dolar, Catalogo_Categoria, Catalogo_Clientes, Catalogo_
 import { ModalMessege, WForm } from "../WDevCore/WComponents/WForm.js";
 // @ts-ignore
 import { Transactional_Configuraciones } from "../FrontModel/ADMINISTRATIVE_ACCESSDataBaseModel.js";
-import { Detail_Prendas, ValoracionesContrato } from "../FrontModel/Model.js";
+import { Detail_Prendas, Transaction_Contratos, ValoracionesTransaction } from "../FrontModel/Model.js";
 import { CuotaComponent } from "../FrontModel/ModelComponents.js";
 import { AmoritizationModule } from "../modules/AmortizacionModule.js";
 import { clientSearcher, ValoracionesSearch } from "../modules/SerchersModules.js";
@@ -523,15 +523,15 @@ class Transaction_Valoraciones_View extends HTMLElement {
     }
     /**
      * 
-     * @returns {ValoracionesContrato}
+     * @returns {ValoracionesTransaction}
      */
     calculoAmortizacion = () => {
         if (this.valoracionesTable?.Dataset.length == 0) {
             this.amortizacionResumen.innerText = this.valoracionResumen(0, 0, 0, 0);
-            return new ValoracionesContrato();
+            return new ValoracionesTransaction();
         }
         // const total = this.valoracionesTable?.Dataset.reduce((sum, value) => (typeof value.Edad == "number" ? sum + value.Edad : sum), 0);
-        const contrato = new ValoracionesContrato({
+        const contrato = new ValoracionesTransaction({
             // @ts-ignore
             valoracion_compra_cordobas: (WArrayF.SumValAtt(this.valoracionesTable?.Dataset, "valoracion_compra_cordobas")),
             // @ts-ignore
@@ -562,6 +562,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
                 Catalogo_Categoria: valoracion.Catalogo_Categoria,
                 Transactional_Valoracion: valoracion
             })),
+            Transaction_Contratos: new Transaction_Contratos(),
             Catalogo_Clientes: this.Cliente,
             valoraciones: this.valoracionesTable?.Dataset
         })
