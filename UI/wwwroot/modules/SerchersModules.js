@@ -106,10 +106,18 @@ const contratosSearcher = (action) => {
     const model = new Transaction_Contratos();
     const TableComponent = new WTableComponent({
         EntityModel: model,
-        ModelObject: new Transaction_ContratosModel(),
+        ModelObject: new Transaction_ContratosModel({
+            numero_contrato : { type: "text", primary: false}
+        }),
         AddItemsFromApi: true,
         Options: {
-           Show: true
+           Show: true,
+           UserActions: [{
+                name: "Selecionar",
+                action: async (cliente) => {
+                    await action(cliente);
+                }
+            }]
         }
     })
     const FilterOptions = new WFilterOptions({
@@ -120,6 +128,8 @@ const contratosSearcher = (action) => {
         FilterFunction: (DFilt) => {
             TableComponent.Dataset = DFilt;
             TableComponent?.DrawTable();
+            // @ts-ignore
+            action(DFilt, FilterOptions);
         }
     });
     return WRender.Create({ className: "main-contratos-searcher", children: [FilterOptions, TableComponent] });

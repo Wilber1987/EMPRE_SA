@@ -57,7 +57,7 @@ class WForm extends HTMLElement {
                 Url: undefined
             };
         }
-        console.log(this.FormObject);
+        //console.log(this.FormObject);
         this.FormObject = this.FormObject ?? this.Config.EditObject ?? {};
         const Model = this.Config.ModelObject ?? this.Config.EditObject;
         const ObjectProxy = this.CreateProxy(Model);

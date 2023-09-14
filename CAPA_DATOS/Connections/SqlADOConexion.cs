@@ -16,13 +16,13 @@ namespace CAPA_DATOS
 
         //static string SQLServer = "DESKTOP-I58J01U";
 
-        static string SQLServer = ".";
+       /* static string SQLServer = ".";
         private static string SGBD_USER = "sa";
-        private static string SWGBD_PASSWORD = "zaxscd";
+        private static string SWGBD_PASSWORD = "zaxscd";*/
 
-        // static string SQLServer = ".\\SQLEXPRESS";
-        // private static string SGBD_USER = "sa";
-        // private static string SWGBD_PASSWORD = "123";
+         static string SQLServer = ".\\SQLEXPRESS";
+         private static string SGBD_USER = "sa";
+         private static string SWGBD_PASSWORD = "123";
 
         static public bool IniciarConexion()
         {

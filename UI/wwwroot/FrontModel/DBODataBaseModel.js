@@ -239,7 +239,7 @@ class Transaction_ContratosModel extends EntityClass {
     mora = { type: 'number', hiddenInTable: true, hiddenFilter: true };
     estado = { type: 'select', Dataset: ["ACTIVO", "INACTIVO"] };
     fecha_vencimiento = { type: 'date' };
-    dias_mora = { type: 'number' };
+    dias_mora = { type: 'number' , hiddenFilter: true};
     saldo_mora = { type: 'number', hiddenInTable: true, hiddenFilter: true };
     saldo = { type: 'number', hiddenInTable: true, hiddenFilter: true };
     fecha_baja = { type: 'date', hiddenInTable: true, hiddenFilter: true };

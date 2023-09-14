@@ -97,8 +97,7 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
             tagName: 'button', className: 'Block-Secundary', innerText: 'Registrar Movimiento',
             onclick: () => {
                 const modelExterno = new Movimientos_Cuentas();
-                modelExterno.Catalogo_Cuentas_Destino.Dataset =  model.Catalogo_Cuentas_Destino.Dataset.filter(x => x.tipo_cuenta == "PROPIA");
-                console.log( model.Catalogo_Cuentas_Destino.Dataset.filter(x => x.tipo_cuenta == "PROPIA"));
+                modelExterno.Catalogo_Cuentas_Destino.Dataset =  model.Catalogo_Cuentas_Destino.Dataset.filter(x => x.tipo_cuenta == "PROPIA");                
                 modelExterno.Catalogo_Cuentas_Origen.Dataset = model.Catalogo_Cuentas_Origen.Dataset.filter(x => x.tipo_cuenta == "PROPIA");
                 modelExterno.tasa_cambio = model.tasa_cambio;
                 modelExterno.tasa_cambio_compra = model.tasa_cambio_compra;
