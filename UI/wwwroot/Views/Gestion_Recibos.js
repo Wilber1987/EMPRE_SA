@@ -20,7 +20,8 @@ class Gestion_RecibosView extends HTMLElement {
         this.valoracionesContainer = WRender.Create({ className: "valoraciones-container" });
         this.append(this.CustomStyle);
         this.Cliente = {}
-        this.valoresObject = {
+        this.
+        valoresObject = {
             Valoracion_1: 0, dolares_1: 0,
             Valoracion_2: 0, dolares_2: 0,
             Valoracion_3: 0, dolares_3: 0,
@@ -277,7 +278,7 @@ class Gestion_RecibosView extends HTMLElement {
         }))
     }
     selectContrato = (/**@type {Transaction_ContratosModel} */ selectContrato) => {
-        console.log(selectContrato);
+        //console.log(selectContrato);        
         this.Cliente = selectContrato;
         if (this.valoracionesForm != undefined) {
             //this.valoracionesForm.FormObject.Tasa_interes = this.getTasaInteres();
@@ -285,67 +286,106 @@ class Gestion_RecibosView extends HTMLElement {
         }
         //this.calculoAmortizacion();//ocupar metodo
         this.selectedClientDetail.innerHTML = 
-                    `<div>
-                    <h4>CONTRATO #: ${selectContrato.numero_contrato}</h4>
+                `<div>
+                    
                     <div class="column-venta">
-                        <label>VENTA DE COMPRA</label>
-                        <span>Nombre: ${selectContrato.numero_contrato}</span>
-                        <span>Dirección: ${selectContrato.Catalogo_Clientes.identificacion}</span>
-                        <span>Identificación: ${selectContrato.numero_contrato}</span>
-                    </div>                     
+                        <div class="campo">
+                            <span>Nombre:</span>
+                            <input type="text" value="${selectContrato.numero_contrato}" disabled>
+                            <span>Dirección:</span>
+                            <input type="text" value="${selectContrato.Catalogo_Clientes.identificacion}" disabled>
+                        </div>                        
+                        <div class="campo">
+                            <span>Identificación:</span>
+                            <input type="text" value="${selectContrato.numero_contrato}" disabled>
+                            <span>contrato #:</span>
+                            <input type="text" value="${selectContrato.numero_contrato}" disabled>
+                        </div>
+                    </div>                  
+                </div>
+                <div>
+                    <h4 style="text-align:center;">DATOS DEL RECIBO OFICIAL DE CAJA</h4>
                 </div>`;
-        `
-            Cliente seleccionado: ${selectContrato.numero_contrato} ${selectContrato.numero_contrato ?? ''} ${selectContrato.numero_contrato} ${selectContrato.numero_contrato ?? ''}
-        `;
+        this.calculoRecibo(selectContrato,this.tasasCambio);
+                
         this.Manager.NavigateFunction("valoraciones", this.valoracionesContainer);
         //this.contratoDetailUpdate();
     }
-    /*getTasaInteres = () => {
-        if (this.Cliente.Catalogo_Clasificacion_Interes) {
-            return parseFloat(this.Cliente.Catalogo_Clasificacion_Interes.porcentaje)
+   
+    /**
+     * 
+     * @returns {Recibos}
+     */
+    calculoRecibo = (contrato,tasasCambio) => {
+        if (this.valoracionesForm != undefined) {
+            for (const prop in this.valoracionesForm?.FormObject) {
+                if (prop == "Detail_Valores") continue;
+                if (prop == "Tasa_interes") continue;
+                this.valoracionesForm.FormObject[prop] = contrato[prop]
+                //this.valoracionesForm.FormObject["consecutivo"] = 5;
+                //this.valoracionesForm.FormObject["numero_contrato"] = 4;
+
+                
+            }
+            this.valoracionesForm.FormObject["tasa_cambio"] = tasasCambio[0].valor_de_compra;
+            this.valoracionesForm.FormObject["tasa_cambio_compra"] = tasasCambio[0].valor_de_venta;
+            this.valoracionesForm.FormObject["tasa_cambio_compra"] = tasasCambio[0].valor_de_venta;
+            
+                                    console.log(contrato["saldo"]+" -> "+contrato["taza_cambio"]);
+            this.valoracionesForm.FormObject["saldo_actual_cordobas"] = contrato["saldo"];
+            this.valoracionesForm.FormObject["saldo_actual_dolares"] = (contrato["saldo"]/contrato["taza_cambio"]).toFixed(2);            
+            this.valoracionesForm.FormObject["interes_cargos"] = 0;//todo contrato[""];
+            this.valoracionesForm.FormObject["tasa_cambio"] = contrato["taza_cambio"];
+            this.valoracionesForm.FormObject["tasa_cambio_compra"] = 0 // todo contrato[""];
+            this.valoracionesForm.FormObject["interes_demas_cargos_pagar_cordobas"] = 0// todo contrato[""];
+            this.valoracionesForm.FormObject["interes_demas_cargos_pagar_dolares"] = 0// todo contrato[""];
+            this.valoracionesForm.FormObject["abono_capital_cordobas"] = 0// todo contrato[""];
+            this.valoracionesForm.FormObject["abono_capital_dolares"] = 0//todo contrato[""];
+            this.valoracionesForm.FormObject["cuota_pagar_cordobas"] = 0// todo contrato[""];
+            this.valoracionesForm.FormObject["cuota_pagar_dolares"] = 0//todo contrato[""];
+            this.valoracionesForm.FormObject["mora_cordobas"] = contrato["mora"].toFixed(2);
+            this.valoracionesForm.FormObject["mora_dolares"] = (contrato["mora"]/tasasCambio[0].valor_de_compra).toFixed(2);
+            this.valoracionesForm.FormObject["mora_interes_cordobas"] = 0; //todo contrato[""];
+            this.valoracionesForm.FormObject["mora_interes_dolares"] = 0; //todo contrato[""];
+            this.valoracionesForm.FormObject["total_cordobas"] = contrato[""];
+            this.valoracionesForm.FormObject["total_dolares"] = contrato[""];
+            this.valoracionesForm.FormObject["total_parciales"] = contrato[""];
+            this.valoracionesForm.FormObject["fecha_roc"] = new Date();
+            this.valoracionesForm.FormObject["paga_cordobas"] =  0; //todo contrato[""];
+            this.valoracionesForm.FormObject["paga_dolares"] =  0; //todo contrato[""];
+            this.valoracionesForm.FormObject["solo_abono"] =  true;
+            this.valoracionesForm.FormObject["cancelar"] = false;
+
+
+            //console.log(contrato)
+            //console.log("----")
+            //console.log(this.valoracionesForm.FormObject)
+            //this.valoracionesForm.DrawComponent();
+            /*if (this.valoresForm != undefined) {
                 // @ts-ignore
-                + this.InteresBase;
-        } else {
-            // @ts-ignore
-            return 6 + this.InteresBase;
+                if (new Date().subtractDays(40) < new Date(valoracion.Fecha)) {
+                    this.valoresObject.Valoracion_1 = valoracion.Detail_Valores?.Valoracion_1 ?? 0;
+                    this.valoresObject.dolares_1 = valoracion.Detail_Valores?.dolares_1 ?? 0;
+                    this.valoresObject.Valoracion_2 = valoracion.Detail_Valores?.Valoracion_2 ?? 0;
+                    this.valoresObject.dolares_2 = valoracion.Detail_Valores?.dolares_2 ?? 0;
+                    this.valoresObject.Valoracion_3 = valoracion.Detail_Valores?.Valoracion_3 ?? 0;
+                    this.valoresObject.dolares_3 = valoracion.Detail_Valores?.dolares_3 ?? 0;
+                    this.valoresForm.DrawComponent();
+                } else {
+                    this.valoresObject.Valoracion_1 = 0;
+                    this.valoresObject.dolares_1 = 0;
+                    this.valoresObject.Valoracion_2 = 0;
+                    this.valoresObject.dolares_2 = 0;
+                    this.valoresObject.Valoracion_3 = 0;
+                    this.valoresObject.dolares_3 = 0;
+                    this.valoresForm.DrawComponent();
+                }
+            }*/
         }
-    }*/
-  
-    contratoDetailUpdate() {
-        // @ts-ignore
-        this.contratoDetail.innerHTML = "";
-        const detail = this.valoracionesForm?.FormObject;
-        const beneficioVentaC = this.Beneficios?.find(b => b.Nombre == "BENEFICIO_VENTA_ARTICULO_COMPRADO");
-        const beneficioVentaE = this.Beneficios?.find(b => b.Nombre == "BENEFICIO_VENTA_ARTICULO_EMPENO");
-        const mora = detail.Tasa_interes * 2 / 100;
-        const precio_venta_empeño = ((parseFloat(detail.valoracion_empeño_cordobas) * (mora + 1)) * (beneficioVentaE.Valor / 100 + 1));
-
-
-        // @ts-ignore
-        this.valoracionesForm.FormObject.precio_venta_empeño_cordobas = (precio_venta_empeño);
-
-        // @ts-ignore
-        this.valoracionesForm.FormObject.precio_venta_empeño_dolares = (precio_venta_empeño / this.tasasCambio[0].valor_de_compra)
-        // @ts-ignore
-        //const moraDolares =  mora / this.tasasCambio[0].valor_de_compra;    
-        this.contratoDetail?.append(WRender.CreateStringNode(`<div>
-            <h4>BENEFICIOS:</h4>
-            <div class="column-venta">
-                <label>VENTA DE COMPRA</label>
-                <span>C$ ${((detail.valoracion_compra_cordobas) * (beneficioVentaC.Valor / 100 + 1)).toFixed(2)}</span>
-                <span>$ ${((detail.valoracion_compra_dolares) * (beneficioVentaC.Valor / 100 + 1)).toFixed(2)}</span>
-            </div> 
-            <div class="column-venta">
-                <label>VENTA DE EMPEÑO</label>
-                <span>C$ ${precio_venta_empeño.toString() == "NaN" ? "0.00"
-                : precio_venta_empeño.toFixed(2)}</span>
-                <span>$ ${precio_venta_empeño.toString() == "NaN" ? "0.00"
-                : (precio_venta_empeño /
-                    // @ts-ignore
-                    this.tasasCambio[0].valor_de_compra).toFixed(2)}</span>
-            </div> 
-        </div>`));
+        //this.beneficiosDetailUpdate();
+        this.Manager.NavigateFunction("valoraciones", this.valoracionesContainer);
     }
+   
 
     CustomStyle = css`
         .valoraciones-container{
