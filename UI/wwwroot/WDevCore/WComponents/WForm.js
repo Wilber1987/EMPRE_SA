@@ -549,7 +549,8 @@ class WForm extends HTMLElement {
                     })
                 });
                 break;
-            case "CHECKBOX":
+            case "CHECKBOX":                
+                ObjectF[prop] = val != null || val != undefined ? val : false;
                 ControlContainer.className += " radioCheckedControl";
                 ControlLabel.htmlFor = "ControlValue" + prop;
                 ControlLabel.className += " radioCheckedLabel";
@@ -558,7 +559,8 @@ class WForm extends HTMLElement {
                     id: "ControlValue" + prop,
                     className: prop,
                     value: val,
-                    checked: val != null || val != undefined,
+                    // @ts-ignore
+                    checked: val != null || val != undefined ? val : false,
                     onchange: ModelProperty.disabled ? undefined : onChangeEvent,
                     type: ModelProperty.type, placeholder: WArrayF.Capitalize(WOrtograficValidation.es(prop)),
                     disabled: ModelProperty.disabled
