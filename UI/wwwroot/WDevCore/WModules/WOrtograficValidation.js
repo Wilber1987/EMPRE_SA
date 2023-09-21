@@ -7,7 +7,9 @@ class WOrtograficValidation {
     static es = (val = "") => {
         try {
             val = val.toString().replaceAll("_id", "")
+                .replaceAll("CaseTable_", "")
                 .replaceAll("Tbl_", "")
+                .replaceAll("CaseTable_", "")
                 .replaceAll("Cat_", "")
                 .replaceAll("Catalogo_", "")
                 .replaceAll("catalogo_", "")
@@ -65,7 +67,8 @@ class WOrtograficValidation {
         { error: ["IDENTIFICACION"], value: "identificación" },
         { error: ["CLASIFICACION"], value: "clasificación" },
         { error: ["INTERES"], value: "interés" },
-        { error: ["APELLIDIO"], value: "apellido" },        
+        { error: ["APELLIDIO"], value: "apellido" },  
+        { error: ["FECHANAC"], value: "fecha de nacimiento" },      
 
     ]
 }

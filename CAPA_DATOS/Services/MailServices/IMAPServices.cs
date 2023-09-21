@@ -5,7 +5,7 @@ using System.Text;
 using AE.Net.Mail;
 using CAPA_DATOS;
 
-namespace CAPA_NEGOCIO.Services
+namespace CAPA_DATOS.Services
 {
     public class MailConfig
     {
@@ -89,6 +89,33 @@ namespace CAPA_NEGOCIO.Services
             //     }
             // }
             return true; //ids;
-        }        
+        }
+        public object GetData2()
+        {
+            // Datos de la cuenta de correo
+            string server = "outlook.office365.com";
+            int port = 993; // Puerto seguro IMAPS
+            string username = "amejia@ximtechnology.onmicrosoft.com";
+            string password = "%3e2w1qazsX";
+
+            using (var client = new MailKit.Net.Imap.ImapClient())
+            {
+                // Configurar la conexión
+                client.Connect(server, port, MailKit.Security.SecureSocketOptions.StartTls);
+
+                // Autenticación
+                client.Authenticate(username, password);
+
+
+                // Realizar acciones con el cliente IMAP
+                // Por ejemplo, puedes listar carpetas, leer correos, etc.
+
+                // Desconectar
+                client.Disconnect(true);
+            }
+            return true;
+        }
     }
+
+
 }

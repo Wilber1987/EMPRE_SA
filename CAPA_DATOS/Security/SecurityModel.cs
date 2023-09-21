@@ -1,11 +1,8 @@
-﻿using CAPA_DATOS;
-using DataBaseModel;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using API.Controllers;
+using CAPA_DATOS.Services;
 
 
-namespace CAPA_NEGOCIO.Security
+namespace CAPA_DATOS.Security
 {
     public class Security_Roles : EntityClass
     {
@@ -23,10 +20,6 @@ namespace CAPA_NEGOCIO.Security
             }
             else
             {
-                if (this.Estado == null)
-                {
-                    this.Estado = "ACTIVO";
-                }
                 this.Update("Id_Role");
             }
             if (this.Security_Permissions_Roles != null)
@@ -65,7 +58,6 @@ namespace CAPA_NEGOCIO.Security
     {
         [PrimaryKey(Identity = true)]
         public int? Id_User { get; set; }
-        public int? id_agente { get; set; }
         public string? Nombres { get; set; }
         public string? Estado { get; set; }
         public string? Descripcion { get; set; }
@@ -74,13 +66,10 @@ namespace CAPA_NEGOCIO.Security
         public string? Token { get; set; }
         public DateTime? Token_Date { get; set; }
         public DateTime? Token_Expiration_Date { get; set; }
-        [ManyToOne(TableName = "Catalogo_Agentes", KeyColumn = "id_agente", ForeignKeyColumn = "id_agente")]
-        public Catalogo_Agentes? Catalogo_Agentes { get; set; }
         [OneToMany(TableName = "Security_Users_Roles", KeyColumn = "Id_User", ForeignKeyColumn = "Id_User")]
         public List<Security_Users_Roles>? Security_Users_Roles { get; set; }
         public Security_Users? GetUserData()
         {
-
             Security_Users? user = this.Find<Security_Users>();
             if (user != null && user.Estado == "ACTIVO")
             {
@@ -100,10 +89,14 @@ namespace CAPA_NEGOCIO.Security
             }
             return null;
         }
-        public object SaveUser()
+        public object SaveUser(string identity)
         {
-            try
+            if (!AuthNetCore.HavePermission(PermissionsEnum.ADMINISTRAR_USUARIOS.ToString(), identity))
             {
+                throw new Exception("no tiene permisos");
+            }
+            try
+            {                
                 this.BeginGlobalTransaction();
                 if (this.Password != null)
                 {
@@ -116,9 +109,22 @@ namespace CAPA_NEGOCIO.Security
                         throw new Exception("Correo en uso");
                     }
                     this.Save();
+                    new Tbl_Profile()
+                    {
+                        Nombres = this.Nombres,
+                        Estado = this.Estado,
+                        Correo_institucional = this.Mail,
+                        Foto = "\\Media\\profiles\\avatar.png",
+                        IdUser = Id_User
+
+                    }.Save();
                 }
                 else
                 {
+                    if (this.Estado == null)
+                    {
+                        this.Estado = "ACTIVO";
+                    }
                     this.Update("Id_User");
                 }
                 if (this.Security_Users_Roles != null)
@@ -153,6 +159,56 @@ namespace CAPA_NEGOCIO.Security
             }
             return Security_Users_List;
         }
+        internal bool IsAdmin()
+        {
+            return Security_Users_Roles?.Find(r => r.Security_Role?.Security_Permissions_Roles?.Find(p =>
+             p.Security_Permissions.Descripcion.Equals(PermissionsEnum.ADMIN_ACCESS.ToString())
+            ) != null) != null;
+        }
+
+        internal object RecoveryPassword()
+        {
+            Security_Users? user = this.Find<Security_Users>();
+            if (user != null && user.Estado == "ACTIVO")
+            {
+                string password = Guid.NewGuid().ToString();
+                user.Password = EncrypterServices.Encrypt(password);
+                user.Update();
+                SMTPMailServices.SendMail("heldesk@password.recovery",
+                 new List<string> { user.Mail },
+                 "Recuperación de contraseña",
+                 $"nueva contraseña: {password}", null, null);
+                return user;
+            }
+            if (user?.Estado == "INACTIVO")
+            {
+                throw new Exception("usuario inactivo");
+            }
+            return null;
+        }
+
+        public object changePassword(string? identfy)
+        {            
+            var security_User = AuthNetCore.User(identfy).UserData;
+            Password = EncrypterServices.Encrypt(Password);
+            Id_User = security_User.Id_User;
+            return Update();
+        }
+
+        class Tbl_Profile : EntityClass
+        {
+            [PrimaryKey(Identity = true)]
+            public int? Id_Perfil { get; set; }
+            public string? Nombres { get; set; }
+            public string? Apellidos { get; set; }
+            public DateTime? FechaNac { get; set; }
+            public int? IdUser { get; set; }
+            public string? Sexo { get; set; }
+            public string? Foto { get; set; }
+            public string? DNI { get; set; }
+            public string? Correo_institucional { get; set; }
+            public string? Estado { get; set; }
+        }
     }
     public class Security_Permissions : EntityClass
     {
@@ -182,4 +238,6 @@ namespace CAPA_NEGOCIO.Security
         public Security_Roles? Security_Role { get; set; }
 
     }
+
+
 }

@@ -1,6 +1,5 @@
 ﻿@page
 @using API.Controllers
-@using CAPA_NEGOCIO.Security
 @{
     if (!SecurityController.IsAdmin(HttpContext.Session.GetString("seassonKey")))
     {

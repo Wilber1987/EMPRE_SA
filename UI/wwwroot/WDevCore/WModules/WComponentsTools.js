@@ -1,6 +1,7 @@
+import { WAppNavigator } from "../WComponents/WAppNavigator.js";
 import { ElementStyle, WNode } from "./CommonModel.js";
 import { EntityClass } from "./EntityClass.js";
-import { WSecurity } from "./WSecurity.js";
+
 function type(value) {
     var r;
     if (typeof value === 'object') {
@@ -142,7 +143,7 @@ function html(body) {
     // @ts-ignore
     return WRender.CreateStringNode(body);
 }
-export {html}
+export { html }
 class WRender {
     /**
      * 
@@ -313,6 +314,7 @@ class WRender {
 /**
  * @typedef {Object} ConfigDOMManager
      * @property {Boolean} [SPAManage]
+     * @property {WAppNavigator} [WNavigator]
      * @property {HTMLElement} [MainContainer]
      * @property {String} [ContainerName]
      * */
@@ -344,10 +346,21 @@ class ComponentsManager {
                 let navigateComponets = JSON.parse(sessionStorage.getItem("navigateComponets"));
                 if (navigateComponets != null) {
                     const newNode = this.DomComponents.find(node => node.id == hashD);
-                    //console.log(newNode);
                     this.NavigateFunction(hashD, newNode, this.MainContainer);
                 }
+            }
+            if (this.Config.WNavigator != undefined) {
+                const hashD = window.location.hash.replace("#", "");
+                const navElment = this.Config.WNavigator.Elements.find(e => e.id == hashD)
+                if (navElment != null && navElment.action != undefined) {
+                    const elementNav = this.Config.WNavigator.shadowRoot.querySelector("#element" + navElment.id)
+                    if (elementNav != null) {
+                        this.Config.WNavigator.InitialNav = () => {
+                            elementNav.onclick()
+                        }
+                    }
 
+                }
             }
         }
     }
@@ -545,7 +558,7 @@ class WArrayF {
      */
     static GroupBy(DataArray, Property, sumProperty = null) {
         let DataArraySR = []
-        DataArray.forEach(element => {
+        DataArray?.forEach(element => {
             const DFilt = DataArraySR.find(x => x[Property] == element[Property]);
             if (!DFilt) {
                 const NewElement = {};
@@ -631,8 +644,9 @@ class WArrayF {
     static MaxDateValue(Data, MaxParam) {
         var Maxvalue = new Date(Data[0][MaxParam]);
         for (let index = 0; index < Data.length; index++) {
-            if (new Date((Data[index][MaxParam]) > Maxvalue)) {
-                Maxvalue = Data[index][MaxParam];
+
+            if (new Date(Data[index][MaxParam]) > Maxvalue) {
+                Maxvalue = new Date(Data[index][MaxParam]);
             }
         }
         return Maxvalue;
@@ -640,8 +654,9 @@ class WArrayF {
     static MinDateValue(Data, MaxParam) {
         var MinValue = new Date(Data[0][MaxParam]);
         for (let index = 0; index < Data.length; index++) {
+
             if (new Date(Data[index][MaxParam]) < MinValue) {
-                MinValue = Data[index][MaxParam];
+                MinValue = new Date(Data[index][MaxParam]);
             }
         }
         return MinValue;
@@ -885,14 +900,14 @@ Date.prototype.addDays = function (days) {
  * @returns {Date}
  */
 Date.prototype.subtractDays = function (days) {
-    return new Date(this.setDate(this.getDate() - days));
+    return this.setDate(this.getDate() - days);
 };
 /**
  * 
  * @param {Integer} month 
  * @returns {Date}
  */
-Date.prototype.modifyMonth = function(meses) {  
+Date.prototype.modifyMonth = function (meses) {
     const fecha = new Date(this.toString()); //¡se hace esto para no modificar la fecha original!
     const mes = fecha.getMonth();
     fecha.setMonth(fecha.getMonth() + meses);
@@ -918,7 +933,7 @@ String.prototype.getMonthFormatEs = function () {
     const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
     const dias_semana = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
     const fecha = new Date(this);
-    return  meses[fecha.getMonth()];
+    return meses[fecha.getMonth()];
 };
 
 

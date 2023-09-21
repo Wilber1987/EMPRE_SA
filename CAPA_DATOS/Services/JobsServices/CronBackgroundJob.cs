@@ -1,6 +1,7 @@
 using Cronos;
+using Microsoft.Extensions.Hosting;
 
-namespace BackgroundJob.Cron.Jobs
+namespace CAPA_DATOS.Cron.Jobs
 {
 
     public abstract class CronBackgroundJob : BackgroundService
