@@ -106,6 +106,42 @@ namespace DataBaseModel
         public DateTime? fecha_vencimiento { get; set; }
         public int? codigo_cliente { get; set; }
         public Double? saldo { get; set; }
+        public Double? abonos { get; set; }
+        public int? tipo { get; set; }
+        public string? entregado { get; set; }
+        public Double? interes_actual { get; set; }
+        public string? observaciones { get; set; }
+        public Double? iva { get; set; }
+        public Double? descuento { get; set; }
+        public Double? taza_cambio { get; set; }
+        public Double? taza_cambio_compra { get; set; }
+        public int? id_agente { get; set; }
+        public int? plazo { get; set; }
+        public Double? cuotafija { get; set; }
+        public Double? tasa_hoy { get; set; }
+        public string? motivo_anulacion { get; set; }
+        public Double? valoracion_compra_dolares { get; set; }
+        public Double? valoracion_compra_cordobas { get; set; }
+        public Double? valoracion_empeño_cordobas { get; set; }
+        public Double? valoracion_empeño_dolares { get; set; }
+        public Double? tasas_interes { get; set; }
+        public Double? gestion_crediticia { get; set; }
+        public Double? cuotafija_dolares { get; set; }
+        public DateTime? fecha { get; set; }
+        public Double? total_pagar_cordobas { get; set; }
+        public Double? total_pagar_dolares { get; set; }
+        public Double? interes_dolares { get; set; }
+        public int? Id_User { get; set; }
+        /*public int? numero_contrato { get; set; }
+        public DateTime? fecha_contrato { get; set; }
+        public DateTime? fecha_cancelar { get; set; }
+        public Double? monto { get; set; }
+        public Double? interes { get; set; }
+        public Double? mora { get; set; }
+        public string? estado { get; set; }
+        public DateTime? fecha_vencimiento { get; set; }
+        public int? codigo_cliente { get; set; }
+        public Double? saldo { get; set; }
         public int? dias_mora { get; set; }
         public Double? saldo_mora { get; set; }
         public DateTime? fecha_baja { get; set; }
@@ -147,11 +183,11 @@ namespace DataBaseModel
         public Double? cuota_fija_inicial { get; set; }
         public DateTime? fecha_cancelar_inicial { get; set; }
         public int? plazo_inicial { get; set; }
-        public int? dias_para_baja { get; set; }
+        public int? dias_para_baja { get; set; }*/
 
 
         /****new properties ***/
-        public Double? valoracion_compra_dolares { get; set; }
+        /*public Double? valoracion_compra_dolares { get; set; }
         public Double? valoracion_compra_cordobas { get; set; }
         public Double? valoracion_empeño_cordobas { get; set; }
         public Double? valoracion_empeño_dolares { get; set; }
@@ -161,13 +197,13 @@ namespace DataBaseModel
         public DateTime? fecha { get; set; }
         public Double? total_pagar_cordobas { get; set; }
         public Double? total_pagar_dolares { get; set; }
-        public Double? interes_dolares { get; set; }
+        public Double? interes_dolares { get; set; }*/
         /***end new properties***/
 
 
-        public int? Id_User { get; set; }
+        //public int? Id_User { get; set; }
         //[ManyToOne(TableName = "Catalogo_Agentes", KeyColumn = "id_agente", ForeignKeyColumn = "id_agente")]
-       // public Catalogo_Agentes? Catalogo_Agentes { get; set; }
+        // public Catalogo_Agentes? Catalogo_Agentes { get; set; }
         [ManyToOne(TableName = "Catalogo_Clientes", KeyColumn = "codigo_cliente", ForeignKeyColumn = "codigo_cliente")]
         public Catalogo_Clientes? Catalogo_Clientes { get; set; }
         [ManyToOne(TableName = "Security_Users", KeyColumn = "Id_User", ForeignKeyColumn = "Id_User")]

@@ -222,8 +222,56 @@ class Catalogo_Tipo_Identificacion extends EntityClass {
 }
 export { Catalogo_Tipo_Identificacion }
 
-
 class Transaction_ContratosModel extends EntityClass {
+	constructor(props) {
+        super(props, 'EntityDBO');
+		for (const prop in props) {
+			this[prop] = props[prop];
+		}
+	}
+    Catalogo_Clientes = { type: 'WSELECT', ModelObject: () => new Catalogo_Clientes() };
+	numero_contrato = { type: "number" , primary: true  };
+	fecha_contrato = { type: "date"  };
+	fecha_cancelar = { type: "date"  };
+	monto = { type: "number" , hiddenFilter: true };
+	interes = { type: "number" , hiddenFilter: true };
+	mora = { type: "number"  , hiddenFilter: true };
+	estado = { type: "Select", Dataset: ["Activo","Inactivo"] };
+	fecha_vencimiento = { type: "date" , hiddenFilter: true };
+	codigo_cliente = { type: "number"  };
+	saldo = { type: "number"  , hiddenFilter: true };
+	abonos = { type: "number" , hiddenInTable: true,  hiddenFilter: true };
+	tipo = { type: "number" , hiddenInTable: true,  hiddenFilter: true };
+	entregado = { type: "text" , hiddenInTable: true,  hiddenFilter: true };
+	interes_actual = { type: "number" , hiddenInTable:true,  hiddenFilter: true };
+	observaciones = { type: "text" , hiddenInTable: true,  hiddenFilter: true };
+	iva = { type: "number"  , hiddenInTable: true, hiddenFilter: true };
+	descuento = { type: "number"  , hiddenInTable: true, hiddenFilter: true };
+	taza_cambio = { type: "number"  , hiddenInTable: true, hiddenFilter: true };
+	taza_cambio_compra = { type: "number"  , hiddenInTable: true, hiddenFilter: true };
+	id_agente = { type: "number"  , hiddenInTable: true, hiddenFilter: true };
+	plazo = { type: "number" , hiddenInTable: true,  hiddenFilter: true };
+	cuotafija = { type: "number" , hiddenInTable: true,  hiddenFilter: true };
+	tasa_hoy = { type: "number" , hiddenInTable: true,  hiddenFilter: true };
+	motivo_anulacion = { type: "text" , hiddenInTable: true };
+	valoracion_compra_dolares = { type: "number" , hiddenInTable: true };
+	valoracion_compra_cordobas = { type: "number" , hiddenInTable: true };
+	valoracion_empeño_cordobas = { type: "number" , hiddenInTable: true };
+	valoracion_empeño_dolares = { type: "number" , hiddenInTable: true };
+	tasas_interes = { type: "number" , hiddenInTable: true };
+	gestion_crediticia = { type: "number" , hiddenInTable: true };
+	cuotafija_dolares = { type: "number" , hiddenInTable: true };
+	fecha = { type: "date" , hiddenInTable: true };
+	total_pagar_cordobas = { type: "number" , hiddenInTable: true };
+	total_pagar_dolares = { type: "number" , hiddenInTable: true };
+	interes_dolares = { type: "number" , hiddenInTable: true };
+	Id_User = { type: "number" , hiddenInTable: true };
+    Catalogo_Agentes = { type: 'WSELECT', ModelObject: () => new Catalogo_Agentes(), hiddenInTable: true, hiddenFilter: true };
+    Detail_Prendas = { type: 'MasterDetail', ModelObject: () => new Detail_PrendasModel() };
+}
+export{Transaction_ContratosModel}
+
+/*class Transaction_ContratosModel extends EntityClass { //todo eliminar
     constructor(props) {
         super(props, 'EntityDBO');
         for (const prop in props) {
@@ -284,7 +332,7 @@ class Transaction_ContratosModel extends EntityClass {
     Catalogo_Agentes = { type: 'WSELECT', ModelObject: () => new Catalogo_Agentes(), hiddenInTable: true, hiddenFilter: true };
     Detail_Prendas = { type: 'MasterDetail', ModelObject: () => new Detail_PrendasModel() };
 }
-export { Transaction_ContratosModel }
+export { Transaction_ContratosModel }*/
 class Detail_PrendasModel extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
@@ -693,8 +741,8 @@ class Recibos extends EntityClass {
 	total_dolares = { type: "string", hiddenInTable: true , disabled: true};
 	total_parciales = { type: "string", hiddenInTable: true , disabled: true};
 	fecha_roc = { type: "date" , disabled: true};
-	paga_cordobas = { type: "string", hiddenInTable: true , disabled: true};
-	paga_dolares = { type: "string" , hiddenInTable: true, disabled: true};
+	paga_cordobas = { type: "string", hiddenInTable: true, disabled: true, hidden: true };
+	paga_dolares = { type: "string" , hiddenInTable: true, disabled: true, hidden: true};
 	solo_abono = { type: "checkbox", hiddenInTable: true };
 	cancelar = { type: "checkbox" };
 }

@@ -115,6 +115,7 @@ const contratosSearcher = (action) => {
            UserActions: [{
                 name: "Selecionar",
                 action: async (cliente) => {
+                    // @ts-ignore
                     await action(cliente);
                 }
             }]

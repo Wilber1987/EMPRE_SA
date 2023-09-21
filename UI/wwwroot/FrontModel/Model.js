@@ -20,9 +20,7 @@ class ValoracionesTransaction extends EntityClass {
     /**@type {Number} */
     tasas_interes;
     /**@type {Number} */
-    taza_interes_cargos;
-    /**@type {Number} */
-    tasas_interes;
+    taza_interes_cargos;    
     /**@type {Number} */
     cuotafija;
     /**@type {Number} */
@@ -122,39 +120,50 @@ class Transaction_Contratos extends EntityClass {
     numero_contrato;
     fecha_contrato;
     fecha_cancelar;
+    /**@type {Number} */
     monto;
+    /**@type {Number} */
     interes;
+    /**@type {Number} */
+    interes_dolares;
+    /**@type {Number} */
     mora;
     estado;
     fecha_vencimiento;
+    /**@type {Number} */
     saldo;
     dias_mora;
+    /**@type {Number} */
     saldo_mora;
     fecha_baja;
+    /**@type {Number} */
     abonos;
     ultima_visita;
     tipo;
     entregado;
+    /**@type {Number} */
     interes_actual;
     observaciones;
+    /**@type {Number} */
     iva;
+    /**@type {Number} */
     margen;
-    interesl;
-    moral;
+    /**@type {Number} */
     descuento;
+    /**@type {Number} */
     util;
+    /**@type {Number} */
     taza_interes_cargos;
     taza_mora;
     fecha_mora;
     fecha_interes;
     taza_gestion_crediticia;
     Id_User_OLD;
+    /**@type {Number} cuota del abono*/
     taza_cambio;
     dkm;
     gasolinamonto;
     valorcad;
-    plazo;
-    cuotafija;
     montocuotaatrazadas;
     mes_pagado;
     tasa_hoy;
@@ -169,8 +178,13 @@ class Transaction_Contratos extends EntityClass {
     fecha_cancelar_inicial;
     plazo_inicial;
     dias_para_baja;
-    Catalogo_Agentes;
+    /**@type {Catalogo_Clientes} */
     Catalogo_Clientes;
+    /**@type {Array<Tbl_Cuotas>} */
+    Tbl_Cuotas;
+    /**@type {Array<Transaction_Facturas>} */
+    Transaction_Facturas;
+    /**@type {Array<Detail_Prendas>} */
     Detail_Prendas;
 
     //nuevas
@@ -181,13 +195,10 @@ class Transaction_Contratos extends EntityClass {
     /**@type {Number} */
     valoracion_empeño_cordobas;
     /**@type {Number} */
-    valoracion_empeño_dolares;
-    /**@type {Number} */
-    tasas_interes;
+    valoracion_empeño_dolares;  
     /**@type {Number} */
     taza_interes_cargos;
-    /**@type {Number} */
-    tasas_interes;
+
     /**@type {Number} */
     cuotafija;
     /**@type {Number} */
@@ -200,32 +211,14 @@ class Transaction_Contratos extends EntityClass {
     fecha;
 
 
-    /**@type {Catalogo_Clientes} */
-    Catalogo_Clientes;
-    /**@type {Array<Tbl_Cuotas>} */
-    Tbl_Cuotas;
-    /**@type {Array<Transaction_Facturas>} */
-    Transaction_Facturas;
-    /**@type {Array<Detail_Prendas>} */
-    Detail_Prendas;
-    /**@type {String} */
-    observaciones;
-
-
-    //?????????????????
-    /**@type {Number} */
-    monto;
 
     /**@type {Number} */
     total_pagar_cordobas;
     /**@type {Number} */
     total_pagar_dolares;
-    /**@type {Number} */
-    interes;
-    /**@type {Number} */
-    interes_dolares;
-    /**@type {Number} cuota del abono*/
-    taza_cambio;
+   
+    
+    
 }
 
 export { Transaction_Contratos }
