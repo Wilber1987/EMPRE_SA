@@ -57,7 +57,7 @@ class WForm extends HTMLElement {
                 Url: undefined
             };
         }
-        //console.log(this.FormObject);
+        console.log(this.FormObject);
         this.FormObject = this.FormObject ?? this.Config.EditObject ?? {};
         const Model = this.Config.ModelObject ?? this.Config.EditObject;
         const ObjectProxy = this.CreateProxy(Model);
@@ -76,7 +76,7 @@ class WForm extends HTMLElement {
                 target[property] = value;
                 this.SetOperationValues(Model, target)
                 const control = this.shadowRoot?.querySelector("#ControlValue" + property);
-                if (control) {
+                if (Model[property].type.toUpperCase() != "IMG" && control) {
                     // @ts-ignore
                     control.value = target[property];
                 }
@@ -259,11 +259,12 @@ class WForm extends HTMLElement {
                     }
                     await this.SelectedFile(targetControl?.files[0]);
                     setTimeout(() => {
-                        ObjectF[prop] = base64Type + photoB64.toString();
-                        //console.log("#imgControl" + prop, this.shadowRoot?.querySelector("#imgControl" + prop));
+                        //console.log(photoB64, base64Type);
+                        ObjectF[prop] = photoB64.toString();
+                        //console.log("#imgControl" + prop, this.shadowRoot?.querySelector("#imgControl" + prop));                        
                         if (this.shadowRoot?.querySelector("#imgControl" + prop) != null) {
                             // @ts-ignore
-                            this.shadowRoot.querySelector("#imgControl" + prop).src = ObjectF[prop];
+                            this.shadowRoot.querySelector("#imgControl" + prop).src = base64Type + photoB64.toString();
                         }
                     }, 1000);
                 }
@@ -332,7 +333,7 @@ class WForm extends HTMLElement {
                 break;
             case "IMG": case "IMAGE": case "IMAGES":
                 const Multiple = ModelProperty.type.toUpperCase() == "IMAGES" ? true : false;
-                InputControl = this.CreateImageControl(val, ControlContainer, prop, Multiple);
+                InputControl = this.CreateImageControl(val, ControlContainer, prop, Multiple, onChangeEvent);
                 if (Multiple) {
                     ObjectF[prop] = ImageArray;
                 }
@@ -359,7 +360,7 @@ class WForm extends HTMLElement {
                 break;
             case "HORA":
                 //@ts-ignore
-                let time_val = val == "" ? "08:00" : ObjectF[prop];                
+                let time_val = val == "" ? "08:00" : ObjectF[prop];
                 InputControl = WRender.Create({
                     tagName: "input", className: prop, type: "time",
                     placeholder: WArrayF.Capitalize(WOrtograficValidation.es(prop)),
@@ -662,12 +663,22 @@ class WForm extends HTMLElement {
         return InputControl;
     }
     createDrawComponent(InputControl, prop, ControlContainer, ObjectF) {
+        ObjectF[prop]
+        var imgBase64 = ObjectF[prop];
         InputControl = WRender.Create({
             tagName: "canvas",
             id: "ControlValue" + prop,
             className: prop + " draw-canvas"
         });
+        var img = new Image();
         var ctx = InputControl.getContext("2d");
+        if (ObjectF[prop] = !undefined && ObjectF[prop] != null) {
+            img.src = imgBase64;
+            img.onload = function () {
+                // Dibuja la imagen en el canvas
+                ctx.drawImage(img, 0, 0);
+            };
+        }
         const baseData = InputControl.toDataURL();
         ControlContainer.className += " DrawControlContainer"
         ControlContainer.append(
@@ -894,10 +905,11 @@ class WForm extends HTMLElement {
      * @param {HTMLElement} ControlContainer
      * @param {string} prop
      * @param {boolean} Multiple
+     * @param {Function} onChange
      */
-    CreateImageControl(InputValue, ControlContainer, prop, Multiple) {
+    CreateImageControl(InputValue, ControlContainer, prop, Multiple, onChange) {
         const InputControl = WRender.Create({
-            tagName: "input", className: prop, multiple: Multiple, type: "file", style: {
+            tagName: "input", className: prop, onchange: onChange, multiple: Multiple, type: "file", style: {
                 display: "none"
             }
         });
@@ -926,7 +938,7 @@ class WForm extends HTMLElement {
                 cadenaB64 = "data:image/png;base64,";
             } else if (this.ImageUrlPath != undefined && InputValue
                 && InputValue.__proto__ != Object.prototype
-                && typeof this.ImageUrlPath === "string"
+                && typeof this.ImageUrlPath === "string" && this.ImageUrlPath != ""
                 && !base64regex.test(InputValue.replace("data:image/png;base64,", ""))) {
                 cadenaB64 = this.ImageUrlPath + "/";
             }
@@ -934,7 +946,7 @@ class WForm extends HTMLElement {
                 tagName: "img",
                 src: cadenaB64 + InputValue,
                 class: "imgPhotoWModal",
-                id: "imgControl" + prop + this.id,
+                id: "imgControl" + prop,
             }));
         }
         ControlContainer.append(WRender.Create({
@@ -1034,8 +1046,8 @@ class WForm extends HTMLElement {
                             return false;
                         }
 
-                    } else if (this.Config.ModelObject[prop]?.type.toUpperCase() == "MASTERDETAIL" 
-                    || this.Config.ModelObject[prop]?.type.toUpperCase() == "CALENDAR") {
+                    } else if (this.Config.ModelObject[prop]?.type.toUpperCase() == "MASTERDETAIL"
+                        || this.Config.ModelObject[prop]?.type.toUpperCase() == "CALENDAR") {
                         console.log(this.Config.ModelObject[prop].require == true);
                         console.log(ObjectF[prop]);
                         if (this.Config.ModelObject[prop].require == true) {
@@ -1478,8 +1490,7 @@ class WForm extends HTMLElement {
                 }
 
                 .imgPhoto {
-                    grid-row: 1/3;
-                    grid-column: 1/2;
+                    grid-column: span 1 !important;
                 }
             }`;
         const wstyle = new WStyledRender({

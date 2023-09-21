@@ -1,6 +1,5 @@
 //@ts-check
 import { StyleScrolls, StylesControlsV2 } from "../StyleModules/WStyleComponents.js";
-import { ModelProperty } from "../WModules/CommonModel.js";
 import { EntityClass } from "../WModules/EntityClass.js";
 import { WRender, WArrayF } from "../WModules/WComponentsTools.js";
 import { WOrtograficValidation } from "../WModules/WOrtograficValidation.js";
@@ -47,7 +46,7 @@ class WFilterOptions extends HTMLElement {
             class: "options", children: [
                 { tagName: "label", innerText: "Filtros" },
                 {//display
-                    tagName: 'input', style: 'transform: rotate(0deg)', class: 'BtnDinamictT', value: '>', onclick: async (/** @type {{ target: { style: { [x: string]: string; }; }; }} */ ev) => {
+                    tagName: 'input', style: 'transform: rotate(0deg)', class: 'BtnDinamictT', value: '>', onclick: async (ev) => {
                         if (ControlOptions.className == "OptionContainer") {
                             ev.target.style["transform"] = "rotate(90deg)";
                             ControlOptions.className = "OptionContainer OptionContainerActive";
@@ -99,11 +98,11 @@ class WFilterOptions extends HTMLElement {
                 break;
             case "DATE": case "FECHA": case "HORA":
                 /**TODO */
-                return this.CreateDateControl(prop, ModelProperty);
+                return this.CreateDateControl(prop);
             case "NUMBER":
-                return this.CreateNumberControl(prop, ModelProperty);
+                return this.CreateNumberControl(prop);
             case "SELECT":
-                return this.CreateSelectControl(prop, Dataset, ModelProperty);
+                return this.CreateSelectControl(prop, Dataset);
             case "WSELECT": case "MULTISELECT":
                 if (ModelProperty.ModelObject?.__proto__ == Function.prototype) {
                     ModelProperty.ModelObject = await WArrayF.isModelFromFunction(Model, prop);
@@ -126,10 +125,6 @@ class WFilterOptions extends HTMLElement {
         }
         return null
     }
-    /**
-     * @param {{ [x: string]: { __proto__: { constructor: { name: string; }; }; }; }} Model
-     * @param {string} prop
-     */
     isDrawable(Model, prop) {
         if (Model[prop] == null || prop == "FilterData") {
             return false;
@@ -275,10 +270,6 @@ class WFilterOptions extends HTMLElement {
                     return obj[input.id]
                 }
 
-                /**
-                 * @param {string} firstDate
-                 * @param {string} secondDate
-                 */
                 function findElementByDate(firstDate, secondDate) {
                     if (firstDate != "" && new Date(obj[control.id]) < new Date(firstDate + "T00:00:00")) {
                         flagObj = false;
@@ -336,16 +327,15 @@ class WFilterOptions extends HTMLElement {
             className: prop,
             id: prop,
             placeholder: WOrtograficValidation.es(prop),
-            onchange: (/** @type {any} */ ev) => { this.filterFunction() }
+            onchange: (ev) => { this.filterFunction() }
         });
         return InputControl;
     }
     /**
-     * @param {String} prop
-     * @returns
-     * @param {ModelProperty} ModelProperty
+     * @param {String} prop 
+     * @returns 
      */
-    CreateDateControl(prop, ModelProperty) {
+    CreateDateControl(prop) {
         let InputControl = WRender.Create({
             id: prop,
             class: "multi-control", children: [
@@ -355,28 +345,20 @@ class WFilterOptions extends HTMLElement {
                     className: prop + " firstDate",
                     id: prop + "first",
                     placeholder: prop,
-                    // @ts-ignore
-                    value: new Date(ModelProperty.defaultValue).subtractDays(1).toISO(),
-                    onchange: (/** @type {any} */ ev) => { this.filterFunction() }
+                    onchange: (ev) => { this.filterFunction() }
                 }, {
                     tagName: "input",
                     type: "date",
                     className: prop + " secondDate",
                     id: prop + "second",
                     placeholder: prop,
-                    // @ts-ignore
-                    value: new Date(ModelProperty.defaultValue).toISO(),
-                    onchange: (/** @type {any} */ ev) => { this.filterFunction() }
+                    onchange: (ev) => { this.filterFunction() }
                 }
             ]
         });
         return InputControl;
     }
-    /**
-     * @param {string | undefined} prop
-     * @param {ModelProperty} ModelProperty
-     */
-    CreateNumberControl(prop, ModelProperty) {
+    CreateNumberControl(prop) {
         let InputControl = WRender.Create({
             id: prop,
             class: "multi-control", children: [
@@ -386,25 +368,20 @@ class WFilterOptions extends HTMLElement {
                     className: prop + " firstNumber",
                     id: prop + "first",
                     placeholder: WOrtograficValidation.es(prop),
-                    onchange: (/** @type {any} */ ev) => { this.filterFunction() }
+                    onchange: (ev) => { this.filterFunction() }
                 }, {
                     tagName: "input",
                     type: "number",
                     className: prop + " secondNumber",
                     id: prop + "second",
                     placeholder: WOrtograficValidation.es(prop),
-                    onchange: (/** @type {any} */ ev) => { this.filterFunction() }
+                    onchange: (ev) => { this.filterFunction() }
                 }
             ]
         });
         return InputControl;
     }
-    /**
-     * @param {any[]} Dataset
-     * @param {string} prop
-     * @param {ModelProperty} [ModelProperty]
-     */
-    async CreateWSelect(Dataset, prop, ModelProperty) {
+    async CreateWSelect(Dataset, prop) {
         const InputControl = new MultiSelect({
             //MultiSelect: false,
             Dataset: Dataset,

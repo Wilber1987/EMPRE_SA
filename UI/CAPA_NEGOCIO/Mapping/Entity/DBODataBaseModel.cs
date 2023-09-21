@@ -1,5 +1,5 @@
 using CAPA_DATOS;
-using CAPA_NEGOCIO.Security;
+using CAPA_DATOS.Security;
 using Model;
 using System;
 using System.Collections.Generic;

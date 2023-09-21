@@ -54,8 +54,7 @@ class EntityClass {
      * @returns {ResponseServices}
      */
     Update = async () => {
-        return await this.SaveData(this.ApiMethods.Update, this);
-        
+        return await this.SaveData(this.ApiMethods.Update, this);        
     }
      /**
      * @param {String} Param 
@@ -78,7 +77,7 @@ class EntityClass {
         if (Dataset.__proto__ == Object.prototype) {
             return Dataset;
         }
-        return Dataset.map(ent => new this.constructor(ent));;
+        return Dataset.map(ent => new this.constructor(ent));
     }
     SaveWithModel = async (Object, Edit = false) => {
         if (Edit == false) {

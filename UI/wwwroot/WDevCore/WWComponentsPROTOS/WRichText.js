@@ -118,7 +118,7 @@ class WRichText extends HTMLElement {
                             }
                         })
                         //@ts-ignore
-                        this.AttachedSection.append(WRender.Create({ class: "AttachItem", children: [fileClass.Name, AttachBtn] }))
+                        this.AttachedSection.append(WRender.Create({ class: "AttachItem", children: [file.Name, AttachBtn] }))
                     });
 
                 };
@@ -141,14 +141,10 @@ class WRichText extends HTMLElement {
 
     FunctionClear() {
         // @ts-ignore
-        this.value = this.Divinput.innerHTML= "";
+        this.value = this.Divinput.innerHTML = "";
         // @ts-ignore
-        while(this.AttachedSection?.firstChild)
-        {
-            this.AttachedSection?.removeChild(this.AttachedSection.firstChild)
-        }
+        this.AttachedSection.innerHTML = "";        
         this.Files = [];
-        console.log(this.Files);
     }
     Commands = [
         //{ commandName: "backColor", icon: "", type: "color", commandOptions: null, state: 1, event: "onchange" },

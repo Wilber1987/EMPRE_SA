@@ -7,18 +7,13 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.Json;
 
-namespace CAPA_NEGOCIO.Services
+namespace CAPA_DATOS.Services
 {
-    class SeasonServices
+    public class SeasonServices
     {
         public static List<SeassonData> SeassonDatas = new List<SeassonData>();
         public static void Set(string key, Object value, string identfy)
         {
-            var seasonInfos = SeassonDatas.Where(s => s.KeyName.Equals(key) && s.idetify.Equals(identfy)).ToList();
-            foreach (var item in seasonInfos)
-            {
-                SeassonDatas.Remove(item);
-            } 
             SeassonDatas.Add(new SeassonData()
             {
                 KeyName = key,

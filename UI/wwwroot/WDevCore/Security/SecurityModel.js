@@ -1,5 +1,4 @@
-import { Catalogo_Agentes, Catalogo_Sucursales } from "../FrontModel/DBODataBaseModel.js";
-
+//@ts-check
 class Security_Roles {
 	constructor(props) {
 		for (const prop in props) {
@@ -63,7 +62,6 @@ class Security_Users {
 	Mail = { type: "email" };
 	Estado = { type: "Select", Dataset: ["ACTIVO", "INACTIVO"] };
 	Password = { type: "password", hiddenInTable: true };
-	Catalogo_Sucursales = { type: 'WSELECT', hiddenInTable: true,  ModelObject: ()=> new Catalogo_Sucursales()};
 	Security_Users_Roles = {
 		type: "MULTISELECT", Dataset: [{ Descripcion: "Role 1" }]
 	};
@@ -90,7 +88,6 @@ class ChangeStateModel {
 	Estado = { type: "radio", hiddenInTable: true, Dataset: ["ACTIVO", "INACTIVO"] };
 }
 export { ChangeStateModel }
-
 class ChangeRolesModel {
 	constructor(props) {
 		for (const prop in props) {

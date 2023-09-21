@@ -1,11 +1,10 @@
-import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
-import { WRender, WArrayF, ComponentsManager, WAjaxTools, type } from '../WDevCore/WModules/WComponentsTools.js';
-import { WCssClass } from '../WDevCore/WModules/WStyledRender.js';
-import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js";
-import { StylesControlsV2 } from "../WDevCore/StyleModules/WStyleComponents.js";
-import { ChangePasswordModel, ChangeRolesModel, ChangeStateModel, Security_Permissions, Security_Roles, Security_Users } from "../Model/SecurityModel.js";
-import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
-import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
+import { StylesControlsV2 } from "../StyleModules/WStyleComponents.js";
+import { WAppNavigator } from "../WComponents/WAppNavigator.js";
+import { WFilterOptions } from "../WComponents/WFilterControls.js";
+import { WModalForm } from "../WComponents/WModalForm.js";
+import { WTableComponent } from "../WComponents/WTableComponent.js";
+import { ComponentsManager, WAjaxTools, WRender } from '../WModules/WComponentsTools.js';
+import { ChangePasswordModel, ChangeRolesModel, ChangeStateModel, Security_Permissions, Security_Roles, Security_Users } from "./SecurityModel.js";
 window.addEventListener("load", async () => {
     const DOMManager = new ComponentsManager({ MainContainer: Main });
     const Roles = await WAjaxTools.PostRequest("../api/ApiEntitySECURITY/getSecurity_Roles", {});

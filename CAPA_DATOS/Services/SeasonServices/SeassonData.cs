@@ -1,4 +1,4 @@
-namespace CAPA_NEGOCIO.Services
+namespace CAPA_DATOS.Services
 {
     public class SeassonData
     {

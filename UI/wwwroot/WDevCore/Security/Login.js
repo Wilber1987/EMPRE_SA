@@ -1,7 +1,7 @@
-import { WCssClass } from "../WDevCore/WModules/WStyledRender.js";
-import { StylesControlsV2 } from "../WDevCore/StyleModules/WStyleComponents.js";
-import { WRender, WAjaxTools } from "../WDevCore/WModules/WComponentsTools.js";
-import { WSecurity } from "../WDevCore/WModules/WSecurity.js";
+import { StylesControlsV2 } from "../StyleModules/WStyleComponents.js";
+import { WRender } from "../WModules/WComponentsTools.js";
+import { WSecurity } from "../Security/WSecurity.js";
+import { WCssClass } from "../WModules/WStyledRender.js";
 
 const OnLoad = async () => {
     const UserData = {
@@ -13,8 +13,8 @@ const OnLoad = async () => {
             WRender.Create({ tagName: "style", innerHTML: '@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800&display=swap");' }),
             WRender.createElement(StylesControlsV2),
             WRender.Create(MasterStyle),
-            //{ tagName: 'img', src: Icons.SNI, class: 'className' },
-            { tagName: 'h1', innerText: "Inicio de sesion", class: 'className' },
+            { tagName: 'img', src: "/Media/img/logo.png", class: 'className' },
+            { tagName: 'h3', innerText: "Inicio de sesión", class: 'className' },
             {
                 children: ["Correo", {
                     tagName: 'input', type: 'text', placeholder: 'Correo', onchange: (ev) => {
@@ -31,6 +31,10 @@ const OnLoad = async () => {
                 children: [{
                     tagName: 'input', type: 'button', className: 'Btn', value: 'Ok',
                     onclick: async () => WSecurity.Login(UserData)
+                }]
+            }, {
+                children: [{
+                    tagName: 'a', innerText: 'Recuperar contraseña', href: "/Security/RecoveryPassword"
                 }]
             }
         ]

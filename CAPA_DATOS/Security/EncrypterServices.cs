@@ -5,7 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using CAPA_DATOS;
 
-namespace CAPA_NEGOCIO.Security
+namespace CAPA_DATOS.Security
 {
     public class EncrypterServices
     {      
@@ -22,15 +22,19 @@ namespace CAPA_NEGOCIO.Security
             myAesConfig();
             // Encrypt the string to an array of bytes.
             byte[] encrypted = EncryptStringToBytes_Aes(chain, myAes.Key, myAes.IV);
-            return Encoding.ASCII.GetString(encrypted);
-
+            var encript = Encoding.ASCII.GetString(encrypted);
+            var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(encript);
+            return System.Convert.ToBase64String(plainTextBytes);
         }
         static public String Decrypt(string chain)
         {
+            var base64EncodedBytes = System.Convert.FromBase64String(chain);
+            var textConverter = System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
             myAesConfig();
-            byte[] encrypted = Encoding.ASCII.GetBytes(chain);
+            byte[] encrypted = Encoding.ASCII.GetBytes(textConverter);
             string decrypt = DecryptStringFromBytes_Aes(encrypted, myAes.Key, myAes.IV);
             return decrypt;
+             
         }
         static byte[] EncryptStringToBytes_Aes(string plainText, byte[] Key, byte[] IV)
         {
@@ -48,10 +52,8 @@ namespace CAPA_NEGOCIO.Security
             {
                 aesAlg.Key = Key;
                 aesAlg.IV = IV;
-
                 // Create an encryptor to perform the stream transform.
                 ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
-
                 // Create the streams used for encryption.
                 using (MemoryStream msEncrypt = new MemoryStream())
                 {
@@ -66,7 +68,6 @@ namespace CAPA_NEGOCIO.Security
                     }
                 }
             }
-
             // Return the encrypted bytes from the memory stream.
             return encrypted;
         }
@@ -91,10 +92,8 @@ namespace CAPA_NEGOCIO.Security
             {
                 aesAlg.Key = Key;
                 aesAlg.IV = IV;
-
                 // Create a decryptor to perform the stream transform.
                 ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
-
                 // Create the streams used for decryption.
                 using (MemoryStream msDecrypt = new MemoryStream(cipherText))
                 {

@@ -1,5 +1,5 @@
 ﻿@using API.Controllers
-@using CAPA_NEGOCIO.Security
+@using CAPA_DATOS.Security
 @using DataBaseModel
 @{
     string identify = Context.Session.GetString("seassonKey");
@@ -15,7 +15,7 @@
     <title>@ViewData["Title"] EMPRE S.A</title>
     <link rel="stylesheet" href="~/css/AdminTemplate.css" />
     <script type="module">
-        import { WSecurity } from "../WDevCore/WModules/WSecurity.js";
+        import { WSecurity } from "/WDevCore/Security/WSecurity.js";
         const logout = () => {
             WSecurity.LogOut();
         }

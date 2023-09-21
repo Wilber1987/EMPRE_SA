@@ -27,6 +27,10 @@ class ColumChart extends HTMLElement {
     }
     connectedCallback() {
         //console.log("conected");
+        if (this.Dataset == null || this.Dataset ==  undefined || this.Dataset.length == 0) {
+            this.shadowRoot.innerHTML = "No hay datos que mostar";
+            return;
+        }
         this.shadowRoot.innerHTML = "";
         this.MainChart.children = [];
         this.GroupsData = [];
@@ -807,7 +811,7 @@ class GanttChart extends HTMLElement {
         }
         const min = WArrayF.MinDateValue(this.Dataset, "Fecha_Inicio");
         const max = WArrayF.MaxDateValue(this.Dataset, "Fecha_Finalizacion");
-        //console.log(this.Dataset);
+        //console.log(min, max);
 
         const UN_DIA_EN_MILISEGUNDOS = 1000 * 60 * 60 * 24;
         const INTERVALO = UN_DIA_EN_MILISEGUNDOS //* 7; // Cada semana
@@ -816,7 +820,7 @@ class GanttChart extends HTMLElement {
         const fin = new Date(max.getTime() + INTERVALO);
 
         for (let i = inicio; i <= fin; i = new Date(i.getTime() + INTERVALO)) {
-            console.log(formateadorFecha.format(i));
+           // console.log(formateadorFecha.format(i));
             this.TimeLine.append(WRender.Create({
                 id: i.toLocaleDateString(),
                 class: "TimeLineBlock",
@@ -858,8 +862,8 @@ class GanttChart extends HTMLElement {
                 left = filteredArray[0].offsetLeft + filteredArray[0].offsetWidth / 2;
             } else {
                 const filteredArray = daysArray.filter(day => day.id == startDay);
-                console.log(filteredArray);
-                console.log(startDay);
+                //console.log(filteredArray);
+                //console.log(startDay);
                 left = filteredArray[0].offsetLeft;
             }
 
@@ -868,7 +872,7 @@ class GanttChart extends HTMLElement {
                 width = filteredArray[0].offsetLeft + filteredArray[0].offsetWidth / 2 - left;
             } else {
                 const filteredArray = daysArray.filter(day => day.id == endDay);
-                console.log(endDay);
+                //console.log(endDay);
                 width = filteredArray[0].offsetLeft + filteredArray[0].offsetWidth - left;
             }
 

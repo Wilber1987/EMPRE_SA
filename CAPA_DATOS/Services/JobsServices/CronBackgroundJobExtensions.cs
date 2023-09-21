@@ -1,4 +1,6 @@
-namespace BackgroundJob.Cron.Jobs
+using Microsoft.Extensions.DependencyInjection;
+
+namespace CAPA_DATOS.Cron.Jobs
 {
     public static class CronBackgroundJobExtensions
     {
