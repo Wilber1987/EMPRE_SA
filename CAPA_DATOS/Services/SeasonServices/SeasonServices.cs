@@ -9,7 +9,7 @@ using System.Text.Json;
 
 namespace CAPA_DATOS.Services
 {
-    class SeasonServices
+    public class SeasonServices
     {
         public static List<SeassonData> SeassonDatas = new List<SeassonData>();
         public static void Set(string key, Object value, string identfy)

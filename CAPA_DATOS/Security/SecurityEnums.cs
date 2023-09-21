@@ -14,6 +14,7 @@ namespace CAPA_DATOS.Security
    {
 
       ADMIN_ACCESS,
+      PERFIL_MANAGER,
       GESTION_CLIENTES,//PERMITE GESTIONAR CLIENTES
                        //GESTION_INGRESOS,
                        //GESTION_EGRESOS,

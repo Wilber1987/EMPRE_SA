@@ -1,5 +1,5 @@
 using CAPA_DATOS;
-using CAPA_NEGOCIO.Services;
+using CAPA_DATOS.Services;
 using DataBaseModel;
 namespace Model
 {
