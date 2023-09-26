@@ -1,39 +1,32 @@
-using DataBaseModel;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using CAPA_NEGOCIO.Services;
-using iText.IO.Source;
-using iText.Kernel.Pdf;
-using iText.Html2pdf;
-using iText.Kernel.Geom;
 using System.Text;
-using iText.Layout;
+using Transactions;
 
 namespace API.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    public class RecibosController : ControllerBase
+    public class ApiRecibosController : ControllerBase
     {
         //Recibos
         [HttpPost]
         [AuthController]
-        public List<Recibos> getRecibos(Recibos Inst)
+        public List<Recibos_Transaction> Get(Recibos_Transaction Inst)
         {
-            return Inst.Get<Recibos>();
+            return Inst.Get();// Inst.Get<Recibos_Transaction>();
         }
         [HttpPost]
         [AuthController]
-        public object saveRecibos(Recibos inst)
-        {
-            return inst.Save();
+        public object saveRecibos(Recibos_Transaction inst)
+        {            
+            return inst.Save(HttpContext.Session.GetString("seassonKey"));
         }
         [HttpPost]
         [AuthController]
-        public object updateRecibos(Recibos inst)
+        public object updateRecibos(Recibos_Transaction inst)
         {
-            return inst.Update();
+            return true;
+            //return inst.Update();
         }
     }
 }

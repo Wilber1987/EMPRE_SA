@@ -711,7 +711,7 @@ export { Datos_Configuracion }
 
 class Recibos extends EntityClass {
 	constructor(props) {
-        super(props, 'EntityDBO');
+        super(props, 'Recibos');
 		for (const prop in props) {
 			this[prop] = props[prop];
 		}
