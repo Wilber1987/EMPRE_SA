@@ -39,7 +39,7 @@ class Gestion_RecibosView extends HTMLElement {
         //this.Categorias = await new Catalogo_Categoria().Get();        
         //this.InteresBase = WArrayF.SumValAtt(this.Intereses, "Valor");
 
-        this.buildValoresModel(this.tasasCambio);
+        //this.buildValoresModel(this.tasasCambio);
 
 
         //this.reciboModel = this.valoracionesModel(this.tasasCambio,this.multiSelectEstadosArticulos);
@@ -48,14 +48,14 @@ class Gestion_RecibosView extends HTMLElement {
             paga_cordobas: { type: 'number',  action: (ObjectF, form) => {                    
                     console.log(form)
                     
-                    this.reciboModel.paga_dolares.val = 77;
+                    ObjectF.paga_dolares = 77;
                     //this.reciboModel.FormObject.paga_dolares = 77;
-                    form.DrawComponent();
+                    this.reciboForm.DrawComponent();
                 }
             },
             paga_dolares:{ type: 'number',  action: (ObjectF, form) => {
                     this.reciboModel.FormObject.paga_cordobas = 77;
-                    form.DrawComponent();
+                    this.reciboForm.DrawComponent();
                 }
             }
         });
@@ -85,27 +85,27 @@ class Gestion_RecibosView extends HTMLElement {
                 } `
         });
 
-        this.valoresForm = new WForm({
-            EditObject: this.valoresObject,
-            ModelObject: this.valoresModel,
-            Options: false,
-            DivColumns: "calc(100% - 160px) 150px",
-            // @ts-ignore
-            ProxyAction: (/**@type {WForm} */ valoracion) => {
-                //this.reciboForm?.SetOperationValues();
-            }, CustomStyle: css`
-                .ModalElement {
-                    display: grid;
-                    grid-template-columns: auto 120px;
-                    align-items: center;
-                } .ModalElement label {
-                    display: block;
-                    width: 100%;
-                    margin: 0px;
-                } input {
-                    min-width: 120px;
-                }`
-        });
+        // this.valoresForm = new WForm({
+        //     EditObject: this.valoresObject,
+        //     ModelObject: this.valoresModel,
+        //     Options: false,
+        //     DivColumns: "calc(100% - 160px) 150px",
+        //     // @ts-ignore
+        //     ProxyAction: (/**@type {WForm} */ valoracion) => {
+        //         //this.reciboForm?.SetOperationValues();
+        //     }, CustomStyle: css`
+        //         .ModalElement {
+        //             display: grid;
+        //             grid-template-columns: auto 120px;
+        //             align-items: center;
+        //         } .ModalElement label {
+        //             display: block;
+        //             width: 100%;
+        //             margin: 0px;
+        //         } input {
+        //             min-width: 120px;
+        //         }`
+        // });
 
 
         this.contratoDetail = WRender.Create({ className: "info-header-contrato" });
@@ -308,6 +308,7 @@ class Gestion_RecibosView extends HTMLElement {
                 }
             }
 
+            this.reciboForm.FormObject["numero_contrato"] = contrato["numero_contrato"];
             this.reciboForm.FormObject["saldo_actual"] = contrato["saldo_actual"];
             
             this.reciboForm.FormObject["tasa_cambio"] = tasasCambio[0].valor_de_compra;
@@ -326,8 +327,8 @@ class Gestion_RecibosView extends HTMLElement {
             this.reciboForm.FormObject["abono_capital_dolares"] = contrato["saldo"]; //todo
             this.reciboForm.FormObject["cuota_pagar_cordobas"] = contrato["saldo"]; //todo
             this.reciboForm.FormObject["cuota_pagar_dolares"] = contrato["saldo"]; //todo
-            this.reciboForm.FormObject["mora_cordobas"] = contrato["mora"]?.toFixed(2);//todo
-            this.reciboForm.FormObject["mora_dolares"] = (contrato["mora"] / tasasCambio[0].valor_de_compra).toFixed(2);//todo
+            this.reciboForm.FormObject["mora_cordobas"] = contrato["mora"]?.toFixed(3);//todo
+            this.reciboForm.FormObject["mora_dolares"] = (contrato["mora"] / tasasCambio[0].valor_de_compra).toFixed(3);//todo
             this.reciboForm.FormObject["mora_interes_cordobas"] = primeraCuotaConCapitalMayorACero; //todo contrato[""];
             this.reciboForm.FormObject["mora_interes_dolares"] = (primeraCuotaConCapitalMayorACero / tasasCambio[0].valor_de_venta).toFixed(2); //todo contrato[""];
             this.reciboForm.FormObject["total_cordobas"] = contrato["saldo"]; //todo

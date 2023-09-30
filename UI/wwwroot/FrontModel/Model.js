@@ -97,6 +97,8 @@ class Tbl_Cuotas extends EntityClass {
     abono_capital;
     /**@type {Number} capital restante*/
     capital_restante;
+    /**@type {Number} mora*/
+    mora;
     /**DATOS DE LA FATURA */
     /**@type {Date} */
     fecha_pago;

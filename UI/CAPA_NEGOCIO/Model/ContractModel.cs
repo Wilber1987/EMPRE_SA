@@ -119,6 +119,8 @@ namespace Model
         public double? abono_capital { get; set; }
         /**@type {Number} capital restante*/
         public double? capital_restante { get; set; }
+        /**@type {Number} capital mora*/
+         public double? mora { get; set; }
         /**DATOS DE LA FATURA */
         /**@type {Date} */
         public DateTime? fecha_pago { get; set; }
