@@ -89,7 +89,7 @@ class Tbl_Cuotas extends EntityClass {
     /**Datos de la Tbl_cuotas*/
     /**@type {Date} */
     fecha;
-    /**@type {Number} Tbl_cuotas del abono*/
+    /**@type {Number} Tbl_cuotas del abono total a pagar dolares*/
     total;
     /**@type {Number} valor del interes del capital*/
     interes;

@@ -32,8 +32,8 @@ class AmoritizationModule {
 
         AmoritizationModule.crearCuotas(contrato);
 
-        contrato.Transaction_Contratos.total_pagar_cordobas = (WArrayF.SumValAtt(contrato.Transaction_Facturas, "total"));
-        contrato.Transaction_Contratos.total_pagar_dolares = (WArrayF.SumValAtt(contrato.Transaction_Facturas, "total") / contrato.taza_cambio);
+        contrato.Transaction_Contratos.total_pagar_cordobas = (WArrayF.SumValAtt(contrato.Transaction_Contratos.Tbl_Cuotas, "total"));
+        contrato.Transaction_Contratos.total_pagar_dolares = (WArrayF.SumValAtt(contrato.Transaction_Contratos.Tbl_Cuotas, "total") / contrato.taza_cambio);
 
         contrato.Transaction_Contratos.interes = (WArrayF.SumValAtt(contrato.Transaction_Facturas, "interes"));
         contrato.Transaction_Contratos.interes_dolares = (WArrayF.SumValAtt(contrato.Transaction_Facturas, "interes") / contrato.taza_cambio);
@@ -63,6 +63,8 @@ class AmoritizationModule {
     static crearCuotas(contrato) {
         contrato.cuotafija_dolares = this.getPago(contrato);
         contrato.cuotafija = contrato.cuotafija_dolares * contrato.taza_cambio;
+        contrato.Transaction_Contratos.cuotafija_dolares = this.getPago(contrato);
+        contrato.Transaction_Contratos.cuotafija = contrato.cuotafija_dolares * contrato.taza_cambio;
         // @ts-ignore
         let capital = (parseFloat(contrato.valoracion_empeño_dolares));
         for (let index = 0; index < contrato.plazo; index++) {

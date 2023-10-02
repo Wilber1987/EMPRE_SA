@@ -1,3 +1,4 @@
+using System.Transactions;
 using CAPA_DATOS;
 using CAPA_DATOS.Services;
 using DataBaseModel;
@@ -81,18 +82,47 @@ namespace Model
         {
             try
             {
+                var configuraciones = new Transactional_Configuraciones().GetConfig(ConfiguracionesInteresesEnum.INTERES_MORA.ToString());
+                Transaction_Contratos.fecha_contrato = DateTime.Now;
+                Transaction_Contratos.fecha_cancelar = Transaction_Contratos.Tbl_Cuotas.Select(c => c.fecha_pago).ToList().Max();
+                Transaction_Contratos.fecha_vencimiento = Transaction_Contratos.Tbl_Cuotas.Select(c => c.fecha_pago).ToList().Max();//TODO PREGUNTAR
+                var valoracion = Transaction_Contratos.Detail_Prendas[0];
+                if (valoracion.en_manos_de == EnManosDe.ACREEDOR.ToString()
+                && valoracion.Catalogo_Categoria.descripcion != "Vehículos")
+                {
+                    Transaction_Contratos.tipo = Contratos_Type.EMPENO.ToString();
+
+                }
+                if (valoracion.en_manos_de == EnManosDe.ACREEDOR.ToString()
+                && valoracion.Catalogo_Categoria.descripcion == "Vehículos")
+                {
+
+                    Transaction_Contratos.tipo = Contratos_Type.EMPENO_VEHICULO.ToString();
+                }
+                else
+                {
+                    Transaction_Contratos.tipo = Contratos_Type.PRESTAMO.ToString();
+                }
+
+                Transaction_Contratos.monto = Transaction_Contratos.valoracion_empeño_dolares;
+                Transaction_Contratos.saldo = Transaction_Contratos.valoracion_empeño_dolares;
+                Transaction_Contratos.mora = Convert.ToDouble(configuraciones.Valor) / 100;
+                Transaction_Contratos.estado = Contratos_State.ACTIVO.ToString();
+
+
                 Transaction_Contratos.Save();
                 return new ResponseService()
                 {
                     status = 200
                 };
             }
-            catch (System.Exception)
+            catch (System.Exception ex)
             {
 
                 return new ResponseService()
                 {
-                    status = 200
+                    status = 500,
+                    body = ex
                 };
             }
         }
@@ -120,7 +150,7 @@ namespace Model
         /**@type {Number} capital restante*/
         public double? capital_restante { get; set; }
         /**@type {Number} capital mora*/
-         public double? mora { get; set; }
+        public double? mora { get; set; }
         /**DATOS DE LA FATURA */
         /**@type {Date} */
         public DateTime? fecha_pago { get; set; }
