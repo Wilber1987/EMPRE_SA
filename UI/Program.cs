@@ -33,7 +33,7 @@ builder.Services.AddCronJob<CalculateMoraCuotasSchedulerJob>(options =>
 {
     // Corre cada minuto
     //options.CronExpression = "0 0 13 1/1 * ? *";//ejecucion diaria a las 1 de la mañana
-     options.CronExpression = "* * * * *";
+    options.CronExpression = "0 12 * * *";
     options.TimeZone = TimeZoneInfo.Local;
 });
 

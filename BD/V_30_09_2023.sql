@@ -11,7 +11,7 @@ ALTER TABLE EMPRE_SA.administrative_access.Transactional_Configuraciones ADD CON
 
 INSERT INTO EMPRE_SA.administrative_access.Transactional_Configuraciones
 ( Nombre, Descripcion, Valor, Tipo_Configuracion)
-VALUES( N'INTERES_MORA', N' Porsentaje del interes aplicado a la mora(este valor se divide entre 100 al momento de realizar calculos)', N'0.5', N'INTERESES');
+VALUES( N'MORA_CONTRATOS_EMP', N' Porsentaje del interes aplicado a la mora(este valor se divide entre 100 al momento de realizar calculos)', N'0.5', N'INTERES_MORA');
 
 ALTER TABLE EMPRE_SA.dbo.Transaction_Contratos ADD CONSTRAINT Transaction_Contratos_FK FOREIGN KEY (codigo_cliente) REFERENCES EMPRE_SA.dbo.Catalogo_Clientes(codigo_cliente);
 ALTER TABLE EMPRE_SA.dbo.Transaction_Contratos ALTER COLUMN tipo nvarchar(50) NULL;

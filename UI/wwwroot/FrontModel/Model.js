@@ -8,70 +8,25 @@ class ValoracionesTransaction extends EntityClass {
         for (const prop in props) {
             this[prop] = props[prop];
         }
-    }
-    /**@type {Number} */
-    valoracion_compra_cordobas;
-    /**@type {Number} */
-    valoracion_compra_dolares;
-    /**@type {Number} */
-    valoracion_empeño_cordobas;
-    /**@type {Number} */
-    valoracion_empeño_dolares;
-    /**@type {Number} */
-    tasas_interes;
-    /**@type {Number} */
-    taza_interes_cargos;    
-    /**@type {Number} */
-    cuotafija;
-    /**@type {Number} */
-    cuotafija_dolares;
-    /**@type {Number} */
-    gestion_crediticia;
-    /**@type {Number} */
-    plazo;
-    /**@type {Date} */
-    fecha;
-    /**@type {Catalogo_Clientes} */
-    Catalogo_Clientes;
-    /**@type {Array<Tbl_Cuotas>} */
-    Transaction_Facturas;
-    /**@type {Array<Detail_Prendas>} */
-    Detail_Prendas;
-    /**@type {String} */
-    observaciones;
-
-
-    //?????????????????
-    /**@type {Number} */
-    monto;
-
-    /**@type {Number} */
-    total_pagar_cordobas;
-    /**@type {Number} */
-    total_pagar_dolares;
-    /**@type {Number} */
-    interes;
-    /**@type {Number} */
-    interes_dolares;
-    /**@type {Number} cuota del abono*/
-    taza_cambio;
-
+    }   
+    /**@type {Array<Transactional_Valoracion>} */
+    valoraciones;  
+  
     /**@type {Transaction_Contratos} */
     Transaction_Contratos;
 
     SaveDataContract = async () => {
-        await this.SaveData("Transactional_Contrato/SaveDataContract", this)
-        return true;
+        return await this.SaveData("Transactional_Contrato/SaveDataContract", this)
+         true;
     }
     SaveContract = async () => {
-        await this.SaveData("Transactional_Contrato/SaveContract", this)
-        return true;
+        return this.SaveData("Transactional_Contrato/SaveContract", this)
     }
     GetValoracionContrato = async () => {
         return await this.SaveData("Transactional_Contrato/GetDataContract", this)
     }
     VerContrato = async () => {
-        return await this.SaveData("PDF/GeneratePdfContract", this)
+        return await this.SaveData("PDF/GeneratePdfContract", this.Transaction_Contratos)
     }
 }
 export { ValoracionesTransaction }
@@ -207,6 +162,8 @@ class Transaction_Contratos extends EntityClass {
     cuotafija_dolares;
     /**@type {Number} */
     gestion_crediticia;
+    /**@type {Number} */
+    tasas_interes;
     /**@type {Number} */
     plazo;
     /**@type {Date} */

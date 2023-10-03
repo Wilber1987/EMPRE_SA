@@ -229,7 +229,7 @@ class Transaction_ContratosModel extends EntityClass {
 			this[prop] = props[prop];
 		}
 	}
-    Catalogo_Clientes = { type: 'WSELECT', ModelObject: () => new Catalogo_Clientes() };
+    Catalogo_Clientes = { type: 'WSELECT', ModelObject: () => new Catalogo_Clientes() , hiddenFilter: true};
 	numero_contrato = { type: "number" , primary: true  };
 	fecha_contrato = { type: "date"  };
 	fecha_cancelar = { type: "date"  };
@@ -238,7 +238,7 @@ class Transaction_ContratosModel extends EntityClass {
 	mora = { type: "number"  , hiddenFilter: true };
 	estado = { type: "Select", Dataset: ["Activo","Inactivo"] };
 	fecha_vencimiento = { type: "date" , hiddenFilter: true };
-	codigo_cliente = { type: "number"  };
+	codigo_cliente = { type: "number",  hiddenFilter: true  };
 	saldo = { type: "number"  , hiddenFilter: true };
 	abonos = { type: "number" , hiddenInTable: true,  hiddenFilter: true };
 	tipo = { type: "number" , hiddenInTable: true,  hiddenFilter: true };
@@ -253,21 +253,21 @@ class Transaction_ContratosModel extends EntityClass {
 	plazo = { type: "number" , hiddenInTable: true,  hiddenFilter: true };
 	cuotafija = { type: "number" , hiddenInTable: true,  hiddenFilter: true };
 	tasa_hoy = { type: "number" , hiddenInTable: true,  hiddenFilter: true };
-	motivo_anulacion = { type: "text" , hiddenInTable: true };
-	valoracion_compra_dolares = { type: "number" , hiddenInTable: true };
-	valoracion_compra_cordobas = { type: "number" , hiddenInTable: true };
-	valoracion_empeño_cordobas = { type: "number" , hiddenInTable: true };
-	valoracion_empeño_dolares = { type: "number" , hiddenInTable: true };
-	tasas_interes = { type: "number" , hiddenInTable: true };
-	gestion_crediticia = { type: "number" , hiddenInTable: true };
-	cuotafija_dolares = { type: "number" , hiddenInTable: true };
-	fecha = { type: "date" , hiddenInTable: true };
-	total_pagar_cordobas = { type: "number" , hiddenInTable: true };
-	total_pagar_dolares = { type: "number" , hiddenInTable: true };
-	interes_dolares = { type: "number" , hiddenInTable: true };
-	Id_User = { type: "number" , hiddenInTable: true };
+	motivo_anulacion = { type: "text" , hiddenInTable: true , hiddenFilter: true};
+	valoracion_compra_dolares = { type: "number" , hiddenInTable: true, hiddenFilter: true };
+	valoracion_compra_cordobas = { type: "number" , hiddenInTable: true , hiddenFilter: true};
+	valoracion_empeño_cordobas = { type: "number" , hiddenInTable: true, hiddenFilter: true };
+	valoracion_empeño_dolares = { type: "number" , hiddenInTable: true, hiddenFilter: true };
+	tasas_interes = { type: "number" , hiddenInTable: true , hiddenFilter: true};
+	gestion_crediticia = { type: "number" , hiddenInTable: true, hiddenFilter: true };
+	cuotafija_dolares = { type: "number" , hiddenInTable: true , hiddenFilter: true};
+	fecha = { type: "date" , hiddenInTable: true , hiddenFilter: true};
+	total_pagar_cordobas = { type: "number" , hiddenInTable: true, hiddenFilter: true };
+	total_pagar_dolares = { type: "number" , hiddenInTable: true, hiddenFilter: true };
+	interes_dolares = { type: "number" , hiddenInTable: true , hiddenFilter: true};
+	Id_User = { type: "number" , hiddenInTable: true , hiddenFilter: true};
     Catalogo_Agentes = { type: 'WSELECT', ModelObject: () => new Catalogo_Agentes(), hiddenInTable: true, hiddenFilter: true };
-    Detail_Prendas = { type: 'MasterDetail', ModelObject: () => new Detail_PrendasModel() };
+    Detail_Prendas = { type: 'MasterDetail', ModelObject: () => new Detail_PrendasModel(), hiddenFilter: true };
 }
 export{Transaction_ContratosModel}
 

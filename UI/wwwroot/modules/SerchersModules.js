@@ -26,7 +26,7 @@ class ValoracionesSearch extends HTMLElement {
         })
         this.MainComponent = new WTableComponent({
             ModelObject: model,
-            Dataset: dataset.map(x => {
+            Dataset: dataset.map(x => {               
                 // @ts-ignore
                 x.requiere_valoracion = (new Date().subtractDays(40) < new Date(x.Fecha)) ? "NO" : "SI";
                 return x;
@@ -107,12 +107,12 @@ const contratosSearcher = (action) => {
     const TableComponent = new WTableComponent({
         EntityModel: model,
         ModelObject: new Transaction_ContratosModel({
-            numero_contrato : { type: "text", primary: false}
+            numero_contrato: { type: "text", primary: false }
         }),
         AddItemsFromApi: true,
         Options: {
-           Show: true,
-           UserActions: [{
+            Show: true,
+            UserActions: [{
                 name: "Selecionar",
                 action: async (cliente) => {
                     // @ts-ignore

@@ -105,7 +105,7 @@ namespace BackgroundJob.Cron.Jobs
                 var movimientos = new Transaction_Movimiento()
                 {
                     correo_enviado = false
-                }.Get<Transaction_Movimiento>();
+                }.Get<Transaction_Movimiento>(" correo_enviado = 0");
 
 
                 foreach (var item in movimientos)

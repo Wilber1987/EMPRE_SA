@@ -435,7 +435,6 @@ namespace DataBaseModel
         public string? moneda { get; set; }
         public double? tasa_cambio { get; set; }
         public bool? correo_enviado { get; set; }
-
         public double? tasa_cambio_compra { get; set; }
 
         [OneToMany(TableName = "Detail_Movimiento", KeyColumn = "id_movimiento", ForeignKeyColumn = "id_movimiento")]

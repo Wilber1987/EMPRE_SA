@@ -10,8 +10,9 @@ namespace UI.Controllers
     public class PdfController : ControllerBase
     {
         [HttpPost]
-        public ResponseService GeneratePdfContract(Transaction_Contratos model)
+        public ResponseService GeneratePdfContract(Transaction_Contratos Inst)
         {
+            var model = Inst.Find<Transaction_Contratos>();
             ContractService.generaPDF(model, "contrato_empeno.cshtml");
             return new ResponseService()
             {

@@ -39,7 +39,7 @@ namespace DataBaseModel
 
     public enum ConfiguracionesTypeEnum
     {
-        INTERESES, BENEFICIOS, THEME
+        INTERESES, BENEFICIOS, THEME, INTERESES_MORA
     }
 
     public enum ConfiguracionesThemeEnum
@@ -49,7 +49,7 @@ namespace DataBaseModel
 
     public enum ConfiguracionesInteresesEnum
     {
-        INTERES_MORA
+        MORA_CONTRATOS_EMP
     }
 
     public enum ConfiguracionesBeneficiosEnum
