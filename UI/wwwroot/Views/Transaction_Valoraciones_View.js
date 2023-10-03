@@ -545,47 +545,11 @@ class Transaction_Valoraciones_View extends HTMLElement {
             // @ts-ignore
             taza_cambio: this.tasasCambio[0].valor_de_compra,
             taza_interes_cargos: this.InteresBase,
-            Catalogo_Clientes: this.Cliente
-            //gestion_crediticia: this.Cliente.Catalogo_Clasificacion_Interes?.porcentaje ?? 6,
-        });
-        // const contrato = new ValoracionesTransaction({
-        //     // @ts-ignore
-        //     valoracion_compra_cordobas: (WArrayF.SumValAtt(this.valoracionesTable?.Dataset, "valoracion_compra_cordobas")),
-        //     // @ts-ignore
-        //     valoracion_compra_dolares: (WArrayF.SumValAtt(this.valoracionesTable?.Dataset, "valoracion_compra_dolares")),
-        //     // @ts-ignore
-        //     valoracion_empeño_cordobas: (WArrayF.SumValAtt(this.valoracionesTable?.Dataset, "valoracion_empeño_cordobas")),
-        //     // @ts-ignore
-        //     valoracion_empeño_dolares: (WArrayF.SumValAtt(this.valoracionesTable?.Dataset, "valoracion_empeño_dolares")),
-        //     tasas_interes: this.getTasaInteres() / 100,
-        //     plazo: this.valoracionesForm?.FormObject.Plazo ?? 1,
-        //     fecha: new Date(),
-        //     Transaction_Facturas: new Array(),
-        //     // @ts-ignore
-        //     taza_cambio: this.tasasCambio[0].valor_de_compra,
-        //     taza_interes_cargos: this.InteresBase,
-        //     gestion_crediticia: this.Cliente.Catalogo_Clasificacion_Interes?.porcentaje ?? 6,
-        //     Detail_Prendas: this.valoracionesTable?.Dataset.map(
-        //         // @ts-ignore
-        //         /**@type {Transactional_Valoracion}*/valoracion => new Detail_Prendas({
-        //         Descripcion: valoracion.Descripcion,
-        //         modelo: valoracion.Modelo,
-        //         marca: valoracion.Marca,
-        //         serie: valoracion.Serie,
-        //         pprenda: valoracion.valoracion_empeño_cordobas,
-        //         color: "#000",
-        //         en_manos_de: undefined,
-        //         precio_venta: valoracion.precio_venta_empeño_dolares,
-        //         Catalogo_Categoria: valoracion.Catalogo_Categoria,
-        //         Transactional_Valoracion: valoracion
-        //     })),
-        //     Transaction_Contratos: new Transaction_Contratos(),
-        //     Catalogo_Clientes: this.Cliente,
-        //     valoraciones: this.valoracionesTable?.Dataset
-        // })
+            Catalogo_Clientes: this.Cliente,
+            gestion_crediticia: this.Cliente.Catalogo_Clasificacion_Interes?.porcentaje ?? 6,
+        });       
         AmoritizationModule.calculoAmortizacion(contrato);
-        //AmoritizationModule.crearCuotas(contrato);
-        console.log(contrato);
+        console.log(AmoritizationModule.calculoAmortizacion(contrato));
 
         if (this.CuotasTable != undefined) {
             this.CuotasTable.Dataset = contrato.Transaction_Contratos.Tbl_Cuotas;
