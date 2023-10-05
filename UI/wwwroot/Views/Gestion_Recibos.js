@@ -5,11 +5,10 @@ import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
 import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { ModalMessege, WForm } from "../WDevCore/WComponents/WForm.js";
-import { Recibos, Transaction_ContratosModel, Catalogo_Clientes, Catalogo_Cambio_Dolar } from "../FrontModel/DBODataBaseModel.js";//todo eliminar notulizados
+import { Recibos, Transaction_ContratosModel,  Catalogo_Cambio_Dolar } from "../FrontModel/DBODataBaseModel.js";//todo eliminar notulizados
 import { WOrtograficValidation } from "../WDevCore/WModules/WOrtograficValidation.js";
 import { clientSearcher, contratosSearcher, ValoracionesSearch } from "../modules/SerchersModules.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
-import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
 class Gestion_RecibosView extends HTMLElement {
     // @ts-ignore
     constructor(props) {
@@ -218,11 +217,12 @@ class Gestion_RecibosView extends HTMLElement {
                     this.append(ModalMessege("Agregue datos para poder continuar"));
                     return;
                 }
-                const valoracionesGuardadas = await new Recibos(this.reciboForm?.FormObject).Save() //this.reciboModel?.Save() // this.reciboModel?.GuardarValoraciones(this.valoracionesTable?.Dataset);
-                if (valoracionesGuardadas?.length > 0) {
-                    this.append(ModalMessege("Valoraciones guardadas correctamente"));
+                const response = await new Recibos(this.reciboForm?.FormObject).Save() //this.reciboModel?.Save() // this.reciboModel?.GuardarValoraciones(this.valoracionesTable?.Dataset);
+                if (response.status == 200) {
+                    this.shadowRoot?.append(ModalVericateAction(()=>{
+                        location.href = "/PagesViews/Print_Recibo?id_Recibo="+ response.body.id_recibo;
+                    }, response.message))
                 }
-
             }
         }))
 
