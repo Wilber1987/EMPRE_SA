@@ -740,10 +740,11 @@ class Recibos extends EntityClass {
 	total_cordobas = { type: "number", hiddenInTable: true , disabled: true};
 	total_dolares = { type: "number", hiddenInTable: true , disabled: true};
 	total_parciales = { type: "number", hiddenInTable: true , disabled: true};
-    title = {type: "title", label: "mela"};
+    
 	fecha_roc = { type: "date" , disabled: true};
 	paga_cordobas = { type: "number", hiddenInTable: true};
 	paga_dolares = { type: "number" , hiddenInTable: true};
+    title = {type: "title", label: "Opciones:"};
 	solo_abono = { type: "checkbox", hiddenInTable: true, require: false };
 	cancelar = { type: "checkbox", hiddenInTable: true, require: false };
 }

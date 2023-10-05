@@ -11,19 +11,19 @@ namespace API.Controllers
         //Recibos
         [HttpPost]
         [AuthController]
-        public List<Recibos_Transaction> Get(Recibos_Transaction Inst)
+        public List<Recibos> Get(Recibos Inst)
         {
-            return Inst.Get();// Inst.Get<Recibos_Transaction>();
+            return Inst.Get();// Inst.Get<Recibos>();
         }
         [HttpPost]
         [AuthController]
-        public object saveRecibos(Recibos_Transaction inst)
+        public object saveRecibos(Recibos inst)
         {            
-            return inst.Save(HttpContext.Session.GetString("seassonKey"));
+            return inst.SaveRecibos(HttpContext.Session.GetString("seassonKey"));
         }
         [HttpPost]
         [AuthController]
-        public object updateRecibos(Recibos_Transaction inst)
+        public object updateRecibos(Recibos inst)
         {
             return true;
             //return inst.Update();

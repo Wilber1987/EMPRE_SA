@@ -157,12 +157,11 @@ namespace BackgroundJob.Cron.Jobs
         protected override Task DoWork(CancellationToken stoppingToken)
         {
             _log.LogInformation(":::::::::::Running...  CalculateMoraCuotasSchedulerJob at {0}", DateTime.UtcNow);
-            //Envio de mails cada vez que se realice un movimiento entre cuentas
             try
             {
 
                 var cuotas = new Tbl_Cuotas().Get<Tbl_Cuotas>()
-                    .Where(cuota => (cuota.pago_contado == null || (cuota.total > cuota.pago_contado ||cuota.pago_contado == null)))
+                    .Where(cuota => (cuota.pago_contado == null || (cuota.total > cuota.pago_contado ||cuota.pago_contado == null)) && cuota.fecha < DateTime.Now)
                     .ToList();
 
                 foreach (var cuota in cuotas)
@@ -180,7 +179,7 @@ namespace BackgroundJob.Cron.Jobs
                     cuota.mora = cuota.mora + montoMora;
                     cuota.total += cuota.total + montoMora; 
                     
-                    cuota.Update();
+                    //cuota.Update();
                 }
 
             }
