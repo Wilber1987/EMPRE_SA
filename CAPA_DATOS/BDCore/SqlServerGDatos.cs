@@ -548,9 +548,10 @@ namespace CAPA_DATOS
             DataTable Table = TraerDatosSQL(DescribeQuery);
             return Table.Rows.Count;
         }
-        public List<OneToManySchema> oneToManyKeys(string entityName)
+        public List<OneToManySchema> oneToManyKeys(string entityName, string schema = "dbo")
         {
-            string DescribeQuery = @"exec sp_fkeys '" + entityName + "'";
+            string DescribeQuery = $"EXEC sp_fkeys @pktable_name = N'{entityName}' ,@pktable_owner = N'{schema}';";
+            //string DescribeQuery = @"exec sp_fkeys '" + entityName + "'";
             DataTable Table = TraerDatosSQL(DescribeQuery);
             return ConvertDataTable<OneToManySchema>(Table, new OneToManySchema());
         }

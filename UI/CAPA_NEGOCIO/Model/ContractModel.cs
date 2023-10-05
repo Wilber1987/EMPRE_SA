@@ -1,3 +1,5 @@
+using System.Transactions;
+using API.Controllers;
 using CAPA_DATOS;
 using CAPA_DATOS.Services;
 using DataBaseModel;
@@ -7,52 +9,6 @@ namespace Model
     {
 
         public Transaction_Contratos? Transaction_Contratos { get; set; }
-        /**@type {Number} */
-        public Double valoracion_compra_cordobas { get; set; }
-        /**@type {Number} */
-        public Double valoracion_compra_dolares { get; set; }
-        /**@type {Number} */
-        public Double valoracion_empeño_cordobas { get; set; }
-        /**@type {Number} */
-        public Double valoracion_empeño_dolares { get; set; }
-        /**@type {Number} */
-        public Double tasas_interes { get; set; }
-        /**@type {Number} */
-        public Double taza_interes_cargos { get; set; }
-        /**@type {Number} */
-        public Double cuotafija { get; set; }
-        /**@type {Number} */
-        public Double cuotafija_dolares { get; set; }
-        /**@type {Number} */
-        public Double gestion_crediticia { get; set; }
-        /**@type {Number} */
-        public Int32 plazo { get; set; }
-        /**@type {Date} */
-        public DateTime fecha { get; set; }
-        /**@type {Catalogo_Clientes} */
-        public Catalogo_Clientes? Catalogo_Clientes { get; set; }
-        /**@type {Array<Cuota>} */
-        public List<Tbl_Cuotas>? Transaction_Facturas { get; set; }
-        /**@type {Array<Detail_Prendas>} */
-        public List<Detail_Prendas>? Detail_Prendas { get; set; }
-        /**@type {String} */
-        public String? observaciones { get; set; }
-
-        //?????????????????
-        /**@type {Number} */
-        public Double monto { get; set; }
-
-        /**@type {Number} */
-        public Double total_pagar_cordobas { get; set; }
-        /**@type {Number} */
-        public Double total_pagar_dolares { get; set; }
-        /**@type {Number} */
-        public Double interes { get; set; }
-        /**@type {Number} */
-        public Double interes_dolares { get; set; }
-        /**@type {Number} cuota del abono*/
-        public Double taza_cambio { get; set; }
-
         public List<Transactional_Valoracion>? valoraciones { get; set; }
         /**@type {Number} */
 
@@ -81,18 +37,48 @@ namespace Model
         {
             try
             {
+                var configuraciones = new Transactional_Configuraciones().GetConfig(ConfiguracionesInteresesEnum.MORA_CONTRATOS_EMP.ToString());
+                Transaction_Contratos.fecha_contrato = DateTime.Now;
+                Transaction_Contratos.fecha_cancelar = Transaction_Contratos.Tbl_Cuotas.Select(c => c.fecha).ToList().Max();
+                Transaction_Contratos.fecha_vencimiento = Transaction_Contratos.Tbl_Cuotas.Select(c => c.fecha).ToList().Max();//TODO PREGUNTAR
+                var valoracion = Transaction_Contratos.Detail_Prendas[0];
+                if (valoracion.en_manos_de == EnManosDe.ACREEDOR.ToString()
+                && valoracion.Catalogo_Categoria.descripcion != "Vehículos")
+                {
+                    Transaction_Contratos.tipo = Contratos_Type.EMPENO.ToString();
+                }
+                else if (valoracion.en_manos_de == EnManosDe.ACREEDOR.ToString()
+                 && valoracion.Catalogo_Categoria.descripcion == "Vehículos")
+                {
+
+                    Transaction_Contratos.tipo = Contratos_Type.EMPENO_VEHICULO.ToString();
+                }
+                else
+                {
+                    Transaction_Contratos.tipo = Contratos_Type.PRESTAMO.ToString();
+                }
+
+                Transaction_Contratos.monto = Transaction_Contratos.valoracion_empeño_dolares;
+                Transaction_Contratos.saldo = Transaction_Contratos.valoracion_empeño_dolares;
+                Transaction_Contratos.mora = Convert.ToDouble(configuraciones.Valor) / 100;
+                Transaction_Contratos.estado = Contratos_State.ACTIVO.ToString();
+                Transaction_Contratos.Id_User = AuthNetCore.User(seasonKey).UserId;
+
                 Transaction_Contratos.Save();
                 return new ResponseService()
                 {
-                    status = 200
+                    status = 200,
+                    message = "Contrato guardado correctamente",
+                    body = Transaction_Contratos
                 };
             }
-            catch (System.Exception)
+            catch (System.Exception ex)
             {
 
                 return new ResponseService()
                 {
-                    status = 200
+                    status = 500,
+                    body = ex
                 };
             }
         }
@@ -120,7 +106,7 @@ namespace Model
         /**@type {Number} capital restante*/
         public double? capital_restante { get; set; }
         /**@type {Number} capital mora*/
-         public double? mora { get; set; }
+        public double? mora { get; set; }
         /**DATOS DE LA FATURA */
         /**@type {Date} */
         public DateTime? fecha_pago { get; set; }

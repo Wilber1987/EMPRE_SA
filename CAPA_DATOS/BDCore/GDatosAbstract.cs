@@ -321,7 +321,7 @@ namespace CAPA_DATOS
         protected private DataTable BuildTable(object Inst, ref string CondSQL, bool fullEntity = true, bool isFind = true)
         {
             string queryString = BuildSelectQuery(Inst, CondSQL, fullEntity, isFind);
-            LoggerServices.AddMessageInfo(queryString);
+            //LoggerServices.AddMessageInfo(queryString);
             DataTable Table = TraerDatosSQL(queryString);
             return Table;
         }

@@ -131,6 +131,10 @@ namespace CAPA_DATOS.Services
             Span<byte> buffer = new Span<byte>(new byte[base64.Length]);
             return Convert.TryFromBase64String(base64, buffer, out int bytesParsed);
         }
+        public static string setImage(string image)
+        {
+            return ((ModelFiles)FileService.upload("image_tests\\", new ModelFiles { Type = "png", Value = image, Name = "" }).body).Value.Replace("wwwroot", "");
+        }
     }
 
 

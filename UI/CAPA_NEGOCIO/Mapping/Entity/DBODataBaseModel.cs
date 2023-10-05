@@ -107,7 +107,7 @@ namespace DataBaseModel
         public int? codigo_cliente { get; set; }
         public Double? saldo { get; set; }
         public Double? abonos { get; set; }
-        public int? tipo { get; set; }
+        public string? tipo { get; set; }
         public string? entregado { get; set; }
         public Double? interes_actual { get; set; }
         public string? observaciones { get; set; }
@@ -215,6 +215,13 @@ namespace DataBaseModel
         [OneToMany(TableName = "Tbl_Cuotas", KeyColumn = "numero_contrato", ForeignKeyColumn = "numero_contrato")]
         public List<Tbl_Cuotas>? Tbl_Cuotas { get; set; }
     }
+
+    public enum Contratos_State {
+        ACTIVO, CANCELADO, ANULADO
+    }
+    public enum Contratos_Type {
+        EMPENO, PRESTAMO, EMPENO_VEHICULO
+    }
     public class Detail_Prendas : EntityClass
     {
         [PrimaryKey(Identity = true)]
@@ -252,6 +259,9 @@ namespace DataBaseModel
         [ManyToOne(TableName = "Transactional_Valoracion", KeyColumn = "id_valoracion", ForeignKeyColumn = "id_valoracion")]
         public Transactional_Valoracion? Transactional_Valoracion { get; set; }
 
+    }
+    public enum EnManosDe {
+        ACREEDOR, DEUDOR
     }
     public class Detail_Prendas_Vehiculos : EntityClass
     {
@@ -425,7 +435,6 @@ namespace DataBaseModel
         public string? moneda { get; set; }
         public double? tasa_cambio { get; set; }
         public bool? correo_enviado { get; set; }
-
         public double? tasa_cambio_compra { get; set; }
 
         [OneToMany(TableName = "Detail_Movimiento", KeyColumn = "id_movimiento", ForeignKeyColumn = "id_movimiento")]
