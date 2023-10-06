@@ -9,6 +9,7 @@ using iTextSharp.tool.xml;
 using DataBaseModel;
 using System.Text;
 using System.Reflection;
+using Model;
 
 namespace CAPA_NEGOCIO.Services
 {
@@ -45,9 +46,34 @@ namespace CAPA_NEGOCIO.Services
 
             var renderedHtml = RenderTemplate(templateContent, model);
 
-            renderedHtml = RenderTemplate(renderedHtml, model.Catalogo_Clientes);
-            
+            var configuraciones = new Transactional_Configuraciones().GetIntereses();
+            var interes = configuraciones.Select(i => Convert.ToInt32(i.Valor)).ToArray().Sum();
 
+            renderedHtml = RenderTemplate(renderedHtml, model.Catalogo_Clientes)
+                .Replace("{{municipio}}", model.Catalogo_Clientes.Catalogo_Municipio?.nombre)
+                .Replace("{{departamento}}", model.Catalogo_Clientes.Catalogo_Departamento?.nombre)
+                .Replace("{{tabla_articulos}}", GenerateTableHtml(model.Detail_Prendas))
+                /*INTERESES*/
+                .Replace("{{interes_inicial}}", interes.ToString())
+                .Replace("{{interes_inicial_label}}", "")
+                .Replace("{{interes_gastos_administrativos}}",
+                    configuraciones.Find(c => c.Nombre.Equals(InteresesPrestamosEnum.GASTOS_ADMINISTRATIVOS.ToString()))?.Valor)
+                .Replace("{{interes_gastos_administrativos_label}}", "")
+                .Replace("{{interes_gastos_legales}}",
+                    configuraciones.Find(c => c.Nombre.Equals(InteresesPrestamosEnum.GASTOS_LEGALES.ToString()))?.Valor)
+                .Replace("{{interes_comisiones_label}}", "")
+                .Replace("{{interes_comisiones}}",
+                    configuraciones.Find(c => c.Nombre.Equals(InteresesPrestamosEnum.COMISIONES.ToString()))?.Valor)
+                .Replace("{{interes_mantenimiento_valor_label}}", "")
+                .Replace("{{interes_mantenimiento_valor}}",
+                    configuraciones.Find(c => c.Nombre.Equals(InteresesPrestamosEnum.MANTENIMIENTO_VALOR.ToString()))?.Valor)
+                .Replace("{{interes_demas_cargos_label}}", "")
+                .Replace("{{interes_demas_cargos}}",
+                    configuraciones.Find(c => c.Nombre.Equals(InteresesPrestamosEnum.GESTIONES_CREDITICIAS.ToString()))?.Valor)
+                .Replace("{{dias}}", DateTime.Now.Day.ToString())
+                .Replace("{{mes}}", DateTime.Now.Month.ToString())
+                .Replace("{{anio}}", DateTime.Now.Year.ToString())
+                .Replace("{{tbody_amortizacion}}", GenerateTableHtml(model.Tbl_Cuotas));
             // Generar el PDF
             var pdfFilePath = Path.Combine(System.IO.Path.GetFullPath("../UI/wwwroot/Contracts"), "output.pdf");
             GeneratePdfFromHtml(renderedHtml, pdfFilePath);
@@ -100,36 +126,65 @@ namespace CAPA_NEGOCIO.Services
         static string GenerateTableHtml(List<Detail_Prendas> listaDatos)
         {
             StringBuilder htmlBuilder = new StringBuilder();
-
             // Abrir la etiqueta de la tabla con atributos de estilo para bordes y ancho 100%
-            htmlBuilder.Append("<table style=\"font-size:10px; border-collapse: collapse; width: 100%;\">");
-
+            htmlBuilder.Append("<table style=\"font-size:9px;border-collapse: collapse; width: 100%;\">");
             // Encabezados de la tabla (opcional)
             htmlBuilder.Append("<tr>");
-            htmlBuilder.Append("<th style=\"font-size:10px; text-align: center; border: 1px solid black;\">Bienes</th>");
-            htmlBuilder.Append("<th style=\"font-size:10px; text-align: center; border: 1px solid black;\">Color</th>");
-            htmlBuilder.Append("<th style=\"font-size:10px; text-align: center; border: 1px solid black;\">Marca</th>");
-            htmlBuilder.Append("<th style=\"font-size:10px; text-align: center; border: 1px solid black;\">Serie</th>");
-            htmlBuilder.Append("<th style=\"font-size:10px; text-align: center; border: 1px solid black;\">Modelo</th>");
+            htmlBuilder.Append("<th style=\"font-size:9px; text-align: center; padding: 4px; border: 1px solid black;\">Bienes</th>");
+            htmlBuilder.Append("<th style=\"font-size:9px; text-align: center; padding: 4px; border: 1px solid black;\">Color</th>");
+            htmlBuilder.Append("<th style=\"font-size:9px; text-align: center; padding: 4px; border: 1px solid black;\">Marca</th>");
+            htmlBuilder.Append("<th style=\"font-size:9px; text-align: center; padding: 4px; border: 1px solid black;\">Serie</th>");
+            htmlBuilder.Append("<th style=\"font-size:9px; text-align: center; padding: 4px; border: 1px solid black;\">Modelo</th>");
             // Agregar más encabezados según tus necesidades
             htmlBuilder.Append("</tr>");
-
             // Contenido de la tabla
             foreach (var dato in listaDatos)
             {
                 htmlBuilder.Append("<tr>");
-                htmlBuilder.Append($"<td style=\"font-size:10px; border: 1px solid black;\">{dato.Descripcion}</td>");
-                htmlBuilder.Append($"<td style=\"font-size:10px; border: 1px solid black;\">{dato.color}</td>");
-                htmlBuilder.Append($"<td style=\"font-size:10px; border: 1px solid black;\">{dato.marca}</td>");
-                htmlBuilder.Append($"<td style=\"font-size:10px; border: 1px solid black;\">{dato.serie}</td>");
-                htmlBuilder.Append($"<td style=\"font-size:10px; border: 1px solid black;\">{dato.modelo}</td>");
-
+                htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\">{dato.Descripcion}</td>");
+                htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\">{dato.color}</td>");
+                htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\">{dato.marca}</td>");
+                htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\">{dato.serie}</td>");
+                htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\">{dato.modelo}</td>");
                 // Agregar más columnas según las propiedades de tu objeto DatosTabla
                 htmlBuilder.Append("</tr>");
             }
 
             // Cerrar la etiqueta de la tabla
             htmlBuilder.Append("</table>");
+            return htmlBuilder.ToString();
+        }
+        static string GenerateTableHtml(List<Tbl_Cuotas> listaDatos)
+        {
+            List<Tbl_Cuotas> objListOrder = listaDatos.OrderBy(order => order.fecha).ToList();
+            StringBuilder htmlBuilder = new StringBuilder();
+            // Abrir la etiqueta de la tabla con atributos de estilo para bordes y ancho 100%
+            htmlBuilder.Append("<tbody>");
+            // Contenido de la tabla
+            foreach (var dato in objListOrder)
+            {
+                htmlBuilder.Append("<tr>");
+                htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\" colspan=\"2\">{Convert.ToDateTime(dato.fecha.ToString()).ToString("dd-MM-yyyy")}</td>");
+                htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\"></td>");
+                htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\"></td>");
+                htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\"></td>");
+                htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\"></td>");
+                htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\">{Math.Round((decimal)(dato.interes * dato.tasa_cambio), 2)}</td>");
+                htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\">{Math.Round((decimal)dato.interes, 2)}</td>");
+                htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\">{Math.Round((decimal)(dato.abono_capital * dato.tasa_cambio), 2)}</td>");
+                htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\">{Math.Round((decimal)dato.abono_capital, 2)}</td>");
+                htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\">{Math.Round((decimal)(dato.total * dato.tasa_cambio), 2)}</td>");
+                htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\">{Math.Round((decimal)dato.total, 2)}</td>");
+                htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\" colspan=\"2\">{Math.Round((decimal)(dato.capital_restante * dato.tasa_cambio), 2)}</td>");
+                htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\">{Math.Round((decimal)dato.capital_restante, 2)}</td>");
+
+
+                // Agregar más columnas según las propiedades de tu objeto DatosTabla
+                htmlBuilder.Append("</tr>");
+            }
+
+            // Cerrar la etiqueta de la tabla
+            htmlBuilder.Append("</tbody>");
             return htmlBuilder.ToString();
         }
     }
