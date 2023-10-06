@@ -164,6 +164,9 @@ namespace BackgroundJob.Cron.Jobs
                     .Where(cuota => (cuota.pago_contado == null || (cuota.total > cuota.pago_contado ||cuota.pago_contado == null)) && cuota.fecha < DateTime.Now)
                     .ToList();
 
+                double sumaCapitalRestante = (double)cuotas.Sum(cuota => cuota.capital_restante);
+
+
                 foreach (var cuota in cuotas)
                 {
                     //por ejemplo si la cuota es $10 y tiene 5 días de mora el cálculo sería 
@@ -175,7 +178,7 @@ namespace BackgroundJob.Cron.Jobs
                     int diasDeDiferencia = diferencia.Days;
 
 
-                    var montoMora = cuota.total * ((cuota.Transaction_Contratos?.mora/100) ?? 0.005) * 1;//como el cronjob es diario se va cargando mora cada dia
+                    var montoMora = /*cuota.total*/ sumaCapitalRestante * ((cuota.Transaction_Contratos?.mora/100) ?? 0.005) * 1;//como el cronjob es diario se va cargando mora cada dia
                     cuota.mora = cuota.mora + montoMora;
                     cuota.total += cuota.total + montoMora; 
                     

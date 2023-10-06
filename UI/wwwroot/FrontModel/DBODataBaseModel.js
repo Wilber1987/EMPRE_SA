@@ -747,5 +747,9 @@ class Recibos extends EntityClass {
     title = {type: "title", label: "Opciones:"};
 	solo_abono = { type: "checkbox", hiddenInTable: true, require: false };
 	cancelar = { type: "checkbox", hiddenInTable: true, require: false };
+
+    VerRecibo = async () => {
+        return await this.SaveData("PDF/GeneratePdfContract", this)
+    }
 }
 export{Recibos}

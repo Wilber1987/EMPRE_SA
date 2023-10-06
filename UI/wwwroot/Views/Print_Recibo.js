@@ -38,7 +38,7 @@ class Print_Recibo  extends HTMLElement {
             this.entity.id_recibo = params.get('id_Recibo');
         }
         if (this.entity.id_recibo != null && this.entity.id_recibo != undefined) {
-            const contract = await this.entity.VerContrato();
+            const contract = await this.entity.VerRecibo();
             this.shadowRoot?.append(WRender.Create({
                 tagName: "iframe", src: contract.value, style: {
                     width: "100%",
