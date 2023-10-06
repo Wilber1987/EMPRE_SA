@@ -60,7 +60,8 @@ class Transaction_ContratosView extends HTMLElement {
         /**@type  {Catalogo_Cambio_Dolar}*/
         this.tasaActual = this.tasasCambio[0];
         // @ts-ignore
-        const isVehiculo = this.entity.Detail_Prendas?.find(p => p.Catalogo_Categoria.id_categoria == 2);
+        const isVehiculo = this.entity.Transaction_Contratos?.Detail_Prendas?.find(p => p.Catalogo_Categoria.tipo == "Vehículos");
+        console.log(isVehiculo);
         const modelPrendas = new Detail_PrendasModel({
             Detail_Prendas_Vehiculos: {
                 type: 'Model',
@@ -436,94 +437,4 @@ window.addEventListener('load', async () => {
     //
     MainBody.append(new MainContract(contrato))
     //MainBody.append(new MainContract(testData))
-})
-/**@type {ValoracionesTransaction} */
-const testData = new ValoracionesTransaction({
-    "valoracion_compra_cordobas": 10400,
-    "valoracion_compra_dolares": 289.7,
-    "valoracion_empeño_cordobas": 8000,
-    "valoracion_empeño_dolares": 222.84,
-    "tasas_interes": 11,
-    taza_interes_cargos: 9,
-    gestion_crediticia: 1,
-    cuotafija: 100,
-    interes: 100,
-    "plazo": "6",
-    taza_cambio: 36.2,
-    "fecha": "2023-07-16T20:21:50.052Z",
-    "Transaction_Facturas": [{
-        "fecha": "2023-08-16T20:21:50.000Z", "total": "1891.01", "interes": "880.00", "abono_capital": "1011.01", "capital_restante": "6988.99"
-    },
-    {
-        "fecha": "2023-09-16T20:21:50.000Z", "total": "1891.01", "interes": "768.79", "abono_capital": "1122.22", "capital_restante": "5866.76"
-    }, {
-        "fecha": "2023-10-16T20:21:50.000Z", "total": "1891.01", "interes": "645.34", "abono_capital": "1245.67", "capital_restante": "4621.10"
-    },
-    {
-        "fecha": "2023-11-16T20:21:50.000Z", "total": "1891.01", "interes": "508.32", "abono_capital": "1382.69", "capital_restante": "3238.40"
-    },
-    {
-        "fecha": "2023-12-16T20:21:50.000Z", "total": "1891.01", "interes": "356.22", "abono_capital": "1534.79", "capital_restante": "1703.61"
-    }, {
-        "fecha": "2024-01-16T20:21:50.000Z",
-        "total": "1891.01", "interes": "187.40", "abono_capital": "1703.61",
-        "capital_restante": "0.00"
-    }], "Detail_Prendas":
-        [{
-            Descripcion: "Descripcion",
-            modelo: "Modelo",
-            marca: "Marca",
-            serie: "Serie",
-            pprenda: 4000.00,
-            en_manos_de: "acreedor",
-            "Catalogo_Categoria": {
-                "id_categoria": 3, "tipo": "Otros", "descripcion": "otros", "plazo_limite": 6, "prioridad": 3, "filterData": null
-            }, "Transactional_Valoracion": {
-                "id_valoracion": 10, "valoracion_compra_cordobas": "5200.00", "valoracion_compra_dolares": "144.85",
-                "valoracion_empeño_cordobas": "4000.00", "valoracion_empeño_dolares": "111.42", "Descripcion": "TEST", "Serie": "TEST", "Marca": "TEST", "Modelo": "TEST", "Catalogo_Categoria": {
-                    "id_categoria": 3, "tipo": "Otros", "descripcion": "otros", "plazo_limite": 6, "prioridad": 3, "filterData": null
-                }, "Plazo": "6", "Tasa_interes": 234, "Fecha": "2023-05-28", "Tasa_de_cambio": 35.9,
-                "Detail_Valores": { "Valoracion_1": "10000", "dolares_1": 278.5515320334262, "Valoracion_2": "10000", "dolares_2": 278.5515320334262, "Valoracion_3": "10000", "dolares_3": 278.5515320334262 }
-            }
-        }, {
-            Descripcion: "Descripcion",
-            modelo: "Modelo",
-            marca: "Marca",
-            serie: "Serie",
-            pprenda: 4000.00,
-            en_manos_de: "acreedor",
-            "Catalogo_Categoria": {
-                "id_categoria": 3, "tipo": "Otros", "descripcion": "otros", "plazo_limite": 6, "prioridad": 3, "filterData": null
-            }, "Transactional_Valoracion": {
-                "id_valoracion": 10, "valoracion_compra_cordobas": "5200.00", "valoracion_compra_dolares": "144.85",
-                "valoracion_empeño_cordobas": "4000.00", "valoracion_empeño_dolares": "111.42", "Descripcion": "TEST 2", "Serie": "TEST 2", "Marca": "TEST 2", "Modelo": "TEST", "Catalogo_Categoria": {
-                    "id_categoria": 3, "tipo": "Otros", "descripcion": "otros", "plazo_limite": 6, "prioridad": 3, "filterData": null
-                },
-                "Plazo": "6", "Tasa_interes": 234, "Fecha": "2023-05-28", "Tasa_de_cambio": 35.9,
-                "Detail_Valores": { "Valoracion_1": "10000", "dolares_1": 278.5515320334262, "Valoracion_2": "10000", "dolares_2": 278.5515320334262, "Valoracion_3": "10000", "dolares_3": 278.5515320334262 }
-            }
-        }],
-    "Catalogo_Clientes": {
-        "codigo_cliente": 3193, "primer_nombre": "WILFREDO",
-        "segundo_nombre": "",
-        "primer_apellido": "ALEMAN",
-        "segundo_apellidio": "PAVON",
-        "identificacion": "043-180962-0000J",
-        "sexo": "Femenino  ",
-        "fecha_nacimiento": "1962-09-18T00:00:00",
-        "id_departamento": 6, "id_municipio": 10,
-        "id_tipo_identificacion": 1,
-        "correo": null, "telefono": "86087647  ", "direccion": "rpt guillermo salazar", "hora": "08:44:43",
-        "fecha": "2022-06-15T00:00:00", "observaciones": null, "estado_civil": "Casado (a). ", "tipo_firma": "Ilegible",
-        "valor_cliente": "Más prestamos", "operadora_celular": "Claro", /*"valor_interes": 0.02,*/ "solo_acreedor": "No ", "promedio": null,
-        "Catalogo_Clasificacion_Cliente": { "id_clasificacion": 2, "Descripcion": "MUY BUENO", "Estado": "ACTIVO", "porcentaje": null, "Catalogo_Clientes": null, "filterData": null },
-        "Catalogo_Clasificacion_Interes": { "id_clasificacion_interes": 2, "Descripcion": "RANGO 2", "Estado": "ACTIVO", "porcentaje": 2, "Catalogo_Clientes": null, "filterData": null },
-        "Catalogo_Tipo_Identificacion": { "id_tipo_identificacion": 1, "Descripcion": "CÉDULA", "Estado": "ACTIVO", "filterData": null },
-        "Catalogo_Profesiones": { "id_profesion": 49, "nombre": "Albañil", "filterData": null }, "Condicion_Laboral_Cliente": null,
-        "Catalogo_Municipio": { "id_municipio": 10, "nombre": "San Marcos", "id_departamento": 6, "Catalogo_Departamento": null, "Catalogo_Inversores": null, "filterData": null },
-        "Catalogo_Departamento": {
-            "id_departamento": 6, "nombre": "Carazo", "id_nacionalidad": 1, "ponderacion": 20, "puntaje": 2, "clasificacion": "MEDIO",
-            "Catalogo_Nacionalidad": null, "Catalogo_Municipio": null, "filterData": null
-        }, "id_profesion": 49, "tipoc": 1, "id_clasificacion": 2, "id_clasificacion_interes": 2, "Transaction_Contratos": null, "filterData": null
-    }
 })

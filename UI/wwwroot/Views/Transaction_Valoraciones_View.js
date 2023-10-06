@@ -14,7 +14,7 @@ import { AmoritizationModule } from "../modules/AmortizacionModule.js";
 import { clientSearcher, ValoracionesSearch } from "../modules/SerchersModules.js";
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
-class Transaction_Valoraciones_View extends HTMLElement {
+class Transaction_Valoraciones_View extends HTMLElement {   
     // @ts-ignore
     constructor(props) {
         super();
@@ -22,7 +22,11 @@ class Transaction_Valoraciones_View extends HTMLElement {
         this.TabContainer = WRender.Create({ className: "TabContainer", id: 'TabContainer' });
         this.Manager = new ComponentsManager({ MainContainer: this.TabContainer, SPAManage: false });
         this.valoracionesContainer = WRender.Create({ className: "valoraciones-container" });
-        this.append(this.CustomStyle);
+        this.append(this.CustomStyle);        
+        /**
+         * @type {Catalogo_Clientes}
+         */
+        // @ts-ignore
         this.Cliente = {}
         this.valoresObject = {
             Valoracion_1: 0, dolares_1: 0,
@@ -436,6 +440,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
         }))
     }
     selectCliente = (/**@type {Catalogo_Clientes} */ selectCliente) => {
+        console.log(selectCliente);
         this.Cliente = selectCliente;
         if (this.valoracionesForm != undefined) {
             this.valoracionesForm.FormObject.Tasa_interes = this.getTasaInteres();
@@ -545,11 +550,11 @@ class Transaction_Valoraciones_View extends HTMLElement {
             // @ts-ignore
             taza_cambio: this.tasasCambio[0].valor_de_compra,
             taza_interes_cargos: this.InteresBase,
-            Catalogo_Clientes: this.Cliente,
+            Catalogo_Clientes: this.Cliente.codigo_cliente != undefined ? this.Cliente : this.GenerateClient(),
             gestion_crediticia: this.Cliente.Catalogo_Clasificacion_Interes?.porcentaje ?? 6,
         });       
         AmoritizationModule.calculoAmortizacion(contrato);
-        console.log(AmoritizationModule.calculoAmortizacion(contrato));
+        //console.log(AmoritizationModule.calculoAmortizacion(contrato));
 
         if (this.CuotasTable != undefined) {
             this.CuotasTable.Dataset = contrato.Transaction_Contratos.Tbl_Cuotas;
@@ -561,6 +566,26 @@ class Transaction_Valoraciones_View extends HTMLElement {
             contrato.Transaction_Contratos.valoracion_empeño_cordobas,
             contrato.Transaction_Contratos.valoracion_empeño_dolares);
         return contrato;
+    }
+    GenerateClient() {
+      return  { 
+            "Catalogo_Clasificacion_Interes": {
+                "id_clasificacion_interes": 6,
+                "Descripcion": "RANGO 6",
+                "Estado": "ACTIVO",
+                "porcentaje": 6,
+                "Catalogo_Clientes": null,
+                "filterData": null
+            },
+            "Catalogo_Clasificacion_Cliente": {
+                "id_clasificacion": 6,
+                "Descripcion": "NO DEFINIDO",
+                "Estado": "ACTIVO",
+                "porcentaje": null,
+                "Catalogo_Clientes": null,
+                "filterData": null
+            }
+        }
     }
     CustomStyle = css`
         .valoraciones-container{

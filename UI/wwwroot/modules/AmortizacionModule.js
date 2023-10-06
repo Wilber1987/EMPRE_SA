@@ -33,14 +33,14 @@ class AmoritizationModule {
         contrato.Transaction_Contratos.valoracion_empeño_cordobas = AmoritizationModule.round(WArrayF.SumValAtt(contrato.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion), "valoracion_empeño_cordobas"));
         contrato.Transaction_Contratos.valoracion_empeño_dolares = AmoritizationModule.round(WArrayF.SumValAtt(contrato.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion), "valoracion_empeño_dolares"));
         contrato.Transaction_Contratos.taza_interes_cargos = contrato.Transaction_Contratos.taza_interes_cargos ?? 0.9
-        contrato.Transaction_Contratos.tasas_interes = (parseFloat(contrato.Transaction_Contratos.Catalogo_Clientes.Catalogo_Clasificacion_Interes.porcentaje) + contrato.Transaction_Contratos.taza_interes_cargos) / 100;
+        contrato.Transaction_Contratos.tasas_interes = (parseFloat(contrato.Transaction_Contratos?.Catalogo_Clientes?.Catalogo_Clasificacion_Interes?.porcentaje) + contrato.Transaction_Contratos?.taza_interes_cargos) / 100;
         contrato.Transaction_Contratos.plazo = contrato.Transaction_Contratos.plazo ?? 1;
         contrato.Transaction_Contratos.fecha = new Date(contrato.Transaction_Contratos.fecha);
         contrato.Transaction_Contratos.Catalogo_Clientes = contrato.Transaction_Contratos.Catalogo_Clientes;
         //contrato.fecha = new Date(contrato.Transaction_Contratos.fecha)
 
         contrato.Transaction_Contratos.Tbl_Cuotas = new Array();       
-        contrato.Transaction_Contratos.gestion_crediticia = contrato.Transaction_Contratos.Catalogo_Clientes.Catalogo_Clasificacion_Interes.porcentaje ?? 6;
+        contrato.Transaction_Contratos.gestion_crediticia = contrato.Transaction_Contratos.Catalogo_Clientes?.Catalogo_Clasificacion_Interes?.porcentaje ?? 6;
 
         AmoritizationModule.crearCuotas(contrato);
 
