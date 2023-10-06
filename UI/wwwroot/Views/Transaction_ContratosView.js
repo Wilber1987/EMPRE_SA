@@ -29,8 +29,7 @@ class Transaction_ContratosView extends HTMLElement {
         this.attachShadow({ mode: 'open' });
         //models
         this.entity = new ValoracionesTransaction(props?.Entity) ?? new ValoracionesTransaction();
-        //this.entity = testData
-        AmoritizationModule.calculoAmortizacion(this.entity);
+        //this.entity = testData        
         this.componentsModel = new Transaction_ContratosModel();
         this.OptionContainer = WRender.Create({ className: "OptionContainer" });
         this.TabContainer = WRender.Create({ className: "TabContainer", id: 'TabContainer' });
@@ -363,8 +362,10 @@ export { Transaction_ContratosView }
 class MainContract extends HTMLElement {
     constructor(contrato) {
         super();
-        AmoritizationModule.calculoAmortizacion(contrato);
-        if (contrato.Transaction_Contratos.Detail_Prendas != null) {
+       // AmoritizationModule.calculoAmortizacion(contrato);
+        console.log(contrato);
+        if (contrato.Transaction_Contratos != null) {
+            AmoritizationModule.calculoAmortizacion(contrato);
             this.ElementsNav.unshift({
                 name: "Contrato valorado", action: () => this.Manager.NavigateFunction("contrato-valorado", new Transaction_ContratosView({ Entity: contrato }))
             });
@@ -382,7 +383,9 @@ class MainContract extends HTMLElement {
     ElementsNav = [
         {
             name: "Contratos", action: () => {
-                this.Manager.NavigateFunction("contratos", contratosSearcher())
+                this.Manager.NavigateFunction("contratos", contratosSearcher((contrato)=>{
+                    location.href = "/PagesViews/Transaction_ContratosViewDetail?numero_contrato="+ contrato.numero_contrato;
+                }))
             }
         }, {
             name: "Nuevo Contrato", action: () => {

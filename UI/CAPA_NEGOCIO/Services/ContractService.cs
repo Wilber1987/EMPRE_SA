@@ -18,7 +18,7 @@ namespace CAPA_NEGOCIO.Services
         {
             public string Title { get; set; }
             public string Content { get; set; }
-        }    
+        }
 
         public static async Task<byte[]> GeneratePdfFromRazorTemplateAsync<TModel>(string razorTemplate, TModel model)
         {
@@ -40,7 +40,13 @@ namespace CAPA_NEGOCIO.Services
 
         public static void generaPDF(Transaction_Contratos model, String rutaArchivo)
         {
-            var renderedHtml = RenderTemplate(Path.Combine(System.IO.Path.GetFullPath("../UI/Pages/Contracts"), rutaArchivo), model);
+            var templatePath = Path.Combine(System.IO.Path.GetFullPath("../UI/Pages/Contracts"), rutaArchivo);
+            var templateContent = File.ReadAllText(templatePath);
+
+            var renderedHtml = RenderTemplate(templateContent, model);
+
+            renderedHtml = RenderTemplate(renderedHtml, model.Catalogo_Clientes);
+            
 
             // Generar el PDF
             var pdfFilePath = Path.Combine(System.IO.Path.GetFullPath("../UI/wwwroot/Contracts"), "output.pdf");
@@ -48,13 +54,9 @@ namespace CAPA_NEGOCIO.Services
 
         }
 
-         public static string RenderTemplate(string rutaArchivo, object model)
+        public static string RenderTemplate(string templateContent, object model)
         {
-            var templatePath = rutaArchivo;
-            var templateContent = File.ReadAllText(templatePath);
-            
             PropertyInfo[] properties = model.GetType().GetProperties();
-
             string renderedTemplate = templateContent;
             foreach (PropertyInfo property in properties)
             {
@@ -65,11 +67,14 @@ namespace CAPA_NEGOCIO.Services
                 {
                     renderedTemplate = renderedTemplate.Replace(placeholder, propertyValue.ToString());
                 }
+                else
+                {
+                    renderedTemplate = renderedTemplate.Replace(placeholder, "");
+                }
             }
-            
             return renderedTemplate;
         }
-       
+
         static void GeneratePdfFromHtml(string html, string outputPath)
         {
             using (var stream = new FileStream(outputPath, FileMode.Create))
@@ -92,7 +97,7 @@ namespace CAPA_NEGOCIO.Services
             }
         }
 
-       static string GenerateTableHtml(List<Detail_Prendas> listaDatos)
+        static string GenerateTableHtml(List<Detail_Prendas> listaDatos)
         {
             StringBuilder htmlBuilder = new StringBuilder();
 

@@ -62,5 +62,10 @@ class Transaction_ContratosViewDetail extends HTMLElement {
 }
 customElements.define('w-component', Transaction_ContratosViewDetail);
 export { Transaction_ContratosViewDetail }
-// @ts-ignore
-window.addEventListener('load', async () => { MainBody.append(new Transaction_ContratosViewDetail(new Transaction_Contratos())) })
+
+window.addEventListener('load', async () => {
+    // @ts-ignore
+    MainBody.append(new Transaction_ContratosViewDetail(new ValoracionesTransaction({
+        Transaction_Contratos: new Transaction_Contratos()
+    })))
+})
