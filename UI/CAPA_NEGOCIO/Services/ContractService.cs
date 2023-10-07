@@ -10,6 +10,7 @@ using DataBaseModel;
 using System.Text;
 using System.Reflection;
 using Model;
+using CAPA_DATOS.Services;
 
 namespace CAPA_NEGOCIO.Services
 {
@@ -39,37 +40,69 @@ namespace CAPA_NEGOCIO.Services
         }
 
 
-        public static void generaPDF(Transaction_Contratos model, String rutaArchivo)
+        public static void generaPDF(Transaction_Contratos model)
         {
+            string rutaArchivo = "contrato_empeno.cshtml";
+            if (model.tipo.Equals(Contratos_Type.EMPENO_VEHICULO.ToString()))
+            {
+                rutaArchivo = "contrato_empeno_vehiculo.cshtml";
+            } else if (model.tipo.Equals(Contratos_Type.PRESTAMO.ToString()))
+            {
+                rutaArchivo = "contrato_prestamo.cshtml";
+            }
             var templatePath = Path.Combine(System.IO.Path.GetFullPath("../UI/Pages/Contracts"), rutaArchivo);
             var templateContent = File.ReadAllText(templatePath);
+
+             templateContent = templateContent.Replace("{{cuotafija}}", Math.Round((decimal)model.cuotafija, 2).ToString())
+                .Replace("{{cuotafija_label}}", NumberUtility.NumeroALetras(model.cuotafija))
+                .Replace("{{cuotafija_dolares}}", Math.Round((decimal)model.cuotafija_dolares, 2).ToString())
+                .Replace("{{cuotafija_dolares_label}}", NumberUtility.NumeroALetras(model.cuotafija_dolares))
+                .Replace("{{valoracion_empeño_cordobas}}", Math.Round((decimal)model.valoracion_empeño_cordobas, 2).ToString())
+                .Replace("{{valoracion_empeño_cordobas_label}}", NumberUtility.NumeroALetras(model.valoracion_empeño_cordobas))
+                .Replace("{{valoracion_empeño_dolares}}", Math.Round((decimal)model.valoracion_compra_dolares, 2).ToString())
+                .Replace("{{valoracion_empeño_dolares_label}}", NumberUtility.NumeroALetras(model.valoracion_compra_dolares));
 
             var renderedHtml = RenderTemplate(templateContent, model);
 
             var configuraciones = new Transactional_Configuraciones().GetIntereses();
-            var interes = configuraciones.Select(i => Convert.ToInt32(i.Valor)).ToArray().Sum();
+            //var interes = configuraciones.Select(i => Convert.ToInt32(i.Valor)).ToArray().Sum();
 
             renderedHtml = RenderTemplate(renderedHtml, model.Catalogo_Clientes)
                 .Replace("{{municipio}}", model.Catalogo_Clientes.Catalogo_Municipio?.nombre)
                 .Replace("{{departamento}}", model.Catalogo_Clientes.Catalogo_Departamento?.nombre)
                 .Replace("{{tabla_articulos}}", GenerateTableHtml(model.Detail_Prendas))
+
                 /*INTERESES*/
-                .Replace("{{interes_inicial}}", interes.ToString())
-                .Replace("{{interes_inicial_label}}", "")
+                .Replace("{{interes_inicial}}", model.Catalogo_Clientes.Catalogo_Clasificacion_Interes?.porcentaje.ToString() ?? "6")
+                .Replace("{{interes_inicial_label}}", NumberUtility.NumeroALetras(
+                    Convert.ToDecimal(model.Catalogo_Clientes.Catalogo_Clasificacion_Interes?.porcentaje.ToString() ?? "6")))
+
                 .Replace("{{interes_gastos_administrativos}}",
                     configuraciones.Find(c => c.Nombre.Equals(InteresesPrestamosEnum.GASTOS_ADMINISTRATIVOS.ToString()))?.Valor)
-                .Replace("{{interes_gastos_administrativos_label}}", "")
+                .Replace("{{interes_gastos_administrativos_label}}",
+                    NumberUtility.NumeroALetras(Convert.ToDecimal(configuraciones.Find(c =>
+                    c.Nombre.Equals(InteresesPrestamosEnum.GASTOS_ADMINISTRATIVOS.ToString()))?.Valor)))
+
                 .Replace("{{interes_gastos_legales}}",
-                    configuraciones.Find(c => c.Nombre.Equals(InteresesPrestamosEnum.GASTOS_LEGALES.ToString()))?.Valor)
-                .Replace("{{interes_comisiones_label}}", "")
+                    configuraciones.Find(c => c.Nombre.Equals(InteresesPrestamosEnum.GASTOS_ADMINISTRATIVOS.ToString()))?.Valor)
+                .Replace("{{interes_gastos_legales_label}}", NumberUtility.NumeroALetras(Convert.ToDecimal(configuraciones.Find(c =>
+                    c.Nombre.Equals(InteresesPrestamosEnum.GASTOS_ADMINISTRATIVOS.ToString()))?.Valor)))
+
+                .Replace("{{interes_comisiones_label}}", NumberUtility.NumeroALetras(Convert.ToDecimal(configuraciones.Find(c =>
+                    c.Nombre.Equals(InteresesPrestamosEnum.COMISIONES.ToString()))?.Valor)))
                 .Replace("{{interes_comisiones}}",
                     configuraciones.Find(c => c.Nombre.Equals(InteresesPrestamosEnum.COMISIONES.ToString()))?.Valor)
-                .Replace("{{interes_mantenimiento_valor_label}}", "")
+
+                .Replace("{{interes_mantenimiento_valor_label}}", NumberUtility.NumeroALetras(Convert.ToDecimal(configuraciones.Find(c =>
+                    c.Nombre.Equals(InteresesPrestamosEnum.MANTENIMIENTO_VALOR.ToString()))?.Valor)))
                 .Replace("{{interes_mantenimiento_valor}}",
                     configuraciones.Find(c => c.Nombre.Equals(InteresesPrestamosEnum.MANTENIMIENTO_VALOR.ToString()))?.Valor)
-                .Replace("{{interes_demas_cargos_label}}", "")
+
+                .Replace("{{interes_demas_cargos_label}}", NumberUtility.NumeroALetras(Convert.ToDecimal(configuraciones.Find(c =>
+                    c.Nombre.Equals(InteresesPrestamosEnum.GESTIONES_CREDITICIAS.ToString()))?.Valor)))
                 .Replace("{{interes_demas_cargos}}",
                     configuraciones.Find(c => c.Nombre.Equals(InteresesPrestamosEnum.GESTIONES_CREDITICIAS.ToString()))?.Valor)
+
                 .Replace("{{dias}}", DateTime.Now.Day.ToString())
                 .Replace("{{mes}}", DateTime.Now.Month.ToString())
                 .Replace("{{anio}}", DateTime.Now.Year.ToString())
@@ -164,19 +197,19 @@ namespace CAPA_NEGOCIO.Services
             foreach (var dato in objListOrder)
             {
                 htmlBuilder.Append("<tr>");
-                htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\" colspan=\"2\">{Convert.ToDateTime(dato.fecha.ToString()).ToString("dd-MM-yyyy")}</td>");
-                htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\"></td>");
-                htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\"></td>");
-                htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\"></td>");
-                htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\"></td>");
-                htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\">{Math.Round((decimal)(dato.interes * dato.tasa_cambio), 2)}</td>");
-                htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\">{Math.Round((decimal)dato.interes, 2)}</td>");
-                htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\">{Math.Round((decimal)(dato.abono_capital * dato.tasa_cambio), 2)}</td>");
-                htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\">{Math.Round((decimal)dato.abono_capital, 2)}</td>");
-                htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\">{Math.Round((decimal)(dato.total * dato.tasa_cambio), 2)}</td>");
-                htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\">{Math.Round((decimal)dato.total, 2)}</td>");
-                htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\" colspan=\"2\">{Math.Round((decimal)(dato.capital_restante * dato.tasa_cambio), 2)}</td>");
-                htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\">{Math.Round((decimal)dato.capital_restante, 2)}</td>");
+                htmlBuilder.Append($"<td class=\"desc\" colspan=\"2\">{Convert.ToDateTime(dato.fecha.ToString()).ToString("dd-MM-yyyy")}</td>");
+                htmlBuilder.Append($"<td class=\"val\"></td>");
+                htmlBuilder.Append($"<td class=\"val\"></td>");
+                htmlBuilder.Append($"<td class=\"val\"></td>");
+                htmlBuilder.Append($"<td class=\"val\"></td>");
+                htmlBuilder.Append($"<td class=\"val\">{Math.Round((decimal)(dato.interes * dato.tasa_cambio), 2)}</td>");
+                htmlBuilder.Append($"<td class=\"val\">{Math.Round((decimal)dato.interes, 2)}</td>");
+                htmlBuilder.Append($"<td class=\"val\">{Math.Round((decimal)(dato.abono_capital * dato.tasa_cambio), 2)}</td>");
+                htmlBuilder.Append($"<td class=\"val\">{Math.Round((decimal)dato.abono_capital, 2)}</td>");
+                htmlBuilder.Append($"<td class=\"val\">{Math.Round((decimal)(dato.total * dato.tasa_cambio), 2)}</td>");
+                htmlBuilder.Append($"<td class=\"val\">{Math.Round((decimal)dato.total, 2)}</td>");
+                htmlBuilder.Append($"<td class=\"val\">{Math.Round((decimal)(dato.capital_restante * dato.tasa_cambio), 2)}</td>");
+                htmlBuilder.Append($"<td class=\"val\">{Math.Round((decimal)dato.capital_restante, 2)}</td>");
 
 
                 // Agregar más columnas según las propiedades de tu objeto DatosTabla
