@@ -31,17 +31,17 @@ namespace Transactions
             {
 
                 var user = AuthNetCore.User(token);
-                var  cuentaDestino= new Catalogo_Cuentas()
+                var cuentaDestino = new Catalogo_Cuentas()
                 {
                     id_cuentas = this.Catalogo_Cuentas_Destino?.id_cuentas
                 }.Find<Catalogo_Cuentas>();
 
-                var  cuentaOrigen = new Catalogo_Cuentas()
+                var cuentaOrigen = new Catalogo_Cuentas()
                 {
                     id_cuentas = this.Catalogo_Cuentas_Origen?.id_cuentas
                 }.Find<Catalogo_Cuentas>();
 
-                if (!(((bool)cuentaDestino.permite_cordobas && (bool)cuentaOrigen.permite_cordobas) || 
+                if (!(((bool)cuentaDestino.permite_cordobas && (bool)cuentaOrigen.permite_cordobas) ||
                     ((bool)cuentaDestino.permite_dolares && (bool)cuentaOrigen.permite_dolares)))
                 {
                     return new ResponseService()
@@ -121,7 +121,7 @@ namespace Transactions
                     BeginGlobalTransaction();
                     cuentaDestino.Update();
                     cuentaOrigen.Update();
-                    var result = encabezado.Save();                    
+                    var result = encabezado.Save();
                     CommitGlobalTransaction();
                     return new ResponseService()
                     {
