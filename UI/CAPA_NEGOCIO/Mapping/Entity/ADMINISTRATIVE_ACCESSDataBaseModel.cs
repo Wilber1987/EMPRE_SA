@@ -52,6 +52,16 @@ namespace DataBaseModel
         MORA_CONTRATOS_EMP
     }
 
+    public enum InteresesPrestamosEnum
+    {       
+        GASTOS_ADMINISTRATIVOS,
+        COMISIONES,
+        MANTENIMIENTO_VALOR,
+        GASTOS_LEGALES,
+        GESTIONES_CREDITICIAS
+    }
+
+
     public enum ConfiguracionesBeneficiosEnum
     {
         BENEFICIO_VENTA_ARTICULO_COMPRADO, BENEFICIO_VENTA_ARTICULO_EMPENO

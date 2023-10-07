@@ -71,15 +71,18 @@
       por brevedad en lo sucesivo del presente contrato se le podrá denominar el ACREEDOR; siendo el domicilio: Del
       Instituto Juan XXIII, 20 varas al Oeste,
       en el municipio de San Marcos, Departamento de Carazo, Dirección electrónica: empresociedadanonima@gmail.com; y
-      por otra parte el / la señor (a) : {{primer_nombre}}  {{segundo_nombre}}  {{primer_apellido}}  {{segundo_apellidio}} mayor de edad,
-      con número de cédula: {{identificacion}} con domicilio: {{direccion}} , Estado civil: {{estado_civil}} quien habita en el
+      por otra parte el / la señor (a) : {{primer_nombre}} {{segundo_nombre}} {{primer_apellido}} {{segundo_apellidio}}
+      mayor de edad,
+      con número de cédula: {{identificacion}} con domicilio: {{direccion}} , Estado civil: {{estado_civil}} quien
+      habita en el
       municipio de: {{municipio}}, Departamento de {{departamento}},
       a quien en sucesivo se le denominará el "DEUDOR", hemos convenido en celebrar el presente "CONTRATO DE MUTUO
       GARANTIZADO CON PRENDA COMERCIAL" , el cual se regirá conforme las cláusulas siguientes:
    </p>
    <p style="text-align: justify; font-size:9.5px;">
       <u>1. PRIMERA (MONTO DE EMPEÑO):</u> El deudor confiesa tener recibido de parte del acreedor, la cantidad de: C$
-      {{monto}} , ( ) equivalente a moneda de los Estados Unidos de América: $ {{valor_dolar}}, ( ), Según el valor de
+      {{valoracion_empeño_cordobas}}, ( ) equivalente a moneda de los Estados Unidos de América: $
+      {{valoracion_empeño_dolares}}, ( ), Según el valor de
       la compra del dólar a la fecha de hoy de:{{taza_cambio}} C$
    </p>
    <p style="text-align: justify; font-size:9.5px;">
@@ -109,9 +112,9 @@
       <u>4. CUARTA (PLAZO Y FORMA DE PAGO):</u> El deudor decide en cuantas cuotas mensuales cancela su empeño, siendo
       el plazo máximo de 3 meses para artículos electrónicos, 6 meses
       para artículos no electrónicos y 12 meses para automotores; los pagos se realizarán en cuotas fijas MENSUALES de
-      C$ {{cuota_fija_inicial}}, ( ), según el cambio del córdoba a dólar a la fecha de hoy de: C$ {{taza_cambio}}
+      C$ {{cuotafija}}, ( ), según el cambio del córdoba a dólar a la fecha de hoy de: C$ {{taza_cambio}}
       que serán modificables al tipo de cambio del dólar, en la fecha que el cliente haga efectivo su pago. Los pagos se
-      realizarán en córdobas o el equivalente a $ {{valor_dolar}} , ( ) Estadounidenses,
+      realizarán en córdobas o el equivalente a $ {{cuotafija_dolares}} , ( ) Estadounidenses,
       Según tasa de cambio del Banco Central de Nicaragua, iniciando la primera cuota mensual el día y la última cuota
       mensual el día El deudor acepta realizar sus pagos mensuales en las oficinas del acreedor,
       los pagos serán todos en cuotas fijas mensuales a como se muestra en la tabla de amortización de deuda por
@@ -127,19 +130,25 @@
    </p>
    <p style="text-align: justify; font-size:9.5px;">
       <u>5. QUINTA (INTERES CORRIENTE Y DEMÁS CARGOS MENSUALES A PAGAR EN RELACION CON LO PACTADO):</u> El monto de
-      empeño devengará una tasa de interés corriente inicial del uno por ciento (1%) sobre saldo,
-      la cual será verificable mensualmente de acuerdo a la tasa promedio ponderada que emita el Banco Central de
-      Nicaragua. Los demás cargos a pagar en relación con lo pactado bajo lo cual EMPRE S.A estipula lo siguiente:
-      Cinco por ciento (5%) de Gastos administrativos, uno por ciento (1%) de gastos legales, uno por ciento (1%) de
-      Comisiones, uno por ciento (1%) de mantenimiento al valor de la prenda, 0 de Gestiones crediticias;
-      Todos estos demás cargos son aplicados sobre el saldo actual.
+      empeño devengará una tasa de interés corriente inicial del {{interes_inicial_label}} por ciento
+      ({{interes_inicial}}%) sobre saldo, la cual será
+      verificable mensualmente de acuerdo con la tasa promedio ponderada que emita el Banco Central de Nicaragua. Los
+      demás cargos que pagar en relación con lo pactado bajo lo cual EMPRE S. A estipula lo siguiente:
+      {{interes_gastos_administrativos_label}} por ciento
+      ({{interes_gastos_administrativos}}%)
+      de Gastos administrativos, {{interes_gastos_legales_label}} por ciento ({{interes_gastos_legales}}%) de gastos
+      legales, {{interes_comisiones_label}} por ciento ({{interes_comisiones}}%) de Comisiones,
+      {{interes_mantenimiento_valor_label}} por
+      ciento ({{interes_mantenimiento_valor}}%) de mantenimiento al valor de la prenda,
+      {{interes_demas_cargos_label}} porciento ({{interes_demas_cargos}}%) de Gestiones crediticias; Todos estos
+      demás cargos son aplicados sobre el monto restante.
    </p>
    <p style="text-align: justify; font-size:9.5px;">
       <u>6. SEXTA ( MORA):</u> El deudor podrá realizar el pago de su cuota anticipada a su fecha de pago, con el fin de
       evitarse mora; En caso que el Deudor no pague en la fecha de cada cuota mensual,
       automáticamente quedará constituido en mora y por el sólo hecho de incumplimiento, y desde esa fecha hasta el pago
       efectivo de su cuota, reconocerá al acreedor un factor mora de aplicado a la cuota fija,
-      equivalente a C$,( ) por cada día transcurrido en mora hasta el pago efectivo de su cuota.
+      equivalente a {{mora}}%, por cada día transcurrido en mora hasta el pago efectivo de su cuota.
    </p>
    <p style="text-align: justify; font-size:9.5px;"> <u> 7. SEPTIMA (PÉRDIDA DE LA(S) GARANTIA(S)):</u> El deudor debe
       realizar sus pagos mensuales, pero si llegase a 21 días en mora el deudor pierde total derecho sobre la (s)
@@ -207,196 +216,137 @@
       con los términos relacionados, Y leído el presente contrato por las partes lo encontramos conforme, aprobamos,
       ratificamos y firmamos, en la ciudad de San Marcos a los {{dias}} dias del mes {{mes}} del año {{anio}}.
    </p><br></br>
-   <table border="0" cellspacing="0" cellpadding="0" width="1800px" style="width: 1400px; margin-left:30px">
-      <tbody>
-         <tr style="height:25.45pt">
-            <td width="84" rowspan="2" style="width:73.3pt;border-left:solid black 1px;border-top:solid black 1px;">
-               <span lang="ES-NI"
-                  style="font-size:9.0pt;font-family:Times New Roman,serif;color:black; margin:20px">CAPITAL PRESTADO
-                  C$</span>
+   <style>
+      td { border: 1px black solid;}
+   </style>
+   <table style="width: 100%;font-size:9px !important; border-collapse: collapse;">
+      <thead>
+         <tr>
+            <td colspan="2">
+               <span lang="ES-NI">CAPITAL PRESTADO C$</span>
             </td>
-            <td width="66" rowspan="2" style="width:49.6pt;border-top:solid black 1px;border-left:solid black 1px;">
-               <span lang="ES-NI" style="font-size:9.0pt;font-family:Times New Roman,serif;color:black">C$</span>
+            <td colspan="2">
+               <span lang="ES-NI">C$ {{valoracion_empeño_cordobas}}</span>
             </td>
-            <td width="459" colspan="9" rowspan="4"
-               style="width:394.3pt;border:solid black 1px;border-left:solid black 1px;border-bottom:solid black 1px;border-right:solid black 1px;">
-               <span lang="ES-NI" style="font-size:9.0pt;font-family:Times New Roman,serif;color:black">
+            <td colspan="7">
+               <span lang="ES-NI">
                   &nbsp;
                </span>
-               <span lang="ES-NI" style="font-size:9.0pt;font-family:Times New Roman,serif;color:black">
+               <span lang="ES-NI">
                   &nbsp;
                </span>
-               <span lang="ES-NI"
-                  style="font-size:9.0pt;font-family:Times New Roman,serif;color:black;width:100%;text-align:center;">TABLA
-                  DE AMORTIZACION DE DEUDA POR GARANTIA
-                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PRENDARIA</span>
+               <span lang="ES-NI">TABLA DE AMORTIZACION DE DEUDA POR GARANTIA PRENDARIA</span>
 
             </td>
-            <td width="91" colspan="2" rowspan="2"
-               style="width:68.2pt;border-top:solid black 1px;border-bottom:solid black 1px;border-left:solid black 1px;">
-               <span lang="ES-NI" style="font-size:9.0pt;font-family:Times New Roman,serif;color:black">CUOTA C$</span>
+            <td colspan="2">
+               <span lang="ES-NI">CUOTA C$</span>
             </td>
-            <td width="65" colspan="2" rowspan="2"
-               style="width:48.7pt;border:solid black 1px;border-left:solid black 1px;border-bottom:solid black 1px;">
-               <span lang="ES-NI" style="font-size:9.0pt;font-family:Times New Roman,serif;color:black">C$</span>
+            <td colspan="2">
+               <span lang="ES-NI">C$ {{cuotafija}}</span>
             </td>
          </tr>
-
-         <tr style="height:25.45pt">
-            <td width="84" rowspan="2" style="width:63.3pt;border-left:solid black 1px;border-top:solid black 1px;border-top:solid black 1px;padding:0cm 5px 0cm 5px;height:
-                 25.45pt">
-               $
+         <tr>
+            <td colspan="2"> CAPITAL PRESTADO $</td>
+            <td colspan="2"> $ {{valoracion_empeño_dolares}}</td>
+            <td colspan="2">
+               <span lang="ES-NI">CUOTA FIJA<br>$</br></span>
             </td>
-            <td width="66" rowspan="2"
-               style="width:49.6pt;border-left:solid black 1px;border-top:solid black 1px;font-size:9.0pt;">
-               $
-            </td>
-            <td width="91" colspan="2" rowspan="2"
-               style="width:68.2pt;border-top:solid black 1px;border-left:solid black 1px;">
-               <span lang="ES-NI" style="font-size:9.0pt;font-family:Times New Roman,serif;color:black">CUOTA FIJA
-                  <br>$</br></span>
-            </td>
-            <td width="65" colspan="2" rowspan="2"
-               style="width:48.7pt;border-top:solid black 1px;border-left:solid black 1px;border-right:solid black 1px;">
-               $ {{cuotafija}}
-            </td>
-
+            <td colspan="2">$ {{cuotafija_dolares}}</td>
          </tr>
-
-         <tr style="height:25.45pt">
-            <td width="84" rowspan="2"
-               style="width:63.3pt;border-left:solid black 1px;border-left:solid black 1px;border-top:solid black 1px;padding:0cm 5px 0cm 5px;height:25.45pt">
-               <span lang="ES-NI" style="font-size:9.0pt;font-family:Times New Roman,serif;">PLAZO PARA CANCELAR</span>
+         <tr>
+            <td>
+               <span lang="ES-NI" style="font-size:9px;font-family:Times New Roman,serif;">PLAZO PARA CANCELAR</span>
             </td>
-            <td width="66" rowspan="2" style="width:49.6pt;border-left:solid black 1px;border-top:solid black 1px;">
-               <p style="font-size:10px">{{plazo_cancelar}}</p>
+            <td>
+               <p style="font-size:10px">{{plazo}} mes(es)</p>
             </td>
-            <td width="81" colspan="2" rowspan="2"
-               style="width:60.75pt;border-left:solid black 1px;border-top:solid black 1px;">
+            <td colspan="2">
                <p style="margin-bottom:0cm;text-align:center;line-height:normal">
-                  <span lang="ES-NI" style="font-size:9.0pt;font-family:Times New Roman,serif;color:black">INTERÉS NETO
-                     CORRIENTE (a)</span>
+                  <span lang="ES-NI">INTERÉS NETO CORRIENTE (a)</span>
                </p>
             </td>
-            <td width="104" colspan="2" rowspan="2"
-               style="width:77.95pt;border-left:solid black 1px;border-top:solid black 1px;">
-               <span lang="ES-NI" style="font-size:9.0pt;font-family:Times New Roman,serif;color:black">Demás cargos a
+            <td colspan="2">
+               <span lang="ES-NI">Demás cargos a
                   pagar en relación con lo pactado (b)</span>
             </td>
-            <td width="104" colspan="2" rowspan="6"
-               style="width:78.0pt;border-left:solid black 1px;border-top:solid black 1px; padding:5px">
-               <span lang="ES-NI" style="font-size:9.0pt;font-family:Times New Roman,serif;color:black">Interés Neto
+            <td colspan="2" rowspan="6">
+               <span lang="ES-NI">Interés Neto
                   corriente más demás cargos a
                   pagar en relación con lo pactado</span>
             </td>
-            <td width="104" colspan="2" rowspan="6"
-               style="width:77.95pt;border-top:solid black 1px;border-left:solid black 1px;border-right:solid black 1px;">
-               <span lang="ES-NI" style="font-size:9.0pt;font-family:Times New Roman,serif;color:black">ABONO AL
+            <td colspan="2" rowspan="6">
+               <span lang="ES-NI">ABONO AL
                   CAPITAL</span>
             </td>
-            <td width="113" colspan="2" rowspan="6"
-               style="width:85.1pt;border-top:solid black 1px;border-right:solid black 1px;">
-               <span lang="ES-NI" style="font-size:9.0pt;font-family:Times New Roman,serif;color:black">TOTAL A
+            <td colspan="2" rowspan="6">
+               <span lang="ES-NI">TOTAL A
                   PAGAR</span>
             </td>
-            <td width="109" colspan="3" rowspan="6"
-               style="width:81.45pt;border-top:solid black 1px;border-left:solid black 1px;border-right:solid black 1px;">
-               <span lang="ES-NI" style="font-size:9.0pt;font-family:Times New Roman,serif;color:black">MONTO
+            <td colspan="3" rowspan="6">
+               <span lang="ES-NI">MONTO
                   RESTANTE</span>
             </td>
          </tr>
          <tr style="height:25.45pt;">
-            <td width="151" colspan="2" rowspan="5" style="width:112.9pt;border-left:solid black 1px;border-bottom:solid black 1px;border-top:solid black 1px;padding:0cm 5px 0cm 5px;height:
-                 25.45pt"><span lang="ES-NI"
-                  style="font-size:9.0pt;font-family:Times New Roman,serif;color:black">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FECHAS
-                  DE PAGO</span>
+            <td colspan="2" rowspan="5"><span lang="ES-NI">FECHAS DE PAGO</span>
             </td>
-            <td width="81" colspan="2" rowspan="4"
-               style="width:60.75pt;border-top:solid black 1px;border-left:solid black 1px;">
-               <span lang="ES-NI" style="font-size:9.0pt;font-family:Times New Roman,serif;color:black">1%</span>
+            <td colspan="2" rowspan="4">
+               <span lang="ES-NI">1%</span>
             </td>
-            <td width="104" colspan="2" rowspan="4"
-               style="width:77.95pt;border-top:solid black 1px;border-left:solid black 1px;">
-               <span lang="ES-NI" style="font-size:9.0pt;font-family:Times New Roman,serif;color:black">%</span>
+            <td colspan="2" rowspan="4">
+               <span lang="ES-NI">%</span>
             </td>
-
          </tr>
-
          <tr style="height:10.65pt">
-            <td width="43" style="width:32.4pt;border-left:solid black 1px;border-top:solid black 1px;border-bottom:
-                 solid black 1px;padding:0cm 5px 0cm 5px;height:
-                 10.65pt">
-               <span lang="ES-NI" style="font-size:9.0pt;font-family:Times New Roman,serif;color:black">C$</span>
+            <td>
+               <span lang="ES-NI">C$</span>
             </td>
-            <td width="38" style="width:1.0cm;border-left:solid black 1px;border-top:solid black 1px;border-bottom:
-                 solid black 1px;padding:0cm 5px 0cm 5px;height:
-                 10.65pt">
-               <span lang="ES-NI" style="font-size:9.0pt;font-family:Times New Roman,serif;color:black">$</span>
+            <td>
+               <span lang="ES-NI">$</span>
             </td>
-            <td width="57" style="width:42.55pt;border-left:solid black 1px;border-top:solid black 1px;
-                 border-bottom:solid black 1px;padding:0cm 5px 0cm 5px;
-                 height:10.65pt">
-               <span lang="ES-NI" style="font-size:9.0pt;font-family:Times New Roman,serif;color:black">C$</span>
+            <td>
+               <span lang="ES-NI">C$</span>
             </td>
-            <td width="47" style="width:35.4pt;border-left:solid black 1px;border-top:solid black 1px;border-bottom:
-                 solid black 1px;padding:0cm 5px 0cm 5px;height:
-                 10.65pt">
-               <span lang="ES-NI" style="font-size:9.0pt;font-family:Times New Roman,serif;color:black">$</span>
+            <td>
+               <span lang="ES-NI">$</span>
             </td>
-            <td width="57" style="width:42.55pt;border-left:solid black 1px;border-top:solid black 1px;
-                 border-bottom:solid black 1px;padding:0cm 5px 0cm 5px;
-                 height:10.65pt">
-               <span lang="ES-NI" style="font-size:9.0pt;font-family:Times New Roman,serif;color:black">C$</span>
+            <td>
+               <span lang="ES-NI">C$</span>
             </td>
-            <td width="47" style="width:35.45pt;border-left:solid black 1px;border-top:solid black 1px;
-                 border-bottom:solid black 1px;padding:0cm 5px 0cm 5px;
-                 height:10.65pt">
-               <span lang="ES-NI" style="font-size:9.0pt;font-family:Times New Roman,serif;color:black">$</span>
+            <td>
+               <span lang="ES-NI">$</span>
             </td>
-            <td width="57" style="width:42.5pt;border-left:solid black 1px;border-top:solid black 1px;border-bottom:
-                 solid black 1px;padding:0cm 5px 0cm 5px;height:
-                 10.65pt">
-               <span lang="ES-NI" style="font-size:9.0pt;font-family:Times New Roman,serif;color:black">C$</span>
+            <td>
+               <span lang="ES-NI">C$</span>
             </td>
-            <td width="47" style="width:35.45pt;border-left:solid black 1px;border-top:solid black 1px;
-                 border-bottom:solid black 1px;padding:0cm 5px 0cm 5px;
-                 height:10.65pt">
-               <span lang="ES-NI" style="font-size:9.0pt;font-family:Times New Roman,serif;color:black">$</span>
+            <td>
+               <span lang="ES-NI">$</span>
             </td>
-            <td width="66" style="width:49.65pt;border-left:solid black 1px;border-top:solid black 1px;
-                 border-bottom:solid black 1px;padding:0cm 5px 0cm 5px;
-                 height:10.65pt">
-               <span lang="ES-NI" style="font-size:9.0pt;font-family:Times New Roman,serif;color:black">C$</span>
+            <td>
+               <span lang="ES-NI">C$</span>
             </td>
-            <td width="47" style="width:35.45pt;border-left:solid black 1px;border-top:solid black 1px;
-                 border-bottom:solid black 1px;padding:0cm 5px 0cm 5px;
-                 height:10.65pt">
-               <span lang="ES-NI" style="font-size:9.0pt;font-family:Times New Roman,serif;color:black">$</span>
+            <td>
+               <span lang="ES-NI">$</span>
             </td>
-            <td width="66" colspan="2" style="width:49.6pt;border-left:solid black 1px;border-top:solid black 1px;
-                 border-bottom:solid black 1px;padding:0cm 5px 0cm 5px;
-                 height:10.65pt">
-               <span lang="ES-NI" style="font-size:9.0pt;
-                    font-family:Times New Roman,serif;
-                    color:black">C$</span>
+            <td colspan="2">
+               <span lang="ES-NI">C$</span>
             </td>
-            <td width="42" style="width:31.85pt;border-left:solid black 1px;border-top:solid black 1px;
-                 border-bottom:solid black 1px;border-right:solid black 1px;padding:0cm 5px 0cm 5px;
-                 height:10.65pt">
-               <span lang="ES-NI" style="font-size:9.0pt;
+            <td>
+               <span lang="ES-NI" style="font-size:9px;
                     font-family:Times New Roman,serif;
                     color:black">$</span>
             </td>
          </tr>
-          {{tbody_amortizacion}}
-      </tbody>
+      </thead>
+      {{tbody_amortizacion}}
+
    </table>
 
-   <p style="text-align:left; font-size:10px; margin-top:50px; padding-bottom:0px; margin-bottom:0px;">Deudor:{{deudor}}
+   <p style="text-align:left; font-size:10px; margin-top:50px; padding-bottom:0px; margin-bottom:0px;">
+      Deudor:{{primer_nombre}} {{segundo_nombre}} {{primer_apellido}} {{segundo_apellidio}}
    </p>
-   <p style="text-align:left; font-size:10px; margin-top:0px; padding-bottom:0px; margin-bottom:0px;">Cédula: {{cedula}}
+   <p style="text-align:left; font-size:10px; margin-top:0px; padding-bottom:0px; margin-bottom:0px;">Cédula:
+      {{identificacion}}
    </p>
    <p style="text-align:left; font-size:10px; margin-top:0px; padding-bottom:0px; margin-bottom:0px;">Cel:{{telefono}}
    </p>
