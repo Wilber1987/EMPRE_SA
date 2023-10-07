@@ -11,9 +11,9 @@ namespace API.Controllers
         //Recibos
         [HttpPost]
         [AuthController]
-        public List<Recibos> Get(Recibos Inst)
+        public List<Recibos> GetRecibos(Recibos Inst)
         {
-            return Inst.Get();// Inst.Get<Recibos>();
+            return Inst.Get<Recibos>();
         }
         [HttpPost]
         [AuthController]
