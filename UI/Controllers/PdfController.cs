@@ -13,7 +13,7 @@ namespace UI.Controllers
         public ResponseService GeneratePdfContract(Transaction_Contratos Inst)
         {
             var model = Inst.Find<Transaction_Contratos>();
-            ContractService.generaPDF(model, "contrato_empeno.cshtml");
+            ContractService.generaPDF(model);
             return new ResponseService()
             {
                 message = "success",
