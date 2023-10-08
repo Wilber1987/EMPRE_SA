@@ -49,7 +49,7 @@ namespace Transactions
                 var contrato = new Transaction_Contratos()
                 {
                     numero_contrato = this.numero_contrato
-                }.Find<Transaction_Contratos>;
+                }.Find<Transaction_Contratos>();
 
                 if (contrato == null)
                 {
@@ -68,14 +68,11 @@ namespace Transactions
                         message = "Para cancelar es necesario un monto de " + 4548
                     };
                 }
-                double monto = (double)this.paga_cordobas;
+                double monto = (double)this.paga_dolares;
 
                 BeginGlobalTransaction();
 
-                var cuotas = new Tbl_Cuotas()
-                {
-                    numero_contrato = this.numero_contrato
-                }.Get<Tbl_Cuotas>().OrderBy(c => c.id_cuota).ToList(); ;
+                var cuotas = contrato.Tbl_Cuotas.OrderBy(c => c.id_cuota).Where(c => c.pago_contado != c.total).ToList(); ;
 
                 foreach (var item in cuotas)
                 {
@@ -103,8 +100,8 @@ namespace Transactions
                 //guardado de recibo
                 var recibo = new Recibos()
                 {
-                    consecutivo = (bool)this.temporal ? 0 : ultimoConsecutivo + 1,
-                    temporal = this.temporal,
+                    consecutivo = this.temporal == true ? 0 : ultimoConsecutivo + 1,
+                    temporal = this.temporal ?? false,
                     numero_contrato = this.numero_contrato,
                     monto = this.monto,
                     saldo_actual_cordobas = this.saldo_actual_cordobas,

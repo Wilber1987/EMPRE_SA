@@ -4,11 +4,13 @@ import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/St
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
 import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
-import { ModalMessege, WForm } from "../WDevCore/WComponents/WForm.js";
+import { ModalMessege, ModalVericateAction, WForm } from "../WDevCore/WComponents/WForm.js";
 import { Recibos, Transaction_ContratosModel,  Catalogo_Cambio_Dolar } from "../FrontModel/DBODataBaseModel.js";//todo eliminar notulizados
 import { WOrtograficValidation } from "../WDevCore/WModules/WOrtograficValidation.js";
 import { clientSearcher, contratosSearcher, ValoracionesSearch } from "../modules/SerchersModules.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
+import { Transaction_Contratos } from "../FrontModel/Model.js";
+import { WDetailObject } from "../WDevCore/WComponents/WDetailObject.js";
 class Gestion_RecibosView extends HTMLElement {
     // @ts-ignore
     constructor(props) {
@@ -48,14 +50,16 @@ class Gestion_RecibosView extends HTMLElement {
                 type: 'number', action: (ObjectF, form) => {
                     console.log(form)
 
-                    ObjectF.paga_dolares = 77;
-                    //this.reciboModel.FormObject.paga_dolares = 77;
+                    //ObjectF.paga_dolares = 77;
+                    console.log(ObjectF);
+                    ObjectF.paga_dolares  = ( ObjectF.paga_cordobas / this.tasasCambio[0].valor_de_compra).toFixed(3);
                     this.reciboForm.DrawComponent();
                 }
             },
             paga_dolares: {
                 type: 'number', action: (ObjectF, form) => {
-                    this.reciboModel.FormObject.paga_cordobas = 77;
+                    console.log(ObjectF);
+                    ObjectF.paga_cordobas  = (ObjectF.paga_dolares * this.tasasCambio[0].valor_de_compra).toFixed(3);
                     this.reciboForm.DrawComponent();
                 }
             }
@@ -179,8 +183,18 @@ class Gestion_RecibosView extends HTMLElement {
                 }
                 const response = await new Recibos(this.reciboForm?.FormObject).Save() //this.reciboModel?.Save() // this.reciboModel?.GuardarValoraciones(this.valoracionesTable?.Dataset);
                 if (response.status == 200) {
-                    this.shadowRoot?.append(ModalVericateAction(()=>{
-                        location.href = "/PagesViews/Print_Recibo?id_Recibo="+ response.body.id_recibo;
+                    //location.href = "/PagesViews/Gestion_Recibos"
+                   /* this.append(new WModalForm({                      
+                        title: "Detalle",
+                        ObjectModal: new WDetailObject({ ObjectDetail: response.body, ModelObject: this.reciboModel }),
+                        UserActions: [
+                            { name: "Aceptar", action: ()=>  location.href = "/PagesViews/Gestion_Recibos"},
+                            { name: "Imprimir", action: ()=>  alert("TODO PENDIENTE..")}
+                        ]
+                    }));  */                  
+                    this.append(ModalVericateAction(()=>{      
+                        location.href = "/PagesViews/Gestion_Recibos"                
+                        //location.href = "/PagesViews/Print_Recibo?id_Recibo="+ response.body.id_recibo;
                     }, response.message))
                 }
             }
@@ -240,7 +254,7 @@ class Gestion_RecibosView extends HTMLElement {
     }
 
     /**
-     * 
+     * @param {Transaction_Contratos} contrato
      * @returns {Recibos}
      */
     calculoRecibo = (contrato, tasasCambio) => {
@@ -267,7 +281,7 @@ class Gestion_RecibosView extends HTMLElement {
                     interes_cargos = cuota.interes;
                     interes_demas_cargos_pagar_cordobas = cuota.interes;
                     abono_capital_cordobas = cuota.abono_capital;
-                    mora_interes = cuota.mora || 0; // no permite el cero, preguntar a wilber sobre problema
+                    mora_interes = cuota.mora; // no permite el cero, preguntar a wilber sobre problema
                     cuota_total = cuota.total;
                     break;
                 }
@@ -295,8 +309,8 @@ class Gestion_RecibosView extends HTMLElement {
             this.reciboForm.FormObject["abono_capital_dolares"] = abono_capital_cordobas;
             this.reciboForm.FormObject["cuota_pagar_cordobas"] = (primeraCuotaConCapitalMayorACero * tasasCambio[0].valor_de_compra).toFixed(3);
             this.reciboForm.FormObject["cuota_pagar_dolares"] = primeraCuotaConCapitalMayorACero;
-            this.reciboForm.FormObject["mora_cordobas"] = (contrato["mora"] * tasasCambio[0].valor_de_compra).toFixed(3);
-            this.reciboForm.FormObject["mora_dolares"] = contrato["mora"]?.toFixed(3);
+            this.reciboForm.FormObject["mora_cordobas"] = (mora_interes * tasasCambio[0].valor_de_compra).toFixed(3);
+            this.reciboForm.FormObject["mora_dolares"] = mora_interes?.toFixed(3);
             this.reciboForm.FormObject["mora_interes_cordobas"] = ((mora_interes+interes_cargos) * tasasCambio[0].valor_de_venta).toFixed(3);
             this.reciboForm.FormObject["mora_interes_dolares"] = (mora_interes+interes_cargos).toFixed(3);
             this.reciboForm.FormObject["total_cordobas"] = (cuota_total * tasasCambio[0].valor_de_venta).toFixed(3);
