@@ -5,10 +5,13 @@ import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
 import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { ModalMessege, WForm } from "../WDevCore/WComponents/WForm.js";
-import { Catalogo_Clientes, Condicion_Laboral_Cliente } from "../FrontModel/DBODataBaseModel.js";
+import { Catalogo_Clientes, Condicion_Laboral_Cliente, Transaction_ContratosModel } from "../FrontModel/DBODataBaseModel.js";
 import { WOrtograficValidation } from "../WDevCore/WModules/WOrtograficValidation.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
+import { clientSearcher } from "../modules/SerchersModules.js";
+import { Transaction_Contratos } from "../FrontModel/Model.js";
+import { WDetailObject } from "../WDevCore/WComponents/WDetailObject.js";
 class Gestion_ClientesView extends HTMLElement {
     constructor(props) {
         super();
@@ -44,13 +47,17 @@ class Gestion_ClientesView extends HTMLElement {
             }
         });
         this.MainComponent = WRender.Create({ className: "main-container", children: [this.FilterOptions, this.TableComponent] })
+        this.OptionContainer.append(WRender.Create({
+            tagName: 'button', className: 'Block-Secundary', innerText: 'Historial de Clientes',
+            onclick: () => this.NewGestionClientes()
+        }))
 
         this.OptionContainer.append(WRender.Create({
-            tagName: 'button', className: 'Block-Basic', innerText: 'Ingresar Cliente',
+            tagName: 'button', className: 'Block-Primary', innerText: 'Ingresar Cliente',
             onclick: () => this.NewTransaction()
         }))
         this.OptionContainer.append(WRender.Create({
-            tagName: 'button', className: 'Block-Secundary', innerText: 'Editar cliente',
+            tagName: 'button', className: 'Block-Tertiary', innerText: 'Editar cliente',
             onclick: async () => {
                 const datasetUpdated = await model.Get();
                 // @ts-ignore
@@ -60,7 +67,8 @@ class Gestion_ClientesView extends HTMLElement {
             }
         }))
 
-        this.NewTransaction();
+        //this.NewTransaction();
+        this.NewGestionClientes()
         this.append(
             StylesControlsV2.cloneNode(true),
             StyleScrolls.cloneNode(true),
@@ -74,6 +82,16 @@ class Gestion_ClientesView extends HTMLElement {
     Gestion_ClientesForm = new Gestion_ClientesForm();
     NewTransaction(Model) {
         this.Manager?.NavigateFunction("Gestion_ClientesForm", this.Gestion_ClientesForm)
+    }
+    NewGestionClientes() {
+        this.Manager?.NavigateFunction("Historial_ClientesForm", clientSearcher(async (cliente) => {
+            const response = await new Transaction_Contratos({ codigo_cliente: cliente.codigo_cliente }).Get();
+            cliente.Transaction_Contratos = response;
+            this.Manager?.NavigateFunction("Gestion_ClientesDetail" + cliente.codigo_cliente, new WDetailObject({
+                ModelObject: new Catalogo_Clientes({ Transaction_Contratos: { type: "MASTERDETAIL", ModelObject: new Transaction_ContratosModel() } }),
+                ObjectDetail: cliente
+            }))
+        }))
     }
 
 }

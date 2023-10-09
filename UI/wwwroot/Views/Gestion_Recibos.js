@@ -52,15 +52,17 @@ class Gestion_RecibosView extends HTMLElement {
 
                     //ObjectF.paga_dolares = 77;
                     console.log(ObjectF);
+                    // @ts-ignore
                     ObjectF.paga_dolares  = ( ObjectF.paga_cordobas / this.tasasCambio[0].valor_de_compra).toFixed(3);
-                    this.reciboForm.DrawComponent();
+                    this.reciboForm?.DrawComponent();
                 }
             },
             paga_dolares: {
                 type: 'number', action: (ObjectF, form) => {
                     console.log(ObjectF);
+                    // @ts-ignore
                     ObjectF.paga_cordobas  = (ObjectF.paga_dolares * this.tasasCambio[0].valor_de_compra).toFixed(3);
-                    this.reciboForm.DrawComponent();
+                    this.reciboForm?.DrawComponent();
                 }
             }
         });

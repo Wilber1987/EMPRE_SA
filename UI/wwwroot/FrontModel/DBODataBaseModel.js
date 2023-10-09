@@ -1,7 +1,7 @@
 import { WForm } from "../WDevCore/WComponents/WForm.js";
 import { EntityClass } from "../WDevCore/WModules/EntityClass.js";
 import { WAjaxTools } from "../WDevCore/WModules/WComponentsTools.js";
-import { Detail_Prendas_Vehiculos } from "./Model.js";
+import { Detail_Prendas_Vehiculos, Tbl_Cuotas } from "./Model.js";
 class Catalogo_Estados_Articulos extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
@@ -241,7 +241,7 @@ class Transaction_ContratosModel extends EntityClass {
     codigo_cliente = { type: "number", hiddenInTable: true, hiddenFilter: true };
     saldo = { type: "number", hiddenFilter: true, hiddenInTable: true };
     abonos = { type: "number", hiddenInTable: true, hiddenFilter: true };
-    tipo = { type: "number", hiddenInTable: true, hiddenFilter: true };
+    tipo = { type: "text", hiddenInTable: true, hiddenFilter: true };
     entregado = { type: "text", hiddenInTable: true, hiddenFilter: true };
     interes_actual = { type: "number", hiddenInTable: true, hiddenFilter: true };
     observaciones = { type: "text", hiddenInTable: true, hiddenFilter: true };
@@ -268,6 +268,7 @@ class Transaction_ContratosModel extends EntityClass {
     Id_User = { type: "number", hiddenInTable: true, hiddenFilter: true };
     Catalogo_Agentes = { type: 'WSELECT', ModelObject: () => new Catalogo_Agentes(), hiddenInTable: true, hiddenFilter: true };
     Detail_Prendas = { type: 'MasterDetail', ModelObject: () => new Detail_PrendasModel(), hiddenFilter: true };
+    Tbl_Cuotas = { type: 'MasterDetail', ModelObject: () => new Tbl_Cuotas(), hiddenFilter: true };
 }
 export { Transaction_ContratosModel }
 

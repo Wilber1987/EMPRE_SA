@@ -91,7 +91,7 @@ namespace DataBaseModel
         public string SUB_TITULO = "Prestamos, empeños y más";
         public string NOMBRE_EMPRESA = "EMPRE S.A.";
         public string LOGO_PRINCIPAL = "logo1.png";
-        public string MEDIA_IMG_PATH = "/media/img/";
+        public string MEDIA_IMG_PATH = "/Media/img/";
         public List<Transactional_Configuraciones> configuraciones = new List<Transactional_Configuraciones>();
     }
 }

@@ -191,3 +191,38 @@ body {
     display: flex;
     justify-content: flex-end;
 }
+.navIcon {
+    display: none;  
+}
+
+@media(max-width: 1200px) {
+    #Aside {
+        position: fixed;
+        transform: translateX(-100%);
+        transition: all 0.5s;
+        z-index: 100000;
+    }
+
+    #AdminTemplate {
+        display: grid;
+        grid-template-rows: 50px calc(100vh - 50px);
+        grid-template-columns: 100%;
+    }
+
+    #Aside.navActive {
+        transform: translateX(0%);
+        position: fixed;
+        top: 0;
+        bottom: 0;
+    }
+    .navIcon {
+        display: block;
+        height: 40px;
+        width: 40px;
+        margin: 0px 20px;
+        cursor: pointer;
+    }
+    #Header .navIcon {
+        filter: invert(1);
+    }
+}
