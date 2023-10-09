@@ -5,7 +5,7 @@ import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
 import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { ModalMessege, WForm } from "../WDevCore/WComponents/WForm.js";
-import { Catalogo_Clientes, Condicion_Laboral_Cliente, Transaction_ContratosModel } from "../FrontModel/DBODataBaseModel.js";
+import { Catalogo_Clientes, Condicion_Laboral_Cliente, Transaction_Contratos_ModelComponent } from "../FrontModel/DBODataBaseModel.js";
 import { WOrtograficValidation } from "../WDevCore/WModules/WOrtograficValidation.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
@@ -88,7 +88,7 @@ class Gestion_ClientesView extends HTMLElement {
             const response = await new Transaction_Contratos({ codigo_cliente: cliente.codigo_cliente }).Get();
             cliente.Transaction_Contratos = response;
             this.Manager?.NavigateFunction("Gestion_ClientesDetail" + cliente.codigo_cliente, new WDetailObject({
-                ModelObject: new Catalogo_Clientes({ Transaction_Contratos: { type: "MASTERDETAIL", ModelObject: new Transaction_ContratosModel() } }),
+                ModelObject: new Catalogo_Clientes({ Transaction_Contratos: { type: "MASTERDETAIL", ModelObject: new Transaction_Contratos_ModelComponent() } }),
                 ObjectDetail: cliente
             }))
         }))

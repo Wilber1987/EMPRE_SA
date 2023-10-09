@@ -2,6 +2,7 @@ import { WForm } from "../WDevCore/WComponents/WForm.js";
 import { EntityClass } from "../WDevCore/WModules/EntityClass.js";
 import { WAjaxTools } from "../WDevCore/WModules/WComponentsTools.js";
 import { Detail_Prendas_Vehiculos, Tbl_Cuotas } from "./Model.js";
+import { Tbl_Cuotas_ModelComponent } from "./ModelComponents.js";
 class Catalogo_Estados_Articulos extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
@@ -222,7 +223,7 @@ class Catalogo_Tipo_Identificacion extends EntityClass {
 }
 export { Catalogo_Tipo_Identificacion }
 
-class Transaction_ContratosModel extends EntityClass {
+class Transaction_Contratos_ModelComponent extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
         for (const prop in props) {
@@ -267,12 +268,12 @@ class Transaction_ContratosModel extends EntityClass {
     interes_dolares = { type: "number", hiddenInTable: true, hiddenFilter: true };
     Id_User = { type: "number", hiddenInTable: true, hiddenFilter: true };
     Catalogo_Agentes = { type: 'WSELECT', ModelObject: () => new Catalogo_Agentes(), hiddenInTable: true, hiddenFilter: true };
-    Detail_Prendas = { type: 'MasterDetail', ModelObject: () => new Detail_PrendasModel(), hiddenFilter: true };
-    Tbl_Cuotas = { type: 'MasterDetail', ModelObject: () => new Tbl_Cuotas(), hiddenFilter: true };
+    Detail_Prendas = { type: 'MasterDetail', ModelObject: () => new Detail_Prendas_ModelComponent(), hiddenFilter: true };
+    Tbl_Cuotas = { type: 'MasterDetail', ModelObject: () => new Tbl_Cuotas_ModelComponent(), hiddenFilter: true };
 }
-export { Transaction_ContratosModel }
+export { Transaction_Contratos_ModelComponent }
 
-/*class Transaction_ContratosModel extends EntityClass { //todo eliminar
+/*class Transaction_Contratos_ModelComponent extends EntityClass { //todo eliminar
     constructor(props) {
         super(props, 'EntityDBO');
         for (const prop in props) {
@@ -331,10 +332,10 @@ export { Transaction_ContratosModel }
     plazo_inicial = { type: 'number', hiddenInTable: true, hiddenFilter: true };
     dias_para_baja = { type: 'number', hiddenInTable: true, hiddenFilter: true };
     Catalogo_Agentes = { type: 'WSELECT', ModelObject: () => new Catalogo_Agentes(), hiddenInTable: true, hiddenFilter: true };
-    Detail_Prendas = { type: 'MasterDetail', ModelObject: () => new Detail_PrendasModel() };
+    Detail_Prendas = { type: 'MasterDetail', ModelObject: () => new Detail_Prendas_ModelComponent() };
 }
-export { Transaction_ContratosModel }*/
-class Detail_PrendasModel extends EntityClass {
+export { Transaction_Contratos_ModelComponent }*/
+class Detail_Prendas_ModelComponent extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
         for (const prop in props) {
@@ -371,13 +372,13 @@ class Detail_PrendasModel extends EntityClass {
     };
     Detail_Prendas_Vehiculos = {
         type: 'Model',
-        ModelObject: () => new Detail_Prendas_VehiculosModel(),
+        ModelObject: () => new Detail_Prendas_Vehiculos_ModelComponent(),
         EntityModel: () => new Detail_Prendas_Vehiculos()
     };
 
 }
-export { Detail_PrendasModel }
-class Detail_Prendas_VehiculosModel extends EntityClass {
+export { Detail_Prendas_ModelComponent }
+class Detail_Prendas_Vehiculos_ModelComponent extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
         for (const prop in props) {
@@ -399,9 +400,9 @@ class Detail_Prendas_VehiculosModel extends EntityClass {
     fecha_seguro = { type: 'date' };
     combustible = { type: 'text' };
 }
-export { Detail_Prendas_VehiculosModel }
+export { Detail_Prendas_Vehiculos_ModelComponent }
 
-class Transaction_FacturasModel extends EntityClass {
+class Transaction_Facturas_ModelComponent extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
         for (const prop in props) {
@@ -435,9 +436,9 @@ class Transaction_FacturasModel extends EntityClass {
     moraparcial = { type: 'number' };
     interesparcial = { type: 'number' };
     motivo_anulacion = { type: 'text' };
-    Transaction_Contratos = { type: 'WSELECT', ModelObject: () => new Transaction_ContratosModel() };
+    Transaction_Contratos = { type: 'WSELECT', ModelObject: () => new Transaction_Contratos_ModelComponent() };
 }
-export { Transaction_FacturasModel }
+export { Transaction_Facturas_ModelComponent }
 
 
 class Catalogo_Cambio_Dolar extends EntityClass {

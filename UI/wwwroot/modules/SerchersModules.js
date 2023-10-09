@@ -4,11 +4,12 @@ import { WRender, ComponentsManager, WAjaxTools } from "../WDevCore/WModules/WCo
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js"
 // @ts-ignore
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
-import { Catalogo_Clientes, Transaction_ContratosModel, Transactional_Valoracion } from "../FrontModel/DBODataBaseModel.js"
+import { Catalogo_Clientes, Transaction_Contratos_ModelComponent, Transactional_Valoracion } from "../FrontModel/DBODataBaseModel.js"
 // @ts-ignore
 import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
-import { Transaction_Contratos, ValoracionesTransaction } from "../FrontModel/Model.js";
+import { Tbl_Cuotas, Transaction_Contratos, ValoracionesTransaction } from "../FrontModel/Model.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
+import { Tbl_Cuotas_ModelComponent } from "../FrontModel/ModelComponents.js";
 class ValoracionesSearch extends HTMLElement {
     constructor(/** @type {Function} */ action) {
         super();
@@ -26,7 +27,7 @@ class ValoracionesSearch extends HTMLElement {
         })
         this.MainComponent = new WTableComponent({
             ModelObject: model,
-            Dataset: dataset.map(x => {               
+            Dataset: dataset.map(x => {
                 // @ts-ignore
                 x.requiere_valoracion = (new Date().subtractDays(40) < new Date(x.Fecha)) ? "NO" : "SI";
                 return x;
@@ -103,10 +104,19 @@ export { clientSearcher }
  * @returns { HTMLElement }
  */
 const contratosSearcher = (action) => {
-    const model = new Transaction_Contratos();
+    const model = new Transaction_Contratos_ModelComponent();
+    model.Tbl_Cuotas.ModelObject = () => new Tbl_Cuotas_ModelComponent({
+        Estado: { type: "operation" , action: (/** @type {Tbl_Cuotas} */ cuota)=>{
+            if(cuota.total == cuota.pago_contado) {
+                return "CANCELADA";
+            } else if(cuota.pago_contado > 0) {
+                return "PAGO PARCIAL";
+            }
+        }}
+    });
     const TableComponent = new WTableComponent({
         EntityModel: model,
-        ModelObject: new Transaction_ContratosModel({
+        ModelObject: new Transaction_Contratos_ModelComponent({
             numero_contrato: { type: "text", primary: false }
         }),
         AddItemsFromApi: true,
@@ -124,7 +134,7 @@ const contratosSearcher = (action) => {
     const FilterOptions = new WFilterOptions({
         Dataset: [],
         EntityModel: model,
-        ModelObject: new Transaction_ContratosModel(),
+        ModelObject: new Transaction_Contratos_ModelComponent(),
         Display: true,
         FilterFunction: (DFilt) => {
             TableComponent.Dataset = DFilt;

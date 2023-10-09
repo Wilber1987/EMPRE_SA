@@ -79,11 +79,12 @@ class WDetailObject extends HTMLElement {
     }
     TabElements = (ObjectDetail, Model) => {
         const tabElements = [];
-        for (const prop in Model) {
-            console.log(prop, ObjectDetail[prop]);
+        for (const prop in Model) {          
             if (Model != undefined && Model[prop] != undefined && Model[prop].__proto__ == Object.prototype && Model[prop].type) {
                 switch (Model[prop].type.toUpperCase()) {
                     case "MASTERDETAIL":
+                        console.log(prop);
+                        console.log(Model[prop].ModelObject());
                         tabElements.push({
                             name: WOrtograficValidation.es(prop), url: "#",
                             action: async (ev) => {

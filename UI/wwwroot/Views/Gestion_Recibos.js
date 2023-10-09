@@ -5,7 +5,7 @@ import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
 import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { ModalMessege, ModalVericateAction, WForm } from "../WDevCore/WComponents/WForm.js";
-import { Recibos, Transaction_ContratosModel,  Catalogo_Cambio_Dolar } from "../FrontModel/DBODataBaseModel.js";//todo eliminar notulizados
+import { Recibos, Transaction_Contratos_ModelComponent,  Catalogo_Cambio_Dolar } from "../FrontModel/DBODataBaseModel.js";//todo eliminar notulizados
 import { WOrtograficValidation } from "../WDevCore/WModules/WOrtograficValidation.js";
 import { clientSearcher, contratosSearcher, ValoracionesSearch } from "../modules/SerchersModules.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
@@ -221,7 +221,7 @@ class Gestion_RecibosView extends HTMLElement {
             }
         }))
     }
-    selectContrato = (/**@type {Transaction_ContratosModel} */ selectContrato) => {
+    selectContrato = (/**@type {Transaction_Contratos_ModelComponent} */ selectContrato) => {
         //console.log(selectContrato);
         this.Cliente = selectContrato;
         if (this.reciboForm != undefined) {

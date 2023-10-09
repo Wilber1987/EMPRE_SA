@@ -9,7 +9,7 @@ import { ModalMessege, WForm } from "../WDevCore/WComponents/WForm.js";
 // @ts-ignore
 import { Transactional_Configuraciones } from "../FrontModel/ADMINISTRATIVE_ACCESSDataBaseModel.js";
 import { Detail_Prendas, Transaction_Contratos, ValoracionesTransaction } from "../FrontModel/Model.js";
-import { CuotaComponent } from "../FrontModel/ModelComponents.js";
+import { Tbl_Cuotas_ModelComponent } from "../FrontModel/ModelComponents.js";
 import { AmoritizationModule } from "../modules/AmortizacionModule.js";
 import { clientSearcher, ValoracionesSearch } from "../modules/SerchersModules.js";
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
@@ -129,7 +129,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
 
         this.CuotasTable = new WTableComponent({
             Dataset: [],
-            ModelObject: new CuotaComponent(),
+            ModelObject: new Tbl_Cuotas_ModelComponent(),
             paginate: false,
             AddItemsFromApi: false,
             AutoSave: false,
