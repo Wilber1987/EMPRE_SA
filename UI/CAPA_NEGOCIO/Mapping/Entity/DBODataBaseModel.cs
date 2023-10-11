@@ -211,15 +211,17 @@ namespace DataBaseModel
         [OneToMany(TableName = "Detail_Prendas", KeyColumn = "numero_contrato", ForeignKeyColumn = "numero_contrato")]
         public List<Detail_Prendas>? Detail_Prendas { get; set; }
         [OneToMany(TableName = "Transaction_Facturas", KeyColumn = "numero_contrato", ForeignKeyColumn = "numero_contrato")]
-        public List<Transaction_Facturas>? Transaction_Facturas { get; set; }
-        [OneToMany(TableName = "Tbl_Cuotas", KeyColumn = "numero_contrato", ForeignKeyColumn = "numero_contrato")]
+        /*public List<Transaction_Facturas>? Transaction_Facturas { get; set; }
+        [OneToMany(TableName = "Tbl_Cuotas", KeyColumn = "numero_contrato", ForeignKeyColumn = "numero_contrato")]*/
         public List<Tbl_Cuotas>? Tbl_Cuotas { get; set; }
     }
 
-    public enum Contratos_State {
+    public enum Contratos_State
+    {
         ACTIVO, CANCELADO, ANULADO
     }
-    public enum Contratos_Type {
+    public enum Contratos_Type
+    {
         EMPENO, PRESTAMO, EMPENO_VEHICULO
     }
     public class Detail_Prendas : EntityClass
@@ -260,7 +262,8 @@ namespace DataBaseModel
         public Transactional_Valoracion? Transactional_Valoracion { get; set; }
 
     }
-    public enum EnManosDe {
+    public enum EnManosDe
+    {
         ACREEDOR, DEUDOR
     }
     public class Detail_Prendas_Vehiculos : EntityClass
@@ -464,5 +467,66 @@ namespace DataBaseModel
         [ManyToOne(TableName = "Catalogo_Cuentas", KeyColumn = "id_cuentas", ForeignKeyColumn = "id_cuenta")]
         public Catalogo_Cuentas? catalogo_Cuentas { get; set; }
     }
- 
+
+    public class Transaccion_Factura : EntityClass
+    {
+        [PrimaryKey(Identity = true)]
+        public int? id_factura { get; set; }
+        public string tipo { get; set; }
+        public string concepto { get; set; }
+        public double? tasa_cambio { get; set; }
+        public double? total { get; set; }
+        public int? id_cliente { get; set; }
+        public int? id_sucursal { get; set; }
+        public DateTime? fecha { get; set; }
+        public int? id_usuario { get; set; }
+        
+        [JsonProp]
+        public Factura_contrato? Factura_contrato { get; set; }
+
+        [OneToMany(TableName = "Detalle_Factura_Recibo", KeyColumn = "id_factura", ForeignKeyColumn = "id_factura")]
+        public List<Detalle_Factura_Recibo>? Detalle_Factura_Recibo { get; set; }
+    }
+
+    public class Factura_contrato : EntityClass
+    {
+        [PrimaryKey(Identity = true)]
+        public int? id { get; set; }
+        public int? numero_contrato { get; set; }
+        public int? cuotas_pactadas { get; set; }
+        public int? cuotas_pendientes { get; set; }
+        public double? saldo_anterior { get; set; }
+        public double? saldo_actual { get; set; }
+        public double? mora { get; set; }
+        public double? interes_demas_cargos_pagar { get; set; }
+        public DateTime? proximo_pago_pactado { get; set; }
+        public double? total_parciales { get; set; }
+        public string tipo { get; set; }
+        public string tipo_cuenta { get; set; }
+        public double? total { get; set; }
+        public double? tasa_cambio { get; set; }
+        public int? id_cliente { get; set; }
+        public int? id_sucursal { get; set; }
+        
+    }
+
+    public class Detalle_Factura_Recibo : EntityClass
+    {
+        [PrimaryKey(Identity = true)]
+        public int? id { get; set; }
+        
+        public int? id_cuota { get; set; }
+        public double? total_cuota { get; set; }
+        public double? monto_pagado { get; set; }
+        public double? capital_restante { get; set; }
+        public string? concepto { get; set; }
+        public double? tasa_cambio { get; set; }
+
+        public int? id_factura { get; set; }
+
+        [ManyToOne(TableName = "Transaccion_Factura", KeyColumn = "id_factura", ForeignKeyColumn = "id_factura")]
+        public Transaccion_Factura? Transaccion_Factura { get; set; }
+
+        
+    }
 }

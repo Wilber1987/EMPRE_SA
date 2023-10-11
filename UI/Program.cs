@@ -4,6 +4,7 @@ using CAPA_DATOS.Cron.Jobs;
 
 SqlADOConexion.IniciarConexion();
 var builder = WebApplication.CreateBuilder(args);
+//AppGenerate.Program.Main(); //generador de codigo
 
 // Add services to the container.
 builder.Services.AddRazorPages();
