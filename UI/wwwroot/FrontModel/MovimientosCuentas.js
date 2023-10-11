@@ -12,23 +12,15 @@ class Movimientos_Cuentas extends EntityClass {
 	Catalogo_Cuentas_Origen = { type: 'WSELECT', ModelObject: () => new Catalogo_Cuentas() };
 	Catalogo_Cuentas_Destino = { type: 'WSELECT', ModelObject: () => new Catalogo_Cuentas() };
 	//moneda = { type: 'select', Dataset: ["C$", "$"], hiddenInTable: false,hidden:true, disabled: true, require: false, };
-	monto = {
-		type: "number", action: (movimiento) => {
-			movimiento.total = (movimiento.monto / movimiento.tasa_cambio).toFixed(3).toString();
-		}
-	};
+	monto = { type: "number" };
 	tasa_cambio = { type: "number", disabled: true };
 	tasa_cambio_compra = { type: "number", disabled: true };
-	total = {
-		type: "number", action: (movimiento) => {
-			movimiento.monto = (movimiento.total * movimiento.tasa_cambio).toFixed(3).toString();
-		}
-	};
+	moneda = { type: "radio", Dataset: ["CORDOBAS", "DOLARES"] };
 	id_usuario_crea = { type: "number", hidden: true };
 	fecha = { type: "date", disabled: true, required: false, hidden: true };
 	descripcion = { type: "textarea" };
 	concepto = { type: "textarea" };
-	correo_enviado = { type: "checkbox", require: false,  hiddenInTable: true, hidden: true };
+	correo_enviado = { type: "checkbox", require: false, hiddenInTable: true, hidden: true };
 }
 export { Movimientos_Cuentas }
 

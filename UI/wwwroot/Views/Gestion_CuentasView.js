@@ -38,17 +38,16 @@ class Gestion_CuentasView extends HTMLElement {
         this.Draw();
     }
     Draw = async () => {
-        this.SetOption();
+        this.SetOption();       
     }
 
     SetOption = async () => {
-
         const model = new Catalogo_Cuentas();
         /**@type {Array<Catalogo_Cuentas>} */
         const dataset = await model.Get();
 
         this.OptionContainer.append(WRender.Create({
-            tagName: 'button', className: 'Block-Primary', innerText: 'Registrar Movimiento',
+            tagName: 'button', className: 'Block-Primary', innerText: 'Movimiento Internos',
             onclick: () => {
                 // @ts-ignore
                 this.Manager.NavigateFunction("PROPIAS", new GestionCuentaComponent({ Dataset: dataset.filter(c => c.tipo_cuenta == "PROPIA") }));
@@ -68,12 +67,17 @@ class Gestion_CuentasView extends HTMLElement {
                 this.Manager.NavigateFunction("PAGOS", new GestionCuentaComponent({ Dataset: dataset.filter(c => c.tipo_cuenta == "PAGO") }));
             }
         }))
+          // @ts-ignore
+        this.Manager.NavigateFunction("PROPIAS", new GestionCuentaComponent({ Dataset: dataset.filter(c => c.tipo_cuenta == "PROPIA") }));
     }
 
     CustomStyle = css`
             .component{
                display: block;
-            }           
+            }    
+            .OptionContainer {
+                margin-bottom: 20px;
+            }       
         `
 
 }
@@ -242,8 +246,8 @@ class GestionCuentaComponent extends HTMLElement {
             saldo.append(WRender.Create({ className: "saldo-label", children: [currency, movimiento[montoProp]?.toFixed(3)] }));
         });
         detalle.append(WRender.Create({ className: "total ", innerHTML: "Total" }));
-        debito.append(WRender.Create({ className: "debito-label total", children: [currency, "- " + WArrayF.SumValAtt(movimientos, debitoProp).toFixed(3)] }));
-        creadito.append(WRender.Create({ className: "creadito-label total", children: [currency, "+ " + WArrayF.SumValAtt(movimientos, creaditoProp).toFixed(3)] }));
+        debito.append(WRender.Create({ className: "debito-label total", children: [currency, "- " + WArrayF.SumValAtt(movimientos, debitoProp)] }));
+        creadito.append(WRender.Create({ className: "creadito-label total", children: [currency, "+ " + WArrayF.SumValAtt(movimientos, creaditoProp)] }));
     }
 
     CustomStyle = css`
@@ -259,7 +263,7 @@ class GestionCuentaComponent extends HTMLElement {
         .detalle-cuenta {
             border-radius: 10px;
             padding: 10px;
-            border: solid 1px #888;
+            border: solid 1px #b3b3b3;
             display: flex;
             align-items: center;
             font-weight: bold;

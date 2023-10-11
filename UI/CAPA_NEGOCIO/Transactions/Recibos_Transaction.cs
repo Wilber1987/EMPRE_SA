@@ -157,7 +157,7 @@ namespace Transactions
                 factura.Save();
 
 
-                /****guardado de movimiento contable*****/
+                /****guardado de movimiento 
                 var cuentaDestino = new Catalogo_Cuentas()
                 {
                     id_cuentas = 10 //todo por el momento es na caja quemada
@@ -167,56 +167,71 @@ namespace Transactions
                 {
                     id_cuentas = 16
                 }.Find<Catalogo_Cuentas>();
+               
+                    
+                };contable*****/
+              
+                // var encabezado = new Transaction_Movimiento()
+                // {
+                //     descripcion = "Pago de contrato #" + this.numero_contrato.ToString(),
+                //     concepto = "Pago de contrato #" + this.numero_contrato.ToString(),
+                //     id_usuario_crea = user.UserId,
+                //     tipo = "pendiente",
+                //     moneda = cuentaDestino?.permite_cordobas == true ? "C$" : "$",
+                //     tasa_cambio = this.tasa_cambio,
+                //     tasa_cambio_compra = this.tasa_cambio_compra,
+                //     correo_enviado = false,
+                //     Detail_Movimiento = new List<Detail_Movimiento>(){
+                //             new Detail_Movimiento(){
+                //                 id_cuenta = cuentaOrigen?.id_cuentas,
+                //                 debito = this.monto,
+                //                 debito_dolares = this.monto / this.tasa_cambio,
+                //                 credito = 0,
+                //                 credito_dolares = 0,
+                //                 monto_inicial = cuentaOrigen?.saldo,
+                //                 monto_inicial_dolares = cuentaOrigen?.saldo_dolares,
+                //                 monto_final = cuentaOrigen?.saldo - this.monto,
+                //                 monto_final_dolares = cuentaOrigen?.saldo_dolares - (this.monto / this.tasa_cambio),
+                //                 tasa_cambio = this.tasa_cambio,
+                //                 tasa_cambio_compra = this.tasa_cambio_compra,
+                //                 moneda = cuentaDestino?.permite_cordobas == true ? "C$" : "$"
+                //             },new Detail_Movimiento(){
+                //                 id_cuenta = cuentaDestino?.id_cuentas,
+                //                 debito = 0,
+                //                 debito_dolares = 0,
+                //                 credito = this.monto,
+                //                 credito_dolares = this.monto / tasa_cambio,
+                //                 monto_inicial = cuentaDestino?.saldo,
+                //                 monto_inicial_dolares = cuentaDestino?.saldo_dolares,
+                //                 monto_final = cuentaDestino?.saldo + this.monto,
+                //                 monto_final_dolares = cuentaDestino?.saldo_dolares + (this.monto / this.tasa_cambio),
+                //                 tasa_cambio = this.tasa_cambio,
+                //                 tasa_cambio_compra = this.tasa_cambio_compra,
+                //                 moneda = cuentaDestino?.permite_cordobas == true ? "C$" : "$"
+                //             }
+                //         }
+                // };
 
-                var encabezado = new Transaction_Movimiento()
+                // cuentaOrigen.saldo = cuentaOrigen.saldo - this.paga_cordobas;
+                // cuentaOrigen.saldo_dolares = cuentaOrigen.saldo_dolares - (this.paga_cordobas / this.tasa_cambio);
+                // cuentaDestino.saldo = cuentaDestino.saldo + this.paga_cordobas;
+                // cuentaDestino.saldo_dolares = cuentaDestino.saldo_dolares + (this.paga_cordobas / this.tasa_cambio);
+                //cuentaDestino.Update();
+                //cuentaOrigen.Update();
+
+                //var resultMovimiento = encabezado.Save();
+
+                new Movimientos_Cuentas
                 {
-                    descripcion = "Pago de contrato #" + this.numero_contrato.ToString(),
-                    concepto = "Pago de contrato #" + this.numero_contrato.ToString(),
-                    id_usuario_crea = user.UserId,
-                    tipo = "pendiente",
-                    moneda = cuentaDestino?.permite_cordobas == true ? "C$" : "$",
-                    tasa_cambio = this.tasa_cambio,
-                    tasa_cambio_compra = this.tasa_cambio_compra,
-                    correo_enviado = false,
-                    Detail_Movimiento = new List<Detail_Movimiento>(){
-                            new Detail_Movimiento(){
-                                id_cuenta = cuentaOrigen?.id_cuentas,
-                                debito = this.monto,
-                                debito_dolares = this.monto / this.tasa_cambio,
-                                credito = 0,
-                                credito_dolares = 0,
-                                monto_inicial = cuentaOrigen?.saldo,
-                                monto_inicial_dolares = cuentaOrigen?.saldo_dolares,
-                                monto_final = cuentaOrigen?.saldo - this.monto,
-                                monto_final_dolares = cuentaOrigen?.saldo_dolares - (this.monto / this.tasa_cambio),
-                                tasa_cambio = this.tasa_cambio,
-                                tasa_cambio_compra = this.tasa_cambio_compra,
-                                moneda = cuentaDestino?.permite_cordobas == true ? "C$" : "$"
-                            },new Detail_Movimiento(){
-                                id_cuenta = cuentaDestino?.id_cuentas,
-                                debito = 0,
-                                debito_dolares = 0,
-                                credito = this.monto,
-                                credito_dolares = this.monto / tasa_cambio,
-                                monto_inicial = cuentaDestino?.saldo,
-                                monto_inicial_dolares = cuentaDestino?.saldo_dolares,
-                                monto_final = cuentaDestino?.saldo + this.monto,
-                                monto_final_dolares = cuentaDestino?.saldo_dolares + (this.monto / this.tasa_cambio),
-                                tasa_cambio = this.tasa_cambio,
-                                tasa_cambio_compra = this.tasa_cambio_compra,
-                                moneda = cuentaDestino?.permite_cordobas == true ? "C$" : "$"
-                            }
-                        }
-                };
-
-                cuentaOrigen.saldo = cuentaOrigen.saldo - this.paga_cordobas;
-                cuentaOrigen.saldo_dolares = cuentaOrigen.saldo_dolares - (this.paga_cordobas / this.tasa_cambio);
-                cuentaDestino.saldo = cuentaDestino.saldo + this.paga_cordobas;
-                cuentaDestino.saldo_dolares = cuentaDestino.saldo_dolares + (this.paga_cordobas / this.tasa_cambio);
-                cuentaDestino.Update();
-                cuentaOrigen.Update();
-
-                var resultMovimiento = encabezado.Save();
+                    Catalogo_Cuentas_Destino = null,
+                    Catalogo_Cuentas_Origen = null,
+                    concepto = "TEST",
+                    descripcion = "TEST",
+                    moneda = "CORDOBAS",
+                    monto = 7000,
+                    tasa_cambio = 35.95,
+                    tasa_cambio_compra = 36.85
+                }.Save(token);
 
                 CommitGlobalTransaction();
 

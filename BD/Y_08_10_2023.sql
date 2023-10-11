@@ -32,3 +32,6 @@ ALTER TABLE dbo.Detalle_Factura_Recibo ADD CONSTRAINT detalle_factura_recibo_fk 
 go
 ALTER TABLE dbo.Detalle_Factura_Recibo ADD CONSTRAINT detalle_factura_cuota_fk FOREIGN KEY (id_cuota) REFERENCES Tbl_Cuotas (id_cuota) ON DELETE NO ACTION ON UPDATE NO ACTION
 GO
+
+
+
