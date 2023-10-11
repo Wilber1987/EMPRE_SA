@@ -41,8 +41,7 @@ namespace BackgroundJob.Cron.Jobs
             : base(settings.CronExpression, settings.TimeZone)
         {
             _log = log;
-        }
-
+        }       
         protected override Task DoWork(CancellationToken stoppingToken)
         {
             _log.LogInformation(":::::::::::Running...  SendMovimientoCuentaMailNotificationsSchedulerJob at {0}", DateTime.UtcNow);

@@ -1,6 +1,6 @@
 import { ModelProperty } from "../WDevCore/WModules/CommonModel.js";
 
-class CuotaComponent {
+class Tbl_Cuotas_ModelComponent {
     constructor(props) {
         for (const prop in props) {
             this[prop] = props[prop];
@@ -17,4 +17,4 @@ class CuotaComponent {
     /**@type {ModelProperty} */
     capital_restante = { type: "number", label: "MONTO RESTANTE" };
 }
-export { CuotaComponent }
+export { Tbl_Cuotas_ModelComponent }

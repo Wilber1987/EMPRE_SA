@@ -14,6 +14,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] EMPRE S.A</title>
     <link rel="stylesheet" href="~/css/AdminTemplate.css" />
+    <script>
+        function displayNav() {
+            Aside.className = Aside.className.includes("navActive") ? "" : "navActive";
+        }
+    </script>
     <script type="module">
         import { WSecurity } from "/WDevCore/Security/WSecurity.js";
         const logout = () => {
@@ -51,6 +56,7 @@
 <body id="AdminTemplate">
     <aside id="Aside">
         <nav>
+            <img src="~/Media/Image/close.webp" class="navIcon" onclick="displayNav()">
             <div class="logo-container">
                 <img src="@pageConfig.MEDIA_IMG_PATH@pageConfig.LOGO_PRINCIPAL">
             </div>
@@ -142,6 +148,7 @@
     </aside>
 
     <header id="Header" class="admin-header">
+        <img src="~/Media/Image/navIcon.png" class="navIcon" onclick="displayNav()">
         <div class="title-container">
             <label for="" class="title">@pageConfig.TITULO</label>
             <label for="" class="sub-title">@pageConfig.SUB_TITULO</label>
@@ -174,7 +181,6 @@
                 target.className = target.className + ' active-title';
                 sessionStorage.setItem("menu_active", target.id);
             }
-
         }
         const menuActive = document.querySelector("#" + sessionStorage.getItem("menu_active"));
         if (menuActive) {

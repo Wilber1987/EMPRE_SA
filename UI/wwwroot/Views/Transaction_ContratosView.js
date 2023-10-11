@@ -4,7 +4,7 @@ import { WRender, ComponentsManager, WAjaxTools, WArrayF } from "../WDevCore/WMo
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js"
 // @ts-ignore
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
-import { Catalogo_Cambio_Dolar, Catalogo_Clientes, Detail_PrendasModel, Detail_Prendas_VehiculosModel, Transaction_ContratosModel } from "../FrontModel/DBODataBaseModel.js"
+import { Catalogo_Cambio_Dolar, Catalogo_Clientes, Detail_Prendas_ModelComponent, Detail_Prendas_Vehiculos_ModelComponent, Transaction_Contratos_ModelComponent } from "../FrontModel/DBODataBaseModel.js"
 // @ts-ignore
 import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
 import { Detail_Prendas, Detail_Prendas_Vehiculos, Transaction_Contratos, ValoracionesTransaction } from "../FrontModel/Model.js";
@@ -30,7 +30,7 @@ class Transaction_ContratosView extends HTMLElement {
         //models
         this.entity = new ValoracionesTransaction(props?.Entity) ?? new ValoracionesTransaction();
         //this.entity = testData        
-        this.componentsModel = new Transaction_ContratosModel();
+        this.componentsModel = new Transaction_Contratos_ModelComponent();
         this.OptionContainer = WRender.Create({ className: "OptionContainer" });
         this.TabContainer = WRender.Create({ className: "TabContainer", id: 'TabContainer' });
         this.Manager = new ComponentsManager({ MainContainer: this.TabContainer, SPAManage: false });
@@ -61,10 +61,10 @@ class Transaction_ContratosView extends HTMLElement {
         // @ts-ignore
         const isVehiculo = this.entity.Transaction_Contratos?.Detail_Prendas?.find(p => p.Catalogo_Categoria.tipo == "Vehículos");
         console.log(isVehiculo);
-        const modelPrendas = new Detail_PrendasModel({
+        const modelPrendas = new Detail_Prendas_ModelComponent({
             Detail_Prendas_Vehiculos: {
                 type: 'Model',
-                ModelObject: () => new Detail_Prendas_VehiculosModel(),
+                ModelObject: () => new Detail_Prendas_Vehiculos_ModelComponent(),
                 hidden: isVehiculo == undefined ? true : false
             }
         });
@@ -370,7 +370,7 @@ class MainContract extends HTMLElement {
                 name: "Contrato valorado", action: () => this.Manager.NavigateFunction("contrato-valorado", new Transaction_ContratosView({ Entity: contrato }))
             });
         }
-        this.componentsModel = new Transaction_ContratosModel();
+        this.componentsModel = new Transaction_Contratos_ModelComponent();
         this.OptionContainer = WRender.Create({ className: "OptionContainer" });
         this.TabContainer = WRender.Create({ className: "TabContainer", id: 'TabContainer' });
         this.Manager = new ComponentsManager({ MainContainer: this.TabContainer, SPAManage: false });
