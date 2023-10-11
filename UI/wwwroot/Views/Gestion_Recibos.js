@@ -7,8 +7,9 @@ import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { ModalMessege, WForm } from "../WDevCore/WComponents/WForm.js";
 import { Recibos, Transaction_ContratosModel,  Catalogo_Cambio_Dolar } from "../FrontModel/DBODataBaseModel.js";//todo eliminar notulizados
 import { WOrtograficValidation } from "../WDevCore/WModules/WOrtograficValidation.js";
-import { clientSearcher, contratosSearcher, ValoracionesSearch } from "../modules/SerchersModules.js";
+import {  contratosSearcher } from "../modules/SerchersModules.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
+import { Transaction_Contratos } from "../FrontModel/Model.js";
 class Gestion_RecibosView extends HTMLElement {
     // @ts-ignore
     constructor(props) {
@@ -18,7 +19,7 @@ class Gestion_RecibosView extends HTMLElement {
         this.Manager = new ComponentsManager({ MainContainer: this.TabContainer, SPAManage: false });
         this.valoracionesContainer = WRender.Create({ className: "valoraciones-container" });
         this.append(this.CustomStyle);
-        this.Cliente = {}
+        this.Contrato = {}
         this.valoresObject = {
 
         }
@@ -47,19 +48,30 @@ class Gestion_RecibosView extends HTMLElement {
             paga_cordobas: {
                 type: 'number', action: (ObjectF, form) => {
                     console.log(form)
-
-                    ObjectF.paga_dolares = 77;
-                    //this.reciboModel.FormObject.paga_dolares = 77;
-                    this.reciboForm.DrawComponent();
+                    ObjectF.paga_dolares = (ObjectF.paga_cordobas / ObjectF.tasa_cambio).toFixed(3);    
+                    if (ObjectF.paga_dolares < this.Contrato.saldo) {
+                        ObjectF.cancelar = false;
+                    }
+                                    
+                    this.reciboForm?.DrawComponent();
                 }
             },
             paga_dolares: {
                 type: 'number', action: (ObjectF, form) => {
-                    this.reciboModel.FormObject.paga_cordobas = 77;
-                    this.reciboForm.DrawComponent();
+                    ObjectF.paga_cordobas = (ObjectF.paga_dolares * ObjectF.tasa_cambio).toFixed(3);
+                    if (ObjectF.paga_dolares < this.Contrato.saldo) {
+                        ObjectF.cancelar = false;
+                    }
+                    this.reciboForm?.DrawComponent();
                 }
             }
         });
+        this.reciboModel.cancelar.action = (ObjectF)=> {            
+            if (this.reciboForm != null) {
+                this.reciboForm.FormObject.paga_dolares = this.Contrato.saldo;
+                this.reciboForm?.DrawComponent();
+            }           
+        };
         // new Recibos();
 
         this.SetOption();
@@ -125,35 +137,7 @@ class Gestion_RecibosView extends HTMLElement {
     valoracionResumen(valoracion_compra_cordobas, valoracion_compra_dolares, valoracion_empeño_cordobas, valoracion_empeño_dolares) {
         return `Compra C$: ${valoracion_compra_cordobas} - Compra $: ${valoracion_compra_dolares} - Empeño C$: ${valoracion_empeño_cordobas} - Empeño $: ${valoracion_empeño_dolares}`;
     }
-    buildValoresModel(tasasCambio) {
-        this.valoresModel = {
-            pago_cordobas: {
-                type: "number", label: "Paga C$:", action: (element) => {
-                    this.valoresObject.pago_dolares = (this.valoresObject.pago_cordobas / tasasCambio[0].valor_de_compra).toFixed(2);
-                    this.reciboForm.FormObject.monto = this.valoresObject.pago_dolares
-                    //const control = this.valoresForm?.shadowRoot?.querySelector(".pago_cordobas");
-                    this.reciboForm?.DrawComponent();
-
-                }
-            },
-            pago_dolares: {
-                type: "number", label: "$:", action: () => {
-                    this.valoresObject.pago_cordobas = (this.valoresObject.pago_dolares * tasasCambio[0].valor_de_compra).toFixed(2);
-
-                }
-            }, cancela: {
-                type: "radio", label: "Cancela", Dataset: ["Cancela", "Solo Abono"], action: (value) => {
-                    //console.log(value.cancela);
-                    this.valoresObject.pago_cordobas = this.valoresObject.pago_dolares * tasasCambio[0].valor_de_compra;
-                    /** @type {HTMLInputElement|undefined|null} */
-                    const control = this.valoresForm?.shadowRoot?.querySelector(".pago_cordobas");
-                    if (control != undefined || control != null) {
-                        control.value = this.valoresObject.pago_cordobas.toString();
-                    }
-                }
-            }
-        };
-    }
+    
 
 
     SetOption() {
@@ -179,46 +163,56 @@ class Gestion_RecibosView extends HTMLElement {
                 }
                 const response = await new Recibos(this.reciboForm?.FormObject).Save() //this.reciboModel?.Save() // this.reciboModel?.GuardarValoraciones(this.valoracionesTable?.Dataset);
                 if (response.status == 200) {
-                    this.shadowRoot?.append(ModalVericateAction(()=>{
+                    location.href = "/PagesViews/Ver_Recibos";
+                    /*this.shadowRoot?.append(ModalVericateAction(()=>{
                         location.href = "/PagesViews/Print_Recibo?id_Recibo="+ response.body.id_recibo;
-                    }, response.message))
+                    }, response.message))*/
                 }
             }
         }))
 
-        this.OptionContainer.append(WRender.Create({
-            tagName: 'button', className: 'Block-Success', innerText: 'Generar Recibo',
-            onclick: async () => {
-                if (this.Cliente?.codigo_cliente == undefined) {
-                    this.append(ModalMessege("Seleccione un cliente para continuar"));
-                    return;
-                }
-                const contract = await this.entity.VerContrato();
-                this.shadowRoot?.append(new WModalForm({
-                    ObjectModal: WRender.Create({
-                        tagName: "iframe", src: contract.value, style: {
-                            width: "100%",
-                            minHeight: "700px"
-                        }
-                    })
-                }))
-            }
-        }))
+        // this.OptionContainer.append(WRender.Create({
+        //     tagName: 'button', className: 'Block-Success', innerText: 'Generar Recibo',
+        //     onclick: async () => {
+        //         if (this.Contrato?.codigo_cliente == undefined) {
+        //             this.append(ModalMessege("Seleccione un cliente para continuar"));
+        //             return;
+        //         }
+        //         const contract = await this.entity.VerContrato();
+        //         this.shadowRoot?.append(new WModalForm({
+        //             ObjectModal: WRender.Create({
+        //                 tagName: "iframe", src: contract.value, style: {
+        //                     width: "100%",
+        //                     minHeight: "700px"
+        //                 }
+        //             })
+        //         }))
+        //     }
+        // }))
     }
-    selectContrato = (/**@type {Transaction_ContratosModel} */ selectContrato) => {
+    selectContrato = (/**@type {Transaction_Contratos} */ selectContrato) => {
         //console.log(selectContrato);
-        this.Cliente = selectContrato;
+
+        let cuotasFiltradas = selectContrato.Tbl_Cuotas.filter(cuota => cuota.pago_contado == null || cuota.total > cuota.pago_contado);
+
+        console.log(selectContrato.Tbl_Cuotas);
+        console.log(cuotasFiltradas);
+        if (cuotasFiltradas.length == 0) {
+            this.append(ModalMessege("Este contrato ya se encuentra cancelado"))
+            return;
+        }
+
+        this.Contrato = selectContrato;
         if (this.reciboForm != undefined) {
             //this.reciboForm.FormObject.Tasa_interes = this.getTasaInteres();
             this.reciboForm.DrawComponent();
-        }
-        //this.calculoAmortizacion();//ocupar metodo
+        }        
         this.selectedClientDetail.innerHTML =
             `<div>           
                     <div class="column-venta">
                         <div class="campo">
                             <span>Nombre:</span>
-                            <input type="text" value="${selectContrato.Catalogo_Clientes.primer_nombre + ' ' + selectContrato.Catalogo_Clientes.segundo_nombre + ' ' + selectContrato.Catalogo_Clientes.primer_apellido + ' ' + selectContrato.Catalogo_Clientes.segundo_apellido}" disabled>
+                            <input type="text" value="${selectContrato.Catalogo_Clientes.primer_nombre + ' ' + selectContrato.Catalogo_Clientes.segundo_nombre + ' ' + selectContrato.Catalogo_Clientes.primer_apellido + ' ' + selectContrato.Catalogo_Clientes.segundo_apellidio}" disabled>
                             <span>Dirección:</span>
                             <input type="text" value="${selectContrato.Catalogo_Clientes.direccion}" disabled>
                         </div>                        
@@ -241,7 +235,8 @@ class Gestion_RecibosView extends HTMLElement {
 
     /**
      * 
-     * @returns {Recibos}
+     * @param {Transaction_Contratos} contrato
+     * @param {Array<Catalogo_Cambio_Dolar>} contrato
      */
     calculoRecibo = (contrato, tasasCambio) => {
         if (this.reciboForm != undefined) {
@@ -253,7 +248,7 @@ class Gestion_RecibosView extends HTMLElement {
 
             contrato.Tbl_Cuotas.sort((a, b) => a.id_cuota - b.id_cuota);
 
-            let primeraCuotaConCapitalMayorACero;
+            let primeraCuotaConCapitalMayorACero = 0;
             let interes_cargos = 0;
             let interes_demas_cargos_pagar_cordobas = 0;
             let abono_capital_cordobas = 0;
@@ -280,15 +275,16 @@ class Gestion_RecibosView extends HTMLElement {
                 }
             }
 
+
             this.reciboForm.FormObject["numero_contrato"] = contrato["numero_contrato"];
-            this.reciboForm.FormObject["saldo_actual"] = contrato["saldo_actual"];
+            //this.reciboForm.FormObject["saldo_actual"] = contrato["saldo_actual"];
             this.reciboForm.FormObject["tasa_cambio"] = tasasCambio[0].valor_de_compra;
             this.reciboForm.FormObject["tasa_cambio_compra"] = tasasCambio[0].valor_de_compra;
             this.reciboForm.FormObject["tasa_cambio_centa"] = tasasCambio[0].valor_de_venta;
-            this.reciboForm.FormObject["monto"] = contrato["monto"];
-            this.reciboForm.FormObject["saldo_actual_cordobas"] = (totalRestante * tasasCambio[0].valor_de_compra).toFixed(3);
-            this.reciboForm.FormObject["saldo_actual_dolares"] = totalRestante;
-            this.reciboForm.FormObject["interes_cargos"] = interes_cargos;
+            this.reciboForm.FormObject["monto"] = contrato["monto"].toFixed(3);
+            this.reciboForm.FormObject["saldo_actual_cordobas"] = ( contrato["saldo"] * tasasCambio[0].valor_de_compra).toFixed(3);
+            this.reciboForm.FormObject["saldo_actual_dolares"] =  contrato["saldo"].toFixed(3);
+            this.reciboForm.FormObject["interes_cargos"] = interes_cargos.toFixed(3);
             this.reciboForm.FormObject["interes_demas_cargos_pagar_cordobas"] = (interes_demas_cargos_pagar_cordobas * tasasCambio[0].valor_de_compra).toFixed(3);
             this.reciboForm.FormObject["interes_demas_cargos_pagar_dolares"] = interes_demas_cargos_pagar_cordobas;
             this.reciboForm.FormObject["abono_capital_cordobas"] = (abono_capital_cordobas * tasasCambio[0].valor_de_compra).toFixed(3);
@@ -300,7 +296,7 @@ class Gestion_RecibosView extends HTMLElement {
             this.reciboForm.FormObject["mora_interes_cordobas"] = ((mora_interes+interes_cargos) * tasasCambio[0].valor_de_venta).toFixed(3);
             this.reciboForm.FormObject["mora_interes_dolares"] = (mora_interes+interes_cargos).toFixed(3);
             this.reciboForm.FormObject["total_cordobas"] = (cuota_total * tasasCambio[0].valor_de_venta).toFixed(3);
-            this.reciboForm.FormObject["total_dolares"] =  cuota_total;
+            this.reciboForm.FormObject["total_dolares"] =  cuota_total.toFixed(3);;
             this.reciboForm.FormObject["total_parciales"] = 1;//todo preguntar
             this.reciboForm.FormObject["fecha_roc"] = new Date();
             this.reciboForm.FormObject["paga_cordobas"] = (primeraCuotaConCapitalMayorACero * tasasCambio[0].valor_de_compra).toFixed(3);
@@ -309,30 +305,7 @@ class Gestion_RecibosView extends HTMLElement {
             this.reciboForm.FormObject["cancelar"] = false;
 
 
-            //console.log(contrato)
-            //console.log("----")
-            //console.log(this.reciboForm.FormObject)
-            //this.reciboForm.DrawComponent();
-            /*if (this.valoresForm != undefined) {
-                // @ts-ignore
-                if (new Date().subtractDays(40) < new Date(valoracion.Fecha)) {
-                    this.valoresObject.Valoracion_1 = valoracion.Detail_Valores?.Valoracion_1 ?? 0;
-                    this.valoresObject.dolares_1 = valoracion.Detail_Valores?.dolares_1 ?? 0;
-                    this.valoresObject.Valoracion_2 = valoracion.Detail_Valores?.Valoracion_2 ?? 0;
-                    this.valoresObject.dolares_2 = valoracion.Detail_Valores?.dolares_2 ?? 0;
-                    this.valoresObject.Valoracion_3 = valoracion.Detail_Valores?.Valoracion_3 ?? 0;
-                    this.valoresObject.dolares_3 = valoracion.Detail_Valores?.dolares_3 ?? 0;
-                    this.valoresForm.DrawComponent();
-                } else {
-                    this.valoresObject.Valoracion_1 = 0;
-                    this.valoresObject.dolares_1 = 0;
-                    this.valoresObject.Valoracion_2 = 0;
-                    this.valoresObject.dolares_2 = 0;
-                    this.valoresObject.Valoracion_3 = 0;
-                    this.valoresObject.dolares_3 = 0;
-                    this.valoresForm.DrawComponent();
-                }
-            }*/
+           
         }
 
     }

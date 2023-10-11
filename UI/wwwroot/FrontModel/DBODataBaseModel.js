@@ -57,7 +57,7 @@ class Transactional_Valoracion extends EntityClass {
 
     precio_venta_empeño_cordobas = { type: 'number', hidden: true };
     precio_venta_empeño_dolares = { type: 'number', hidden: true };
-    
+
     GuardarValoraciones = async (valoraciones) => {
         return await this.SaveData("Transactional_Valoracion/GuardarValoraciones", { valoraciones: valoraciones })
     }
@@ -223,53 +223,53 @@ class Catalogo_Tipo_Identificacion extends EntityClass {
 export { Catalogo_Tipo_Identificacion }
 
 class Transaction_ContratosModel extends EntityClass {
-	constructor(props) {
+    constructor(props) {
         super(props, 'EntityDBO');
-		for (const prop in props) {
-			this[prop] = props[prop];
-		}
-	}
-    Catalogo_Clientes = { type: 'WSELECT', ModelObject: () => new Catalogo_Clientes() , hiddenFilter: true};
-	numero_contrato = { type: "number" , primary: true  };
-	fecha_contrato = { type: "date"  };
-	fecha_cancelar = { type: "date" , hiddenInTable: true };
-	monto = { type: "number" , hiddenInTable: true,hiddenFilter: true  };
-	interes = { type: "number" , hiddenInTable: true,hiddenFilter: true };
-	mora = { type: "number"  , hiddenInTable: true,hiddenFilter: true };
-	estado = { type: "Select", Dataset: ["ACTIVO", "CANCELADO", "ANULADO"] };
-	fecha_vencimiento = { type: "date" , hiddenFilter: true };
-	codigo_cliente = { type: "number", hiddenInTable: true, hiddenFilter: true  };
-	saldo = { type: "number"  , hiddenFilter: true ,hiddenInTable: true};
-	abonos = { type: "number" , hiddenInTable: true,  hiddenFilter: true };
-	tipo = { type: "number" , hiddenInTable: true,  hiddenFilter: true };
-	entregado = { type: "text" , hiddenInTable: true,  hiddenFilter: true };
-	interes_actual = { type: "number" , hiddenInTable:true,  hiddenFilter: true };
-	observaciones = { type: "text" , hiddenInTable: true,  hiddenFilter: true };
-	iva = { type: "number"  , hiddenInTable: true, hiddenFilter: true };
-	descuento = { type: "number"  , hiddenInTable: true, hiddenFilter: true };
-	taza_cambio = { type: "number"  , hiddenInTable: true, hiddenFilter: true };
-	taza_cambio_compra = { type: "number"  , hiddenInTable: true, hiddenFilter: true };
-	id_agente = { type: "number"  , hiddenInTable: true, hiddenFilter: true };
-	plazo = { type: "number" , hiddenInTable: true,  hiddenFilter: true };
-	cuotafija = { type: "number" , hiddenInTable: true,  hiddenFilter: true };
-	tasa_hoy = { type: "number" , hiddenInTable: true,  hiddenFilter: true };
-	motivo_anulacion = { type: "text" , hiddenInTable: true , hiddenFilter: true};
-	valoracion_compra_dolares = { type: "number" , hiddenInTable: true, hiddenFilter: true };
-	valoracion_compra_cordobas = { type: "number" , hiddenInTable: true , hiddenFilter: true};
-	valoracion_empeño_cordobas = { type: "number" , hiddenInTable: true, hiddenFilter: true };
-	valoracion_empeño_dolares = { type: "number" , hiddenInTable: true, hiddenFilter: true };
-	tasas_interes = { type: "number" , hiddenInTable: true , hiddenFilter: true};
-	gestion_crediticia = { type: "number" , hiddenInTable: true, hiddenFilter: true };
-	cuotafija_dolares = { type: "number" , hiddenInTable: true , hiddenFilter: true};
-	fecha = { type: "date" , hiddenInTable: true , hiddenFilter: true};
-	total_pagar_cordobas = { type: "number" , hiddenInTable: true, hiddenFilter: true };
-	total_pagar_dolares = { type: "number" , hiddenInTable: true, hiddenFilter: true };
-	interes_dolares = { type: "number" , hiddenInTable: true , hiddenFilter: true};
-	Id_User = { type: "number" , hiddenInTable: true , hiddenFilter: true};
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
+    Catalogo_Clientes = { type: 'WSELECT', ModelObject: () => new Catalogo_Clientes(), hiddenFilter: true };
+    numero_contrato = { type: "number", primary: true };
+    fecha_contrato = { type: "date" };
+    fecha_cancelar = { type: "date", hiddenInTable: true };
+    monto = { type: "number", hiddenInTable: true, hiddenFilter: true };
+    interes = { type: "number", hiddenInTable: true, hiddenFilter: true };
+    mora = { type: "number", hiddenInTable: true, hiddenFilter: true };
+    estado = { type: "Select", Dataset: ["ACTIVO", "CANCELADO", "ANULADO"] };
+    fecha_vencimiento = { type: "date", hiddenFilter: true };
+    codigo_cliente = { type: "number", hiddenInTable: true, hiddenFilter: true };
+    saldo = { type: "number", hiddenFilter: true, hiddenInTable: true };
+    abonos = { type: "number", hiddenInTable: true, hiddenFilter: true };
+    tipo = { type: "number", hiddenInTable: true, hiddenFilter: true };
+    entregado = { type: "text", hiddenInTable: true, hiddenFilter: true };
+    interes_actual = { type: "number", hiddenInTable: true, hiddenFilter: true };
+    observaciones = { type: "text", hiddenInTable: true, hiddenFilter: true };
+    iva = { type: "number", hiddenInTable: true, hiddenFilter: true };
+    descuento = { type: "number", hiddenInTable: true, hiddenFilter: true };
+    taza_cambio = { type: "number", hiddenInTable: true, hiddenFilter: true };
+    taza_cambio_compra = { type: "number", hiddenInTable: true, hiddenFilter: true };
+    id_agente = { type: "number", hiddenInTable: true, hiddenFilter: true };
+    plazo = { type: "number", hiddenInTable: true, hiddenFilter: true };
+    cuotafija = { type: "number", hiddenInTable: true, hiddenFilter: true };
+    tasa_hoy = { type: "number", hiddenInTable: true, hiddenFilter: true };
+    motivo_anulacion = { type: "text", hiddenInTable: true, hiddenFilter: true };
+    valoracion_compra_dolares = { type: "number", hiddenInTable: true, hiddenFilter: true };
+    valoracion_compra_cordobas = { type: "number", hiddenInTable: true, hiddenFilter: true };
+    valoracion_empeño_cordobas = { type: "number", hiddenInTable: true, hiddenFilter: true };
+    valoracion_empeño_dolares = { type: "number", hiddenInTable: true, hiddenFilter: true };
+    tasas_interes = { type: "number", hiddenInTable: true, hiddenFilter: true };
+    gestion_crediticia = { type: "number", hiddenInTable: true, hiddenFilter: true };
+    cuotafija_dolares = { type: "number", hiddenInTable: true, hiddenFilter: true };
+    fecha = { type: "date", hiddenInTable: true, hiddenFilter: true };
+    total_pagar_cordobas = { type: "number", hiddenInTable: true, hiddenFilter: true };
+    total_pagar_dolares = { type: "number", hiddenInTable: true, hiddenFilter: true };
+    interes_dolares = { type: "number", hiddenInTable: true, hiddenFilter: true };
+    Id_User = { type: "number", hiddenInTable: true, hiddenFilter: true };
     Catalogo_Agentes = { type: 'WSELECT', ModelObject: () => new Catalogo_Agentes(), hiddenInTable: true, hiddenFilter: true };
     Detail_Prendas = { type: 'MasterDetail', ModelObject: () => new Detail_PrendasModel(), hiddenFilter: true };
 }
-export{Transaction_ContratosModel}
+export { Transaction_ContratosModel }
 
 /*class Transaction_ContratosModel extends EntityClass { //todo eliminar
     constructor(props) {
@@ -463,8 +463,8 @@ class Catalogo_Cuentas extends EntityClass {
     id_cuentas = { type: 'number', primary: true };
     nombre = { type: 'text' };
     saldo = { type: 'number', disabled: true, hiddenInTable: true, require: false };
-    permite_dolares = { type: "checkbox", require: false  };
-	permite_cordobas = { type: "checkbox", require: false  };
+    permite_dolares = { type: "checkbox", require: false };
+    permite_cordobas = { type: "checkbox", require: false };
     tipo_cuenta = { type: 'select', Dataset: ['PROPIA', 'PAGO', 'EXTERNA'] };
     Catalogo_Sucursales = { type: 'WSELECT', ModelObject: () => new Catalogo_Sucursales() };
     Categoria_Cuentas = { type: 'WSELECT', ModelObject: () => new Categoria_Cuentas() };
@@ -472,33 +472,33 @@ class Catalogo_Cuentas extends EntityClass {
 }
 export { Catalogo_Cuentas }
 
-class Categoria_Cuentas  extends EntityClass {
-	constructor(props) {
+class Categoria_Cuentas extends EntityClass {
+    constructor(props) {
         super(props, 'EntityDBO');
-		for (const prop in props) {
-			this[prop] = props[prop];
-		}
-	}
-	id_categoria = { type: "number" , primary: true  };
-	descripcion = { type: "text"  };
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
+    id_categoria = { type: "number", primary: true };
+    descripcion = { type: "text" };
 }
-export{Categoria_Cuentas}
+export { Categoria_Cuentas }
 
-class Permisos_Cuentas extends EntityClass {    
-	constructor(props) {
+class Permisos_Cuentas extends EntityClass {
+    constructor(props) {
         super(props, 'EntityDBO');
-		for (const prop in props) {
-			this[prop] = props[prop];
-		}
-	}
-	id_permiso = { type: "number" , primary: true  };
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
+    id_permiso = { type: "number", primary: true };
     Categoria_Cuentas_Origen = { type: 'WSELECT', ModelObject: () => new Categoria_Cuentas() };
-	Categoria_Cuentas_Destino = { type: 'WSELECT', ModelObject: () => new Categoria_Cuentas() };
-	permite_debito = { type: "checkbox", require: false  };
-	permite_credito = { type: "checkbox", require: false  };
+    Categoria_Cuentas_Destino = { type: 'WSELECT', ModelObject: () => new Categoria_Cuentas() };
+    permite_debito = { type: "checkbox", require: false };
+    permite_credito = { type: "checkbox", require: false };
     //Categoria_Cuentas = { type: 'WSELECT', ModelObject: () => new Categoria_Cuentas() };//todo eliminar
 }
-export{Permisos_Cuentas}
+export { Permisos_Cuentas }
 
 class Catalogo_Departamento extends EntityClass {
     constructor(props) {
@@ -710,46 +710,109 @@ export { Datos_Configuracion }
 
 
 class Recibos extends EntityClass {
-	constructor(props) {
+    constructor(props) {
         super(props, 'Recibos');
-		for (const prop in props) {
-			this[prop] = props[prop];
-		}
-	}
-	id_recibo = { type: "number" , primary: true  };
-	consecutivo = { type: "number", hidden: true, require: false  };
-	temporal = { type: "checkbox", require:false  };
-	numero_contrato = { type: "number", hidden: true , disabled: true};
-	monto = { type: "number" , disabled: true};
-	saldo_actual_cordobas = { type: "number" , disabled: true};
-	saldo_actual_dolares = { type: "number" , disabled: true};
-	plazo = { type: "number" , disabled: true};
-	interes_cargos = { type: "number" , disabled: true};
-	tasa_cambio = { type: "number", hiddenInTable: true , disabled: true};
-	tasa_cambio_compra = { type: "number", hiddenInTable: true , disabled: true};
-	interes_demas_cargos_pagar_cordobas = { type: "number", hiddenInTable: true , disabled: true};
-	interes_demas_cargos_pagar_dolares = { type: "number", hiddenInTable: true , disabled: true};
-	abono_capital_cordobas = { type: "number", hiddenInTable: true , disabled: true};
-	abono_capital_dolares = { type: "number", hiddenInTable: true , disabled: true};
-	cuota_pagar_cordobas = { type: "number", hiddenInTable: true , disabled: true};
-	cuota_pagar_dolares = { type: "number", hiddenInTable: true , disabled: true};
-	mora_cordobas = { type: "number", hiddenInTable: true , disabled: true};
-	mora_dolares = { type: "number", hiddenInTable: true , disabled: true};
-	mora_interes_cordobas = { type: "number", hiddenInTable: true , disabled: true};
-	mora_interes_dolares = { type: "number", hiddenInTable: true , disabled: true};
-	total_cordobas = { type: "number", hiddenInTable: true , disabled: true};
-	total_dolares = { type: "number", hiddenInTable: true , disabled: true};
-	total_parciales = { type: "number", hiddenInTable: true , disabled: true};
-    
-	fecha_roc = { type: "date" , disabled: true};
-	paga_cordobas = { type: "number", hiddenInTable: true};
-	paga_dolares = { type: "number" , hiddenInTable: true};
-    title = {type: "title", label: "Opciones:"};
-	solo_abono = { type: "checkbox", hiddenInTable: true, require: false };
-	cancelar = { type: "checkbox", hiddenInTable: true, require: false };
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
+    id_recibo = { type: "number", primary: true };
+    consecutivo = { type: "number", hidden: true, require: false };
+    temporal = { type: "checkbox", require: false };
+    numero_contrato = { type: "number", hidden: true, disabled: true };
+    monto = { type: "number", disabled: true };
+    saldo_actual_cordobas = { type: "number", disabled: true };
+    saldo_actual_dolares = { type: "number", disabled: true };
+    plazo = { type: "number", disabled: true };
+    interes_cargos = { type: "number", disabled: true };
+    tasa_cambio = { type: "number", hiddenInTable: true, disabled: true };
+    tasa_cambio_compra = { type: "number", hiddenInTable: true, disabled: true };
+    interes_demas_cargos_pagar_cordobas = { type: "number", hiddenInTable: true, disabled: true };
+    interes_demas_cargos_pagar_dolares = { type: "number", hiddenInTable: true, disabled: true };
+    abono_capital_cordobas = { type: "number", hiddenInTable: true, disabled: true };
+    abono_capital_dolares = { type: "number", hiddenInTable: true, disabled: true };
+    cuota_pagar_cordobas = { type: "number", hiddenInTable: true, disabled: true };
+    cuota_pagar_dolares = { type: "number", hiddenInTable: true, disabled: true };
+    mora_cordobas = { type: "number", hiddenInTable: true, disabled: true };
+    mora_dolares = { type: "number", hiddenInTable: true, disabled: true };
+    mora_interes_cordobas = { type: "number", hiddenInTable: true, disabled: true };
+    mora_interes_dolares = { type: "number", hiddenInTable: true, disabled: true };
+    total_cordobas = { type: "number", hiddenInTable: true, disabled: true };
+    total_dolares = { type: "number", hiddenInTable: true, disabled: true };
+    total_parciales = { type: "number", hiddenInTable: true, disabled: true };
+
+    fecha_roc = { type: "date", disabled: true };
+    paga_cordobas = { type: "number", hiddenInTable: true };
+    paga_dolares = { type: "number", hiddenInTable: true };
+    title = { type: "title", label: "Opciones:" };    
+    //solo_abono = { type: "checkbox", hiddenInTable: true, require: false };
+    cancelar = { type: "checkbox", hiddenInTable: true, require: false };
 
     VerRecibo = async () => {
         return await this.SaveData("PDF/GeneratePdfContract", this)
     }
 }
-export{Recibos}
+export { Recibos }
+
+
+class Transaccion_Factura extends EntityClass {
+    constructor(props) {
+        super(props, 'Transaccion_Factura');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
+    id_factura = { type: "number", primary: true };
+    tipo = { type: "text" };
+    concepto = { type: "text" };
+    tasa_cambio = { type: "string" };
+    total = { type: "string" };
+    id_cliente = { type: "number" };
+    id_sucursal = { type: "number" };
+    fecha = { type: "date" };
+    id_usuario = { type: "number" };
+}
+export { Transaccion_Factura }
+
+class Factura_contrato {
+    constructor(props) {
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
+    id = { type: "number", primary: true };
+    id_factura = { type: "number" };
+    numero_contrato = { type: "number" };
+    cuotas_pendientes = { type: "number" };
+    saldo_anterior = { type: "string" };
+    saldo_actual = { type: "string" };
+    mora = { type: "string" };
+    interes_demas_cargos_pagar = { type: "string" };
+    proximo_pago_pactado = { type: "date" };
+    total_parciales = { type: "string" };
+    tipo = { type: "text" };
+    tipo_cuenta = { type: "text" };
+    total = { type: "string" };
+    tasa_cambio = { type: "string" };
+    id_cliente = { type: "number" };
+    id_sucursal = { type: "number" };
+}
+export { Factura_contrato }
+
+class Detalle_Factura_Recibo extends EntityClass {
+    constructor(props) {
+        super(props, 'Detalle_Factura_Recibo');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
+    id = { type: "number", primary: true };
+    id_factura = { type: "number" };
+    id_cuota = { type: "number" };
+    total_cuota = { type: "string" };
+    monto_pagado = { type: "string" };
+    capital_restante = { type: "string" };
+    concepto = { type: "text" };
+    tasa_cambio = { type: "string" };
+}
+export { Detalle_Factura_Recibo }
