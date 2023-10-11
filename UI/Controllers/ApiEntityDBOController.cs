@@ -601,6 +601,22 @@ namespace API.Controllers
         {
             return inst.Update();
         }
+         //Transaccion_Factura
+       [HttpPost]
+       [AuthController]
+       public List<Transaccion_Factura> getTransaccion_Factura(Transaccion_Factura Inst) {
+           return Inst.Get<Transaccion_Factura>();
+       }
+       [HttpPost]
+       [AuthController]
+       public object saveTransaccion_Factura(Transaccion_Factura inst) {
+           return inst.Save();
+       }
+       [HttpPost]
+       [AuthController]
+       public object updateTransaccion_Factura(Transaccion_Factura inst) {
+           return inst.Update();
+       }
         
     }
 }

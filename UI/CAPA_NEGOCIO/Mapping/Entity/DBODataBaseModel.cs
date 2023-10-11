@@ -472,8 +472,8 @@ namespace DataBaseModel
     {
         [PrimaryKey(Identity = true)]
         public int? id_factura { get; set; }
-        public string tipo { get; set; }
-        public string concepto { get; set; }
+        public string? tipo { get; set; }
+        public string? concepto { get; set; }
         public double? tasa_cambio { get; set; }
         public double? total { get; set; }
         public int? id_cliente { get; set; }
@@ -482,16 +482,14 @@ namespace DataBaseModel
         public int? id_usuario { get; set; }
         
         [JsonProp]
-        public Factura_contrato? Factura_contrato { get; set; }
+        public Factura_contrato Factura_contrato { get; set; }
 
         [OneToMany(TableName = "Detalle_Factura_Recibo", KeyColumn = "id_factura", ForeignKeyColumn = "id_factura")]
         public List<Detalle_Factura_Recibo>? Detalle_Factura_Recibo { get; set; }
     }
 
-    public class Factura_contrato : EntityClass
+    public class Factura_contrato 
     {
-        [PrimaryKey(Identity = true)]
-        public int? id { get; set; }
         public int? numero_contrato { get; set; }
         public int? cuotas_pactadas { get; set; }
         public int? cuotas_pendientes { get; set; }
@@ -501,8 +499,8 @@ namespace DataBaseModel
         public double? interes_demas_cargos_pagar { get; set; }
         public DateTime? proximo_pago_pactado { get; set; }
         public double? total_parciales { get; set; }
-        public string tipo { get; set; }
-        public string tipo_cuenta { get; set; }
+        public string? tipo { get; set; }
+        public string? tipo_cuenta { get; set; }
         public double? total { get; set; }
         public double? tasa_cambio { get; set; }
         public int? id_cliente { get; set; }
@@ -524,7 +522,7 @@ namespace DataBaseModel
 
         public int? id_factura { get; set; }
 
-        [ManyToOne(TableName = "Transaccion_Factura", KeyColumn = "id_factura", ForeignKeyColumn = "id_factura")]
+       //[ManyToOne(TableName = "Transaccion_Factura", KeyColumn = "id_factura", ForeignKeyColumn = "id_factura")]
         public Transaccion_Factura? Transaccion_Factura { get; set; }
 
         

@@ -1,4 +1,5 @@
-
+drop table Transaccion_Factura;
+go
 CREATE TABLE Transaccion_Factura (
   id_factura int  IDENTITY(1,1) PRIMARY KEY,
   tipo nvarchar(150) COLLATE Modern_Spanish_CI_AS  NULL,

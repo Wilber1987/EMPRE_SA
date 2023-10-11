@@ -464,6 +464,7 @@ class Catalogo_Cuentas extends EntityClass {
     id_cuentas = { type: 'number', primary: true };
     nombre = { type: 'text' };
     saldo = { type: 'number', disabled: true, hiddenInTable: true, require: false };
+    saldo_dolares = { type: 'number', disabled: true, hiddenInTable: true, require: false };
     permite_dolares = { type: "checkbox", require: false };
     permite_cordobas = { type: "checkbox", require: false };
     tipo_cuenta = { type: 'select', Dataset: ['PROPIA', 'PAGO', 'EXTERNA'] };
@@ -712,7 +713,7 @@ export { Datos_Configuracion }
 
 class Recibos extends EntityClass {
     constructor(props) {
-        super(props, 'Recibos');
+        super(props, 'EntityDBO');
         for (const prop in props) {
             this[prop] = props[prop];
         }
@@ -758,7 +759,7 @@ export { Recibos }
 
 class Transaccion_Factura extends EntityClass {
     constructor(props) {
-        super(props, 'Transaccion_Factura');
+        super(props, 'EntityDBO');
         for (const prop in props) {
             this[prop] = props[prop];
         }
@@ -771,7 +772,9 @@ class Transaccion_Factura extends EntityClass {
     id_cliente = { type: "number" };
     id_sucursal = { type: "number" };
     fecha = { type: "date" };
-    id_usuario = { type: "number" };
+    Factura_contrato = { type: 'model', label: "Datos del contrato al momento del pago", ModelObject: () => new Factura_contrato(), hiddenFilter: true };
+    Detalle_Factura_Recibo = { type: 'MasterDetail', label: "Cuotas Pagadas", ModelObject: () => new Detalle_Factura_Recibo(), hiddenFilter: true };
+
 }
 export { Transaccion_Factura }
 
@@ -781,28 +784,24 @@ class Factura_contrato {
             this[prop] = props[prop];
         }
     }
-    id = { type: "number", primary: true };
-    id_factura = { type: "number" };
     numero_contrato = { type: "number" };
     cuotas_pendientes = { type: "number" };
-    saldo_anterior = { type: "string" };
-    saldo_actual = { type: "string" };
-    mora = { type: "string" };
-    interes_demas_cargos_pagar = { type: "string" };
+    saldo_anterior = { type: "number" };
+    saldo_actual = { type: "number" };
+    mora = { type: "number" };
+    interes_demas_cargos_pagar = { type: "number" };
     proximo_pago_pactado = { type: "date" };
-    total_parciales = { type: "string" };
-    tipo = { type: "text" };
-    tipo_cuenta = { type: "text" };
-    total = { type: "string" };
-    tasa_cambio = { type: "string" };
-    id_cliente = { type: "number" };
-    id_sucursal = { type: "number" };
+    total_parciales = { type: "number" };
+    tipo = { type: "number" };
+    tipo_cuenta = { type: "number" };
+    total = { type: "number" };
+    tasa_cambio = { type: "number" };
 }
 export { Factura_contrato }
 
 class Detalle_Factura_Recibo extends EntityClass {
     constructor(props) {
-        super(props, 'Detalle_Factura_Recibo');
+        super(props, 'EntityDBO');
         for (const prop in props) {
             this[prop] = props[prop];
         }

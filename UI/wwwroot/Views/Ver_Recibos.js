@@ -1,16 +1,18 @@
 import { WRender, ComponentsManager, WAjaxTools } from "../WDevCore/WModules/WComponentsTools.js";
 import { StylesControlsV2, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js"
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
-import { Recibos } from "../FrontModel/DBODataBaseModel.js"
+import { Recibos, Transaccion_Factura } from "../FrontModel/DBODataBaseModel.js"
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 class Ver_RecibosView extends HTMLElement {
     constructor(props) {
         super();
         this.TabContainer = WRender.createElement({ type: 'div', props: { class: 'TabContainer', id: 'TabContainer' } })
         this.MainComponent = new WTableComponent({
-            ModelObject: new Recibos(), Dataset: [], Options: {                
+            EntityModel: new Transaccion_Factura({ Factura_contrato: {}}),
+            ModelObject: new Transaccion_Factura(), Dataset: [],
+            Options: {                
                 Show: true,
-                Search: true, UrlSearch: "../api/ApiRecibos/GetRecibos",                
+                Search: true                
             }
         })
         this.TabContainer.append(this.MainComponent)

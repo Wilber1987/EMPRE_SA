@@ -6,3 +6,12 @@ clonar con todos los submodulos:
 clonar solo sub modulos:
 ´´git submodule update --init --recursive´´
 
+
+configuracion de modulos
+
+[submodule "UI/wwwroot/WDevCore"]
+	path = UI/wwwroot/WDevCore
+	url = https://github.com/Wilber1987/WDevCore
+[submodule "CAPA_DATOS"]
+	path = CAPA_DATOS
+	url = https://github.com/Wilber1987/CAPA_DATOS.git
