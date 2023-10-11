@@ -1,15 +1,11 @@
 //@ts-check
-import { WRender, ComponentsManager, WAjaxTools } from "../WDevCore/WModules/WComponentsTools.js";
-import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js"
-import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
-import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
-import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
-import { ModalMessege, ModalVericateAction, WForm } from "../WDevCore/WComponents/WForm.js";
-import { Recibos, Transaction_Contratos_ModelComponent,  Catalogo_Cambio_Dolar } from "../FrontModel/DBODataBaseModel.js";//todo eliminar notulizados
-import { WOrtograficValidation } from "../WDevCore/WModules/WOrtograficValidation.js";
-import {  contratosSearcher } from "../modules/SerchersModules.js";
-import { css } from "../WDevCore/WModules/WStyledRender.js";
+import { Catalogo_Cambio_Dolar, Recibos } from "../FrontModel/DBODataBaseModel.js"; //todo eliminar notulizados
 import { Transaction_Contratos } from "../FrontModel/Model.js";
+import { StyleScrolls, StylesControlsV2, StylesControlsV3 } from "../WDevCore/StyleModules/WStyleComponents.js";
+import { ModalMessege, WForm } from "../WDevCore/WComponents/WForm.js";
+import { ComponentsManager, WRender } from "../WDevCore/WModules/WComponentsTools.js";
+import { css } from "../WDevCore/WModules/WStyledRender.js";
+import { contratosSearcher } from "../modules/SerchersModules.js";
 class Gestion_RecibosView extends HTMLElement {
     // @ts-ignore
     constructor(props) {
@@ -161,6 +157,7 @@ class Gestion_RecibosView extends HTMLElement {
                     this.append(ModalMessege("Agregue datos para poder continuar"));
                     return;
                 }
+                // @ts-ignore
                 const response = await new Recibos(this.reciboForm?.FormObject).Save() //this.reciboModel?.Save() // this.reciboModel?.GuardarValoraciones(this.valoracionesTable?.Dataset);
                 if (response.status == 200) {
                     location.href = "/PagesViews/Ver_Recibos";
@@ -262,7 +259,7 @@ class Gestion_RecibosView extends HTMLElement {
                     interes_cargos = cuota.interes;
                     interes_demas_cargos_pagar_cordobas = cuota.interes;
                     abono_capital_cordobas = cuota.abono_capital;
-                    mora_interes = cuota.mora; // no permite el cero, preguntar a wilber sobre problema
+                    mora_interes = cuota.mora == null ? 0 : cuota.mora; // no permite el cero, preguntar a wilber sobre problema
                     cuota_total = cuota.total;
                     break;
                 }
