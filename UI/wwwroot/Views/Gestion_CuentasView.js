@@ -57,7 +57,7 @@ class Gestion_CuentasView extends HTMLElement {
             tagName: 'button', className: 'Block-Basic', innerText: 'Ingresos',
             onclick: () => {
                 // @ts-ignore
-                this.Manager.NavigateFunction("PAGOS", new GestionCuentaComponent({ Dataset: dataset.filter(c => c.tipo_cuenta == "EXTERNA") }));
+                this.Manager.NavigateFunction("INGRESOS", new GestionCuentaComponent({ Dataset: dataset.filter(c => c.tipo_cuenta == "EXTERNA") }));
             }
         }))
         this.OptionContainer.append(WRender.Create({
@@ -157,7 +157,7 @@ class GestionCuentaComponent extends HTMLElement {
             monto_final_dolares: undefined
         })
         filterModel.fecha.defaultValue = Date.now();
-        console.log(filterModel.fecha.defaultValue);
+        //console.log(filterModel.fecha.defaultValue);
         const filterOptions = new WFilterOptions({
             Dataset: movimientos,
             ModelObject: filterModel,
@@ -165,6 +165,23 @@ class GestionCuentaComponent extends HTMLElement {
             FilterFunction: (DFilt) => {
                 this.buildDetailMovimientos(DFilt, detalle, fecha, debito, creadito, saldo, displayType);
             }
+        });
+        const movimientosMap = movimientos.map(c => ({
+            // @ts-ignore
+            Caso: c.debito == 0 ? "Credito" : "Debito",
+            Mes: c.fecha.getMonthFormatEs(),
+            val: 1
+        }));
+        //TODO REVISAR COLUMNS CART
+        console.log(movimientos, movimientosMap);
+        const columChartMovimientos = new ColumChart({
+            Title: "Movimientos",
+            // @ts-ignore
+            TypeChart: "Line",
+            Dataset: movimientosMap,
+            EvalValue: "val",
+            AttNameEval: "Caso",
+            groupParams: ["Mes"]
         });
         const detalleCuenta = WRender.Create({
             className: "detalle-cuenta",
@@ -182,25 +199,12 @@ class GestionCuentaComponent extends HTMLElement {
                     tagName: 'input', type: 'button', className: 'Btn-Mini', value: 'Movimientos C$', onclick: async () => {
                         displayType = "cordobas";
                         this.buildDetailMovimientos(movimientos, detalle, fecha, debito, creadito, saldo, displayType);
+                        
                     }
                 })
             ]
         });
-        const movimientosMap = movimientos.map(c => ({
-            // @ts-ignore
-            Caso: c.debito == 0 ? "Credito" : "Debito",
-            Mes: c.fecha.getMonthFormatEs(),
-            val: 1
-        }));
-        const columChartMovimientos = new ColumChart({
-            Title: "Movimientos",
-            // @ts-ignore
-            TypeChart: "Line",
-            Dataset: movimientosMap,
-            EvalValue: "val",
-            AttNameEval: "Caso",
-            groupParams: ["Mes"]
-        });
+       
         const detalle = WRender.Create({ className: "detalle" });
         const fecha = WRender.Create({ className: "fecha" });
         const debito = WRender.Create({ className: "debito" });
@@ -246,8 +250,8 @@ class GestionCuentaComponent extends HTMLElement {
             saldo.append(WRender.Create({ className: "saldo-label", children: [currency, movimiento[montoProp]?.toFixed(3)] }));
         });
         detalle.append(WRender.Create({ className: "total ", innerHTML: "Total" }));
-        debito.append(WRender.Create({ className: "debito-label total", children: [currency, "- " + WArrayF.SumValAtt(movimientos, debitoProp)] }));
-        creadito.append(WRender.Create({ className: "creadito-label total", children: [currency, "+ " + WArrayF.SumValAtt(movimientos, creaditoProp)] }));
+        debito.append(WRender.Create({ className: "debito-label total", children: [currency, "- " + WArrayF.SumValAtt(movimientos, debitoProp).toFixed(3)] }));
+        creadito.append(WRender.Create({ className: "creadito-label total", children: [currency, "+ " + WArrayF.SumValAtt(movimientos, creaditoProp).toFixed(3)] }));
     }
 
     CustomStyle = css`

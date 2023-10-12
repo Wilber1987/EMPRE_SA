@@ -36,7 +36,7 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
                 Search: true, //UrlSearch: "../application/controllers/Vehiculos_Controller.php/get" + Model.constructor.name,
                 UserActions: [
                     {
-                        name: "Contra Partida", action: (movimiento) => {
+                        name: "Anular movimiento", action: (movimiento) => {
                             const modelContrapartida = new Movimientos_Cuentas();
                             modelContrapartida.Catalogo_Cuentas_Destino.Dataset = [movimiento.Catalogo_Cuentas_Origen];
                             modelContrapartida.Catalogo_Cuentas_Origen.Dataset = [movimiento.Catalogo_Cuentas_Destino];
@@ -55,7 +55,7 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
                             // @ts-ignore
                             modelContrapartida.Catalogo_Cuentas_Origen.ModelObject = undefined;
                             modelContrapartida.monto.disabled = true;
-                            modelContrapartida.total.disabled = true;
+                            //modelContrapartida.total.disabled = true;
                             this.append(new WModalForm({
                                 EditObject: MovimientoContrapartida,
                                 ObjectOptions: {
@@ -65,7 +65,7 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
                                         this.TableComponent.DrawTable();
                                     }
                                 },
-                                title: "Anulación Contrapartida", ModelObject: modelContrapartida, AutoSave: true
+                                title: "Anulación movimiento", ModelObject: modelContrapartida, AutoSave: true
                             }))
                         }
                     }
