@@ -12,15 +12,21 @@ namespace API.Controllers
         [HttpPost]
         [AuthController]
         public object SaveDataContract(ValoracionesTransaction Inst)
-        {           
-            return Inst.SaveDataContract(HttpContext.Session.GetString("seassonKey"));           
+        {
+            return Inst.SaveDataContract(HttpContext.Session.GetString("seassonKey"));
+        }
+        [HttpPost]
+        [AuthController]
+        public object SaveContract(ValoracionesTransaction Inst)
+        {
+            return Inst.SaveContract(HttpContext.Session.GetString("seassonKey"));
         }
 
         [HttpPost]
         [AuthController]
         public object GetDataContract()
-        {           
-            return new ValoracionesTransaction().GetDataContract(HttpContext.Session.GetString("seassonKey"));           
+        {
+            return new ValoracionesTransaction().GetDataContract(HttpContext.Session.GetString("seassonKey"));
         }
     }
 }

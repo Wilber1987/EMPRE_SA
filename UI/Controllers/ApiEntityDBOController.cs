@@ -12,7 +12,7 @@ using iText.Layout;
 
 namespace API.Controllers
 {
-     [Route("api/[controller]/[action]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class ApiEntityDBOController : ControllerBase
     {
@@ -24,7 +24,14 @@ namespace API.Controllers
 
         [HttpGet]
         public object SendMail(){
-            return MailServices.SendMailContract(new List<String>(){"wilberj1987@gmail.com","alderhernandez@gmail.com"},"noreply@noreply","Usted es un mela","example.cshtml");            
+            return MailServices.SendMailContract(new List<String>(){"wilberj1987@gmail.com","alderhernandez@gmail.com"},"noreply@noreply","Usted es un mela","example.cshtml",
+                    new {
+                        numero_contrato = 123,
+                        monto = 1000,
+                        observaciones = "Ejemplo de observaciones",
+                        // Otras propiedades...
+                    } as dynamic
+                );            
         }
 
 
@@ -594,5 +601,22 @@ namespace API.Controllers
         {
             return inst.Update();
         }
+         //Transaccion_Factura
+       [HttpPost]
+       [AuthController]
+       public List<Transaccion_Factura> getTransaccion_Factura(Transaccion_Factura Inst) {
+           return Inst.Get<Transaccion_Factura>();
+       }
+       [HttpPost]
+       [AuthController]
+       public object saveTransaccion_Factura(Transaccion_Factura inst) {
+           return inst.Save();
+       }
+       [HttpPost]
+       [AuthController]
+       public object updateTransaccion_Factura(Transaccion_Factura inst) {
+           return inst.Update();
+       }
+        
     }
 }

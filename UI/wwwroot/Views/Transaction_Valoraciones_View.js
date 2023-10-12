@@ -8,13 +8,13 @@ import { Catalogo_Cambio_Dolar, Catalogo_Categoria, Catalogo_Clientes, Catalogo_
 import { ModalMessege, WForm } from "../WDevCore/WComponents/WForm.js";
 // @ts-ignore
 import { Transactional_Configuraciones } from "../FrontModel/ADMINISTRATIVE_ACCESSDataBaseModel.js";
-import { Detail_Prendas, ValoracionesContrato } from "../FrontModel/Model.js";
-import { CuotaComponent } from "../FrontModel/ModelComponents.js";
+import { Detail_Prendas, Transaction_Contratos, ValoracionesTransaction } from "../FrontModel/Model.js";
+import { Tbl_Cuotas_ModelComponent } from "../FrontModel/ModelComponents.js";
 import { AmoritizationModule } from "../modules/AmortizacionModule.js";
 import { clientSearcher, ValoracionesSearch } from "../modules/SerchersModules.js";
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
-class Transaction_Valoraciones_View extends HTMLElement {
+class Transaction_Valoraciones_View extends HTMLElement {   
     // @ts-ignore
     constructor(props) {
         super();
@@ -22,7 +22,11 @@ class Transaction_Valoraciones_View extends HTMLElement {
         this.TabContainer = WRender.Create({ className: "TabContainer", id: 'TabContainer' });
         this.Manager = new ComponentsManager({ MainContainer: this.TabContainer, SPAManage: false });
         this.valoracionesContainer = WRender.Create({ className: "valoraciones-container" });
-        this.append(this.CustomStyle);
+        this.append(this.CustomStyle);        
+        /**
+         * @type {Catalogo_Clientes}
+         */
+        // @ts-ignore
         this.Cliente = {}
         this.valoresObject = {
             Valoracion_1: 0, dolares_1: 0,
@@ -125,7 +129,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
 
         this.CuotasTable = new WTableComponent({
             Dataset: [],
-            ModelObject: new CuotaComponent(),
+            ModelObject: new Tbl_Cuotas_ModelComponent(),
             paginate: false,
             AddItemsFromApi: false,
             AutoSave: false,
@@ -401,6 +405,10 @@ class Transaction_Valoraciones_View extends HTMLElement {
                     this.append(ModalMessege("Agregue valoraciones para poder continuar"));
                     return;
                 }
+                this.valoracionesTable?.Dataset.forEach(element => {
+                    element.id_valoracion = null;
+                    element.Fecha = new Date();
+                });
                 const valoracionesGuardadas = await this.valoracionModel?.GuardarValoraciones(this.valoracionesTable?.Dataset);
                 if (valoracionesGuardadas?.length > 0) {
                     this.append(ModalMessege("Valoraciones guardadas correctamente"));
@@ -432,6 +440,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
         }))
     }
     selectCliente = (/**@type {Catalogo_Clientes} */ selectCliente) => {
+        console.log(selectCliente);
         this.Cliente = selectCliente;
         if (this.valoracionesForm != undefined) {
             this.valoracionesForm.FormObject.Tasa_interes = this.getTasaInteres();
@@ -523,81 +532,60 @@ class Transaction_Valoraciones_View extends HTMLElement {
     }
     /**
      * 
-     * @returns {ValoracionesContrato}
+     * @returns {ValoracionesTransaction}
      */
     calculoAmortizacion = () => {
         if (this.valoracionesTable?.Dataset.length == 0) {
             this.amortizacionResumen.innerText = this.valoracionResumen(0, 0, 0, 0);
-            return new ValoracionesContrato();
+            return new ValoracionesTransaction();
         }
-        // const total = this.valoracionesTable?.Dataset.reduce((sum, value) => (typeof value.Edad == "number" ? sum + value.Edad : sum), 0);
-        const contrato = new ValoracionesContrato({
-            // @ts-ignore
-            valoracion_compra_cordobas: (WArrayF.SumValAtt(this.valoracionesTable?.Dataset, "valoracion_compra_cordobas")),
-            // @ts-ignore
-            valoracion_compra_dolares: (WArrayF.SumValAtt(this.valoracionesTable?.Dataset, "valoracion_compra_dolares")),
-            // @ts-ignore
-            valoracion_empeño_cordobas: (WArrayF.SumValAtt(this.valoracionesTable?.Dataset, "valoracion_empeño_cordobas")),
-            // @ts-ignore
-            valoracion_empeño_dolares: (WArrayF.SumValAtt(this.valoracionesTable?.Dataset, "valoracion_empeño_dolares")),
+        const total = this.valoracionesTable?.Dataset.reduce((sum, value) => (typeof value.Edad == "number" ? sum + value.Edad : sum), 0);
+        const contrato = new ValoracionesTransaction();
+        // @ts-ignore
+        contrato.valoraciones = this.valoracionesTable?.Dataset;        
+        contrato.Transaction_Contratos = new Transaction_Contratos({
             tasas_interes: this.getTasaInteres() / 100,
-            plazo: this.valoracionesForm?.FormObject.Plazo ?? 1,
             fecha: new Date(),
-            Transaction_Facturas: new Array(),
+            plazo: this.valoracionesForm?.FormObject.Plazo ?? 1,
             // @ts-ignore
             taza_cambio: this.tasasCambio[0].valor_de_compra,
             taza_interes_cargos: this.InteresBase,
+            Catalogo_Clientes: this.Cliente.codigo_cliente != undefined ? this.Cliente : this.GenerateClient(),
             gestion_crediticia: this.Cliente.Catalogo_Clasificacion_Interes?.porcentaje ?? 6,
-            Detail_Prendas: this.valoracionesTable?.Dataset.map(
-                // @ts-ignore
-                /**@type {Transactional_Valoracion}*/valoracion => new Detail_Prendas({
-                Descripcion: valoracion.Descripcion,
-                modelo: valoracion.Modelo,
-                marca: valoracion.Marca,
-                serie: valoracion.Serie,
-                pprenda: valoracion.valoracion_empeño_cordobas,
-                color: "#000",
-                en_manos_de: undefined,
-                precio_venta: valoracion.precio_venta_empeño_dolares,
-                Catalogo_Categoria: valoracion.Catalogo_Categoria,
-                Transactional_Valoracion: valoracion
-            })),
-            Catalogo_Clientes: this.Cliente,
-            valoraciones: this.valoracionesTable?.Dataset
-        })
-        // const cuotaFija = AmoritizationModule.getPago(contrato);
-        // contrato.cuotafija = cuotaFija;
-        // contrato.cuotafija_dolares = contrato.cuotafija / contrato.taza_cambio;
-        // let capital = contrato.valoracion_empeño_dolares;
-        // for (let index = 0; index < contrato.plazo; index++) {
-        //     const abono_capital = contrato.cuotafija_dolares - (capital * contrato.tasas_interes);
-        //     const cuota = new Cuota({
-        //         // @ts-ignore
-        //         fecha: contrato.fecha.modifyMonth(index + 1),
-        //         // @ts-ignore
-        //         total: contrato.cuotafija_dolares,
-        //         // @ts-ignore
-        //         interes: (capital * contrato.tasas_interes),
-        //         // @ts-ignoreº
-        //         abono_capital: abono_capital,
-        //         // @ts-ignore
-        //         capital_restante: (capital - abono_capital)
-        //     })
-        //     capital = capital - abono_capital;
-        //     contrato.Transaction_Facturas.push(cuota)
-        // }
-        AmoritizationModule.crearCuotas(contrato);
-        //console.log(contrato);
+        });       
+        AmoritizationModule.calculoAmortizacion(contrato);
+        //console.log(AmoritizationModule.calculoAmortizacion(contrato));
+
         if (this.CuotasTable != undefined) {
-            this.CuotasTable.Dataset = contrato.Transaction_Facturas;
+            this.CuotasTable.Dataset = contrato.Transaction_Contratos.Tbl_Cuotas;
             this.CuotasTable?.Draw();
         }
         this.amortizacionResumen.innerText = this.valoracionResumen(
-            contrato.valoracion_compra_cordobas,
-            contrato.valoracion_compra_dolares,
-            contrato.valoracion_empeño_cordobas,
-            contrato.valoracion_empeño_dolares);
+            contrato.Transaction_Contratos.valoracion_compra_cordobas,
+            contrato.Transaction_Contratos.valoracion_compra_dolares,
+            contrato.Transaction_Contratos.valoracion_empeño_cordobas,
+            contrato.Transaction_Contratos.valoracion_empeño_dolares);
         return contrato;
+    }
+    GenerateClient() {
+      return  { 
+            "Catalogo_Clasificacion_Interes": {
+                "id_clasificacion_interes": 6,
+                "Descripcion": "RANGO 6",
+                "Estado": "ACTIVO",
+                "porcentaje": 6,
+                "Catalogo_Clientes": null,
+                "filterData": null
+            },
+            "Catalogo_Clasificacion_Cliente": {
+                "id_clasificacion": 6,
+                "Descripcion": "NO DEFINIDO",
+                "Estado": "ACTIVO",
+                "porcentaje": null,
+                "Catalogo_Clientes": null,
+                "filterData": null
+            }
+        }
     }
     CustomStyle = css`
         .valoraciones-container{

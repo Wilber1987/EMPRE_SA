@@ -21,6 +21,7 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
 
         const tasa = await new Catalogo_Cambio_Dolar().Get();
         model.tasa_cambio.defaultValue = tasa[0].valor_de_compra;
+        model.tasa_cambio_compra.defaultValue = tasa[0].valor_de_venta;
 
         //model.tasa_cambio = await new Catalogo_Cambio_Dolar().Get();
 
@@ -35,7 +36,7 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
                 Search: true, //UrlSearch: "../application/controllers/Vehiculos_Controller.php/get" + Model.constructor.name,
                 UserActions: [
                     {
-                        name: "Contra Partida", action: (movimiento) => {
+                        name: "Anular movimiento", action: (movimiento) => {
                             const modelContrapartida = new Movimientos_Cuentas();
                             modelContrapartida.Catalogo_Cuentas_Destino.Dataset = [movimiento.Catalogo_Cuentas_Origen];
                             modelContrapartida.Catalogo_Cuentas_Origen.Dataset = [movimiento.Catalogo_Cuentas_Destino];
@@ -44,16 +45,17 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
                                 Catalogo_Cuentas_Destino: movimiento.Catalogo_Cuentas_Origen,
                                 monto: movimiento.monto.toFixed(2).toString(),
                                 tasa_cambio: movimiento.tasa_cambio.toFixed(2).toString(),
+                                tasa_cambio_compra: movimiento.tasa_cambio_compra.toFixed(2).toString(),
                                 total: movimiento.total.toFixed(2).toString(),
                                 descripcion: movimiento.descripcion,
-                                concepto: "Movimiento de anulación a partir de: " + movimiento.concepto,
+                                concepto: "Anulación de movimiento",
                             };
                             // @ts-ignore
                             modelContrapartida.Catalogo_Cuentas_Destino.ModelObject = undefined;
                             // @ts-ignore
                             modelContrapartida.Catalogo_Cuentas_Origen.ModelObject = undefined;
                             modelContrapartida.monto.disabled = true;
-                            modelContrapartida.total.disabled = true;
+                            //modelContrapartida.total.disabled = true;
                             this.append(new WModalForm({
                                 EditObject: MovimientoContrapartida,
                                 ObjectOptions: {
@@ -63,7 +65,7 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
                                         this.TableComponent.DrawTable();
                                     }
                                 },
-                                title: "Anulación Contrapartida", ModelObject: modelContrapartida, AutoSave: true
+                                title: "Anulación movimiento", ModelObject: modelContrapartida, AutoSave: true
                             }))
                         }
                     }
@@ -95,10 +97,10 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
             tagName: 'button', className: 'Block-Secundary', innerText: 'Registrar Movimiento',
             onclick: () => {
                 const modelExterno = new Movimientos_Cuentas();
-                modelExterno.Catalogo_Cuentas_Destino.Dataset =  model.Catalogo_Cuentas_Destino.Dataset.filter(x => x.tipo_cuenta == "PROPIA");
-                console.log( model.Catalogo_Cuentas_Destino.Dataset.filter(x => x.tipo_cuenta == "PROPIA"));
+                modelExterno.Catalogo_Cuentas_Destino.Dataset =  model.Catalogo_Cuentas_Destino.Dataset.filter(x => x.tipo_cuenta == "PROPIA");                
                 modelExterno.Catalogo_Cuentas_Origen.Dataset = model.Catalogo_Cuentas_Origen.Dataset.filter(x => x.tipo_cuenta == "PROPIA");
                 modelExterno.tasa_cambio = model.tasa_cambio;
+                modelExterno.tasa_cambio_compra = model.tasa_cambio_compra;
                 this.append(new WModalForm({title:"Movimiento a cuenta", ModelObject: modelExterno, AutoSave: true, ObjectOptions: ObjectOptions}))
             }
         }))
@@ -111,6 +113,7 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
                 modelExterno.Catalogo_Cuentas_Origen.Dataset = model.Catalogo_Cuentas_Origen.Dataset.filter(x => x.tipo_cuenta != "PROPIA");
                 modelExterno.Catalogo_Cuentas_Destino.Dataset = model.Catalogo_Cuentas_Destino.Dataset.filter(x => x.tipo_cuenta == "PROPIA");                
                 modelExterno.tasa_cambio = model.tasa_cambio;
+                modelExterno.tasa_cambio_compra = model.tasa_cambio_compra;
                 this.append(new WModalForm({title:"Ingreso", ModelObject: modelExterno, AutoSave: true }))
             }
         }))
@@ -123,6 +126,7 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
                 modelExterno.Catalogo_Cuentas_Destino.Dataset =  model.Catalogo_Cuentas_Destino.Dataset.filter(x => x.tipo_cuenta != "PROPIA");
                 
                 modelExterno.tasa_cambio = model.tasa_cambio;
+                modelExterno.tasa_cambio_compra = model.tasa_cambio_compra;
                 this.append(new WModalForm({title:"Egreso", ModelObject: modelExterno, AutoSave: true }))
             }
         }))
@@ -135,6 +139,7 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
                 modelExterno.Catalogo_Cuentas_Destino.Dataset =  model.Catalogo_Cuentas_Destino.Dataset.filter(x => x.tipo_cuenta == "PAGO");
                 
                 modelExterno.tasa_cambio = model.tasa_cambio;
+                modelExterno.tasa_cambio_compra = model.tasa_cambio_compra;
                 this.append(new WModalForm({title:"Egreso", ModelObject: modelExterno, AutoSave: true }))
             }
         }))

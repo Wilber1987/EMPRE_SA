@@ -1,10 +1,15 @@
 @page
 @using API.Controllers
-@using CAPA_NEGOCIO.Security
+@using CAPA_DATOS.Security
 @{
+     if (!SecurityController.Auth(HttpContext.Session.GetString("seassonKey")))
+    {
+        Response.Redirect("../Security/login");
+        return;
+    }
     @if (!SecurityController.HavePermission(PermissionsEnum.GESTION_MOVIMIENTOS.ToString(), HttpContext.Session.GetString("seassonKey")) )//todo
     {
-        Response.Redirect("../LoginView");
+       Response.Redirect("../Security/login");
         return;
     }    
 }

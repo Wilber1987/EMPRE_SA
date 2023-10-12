@@ -2,78 +2,38 @@ import { EntityClass } from "../WDevCore/WModules/EntityClass.js";
 import { Catalogo_Categoria, Catalogo_Clientes } from "./DBODataBaseModel.js";
 
 //@ts-check
-class ValoracionesContrato extends EntityClass {
+class ValoracionesTransaction extends EntityClass {
     constructor(props) {
         super();
         for (const prop in props) {
             this[prop] = props[prop];
         }
-    }
-    /**@type {Number} */
-    valoracion_compra_cordobas;
-    /**@type {Number} */
-    valoracion_compra_dolares;
-    /**@type {Number} */
-    valoracion_empeño_cordobas;
-    /**@type {Number} */
-    valoracion_empeño_dolares;
-    /**@type {Number} */
-    tasas_interes;
-    /**@type {Number} */
-    taza_interes_cargos;
-    /**@type {Number} */
-    tasas_interes;
-    /**@type {Number} */
-    cuotafija;
-    /**@type {Number} */
-    cuotafija_dolares;
-    /**@type {Number} */
-    gestion_crediticia;
-    /**@type {Number} */
-    plazo;
-    /**@type {Date} */
-    fecha;
-    /**@type {Catalogo_Clientes} */
-    Catalogo_Clientes;
-    /**@type {Array<Cuota>} */
-    Transaction_Facturas;
-    /**@type {Array<Detail_Prendas>} */
-    Detail_Prendas;
-    /**@type {String} */
-    observaciones;
-
-
-    //?????????????????
-    /**@type {Number} */
-    monto;
-
-    /**@type {Number} */
-    total_pagar_cordobas;
-    /**@type {Number} */
-    total_pagar_dolares;
-    /**@type {Number} */
-    interes;
-    /**@type {Number} */
-    interes_dolares;
-    /**@type {Number} cuota del abono*/
-    taza_cambio;
+    }   
+    /**@type {Array<Transactional_Valoracion>} */
+    valoraciones;  
+  
+    /**@type {Transaction_Contratos} */
+    Transaction_Contratos;
 
     SaveDataContract = async () => {
-        await this.SaveData("Transactional_Contrato/SaveDataContract", this)
-        return true;
+        return await this.SaveData("Transactional_Contrato/SaveDataContract", this)
+         true;
+    }
+    SaveContract = async () => {
+        return this.SaveData("Transactional_Contrato/SaveContract", this)
     }
     GetValoracionContrato = async () => {
         return await this.SaveData("Transactional_Contrato/GetDataContract", this)
     }
     VerContrato = async () => {
-        return await this.SaveData("PDF/GeneratePdfContract", this)
+        return await this.SaveData("PDF/GeneratePdfContract", this.Transaction_Contratos)
     }
 }
-export { ValoracionesContrato }
-class Cuota extends EntityClass {
+export { ValoracionesTransaction }
+class Tbl_Cuotas extends EntityClass {
     /**
      * 
-     * @param {Cuota} props 
+     * @param {Tbl_Cuotas} props 
      */
     constructor(props) {
         super();
@@ -81,10 +41,12 @@ class Cuota extends EntityClass {
             this[prop] = props[prop];
         }
     }
-    /**Datos de la cuota*/
+    /**Datos de la Tbl_cuotas*/
     /**@type {Date} */
     fecha;
-    /**@type {Number} cuota del abono*/
+    /**@type {Number} Tbl_cuotas del abono total a pagar dolares*/
+    id_cuota;
+    /**@type {Number} Tbl_cuotas del abono total a pagar dolares*/
     total;
     /**@type {Number} valor del interes del capital*/
     interes;
@@ -92,18 +54,20 @@ class Cuota extends EntityClass {
     abono_capital;
     /**@type {Number} capital restante*/
     capital_restante;
+    /**@type {Number} mora*/
+    mora;
     /**DATOS DE LA FATURA */
     /**@type {Date} */
     fecha_pago;
-    /**@type {Number} cuota del abono*/
+    /**@type {Number} Tbl_cuotas del abono*/
     pago_contado;
-    /**@type {Number} cuota del abono*/
+    /**@type {Number} Tbl_cuotas del abono*/
     descuento;
-    /**@type {Number} cuota del abono*/
+    /**@type {Number} Tbl_cuotas del abono*/
     tasa_cambio;
 
 }
-export { Cuota }
+export { Tbl_Cuotas }
 
 class Transaction_Contratos extends EntityClass {
     constructor(props) {
@@ -115,39 +79,50 @@ class Transaction_Contratos extends EntityClass {
     numero_contrato;
     fecha_contrato;
     fecha_cancelar;
+    /**@type {Number} */
     monto;
+    /**@type {Number} */
     interes;
+    /**@type {Number} */
+    interes_dolares;
+    /**@type {Number} */
     mora;
     estado;
     fecha_vencimiento;
+    /**@type {Number} */
     saldo;
     dias_mora;
+    /**@type {Number} */
     saldo_mora;
     fecha_baja;
+    /**@type {Number} */
     abonos;
     ultima_visita;
     tipo;
     entregado;
+    /**@type {Number} */
     interes_actual;
     observaciones;
+    /**@type {Number} */
     iva;
+    /**@type {Number} */
     margen;
-    interesl;
-    moral;
+    /**@type {Number} */
     descuento;
+    /**@type {Number} */
     util;
+    /**@type {Number} */
     taza_interes_cargos;
     taza_mora;
     fecha_mora;
     fecha_interes;
     taza_gestion_crediticia;
     Id_User_OLD;
+    /**@type {Number} cuota del abono*/
     taza_cambio;
     dkm;
     gasolinamonto;
     valorcad;
-    plazo;
-    cuotafija;
     montocuotaatrazadas;
     mes_pagado;
     tasa_hoy;
@@ -162,10 +137,51 @@ class Transaction_Contratos extends EntityClass {
     fecha_cancelar_inicial;
     plazo_inicial;
     dias_para_baja;
-    Catalogo_Agentes;
+    /**@type {Catalogo_Clientes} */
     Catalogo_Clientes;
+    /**@type {Array<Tbl_Cuotas>} */
+    Tbl_Cuotas;
+    /**@type {Array<Transaction_Facturas>} */
+    Transaction_Facturas;
+    /**@type {Array<Detail_Prendas>} */
     Detail_Prendas;
+
+    //nuevas
+    /**@type {Number} */
+    valoracion_compra_cordobas;
+    /**@type {Number} */
+    valoracion_compra_dolares;
+    /**@type {Number} */
+    valoracion_empeño_cordobas;
+    /**@type {Number} */
+    valoracion_empeño_dolares;  
+    /**@type {Number} */
+    taza_interes_cargos;
+
+    /**@type {Number} */
+    cuotafija;
+    /**@type {Number} */
+    cuotafija_dolares;
+    /**@type {Number} */
+    gestion_crediticia;
+    /**@type {Number} */
+    tasas_interes;
+    /**@type {Number} */
+    plazo;
+    /**@type {Date} */
+    fecha;
+
+
+
+    /**@type {Number} */
+    total_pagar_cordobas;
+    /**@type {Number} */
+    total_pagar_dolares;
+   
+    
+    
 }
+
 export { Transaction_Contratos }
 class Detail_Prendas extends EntityClass {
     /**

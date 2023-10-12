@@ -1,12 +1,16 @@
+using CAPA_DATOS.Cron.Jobs;
 using CAPA_NEGOCIO.Services;
+using DataBaseModel;
+using Model;
+using Transactions;
 
 namespace BackgroundJob.Cron.Jobs
 {
-    public class MySchedulerJob : CronBackgroundJob
+       public class CalculateMoraCuotasSchedulerJob : CronBackgroundJob
     {
-        private readonly ILogger<MySchedulerJob> _log;
+        private readonly ILogger<CalculateMoraCuotasSchedulerJob> _log;
 
-        public MySchedulerJob(CronSettings<MySchedulerJob> settings, ILogger<MySchedulerJob> log)
+        public CalculateMoraCuotasSchedulerJob(CronSettings<CalculateMoraCuotasSchedulerJob> settings, ILogger<CalculateMoraCuotasSchedulerJob> log)
             : base(settings.CronExpression, settings.TimeZone)
         {
             _log = log;
@@ -14,64 +18,35 @@ namespace BackgroundJob.Cron.Jobs
 
         protected override Task DoWork(CancellationToken stoppingToken)
         {
-            _log.LogInformation(":::::::::::Running... at {0}", DateTime.UtcNow);
-            //CARGA AUTOMATICA DE CASOS
+            _log.LogInformation(":::::::::::Running...  CalculateMoraCuotasSchedulerJob at {0}", DateTime.UtcNow);
             try
             {
-                //new IMAPCaseServices().chargeAutomaticCase();
-            }
-            catch (System.Exception ex)
-            {
-                _log.LogInformation(":::::::::::ERROR... at {0}", ex);
-            }
-            return Task.CompletedTask;
-        }
-    }
 
-    public class CreateAutomaticsCaseSchedulerJob : CronBackgroundJob
-    {
-        private readonly ILogger<CreateAutomaticsCaseSchedulerJob> _log;
+                var cuotas = new Tbl_Cuotas().Get<Tbl_Cuotas>()
+                    .Where(cuota => (cuota.pago_contado == null || (cuota.total > cuota.pago_contado ||cuota.pago_contado == null)) && cuota.fecha < DateTime.Now)
+                    .ToList();
 
-        public CreateAutomaticsCaseSchedulerJob(CronSettings<CreateAutomaticsCaseSchedulerJob> settings, ILogger<CreateAutomaticsCaseSchedulerJob> log)
-            : base(settings.CronExpression, settings.TimeZone)
-        {
-            _log = log;
-        }
+                double sumaCapitalRestante = (double)cuotas.Sum(cuota => cuota.capital_restante);
 
-        protected override Task DoWork(CancellationToken stoppingToken)
-        {
-            _log.LogInformation(":::::::::::Running... CreateAutomaticsCaseSchedulerJob at {0}", DateTime.UtcNow);
-            //CARGA AUTOMATICA DE CASOS
-            try
-            {
-                //new IMAPCaseServices().chargeAutomaticCase();
-            }
-            catch (System.Exception ex)
-            {
-                _log.LogInformation(":::::::::::ERROR... at {0}", ex);
-            }
 
-            return Task.CompletedTask;
-        }
-    }
+                foreach (var cuota in cuotas)
+                {
+                    //por ejemplo si la cuota es $10 y tiene 5 días de mora el cálculo sería 
+                    //((10*0.005)*5) = $0.25 seria el valor de la mora por los 5 días.
+                   
+                    DateTime fechaOriginal = (DateTime)cuota.fecha;
+                    DateTime fechaActual = DateTime.Now;
+                    TimeSpan diferencia = fechaActual - fechaOriginal;
+                    int diasDeDiferencia = diferencia.Days;
 
-     public class SendMailNotificationsSchedulerJob : CronBackgroundJob
-    {
-        private readonly ILogger<SendMailNotificationsSchedulerJob> _log;
 
-        public SendMailNotificationsSchedulerJob(CronSettings<SendMailNotificationsSchedulerJob> settings, ILogger<SendMailNotificationsSchedulerJob> log)
-            : base(settings.CronExpression, settings.TimeZone)
-        {
-            _log = log;
-        }
+                    var montoMora = /*cuota.total*/ sumaCapitalRestante * ((cuota.Transaction_Contratos?.mora/100) ?? 0.005) * 1;//como el cronjob es diario se va cargando mora cada dia
+                    cuota.mora = cuota.mora + montoMora;
+                    cuota.total += cuota.total + montoMora; 
+                    
+                    //cuota.Update();
+                }
 
-        protected override Task DoWork(CancellationToken stoppingToken)
-        {
-            _log.LogInformation(":::::::::::Running...  SendMailNotificationsSchedulerJob at {0}", DateTime.UtcNow);
-            //CARGA AUTOMATICA DE CASOS
-            try
-            {
-                //new SMTPCaseServices().sendCaseMailNotifications();
             }
             catch (System.Exception ex)
             {
@@ -79,6 +54,11 @@ namespace BackgroundJob.Cron.Jobs
             }
 
             return Task.CompletedTask;
+        }
+
+        private IEnumerable<object> Get<T>()
+        {
+            throw new NotImplementedException();
         }
     }
 }

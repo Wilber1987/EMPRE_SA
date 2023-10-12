@@ -14,35 +14,55 @@ namespace DataBaseModel
         public string? Descripcion { get; set; }
         public string? Valor { get; set; }
         public string? Tipo_Configuracion { get; set; }
+        internal Transactional_Configuraciones GetConfig(String prop)
+        {
+            Nombre = prop;
+            return Find<Transactional_Configuraciones>();
+        }
 
         internal List<Transactional_Configuraciones> GetIntereses()
         {
             return Get<Transactional_Configuraciones>()
-                .Where(x => x.Tipo_Configuracion.Equals(configuracionesTypeEnum.INTERESES.ToString())).ToList();
+                .Where(x => x.Tipo_Configuracion.Equals(ConfiguracionesTypeEnum.INTERESES.ToString())).ToList();
         }
         internal List<Transactional_Configuraciones> GetTheme()
         {
             return Get<Transactional_Configuraciones>()
-                .Where(x => x.Tipo_Configuracion.Equals(configuracionesTypeEnum.THEME.ToString())).ToList();
+                .Where(x => x.Tipo_Configuracion.Equals(ConfiguracionesTypeEnum.THEME.ToString())).ToList();
         }
         internal List<Transactional_Configuraciones> GetBeneficios()
         {
             return Get<Transactional_Configuraciones>()
-                .Where(x => x.Tipo_Configuracion.Equals(configuracionesTypeEnum.BENEFICIOS.ToString())).ToList();
+                .Where(x => x.Tipo_Configuracion.Equals(ConfiguracionesTypeEnum.BENEFICIOS.ToString())).ToList();
         }
     }
 
-    public enum configuracionesTypeEnum
+    public enum ConfiguracionesTypeEnum
     {
-        INTERESES, BENEFICIOS, THEME
+        INTERESES, BENEFICIOS, THEME, INTERESES_MORA
     }
 
-    public enum configuracionesThemeEnum
+    public enum ConfiguracionesThemeEnum
     {
         TITULO, SUB_TITULO, NOMBRE_EMPRESA, LOGO_PRINCIPAL
     }
 
-    public enum configuracionesBeneficiosEnum
+    public enum ConfiguracionesInteresesEnum
+    {
+        MORA_CONTRATOS_EMP
+    }
+
+    public enum InteresesPrestamosEnum
+    {       
+        GASTOS_ADMINISTRATIVOS,
+        COMISIONES,
+        MANTENIMIENTO_VALOR,
+        GASTOS_LEGALES,
+        GESTIONES_CREDITICIAS
+    }
+
+
+    public enum ConfiguracionesBeneficiosEnum
     {
         BENEFICIO_VENTA_ARTICULO_COMPRADO, BENEFICIO_VENTA_ARTICULO_EMPENO
     }
@@ -61,17 +81,17 @@ namespace DataBaseModel
         {
             SqlADOConexion.IniciarConexionAnonima();
             configuraciones = new Transactional_Configuraciones().Get<Transactional_Configuraciones>();
-            TITULO = configuraciones.Find(c => c.Nombre.Equals(configuracionesThemeEnum.TITULO.ToString()))?.Valor ?? TITULO;
-            SUB_TITULO = configuraciones.Find(c => c.Nombre.Equals(configuracionesThemeEnum.SUB_TITULO.ToString()))?.Valor ?? SUB_TITULO;
-            NOMBRE_EMPRESA = configuraciones.Find(c => c.Nombre.Equals(configuracionesThemeEnum.NOMBRE_EMPRESA.ToString()))?.Valor ?? NOMBRE_EMPRESA;
-            LOGO_PRINCIPAL = configuraciones.Find(c => c.Nombre.Equals(configuracionesThemeEnum.LOGO_PRINCIPAL.ToString()))?.Valor ?? LOGO_PRINCIPAL;
+            TITULO = configuraciones.Find(c => c.Nombre.Equals(ConfiguracionesThemeEnum.TITULO.ToString()))?.Valor ?? TITULO;
+            SUB_TITULO = configuraciones.Find(c => c.Nombre.Equals(ConfiguracionesThemeEnum.SUB_TITULO.ToString()))?.Valor ?? SUB_TITULO;
+            NOMBRE_EMPRESA = configuraciones.Find(c => c.Nombre.Equals(ConfiguracionesThemeEnum.NOMBRE_EMPRESA.ToString()))?.Valor ?? NOMBRE_EMPRESA;
+            LOGO_PRINCIPAL = configuraciones.Find(c => c.Nombre.Equals(ConfiguracionesThemeEnum.LOGO_PRINCIPAL.ToString()))?.Valor ?? LOGO_PRINCIPAL;
 
         }
         public string TITULO = "EMPRE S.A.";
         public string SUB_TITULO = "Prestamos, empeños y más";
         public string NOMBRE_EMPRESA = "EMPRE S.A.";
         public string LOGO_PRINCIPAL = "logo1.png";
-        public string MEDIA_IMG_PATH = "/media/img/";
+        public string MEDIA_IMG_PATH = "/Media/img/";
         public List<Transactional_Configuraciones> configuraciones = new List<Transactional_Configuraciones>();
     }
 }
