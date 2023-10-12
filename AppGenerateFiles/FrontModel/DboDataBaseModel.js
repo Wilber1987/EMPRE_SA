@@ -2,12 +2,12 @@ import { EntityClass } from "../../WDevCore/WModules/EntityClass.js";
 import { WAjaxTools, BasicStates } from "../../WDevCore/WModules/WComponentsTools.js";
 import { ModelProperty } from "../../WDevCore/WModules/CommonModel.js";
 class Transaction_Ingresos extends EntityClass {
-   constructor(props) {
-       super(props, 'EntityDbo');
-       for (const prop in props) {
-           this[prop] = props[prop];
-       }
-   }
+    constructor(props) {
+        super(props, 'EntityDbo');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
    /**@type {Number}*/ numero_ingreso;
    /**@type {Number}*/ monto;
    /**@type {Date}*/ fecha;
@@ -22,12 +22,12 @@ class Transaction_Ingresos extends EntityClass {
 }
 export { Transaction_Ingresos }
 class Transaction_Ingresos_Egresos extends EntityClass {
-   constructor(props) {
-       super(props, 'EntityDbo');
-       for (const prop in props) {
-           this[prop] = props[prop];
-       }
-   }
+    constructor(props) {
+        super(props, 'EntityDbo');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
    /**@type {Number}*/ id_transaccion;
    /**@type {Number}*/ monto_dolares;
    /**@type {Number}*/ tasa_cambio;
@@ -45,12 +45,12 @@ class Transaction_Ingresos_Egresos extends EntityClass {
 }
 export { Transaction_Ingresos_Egresos }
 class Transaction_Movimiento extends EntityClass {
-   constructor(props) {
-       super(props, 'EntityDbo');
-       for (const prop in props) {
-           this[prop] = props[prop];
-       }
-   }
+    constructor(props) {
+        super(props, 'EntityDbo');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
    /**@type {Number}*/ id_movimiento;
    /**@type {String}*/ descripcion;
    /**@type {String}*/ concepto;
@@ -64,12 +64,12 @@ class Transaction_Movimiento extends EntityClass {
 }
 export { Transaction_Movimiento }
 class Transactional_Valoracion extends EntityClass {
-   constructor(props) {
-       super(props, 'EntityDbo');
-       for (const prop in props) {
-           this[prop] = props[prop];
-       }
-   }
+    constructor(props) {
+        super(props, 'EntityDbo');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
    /**@type {Number}*/ id_valoracion;
    /**@type {String}*/ Descripcion;
    /**@type {String}*/ Marca;
@@ -92,12 +92,12 @@ class Transactional_Valoracion extends EntityClass {
 }
 export { Transactional_Valoracion }
 class Transaccion_Factura extends EntityClass {
-   constructor(props) {
-       super(props, 'EntityDbo');
-       for (const prop in props) {
-           this[prop] = props[prop];
-       }
-   }
+    constructor(props) {
+        super(props, 'EntityDbo');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
    /**@type {Number}*/ id_factura;
    /**@type {String}*/ tipo;
    /**@type {String}*/ concepto;
@@ -112,12 +112,12 @@ class Transaccion_Factura extends EntityClass {
 }
 export { Transaccion_Factura }
 class Detalle_Factura_Recibo extends EntityClass {
-   constructor(props) {
-       super(props, 'EntityDbo');
-       for (const prop in props) {
-           this[prop] = props[prop];
-       }
-   }
+    constructor(props) {
+        super(props, 'EntityDbo');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
    /**@type {Number}*/ id;
    /**@type {Number}*/ total_cuota;
    /**@type {Number}*/ monto_pagado;
@@ -129,12 +129,12 @@ class Detalle_Factura_Recibo extends EntityClass {
 }
 export { Detalle_Factura_Recibo }
 class Catalogo_Agentes extends EntityClass {
-   constructor(props) {
-       super(props, 'EntityDbo');
-       for (const prop in props) {
-           this[prop] = props[prop];
-       }
-   }
+    constructor(props) {
+        super(props, 'EntityDbo');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
    /**@type {Number}*/ id_agente;
    /**@type {String}*/ identificacion;
    /**@type {String}*/ nombre;
@@ -148,12 +148,12 @@ class Catalogo_Agentes extends EntityClass {
 }
 export { Catalogo_Agentes }
 class Recibos extends EntityClass {
-   constructor(props) {
-       super(props, 'EntityDbo');
-       for (const prop in props) {
-           this[prop] = props[prop];
-       }
-   }
+    constructor(props) {
+        super(props, 'EntityDbo');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
    /**@type {Number}*/ id_recibo;
    /**@type {Number}*/ consecutivo;
    /**@type {Boolean}*/ temporal;
@@ -186,12 +186,12 @@ class Recibos extends EntityClass {
 }
 export { Recibos }
 class Catalogo_Cambio_Dolar extends EntityClass {
-   constructor(props) {
-       super(props, 'EntityDbo');
-       for (const prop in props) {
-           this[prop] = props[prop];
-       }
-   }
+    constructor(props) {
+        super(props, 'EntityDbo');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
    /**@type {Number}*/ id_cambio;
    /**@type {Date}*/ fecha;
    /**@type {Number}*/ valor_de_compra;
@@ -199,12 +199,12 @@ class Catalogo_Cambio_Dolar extends EntityClass {
 }
 export { Catalogo_Cambio_Dolar }
 class Catalogo_Categoria extends EntityClass {
-   constructor(props) {
-       super(props, 'EntityDbo');
-       for (const prop in props) {
-           this[prop] = props[prop];
-       }
-   }
+    constructor(props) {
+        super(props, 'EntityDbo');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
    /**@type {Number}*/ id_categoria;
    /**@type {String}*/ tipo;
    /**@type {String}*/ descripcion;
@@ -215,12 +215,12 @@ class Catalogo_Categoria extends EntityClass {
 }
 export { Catalogo_Categoria }
 class Tbl_Cuotas extends EntityClass {
-   constructor(props) {
-       super(props, 'EntityDbo');
-       for (const prop in props) {
-           this[prop] = props[prop];
-       }
-   }
+    constructor(props) {
+        super(props, 'EntityDbo');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
    /**@type {Number}*/ id_cuota;
    /**@type {Date}*/ fecha;
    /**@type {Number}*/ total;
@@ -237,12 +237,12 @@ class Tbl_Cuotas extends EntityClass {
 }
 export { Tbl_Cuotas }
 class Catalogo_Clasificacion_Cliente extends EntityClass {
-   constructor(props) {
-       super(props, 'EntityDbo');
-       for (const prop in props) {
-           this[prop] = props[prop];
-       }
-   }
+    constructor(props) {
+        super(props, 'EntityDbo');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
    /**@type {Number}*/ id_clasificacion;
    /**@type {String}*/ Descripcion;
    /**@type {String}*/ Estado;
@@ -250,12 +250,12 @@ class Catalogo_Clasificacion_Cliente extends EntityClass {
 }
 export { Catalogo_Clasificacion_Cliente }
 class Catalogo_Clasificacion_Interes extends EntityClass {
-   constructor(props) {
-       super(props, 'EntityDbo');
-       for (const prop in props) {
-           this[prop] = props[prop];
-       }
-   }
+    constructor(props) {
+        super(props, 'EntityDbo');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
    /**@type {Number}*/ id_clasificacion_interes;
    /**@type {String}*/ Descripcion;
    /**@type {String}*/ Estado;
@@ -264,12 +264,12 @@ class Catalogo_Clasificacion_Interes extends EntityClass {
 }
 export { Catalogo_Clasificacion_Interes }
 class Catalogo_Clientes extends EntityClass {
-   constructor(props) {
-       super(props, 'EntityDbo');
-       for (const prop in props) {
-           this[prop] = props[prop];
-       }
-   }
+    constructor(props) {
+        super(props, 'EntityDbo');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
    /**@type {Number}*/ codigo_cliente;
    /**@type {String}*/ primer_nombre;
    /**@type {String}*/ segundo_nombre;
@@ -303,12 +303,12 @@ class Catalogo_Clientes extends EntityClass {
 }
 export { Catalogo_Clientes }
 class Catalogo_Cuentas extends EntityClass {
-   constructor(props) {
-       super(props, 'EntityDbo');
-       for (const prop in props) {
-           this[prop] = props[prop];
-       }
-   }
+    constructor(props) {
+        super(props, 'EntityDbo');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
    /**@type {Number}*/ id_cuentas;
    /**@type {String}*/ nombre;
    /**@type {String}*/ tipo_cuenta;
@@ -324,12 +324,12 @@ class Catalogo_Cuentas extends EntityClass {
 }
 export { Catalogo_Cuentas }
 class Catalogo_Departamento extends EntityClass {
-   constructor(props) {
-       super(props, 'EntityDbo');
-       for (const prop in props) {
-           this[prop] = props[prop];
-       }
-   }
+    constructor(props) {
+        super(props, 'EntityDbo');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
    /**@type {Number}*/ id_departamento;
    /**@type {String}*/ nombre;
    /**@type {Number}*/ ponderacion;
@@ -342,12 +342,12 @@ class Catalogo_Departamento extends EntityClass {
 }
 export { Catalogo_Departamento }
 class Catalogo_Estados_Articulos extends EntityClass {
-   constructor(props) {
-       super(props, 'EntityDbo');
-       for (const prop in props) {
-           this[prop] = props[prop];
-       }
-   }
+    constructor(props) {
+        super(props, 'EntityDbo');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
    /**@type {Number}*/ id_estado_articulo;
    /**@type {String}*/ nombre;
    /**@type {String}*/ descripcion;
@@ -357,12 +357,12 @@ class Catalogo_Estados_Articulos extends EntityClass {
 }
 export { Catalogo_Estados_Articulos }
 class Catalogo_Inversores extends EntityClass {
-   constructor(props) {
-       super(props, 'EntityDbo');
-       for (const prop in props) {
-           this[prop] = props[prop];
-       }
-   }
+    constructor(props) {
+        super(props, 'EntityDbo');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
    /**@type {Number}*/ id_inversor;
    /**@type {String}*/ nombre;
    /**@type {String}*/ direccion;
@@ -375,12 +375,12 @@ class Catalogo_Inversores extends EntityClass {
 }
 export { Catalogo_Inversores }
 class Catalogo_Municipio extends EntityClass {
-   constructor(props) {
-       super(props, 'EntityDbo');
-       for (const prop in props) {
-           this[prop] = props[prop];
-       }
-   }
+    constructor(props) {
+        super(props, 'EntityDbo');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
    /**@type {Number}*/ id_municipio;
    /**@type {String}*/ nombre;
    /**@type {Catalogo_Departamento} ManyToOne*/ Catalogo_Departamento;
@@ -390,12 +390,12 @@ class Catalogo_Municipio extends EntityClass {
 }
 export { Catalogo_Municipio }
 class Catalogo_Nacionalidad extends EntityClass {
-   constructor(props) {
-       super(props, 'EntityDbo');
-       for (const prop in props) {
-           this[prop] = props[prop];
-       }
-   }
+    constructor(props) {
+        super(props, 'EntityDbo');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
    /**@type {Number}*/ id_nacionalidad;
    /**@type {String}*/ nombre;
    /**@type {String}*/ nacionalidad;
@@ -407,24 +407,24 @@ class Catalogo_Nacionalidad extends EntityClass {
 }
 export { Catalogo_Nacionalidad }
 class Catalogo_Profesiones extends EntityClass {
-   constructor(props) {
-       super(props, 'EntityDbo');
-       for (const prop in props) {
-           this[prop] = props[prop];
-       }
-   }
+    constructor(props) {
+        super(props, 'EntityDbo');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
    /**@type {Number}*/ id_profesion;
    /**@type {String}*/ nombre;
    /**@type {Array<Catalogo_Clientes>} OneToMany*/ Catalogo_Clientes;
 }
 export { Catalogo_Profesiones }
 class Catalogo_Sucursales extends EntityClass {
-   constructor(props) {
-       super(props, 'EntityDbo');
-       for (const prop in props) {
-           this[prop] = props[prop];
-       }
-   }
+    constructor(props) {
+        super(props, 'EntityDbo');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
    /**@type {Number}*/ Id_Sucursal;
    /**@type {String}*/ Nombre;
    /**@type {String}*/ Descripcion;
@@ -437,12 +437,12 @@ class Catalogo_Sucursales extends EntityClass {
 }
 export { Catalogo_Sucursales }
 class Transaction_Contratos extends EntityClass {
-   constructor(props) {
-       super(props, 'EntityDbo');
-       for (const prop in props) {
-           this[prop] = props[prop];
-       }
-   }
+    constructor(props) {
+        super(props, 'EntityDbo');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
    /**@type {Number}*/ numero_contrato;
    /**@type {Date}*/ fecha_contrato;
    /**@type {Date}*/ fecha_cancelar;
@@ -482,12 +482,12 @@ class Transaction_Contratos extends EntityClass {
 }
 export { Transaction_Contratos }
 class Catalogo_Tipo_Agente extends EntityClass {
-   constructor(props) {
-       super(props, 'EntityDbo');
-       for (const prop in props) {
-           this[prop] = props[prop];
-       }
-   }
+    constructor(props) {
+        super(props, 'EntityDbo');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
    /**@type {Number}*/ Id_Tipo_Agente;
    /**@type {String}*/ Descripcion;
    /**@type {String}*/ Estado;
@@ -495,12 +495,12 @@ class Catalogo_Tipo_Agente extends EntityClass {
 }
 export { Catalogo_Tipo_Agente }
 class Catalogo_Tipo_Identificacion extends EntityClass {
-   constructor(props) {
-       super(props, 'EntityDbo');
-       for (const prop in props) {
-           this[prop] = props[prop];
-       }
-   }
+    constructor(props) {
+        super(props, 'EntityDbo');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
    /**@type {Number}*/ id_tipo_identificacion;
    /**@type {String}*/ Descripcion;
    /**@type {String}*/ Estado;
@@ -508,24 +508,24 @@ class Catalogo_Tipo_Identificacion extends EntityClass {
 }
 export { Catalogo_Tipo_Identificacion }
 class Catalogo_Tipo_Transaccion extends EntityClass {
-   constructor(props) {
-       super(props, 'EntityDbo');
-       for (const prop in props) {
-           this[prop] = props[prop];
-       }
-   }
+    constructor(props) {
+        super(props, 'EntityDbo');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
    /**@type {Number}*/ id_tipo_transaccion;
    /**@type {String}*/ descripcion;
    /**@type {Array<Transaction_Ingresos_Egresos>} OneToMany*/ Transaction_Ingresos_Egresos;
 }
 export { Catalogo_Tipo_Transaccion }
 class Categoria_Cuentas extends EntityClass {
-   constructor(props) {
-       super(props, 'EntityDbo');
-       for (const prop in props) {
-           this[prop] = props[prop];
-       }
-   }
+    constructor(props) {
+        super(props, 'EntityDbo');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
    /**@type {Number}*/ id_categoria;
    /**@type {String}*/ descripcion;
    /**@type {Array<Catalogo_Cuentas>} OneToMany*/ Catalogo_Cuentas;
@@ -534,12 +534,12 @@ class Categoria_Cuentas extends EntityClass {
 }
 export { Categoria_Cuentas }
 class Condicion_Laboral_Cliente extends EntityClass {
-   constructor(props) {
-       super(props, 'EntityDbo');
-       for (const prop in props) {
-           this[prop] = props[prop];
-       }
-   }
+    constructor(props) {
+        super(props, 'EntityDbo');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
    /**@type {Number}*/ id;
    /**@type {Date}*/ fecha_ingreso;
    /**@type {String}*/ ocupacion_cargo;
@@ -552,24 +552,24 @@ class Condicion_Laboral_Cliente extends EntityClass {
 }
 export { Condicion_Laboral_Cliente }
 class Datos_Configuracion extends EntityClass {
-   constructor(props) {
-       super(props, 'EntityDbo');
-       for (const prop in props) {
-           this[prop] = props[prop];
-       }
-   }
+    constructor(props) {
+        super(props, 'EntityDbo');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
    /**@type {String}*/ Encabezado;
    /**@type {Boolean}*/ AutoDebito;
    /**@type {Catalogo_Sucursales} ManyToOne*/ Catalogo_Sucursales;
 }
 export { Datos_Configuracion }
 class Detail_Movimiento extends EntityClass {
-   constructor(props) {
-       super(props, 'EntityDbo');
-       for (const prop in props) {
-           this[prop] = props[prop];
-       }
-   }
+    constructor(props) {
+        super(props, 'EntityDbo');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
    /**@type {Number}*/ id_detalle;
    /**@type {Number}*/ id_movimiento;
    /**@type {Number}*/ debito;
@@ -588,12 +588,12 @@ class Detail_Movimiento extends EntityClass {
 }
 export { Detail_Movimiento }
 class Detail_Prendas extends EntityClass {
-   constructor(props) {
-       super(props, 'EntityDbo');
-       for (const prop in props) {
-           this[prop] = props[prop];
-       }
-   }
+    constructor(props) {
+        super(props, 'EntityDbo');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
    /**@type {Number}*/ numero_prenda;
    /**@type {Number}*/ numero_contrato_OLD;
    /**@type {String}*/ Descripcion;
@@ -623,12 +623,12 @@ class Detail_Prendas extends EntityClass {
 }
 export { Detail_Prendas }
 class Detail_Prendas_Vehiculos extends EntityClass {
-   constructor(props) {
-       super(props, 'EntityDbo');
-       for (const prop in props) {
-           this[prop] = props[prop];
-       }
-   }
+    constructor(props) {
+        super(props, 'EntityDbo');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
    /**@type {String}*/ capacidad_cilindros;
    /**@type {String}*/ cantidad_cilindros;
    /**@type {String}*/ cantidad_pasajeros;
@@ -647,12 +647,12 @@ class Detail_Prendas_Vehiculos extends EntityClass {
 }
 export { Detail_Prendas_Vehiculos }
 class Detail_Valores extends EntityClass {
-   constructor(props) {
-       super(props, 'EntityDbo');
-       for (const prop in props) {
-           this[prop] = props[prop];
-       }
-   }
+    constructor(props) {
+        super(props, 'EntityDbo');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
    /**@type {Number}*/ Valoracion_1;
    /**@type {Number}*/ Valoracion_2;
    /**@type {Number}*/ Valoracion_3;
@@ -663,12 +663,12 @@ class Detail_Valores extends EntityClass {
 }
 export { Detail_Valores }
 class Permisos_Cuentas extends EntityClass {
-   constructor(props) {
-       super(props, 'EntityDbo');
-       for (const prop in props) {
-           this[prop] = props[prop];
-       }
-   }
+    constructor(props) {
+        super(props, 'EntityDbo');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
    /**@type {Number}*/ id_permiso;
    /**@type {Boolean}*/ permite_debito;
    /**@type {Boolean}*/ permite_credito;
@@ -677,12 +677,12 @@ class Permisos_Cuentas extends EntityClass {
 }
 export { Permisos_Cuentas }
 class Transaction_Contratos_old extends EntityClass {
-   constructor(props) {
-       super(props, 'EntityDbo');
-       for (const prop in props) {
-           this[prop] = props[prop];
-       }
-   }
+    constructor(props) {
+        super(props, 'EntityDbo');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
    /**@type {Number}*/ numero_contrato;
    /**@type {Date}*/ fecha_contrato;
    /**@type {Date}*/ fecha_cancelar;
@@ -743,12 +743,12 @@ class Transaction_Contratos_old extends EntityClass {
 }
 export { Transaction_Contratos_old }
 class Transaction_Contratos_Inversionistas extends EntityClass {
-   constructor(props) {
-       super(props, 'EntityDbo');
-       for (const prop in props) {
-           this[prop] = props[prop];
-       }
-   }
+    constructor(props) {
+        super(props, 'EntityDbo');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
    /**@type {Number}*/ numero_cont;
    /**@type {Date}*/ fecha;
    /**@type {Number}*/ taza;
@@ -769,12 +769,12 @@ class Transaction_Contratos_Inversionistas extends EntityClass {
 }
 export { Transaction_Contratos_Inversionistas }
 class Transaction_Egresos extends EntityClass {
-   constructor(props) {
-       super(props, 'EntityDbo');
-       for (const prop in props) {
-           this[prop] = props[prop];
-       }
-   }
+    constructor(props) {
+        super(props, 'EntityDbo');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
    /**@type {Number}*/ numero_egreso;
    /**@type {Number}*/ monto;
    /**@type {Date}*/ fecha;
@@ -789,12 +789,12 @@ class Transaction_Egresos extends EntityClass {
 }
 export { Transaction_Egresos }
 class Transaction_Facturas_old extends EntityClass {
-   constructor(props) {
-       super(props, 'EntityDbo');
-       for (const prop in props) {
-           this[prop] = props[prop];
-       }
-   }
+    constructor(props) {
+        super(props, 'EntityDbo');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
    /**@type {Number}*/ numero_factura;
    /**@type {Number}*/ abono_de_cuota;
    /**@type {Number}*/ mora;
