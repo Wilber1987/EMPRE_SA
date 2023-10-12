@@ -15,3 +15,9 @@ configuracion de modulos
 [submodule "CAPA_DATOS"]
 	path = CAPA_DATOS
 	url = https://github.com/Wilber1987/CAPA_DATOS.git
+	
+
+git submodule update --remote
+entonces
+
+git commit && git push

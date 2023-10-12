@@ -550,9 +550,7 @@ namespace DataBaseModel
         public string? en_manos_de { get; set; }
         public string? color { get; set; }
         public string? factura { get; set; }
-        public string? tipo_movimiento { get; set; }
-        public string? uso { get; set; }
-        public string? servicio { get; set; }
+        public string? tipo_movimiento { get; set; }       
         public Double? v_porcentage_etiqueta { get; set; }
         public int? numero_contrato { get; set; }
         public int? id_categoria { get; set; }
@@ -583,6 +581,8 @@ namespace DataBaseModel
         public string? defecto { get; set; }
         public Double? porcentage_descuento_maximo { get; set; }
         public DateTime? fecha_seguro { get; set; }
+        public string? uso { get; set; }
+        public string? servicio { get; set; }
         public string? combustible { get; set; }
         [OneToOne(TableName = "Detail_Prendas", KeyColumn = "numero_prenda", ForeignKeyColumn = "numero_prenda")]
         public Detail_Prendas? Detail_Prendas { get; set; }

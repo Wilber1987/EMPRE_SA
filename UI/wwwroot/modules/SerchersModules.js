@@ -133,7 +133,7 @@ const contratosSearcher = (action) => {
     })
     const FilterOptions = new WFilterOptions({
         Dataset: [],
-        EntityModel: model,
+        //EntityModel: model,
         ModelObject: new Transaction_Contratos_ModelComponent(),
         Display: true,
         FilterFunction: (DFilt) => {
