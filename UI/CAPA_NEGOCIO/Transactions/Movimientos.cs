@@ -13,7 +13,7 @@ namespace Transactions
         public double? monto { get; set; }
         public double? tasa_cambio { get; set; }
         public double? tasa_cambio_compra { get; set; }
-        public double? total { get; set; }
+        public string? moneda { get; set; }
         public int? id_usuario_crea { get; set; }
         public DateTime? fecha { get; set; }
 
@@ -29,7 +29,6 @@ namespace Transactions
         {
             try
             {
-
                 var user = AuthNetCore.User(token);
                 var cuentaDestino = new Catalogo_Cuentas()
                 {
@@ -40,31 +39,28 @@ namespace Transactions
                 {
                     id_cuentas = this.Catalogo_Cuentas_Origen?.id_cuentas
                 }.Find<Catalogo_Cuentas>();
-
-                if (!(((bool)cuentaDestino.permite_cordobas && (bool)cuentaOrigen.permite_cordobas) ||
-                    ((bool)cuentaDestino.permite_dolares && (bool)cuentaOrigen.permite_dolares)))
-                {
-                    return new ResponseService()
-                    {
-                        status = 403,
-                        message = "La cuenta de destino no admite el tipo de moneda de la cuenta origen"
-                    };
-                }
-
                 if (cuentaOrigen != null && cuentaDestino != null)
                 {
                     cuentaOrigen.saldo = cuentaOrigen?.saldo ?? 0;
                     cuentaOrigen.saldo_dolares = cuentaOrigen?.saldo_dolares ?? 0;
                     cuentaDestino.saldo = cuentaDestino?.saldo ?? 0;
                     cuentaDestino.saldo_dolares = cuentaDestino?.saldo_dolares ?? 0;
-                    if (cuentaOrigen?.tipo_cuenta == Tipo_Cuenta.PROPIA.ToString()
-                        && cuentaOrigen?.saldo < this.monto)
+                    if (cuentaOrigen?.tipo_cuenta == Tipo_Cuenta.PROPIA.ToString())
                     {
-                        return new ResponseService()
+
+                        var response = new ResponseService()
                         {
                             status = 403,
-                            message = "La cuenta " + this.Catalogo_Cuentas_Origen?.nombre + " no cuenta con saldo suficiente"
+                            message = $"La cuenta {this.Catalogo_Cuentas_Origen?.nombre} no cuenta con saldo suficiente"
                         };
+                        if (moneda == "DOLARES" && cuentaOrigen.saldo_dolares < monto)
+                        {
+                            return response;
+                        }
+                        else if (moneda == "CORDOBAS" && cuentaOrigen.saldo < monto)
+                        {
+                            return response;
+                        }
                     }
                     if (this.Catalogo_Cuentas_Origen?.id_cuentas == this.Catalogo_Cuentas_Destino?.id_cuentas)
                     {
@@ -72,6 +68,22 @@ namespace Transactions
                         {
                             status = 403,
                             message = "La cuenta de origen debe ser distinta a la cuenta de destino"
+                        };
+                    }
+                    if (this.Catalogo_Cuentas_Destino?.permite_dolares == true && this.moneda != "DOLARES")
+                    {
+                        return new ResponseService()
+                        {
+                            status = 403,
+                            message = "La cuenta de origen debe no permite dolares"
+                        };
+                    }
+                    if (this.Catalogo_Cuentas_Destino?.permite_cordobas == true && this.moneda != "CORDOBAS")
+                    {
+                        return new ResponseService()
+                        {
+                            status = 403,
+                            message = "La cuenta de origen debe no permite cordobas"
                         };
                     }
                     var encabezado = new Transaction_Movimiento()
@@ -87,37 +99,37 @@ namespace Transactions
                         Detail_Movimiento = new List<Detail_Movimiento>(){
                             new Detail_Movimiento(){
                                 id_cuenta = this.Catalogo_Cuentas_Origen?.id_cuentas,
-                                debito = this.monto,
-                                debito_dolares = this.monto / this.tasa_cambio,
+                                debito = this.moneda == "CORDOBAS" ? this.monto : 0,
+                                debito_dolares = this.moneda == "DOLARES" ? this.monto : 0,
                                 credito = 0,
                                 credito_dolares = 0,
                                 monto_inicial = cuentaOrigen?.saldo,
                                 monto_inicial_dolares = cuentaOrigen?.saldo_dolares,
-                                monto_final = cuentaOrigen?.saldo - this.monto,
-                                monto_final_dolares = cuentaOrigen?.saldo_dolares - (this.monto / this.tasa_cambio),
+                                monto_final = cuentaOrigen?.saldo - (this.moneda == "CORDOBAS" ? this.monto : 0),
+                                monto_final_dolares = cuentaOrigen?.saldo_dolares - (this.moneda == "DOLARES" ? this.monto : 0),
                                 tasa_cambio = this.tasa_cambio,
                                 tasa_cambio_compra = this.tasa_cambio_compra,
-                                moneda = Catalogo_Cuentas_Destino?.permite_cordobas == true ? "C$" : "$"
+                                moneda = Catalogo_Cuentas_Destino?.permite_cordobas == true ? "CORDOBAS" : "DOLARES"
                             },new Detail_Movimiento(){
                                 id_cuenta = this.Catalogo_Cuentas_Destino?.id_cuentas,
                                 debito = 0,
                                 debito_dolares = 0,
-                                credito = this.monto,
-                                credito_dolares = this.monto / tasa_cambio,
+                                credito =  this.moneda == "CORDOBAS" ? this.monto : 0,
+                                credito_dolares = this.moneda == "DOLARES" ? this.monto : 0,
                                 monto_inicial = cuentaDestino?.saldo,
                                 monto_inicial_dolares = cuentaDestino?.saldo_dolares,
-                                monto_final = cuentaDestino?.saldo + this.monto,
-                                monto_final_dolares = cuentaDestino?.saldo_dolares + (this.monto / this.tasa_cambio),
+                                monto_final = cuentaDestino?.saldo + (this.moneda == "CORDOBAS" ? this.monto : 0),
+                                monto_final_dolares = cuentaDestino?.saldo_dolares + (this.moneda == "DOLARES" ? this.monto : 0),
                                 tasa_cambio = this.tasa_cambio,
                                 tasa_cambio_compra = this.tasa_cambio_compra,
-                                moneda = Catalogo_Cuentas_Destino?.permite_cordobas == true ? "C$" : "$"
+                                moneda = Catalogo_Cuentas_Destino?.permite_cordobas == true ? "CORDOBAS" : "DOLARES"
                             }
                         }
                     };
-                    cuentaOrigen.saldo = cuentaOrigen.saldo - this.monto;
-                    cuentaOrigen.saldo_dolares = cuentaOrigen.saldo_dolares - (this.monto / this.tasa_cambio);
-                    cuentaDestino.saldo = cuentaDestino.saldo + this.monto;
-                    cuentaDestino.saldo_dolares = cuentaDestino.saldo_dolares + (this.monto / this.tasa_cambio);
+                    cuentaOrigen.saldo = cuentaOrigen.saldo - (this.moneda == "CORDOBAS" ? this.monto : 0);
+                    cuentaOrigen.saldo_dolares = cuentaOrigen.saldo_dolares - (this.moneda == "DOLARES" ? this.monto : 0);
+                    cuentaDestino.saldo = cuentaDestino.saldo +  (this.moneda == "CORDOBAS" ? this.monto : 0);
+                    cuentaDestino.saldo_dolares = cuentaDestino.saldo_dolares + (this.moneda == "DOLARES" ? this.monto : 0);
                     BeginGlobalTransaction();
                     cuentaDestino.Update();
                     cuentaOrigen.Update();
@@ -163,7 +175,7 @@ namespace Transactions
                     concepto = z.concepto,
                     monto = constDestino?.credito,
                     tasa_cambio = constDestino?.tasa_cambio,
-                    total = constDestino?.credito / constDestino?.tasa_cambio,
+                    moneda = constDestino.moneda,
                     id_usuario_crea = z.id_usuario_crea,
                     fecha = z.fecha,
                     Catalogo_Cuentas_Origen = constOrigen?.catalogo_Cuentas,

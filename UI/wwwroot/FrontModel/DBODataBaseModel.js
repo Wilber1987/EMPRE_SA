@@ -58,7 +58,6 @@ class Transactional_Valoracion extends EntityClass {
 
     precio_venta_empeño_cordobas = { type: 'number', hidden: true };
     precio_venta_empeño_dolares = { type: 'number', hidden: true };
-
     GuardarValoraciones = async (valoraciones) => {
         return await this.SaveData("Transactional_Valoracion/GuardarValoraciones", { valoraciones: valoraciones })
     }
@@ -242,7 +241,7 @@ class Transaction_Contratos_ModelComponent extends EntityClass {
     codigo_cliente = { type: "number", hiddenInTable: true, hiddenFilter: true };
     saldo = { type: "number", hiddenFilter: true, hiddenInTable: true };
     abonos = { type: "number", hiddenInTable: true, hiddenFilter: true };
-    tipo = { type: "text", hiddenInTable: true, hiddenFilter: true };
+    tipo = { type: "number", hiddenInTable: true, hiddenFilter: true };
     entregado = { type: "text", hiddenInTable: true, hiddenFilter: true };
     interes_actual = { type: "number", hiddenInTable: true, hiddenFilter: true };
     observaciones = { type: "text", hiddenInTable: true, hiddenFilter: true };
@@ -465,6 +464,7 @@ class Catalogo_Cuentas extends EntityClass {
     id_cuentas = { type: 'number', primary: true };
     nombre = { type: 'text' };
     saldo = { type: 'number', disabled: true, hiddenInTable: true, require: false };
+    saldo_dolares = { type: 'number', disabled: true, hiddenInTable: true, require: false };
     permite_dolares = { type: "checkbox", require: false };
     permite_cordobas = { type: "checkbox", require: false };
     tipo_cuenta = { type: 'select', Dataset: ['PROPIA', 'PAGO', 'EXTERNA'] };
@@ -713,7 +713,7 @@ export { Datos_Configuracion }
 
 class Recibos extends EntityClass {
     constructor(props) {
-        super(props, 'Recibos');
+        super(props, 'EntityDBO');
         for (const prop in props) {
             this[prop] = props[prop];
         }
@@ -735,10 +735,10 @@ class Recibos extends EntityClass {
     abono_capital_dolares = { type: "number", hiddenInTable: true, disabled: true };
     cuota_pagar_cordobas = { type: "number", hiddenInTable: true, disabled: true };
     cuota_pagar_dolares = { type: "number", hiddenInTable: true, disabled: true };
-    mora_cordobas = { type: "number", hiddenInTable: true, disabled: true, require: false };
-    mora_dolares = { type: "number", hiddenInTable: true, disabled: true, require: false };
-    mora_interes_cordobas = { type: "number", hiddenInTable: true, disabled: true, require: false };
-    mora_interes_dolares = { type: "number", hiddenInTable: true, disabled: true, require: false };
+    mora_cordobas = { type: "number", hiddenInTable: true, disabled: true };
+    mora_dolares = { type: "number", hiddenInTable: true, disabled: true };
+    mora_interes_cordobas = { type: "number", hiddenInTable: true, disabled: true };
+    mora_interes_dolares = { type: "number", hiddenInTable: true, disabled: true };
     total_cordobas = { type: "number", hiddenInTable: true, disabled: true };
     total_dolares = { type: "number", hiddenInTable: true, disabled: true };
     total_parciales = { type: "number", hiddenInTable: true, disabled: true };
@@ -746,8 +746,8 @@ class Recibos extends EntityClass {
     fecha_roc = { type: "date", disabled: true };
     paga_cordobas = { type: "number", hiddenInTable: true };
     paga_dolares = { type: "number", hiddenInTable: true };
-    title = { type: "title", label: "Opciones:" };
-    solo_abono = { type: "checkbox", hiddenInTable: true, require: false };
+    title = { type: "title", label: "Opciones:" };    
+    //solo_abono = { type: "checkbox", hiddenInTable: true, require: false };
     cancelar = { type: "checkbox", hiddenInTable: true, require: false };
 
     VerRecibo = async () => {
@@ -755,3 +755,64 @@ class Recibos extends EntityClass {
     }
 }
 export { Recibos }
+
+
+class Transaccion_Factura extends EntityClass {
+    constructor(props) {
+        super(props, 'EntityDBO');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
+    id_factura = { type: "number", primary: true };
+    tipo = { type: "text" };
+    concepto = { type: "text" };
+    tasa_cambio = { type: "string" };
+    total = { type: "string" };
+    id_cliente = { type: "number" };
+    id_sucursal = { type: "number" };
+    fecha = { type: "date" };
+    Factura_contrato = { type: 'model', label: "Datos del contrato al momento del pago", ModelObject: () => new Factura_contrato(), hiddenFilter: true };
+    Detalle_Factura_Recibo = { type: 'MasterDetail', label: "Cuotas Pagadas", ModelObject: () => new Detalle_Factura_Recibo(), hiddenFilter: true };
+
+}
+export { Transaccion_Factura }
+
+class Factura_contrato {
+    constructor(props) {
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
+    numero_contrato = { type: "number" };
+    cuotas_pendientes = { type: "number" };
+    saldo_anterior = { type: "number" };
+    saldo_actual = { type: "number" };
+    mora = { type: "number" };
+    interes_demas_cargos_pagar = { type: "number" };
+    proximo_pago_pactado = { type: "date" };
+    total_parciales = { type: "number" };
+    tipo = { type: "number" };
+    tipo_cuenta = { type: "number" };
+    total = { type: "number" };
+    tasa_cambio = { type: "number" };
+}
+export { Factura_contrato }
+
+class Detalle_Factura_Recibo extends EntityClass {
+    constructor(props) {
+        super(props, 'EntityDBO');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
+    id = { type: "number", primary: true };
+    id_factura = { type: "number" };
+    id_cuota = { type: "number" };
+    total_cuota = { type: "string" };
+    monto_pagado = { type: "string" };
+    capital_restante = { type: "string" };
+    concepto = { type: "text" };
+    tasa_cambio = { type: "string" };
+}
+export { Detalle_Factura_Recibo }

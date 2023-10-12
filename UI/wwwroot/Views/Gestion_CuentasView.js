@@ -38,17 +38,16 @@ class Gestion_CuentasView extends HTMLElement {
         this.Draw();
     }
     Draw = async () => {
-        this.SetOption();
+        this.SetOption();       
     }
 
     SetOption = async () => {
-
         const model = new Catalogo_Cuentas();
         /**@type {Array<Catalogo_Cuentas>} */
         const dataset = await model.Get();
 
         this.OptionContainer.append(WRender.Create({
-            tagName: 'button', className: 'Block-Primary', innerText: 'Registrar Movimiento',
+            tagName: 'button', className: 'Block-Primary', innerText: 'Movimiento Internos',
             onclick: () => {
                 // @ts-ignore
                 this.Manager.NavigateFunction("PROPIAS", new GestionCuentaComponent({ Dataset: dataset.filter(c => c.tipo_cuenta == "PROPIA") }));
@@ -68,12 +67,17 @@ class Gestion_CuentasView extends HTMLElement {
                 this.Manager.NavigateFunction("PAGOS", new GestionCuentaComponent({ Dataset: dataset.filter(c => c.tipo_cuenta == "PAGO") }));
             }
         }))
+          // @ts-ignore
+        this.Manager.NavigateFunction("PROPIAS", new GestionCuentaComponent({ Dataset: dataset.filter(c => c.tipo_cuenta == "PROPIA") }));
     }
 
     CustomStyle = css`
             .component{
                display: block;
-            }           
+            }    
+            .OptionContainer {
+                margin-bottom: 20px;
+            }       
         `
 
 }
@@ -166,7 +170,8 @@ class GestionCuentaComponent extends HTMLElement {
             className: "detalle-cuenta",
             children: [
                 WRender.CreateStringNode(`<div>${cuenta.nombre}</div>`),
-                WRender.CreateStringNode(`<div class="monto-cuenta"> Monto C$: ${cuenta.saldo}</div>`),
+                WRender.CreateStringNode(`<div class="monto-cuenta"> Monto C$: ${(cuenta.saldo ?? 0).toFixed(2)}</div>`),
+                WRender.CreateStringNode(`<div class="monto-cuenta"> Monto $: ${(cuenta.saldo_dolares ?? 0).toFixed(2)}</div>`),
                 WRender.Create({
                     tagName: 'input', type: 'button', className: 'Btn-Mini', value: 'Movimientos $', onclick: async () => {
                         displayType = "dolares";
@@ -216,35 +221,33 @@ class GestionCuentaComponent extends HTMLElement {
      * @param {String} [type]
      */
     buildDetailMovimientos(movimientos, detalle, fecha, debito, creadito, saldo, type = "dolares") {
+        console.log(type);
         detalle.innerHTML = "";
         fecha.innerHTML = "";
         debito.innerHTML = "";
         creadito.innerHTML = "";
         saldo.innerHTML = "";
-        let debitoProp = "debito_dolares";
-        let creaditoProp = "credito_dolares";
-        let montoProp = "monto_final_dolares";
-        if (type == "cordobas") {
-            debitoProp = "debito";
-            creaditoProp = "credito";
-            montoProp = "monto_final";
-        }
+        let debitoProp = type == "dolares" ? "debito_dolares" : "debito";
+        let creaditoProp = type == "dolares" ? "credito_dolares" : "credito";
+        let montoProp = type == "dolares" ? "monto_final_dolares" : "monto_final";
+        let currency = type == "dolares" ? "$" : "C$";
+
         detalle.append(WRender.Create({ className: "header", innerHTML: "Detalle" }));
         fecha.append(WRender.Create({ className: "header", innerHTML: "Fecha" }));
         debito.append(WRender.Create({ className: "header", innerHTML: "Egreso" }));
         creadito.append(WRender.Create({ className: "header", innerHTML: "Ingreso" }));
         saldo.append(WRender.Create({ className: "header", innerHTML: "Saldo" }));
-        movimientos.forEach(movimiento => {
+        movimientos.filter(movimiento => movimiento[creaditoProp] != null).forEach(movimiento => {
             // @ts-ignore
             detalle.append(WRender.Create({ className: "detail-label", children: [movimiento.Transaction_Movimiento?.concepto] }));
             fecha.append(WRender.Create({ className: "fecha-label", children: [movimiento.fecha?.toDateFormatEs()] }));
-            debito.append(WRender.Create({ className: "debito-label", children: ["$", "- " + movimiento[debitoProp]?.toFixed(3)] }));
-            creadito.append(WRender.Create({ className: "creadito-label", children: ["$", "+ " + movimiento[creaditoProp]?.toFixed(3)] }));
-            saldo.append(WRender.Create({ className: "saldo-label", children: ["$", movimiento[montoProp]?.toFixed(3)] }));
+            debito.append(WRender.Create({ className: "debito-label", children: [currency, "- " + movimiento[debitoProp]?.toFixed(3)] }));
+            creadito.append(WRender.Create({ className: "creadito-label", children: [currency, "+ " + movimiento[creaditoProp]?.toFixed(3)] }));
+            saldo.append(WRender.Create({ className: "saldo-label", children: [currency, movimiento[montoProp]?.toFixed(3)] }));
         });
         detalle.append(WRender.Create({ className: "total ", innerHTML: "Total" }));
-        debito.append(WRender.Create({ className: "debito-label total", children: ["$", "- " + WArrayF.SumValAtt(movimientos, debitoProp).toFixed(3)] }));
-        creadito.append(WRender.Create({ className: "creadito-label total", children: ["$", "+ " + WArrayF.SumValAtt(movimientos, creaditoProp).toFixed(3)] }));
+        debito.append(WRender.Create({ className: "debito-label total", children: [currency, "- " + WArrayF.SumValAtt(movimientos, debitoProp)] }));
+        creadito.append(WRender.Create({ className: "creadito-label total", children: [currency, "+ " + WArrayF.SumValAtt(movimientos, creaditoProp)] }));
     }
 
     CustomStyle = css`
@@ -260,7 +263,7 @@ class GestionCuentaComponent extends HTMLElement {
         .detalle-cuenta {
             border-radius: 10px;
             padding: 10px;
-            border: solid 1px #888;
+            border: solid 1px #b3b3b3;
             display: flex;
             align-items: center;
             font-weight: bold;
