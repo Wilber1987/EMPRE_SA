@@ -107,7 +107,7 @@ namespace Transactions
                 contrato.Update();
 
                 //fecha de proximo pago
-                var fechaProximoPago = contrato.Tbl_Cuotas.Find(x => x.total< x.pago_contado);
+                var fechaProximoPago = contrato.Tbl_Cuotas.Find(x => x.total< x.pago_contado || x.pago_contado == null);
 
                 int ultimoConsecutivo = new Recibos().Get<Recibos>().Max(r => (int?)r.consecutivo) ?? 0;
 
@@ -134,14 +134,14 @@ namespace Transactions
                         saldo_actual = contrato.saldo,
                         mora = this.mora_dolares,
                         interes_demas_cargos_pagar = this.interes_demas_cargos_pagar_dolares,
-                        proximo_pago_pactado = fechaProximoPago.fecha_pago,
+                        proximo_pago_pactado = fechaProximoPago != null ? fechaProximoPago.fecha : null,
                         total_parciales = this.total_parciales,//todo preguntar a EMPRESA 
                         tipo = null,
                         tipo_cuenta = null,
                         total = this.total_dolares,
                         tasa_cambio = this.tasa_cambio,
                         id_cliente = contrato.codigo_cliente,
-                        id_sucursal = dbUser.Id_Sucursal,,
+                        id_sucursal = dbUser.Id_Sucursal
                     },
                     Detalle_Factura_Recibo = cuotasPagadas
                 };
