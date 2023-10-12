@@ -140,7 +140,7 @@ const contratosSearcher = (action) => {
             TableComponent.Dataset = DFilt;
             TableComponent?.DrawTable();
             // @ts-ignore
-            action(DFilt, FilterOptions);
+            //action(DFilt, FilterOptions);
         }
     });
     return WRender.Create({ className: "main-contratos-searcher", children: [FilterOptions, TableComponent] });
