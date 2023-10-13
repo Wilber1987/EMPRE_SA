@@ -127,7 +127,7 @@ namespace Transactions
                     return new ResponseService()
                     {
                         status = 403,
-                        message = "La cuenta de origen debe no permite dolares"
+                        message = "La cuenta de destino no permite dolares"
                     };
                 }
                 if (this.Catalogo_Cuentas_Destino?.permite_cordobas == false && this.moneda == "CORDOBAS")
@@ -135,7 +135,7 @@ namespace Transactions
                     return new ResponseService()
                     {
                         status = 403,
-                        message = "La cuenta de origen debe no permite cordobas"
+                        message = "La cuenta de destino no permite cordobas"
                     };
                 }
                 var encabezado = new Transaction_Movimiento()
