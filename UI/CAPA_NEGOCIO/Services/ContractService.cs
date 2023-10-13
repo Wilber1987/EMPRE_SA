@@ -11,6 +11,7 @@ using System.Text;
 using System.Reflection;
 using Model;
 using CAPA_DATOS.Services;
+using CAPA_DATOS;
 
 namespace CAPA_NEGOCIO.Services
 {
@@ -42,30 +43,49 @@ namespace CAPA_NEGOCIO.Services
 
         public static void generaPDF(Transaction_Contratos model)
         {
+            /*LoggerServices.AddMessageInfo("INICIO DE LECTURA");
             string rutaArchivo = "contrato_empeno.cshtml";
             if (model.tipo.Equals(Contratos_Type.EMPENO_VEHICULO.ToString()))
             {
                 rutaArchivo = "contrato_empeno_vehiculo.cshtml";
-            } else if (model.tipo.Equals(Contratos_Type.PRESTAMO.ToString()))
+            }
+            else if (model.tipo.Equals(Contratos_Type.PRESTAMO.ToString()))
             {
                 rutaArchivo = "contrato_prestamo.cshtml";
             }
+            LoggerServices.AddMessageInfo("FIN SELECCION DE PATH");
             var templatePath = Path.Combine(System.IO.Path.GetFullPath("./Pages/Contracts"), rutaArchivo);
+            LoggerServices.AddMessageInfo("COMBINACION DE PATH");
+             LoggerServices.AddMessageInfo($"FIN SELECCION DE PATH ::{templatePath}" );
             var templateContent = File.ReadAllText(templatePath);
+            LoggerServices.AddMessageInfo("LECTURA DE PATH");
+            LoggerServices.AddMessageInfo("FIN DE LECTURA");
+            */
 
-             templateContent = templateContent.Replace("{{cuotafija}}", Math.Round((decimal)model.cuotafija, 2).ToString())
-                .Replace("{{cuotafija_label}}", NumberUtility.NumeroALetras(model.cuotafija))
-                .Replace("{{cuotafija_dolares}}", Math.Round((decimal)model.cuotafija_dolares, 2).ToString())
-                .Replace("{{cuotafija_dolares_label}}", NumberUtility.NumeroALetras(model.cuotafija_dolares))
-                .Replace("{{valoracion_empeño_cordobas}}", Math.Round((decimal)model.valoracion_empeño_cordobas, 2).ToString())
-                .Replace("{{valoracion_empeño_cordobas_label}}", NumberUtility.NumeroALetras(model.valoracion_empeño_cordobas))
-                .Replace("{{valoracion_empeño_dolares}}", Math.Round((decimal)model.valoracion_compra_dolares, 2).ToString())
-                .Replace("{{valoracion_empeño_dolares_label}}", NumberUtility.NumeroALetras(model.valoracion_compra_dolares));
+            string templateContent = ContractsTemplates.ContractEmpeno;
+            if (model.tipo.Equals(Contratos_Type.EMPENO_VEHICULO.ToString()))
+            {
+                templateContent = ContractsTemplates.ContractEmpenoVehiculo;
+            }
+            else if (model.tipo.Equals(Contratos_Type.PRESTAMO.ToString()))
+            {
+                templateContent = ContractsTemplates.ContractPrestamo;
+            }
+            templateContent = templateContent.Replace("{{cuotafija}}", Math.Round((decimal)model.cuotafija, 2).ToString())
+               .Replace("{{cuotafija_label}}", NumberUtility.NumeroALetras(model.cuotafija))
+               .Replace("{{cuotafija_dolares}}", Math.Round((decimal)model.cuotafija_dolares, 2).ToString())
+               .Replace("{{cuotafija_dolares_label}}", NumberUtility.NumeroALetras(model.cuotafija_dolares))
+               .Replace("{{valoracion_empeño_cordobas}}", Math.Round((decimal)model.valoracion_empeño_cordobas, 2).ToString())
+               .Replace("{{valoracion_empeño_cordobas_label}}", NumberUtility.NumeroALetras(model.valoracion_empeño_cordobas))
+               .Replace("{{valoracion_empeño_dolares}}", Math.Round((decimal)model.valoracion_compra_dolares, 2).ToString())
+               .Replace("{{valoracion_empeño_dolares_label}}", NumberUtility.NumeroALetras(model.valoracion_compra_dolares));
 
             var renderedHtml = RenderTemplate(templateContent, model);
 
+            LoggerServices.AddMessageInfo("FIN DE RENDER");
             var configuraciones = new Transactional_Configuraciones().GetIntereses();
             //var interes = configuraciones.Select(i => Convert.ToInt32(i.Valor)).ToArray().Sum();
+            LoggerServices.AddMessageInfo("FIN DE GET INTERESE");
 
             renderedHtml = RenderTemplate(renderedHtml, model.Catalogo_Clientes)
                 .Replace("{{municipio}}", model.Catalogo_Clientes.Catalogo_Municipio?.nombre)
@@ -107,14 +127,17 @@ namespace CAPA_NEGOCIO.Services
                 .Replace("{{mes}}", DateTime.Now.Month.ToString())
                 .Replace("{{anio}}", DateTime.Now.Year.ToString())
                 .Replace("{{tbody_amortizacion}}", GenerateTableHtml(model.Tbl_Cuotas));
+            LoggerServices.AddMessageInfo("FIN DE RENDER 2");
             // Generar el PDF
             var pdfFilePath = Path.Combine(System.IO.Path.GetFullPath("./wwwroot/Contracts"), "output.pdf");
             GeneratePdfFromHtml(renderedHtml, pdfFilePath);
+            LoggerServices.AddMessageInfo("FIN DE GENERATE");
 
         }
 
         public static string RenderTemplate(string templateContent, object model)
         {
+
             PropertyInfo[] properties = model.GetType().GetProperties();
             string renderedTemplate = templateContent;
             foreach (PropertyInfo property in properties)
@@ -131,6 +154,7 @@ namespace CAPA_NEGOCIO.Services
                     renderedTemplate = renderedTemplate.Replace(placeholder, "");
                 }
             }
+            LoggerServices.AddMessageInfo("FIN DE RENDER PROPS");
             return renderedTemplate;
         }
 

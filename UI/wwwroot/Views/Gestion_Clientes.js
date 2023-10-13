@@ -88,7 +88,8 @@ class Gestion_ClientesView extends HTMLElement {
             const response = await new Transaction_Contratos({ codigo_cliente: cliente.codigo_cliente }).Get();
             cliente.Transaction_Contratos = response;
             this.Manager?.NavigateFunction("Gestion_ClientesDetail" + cliente.codigo_cliente, new WDetailObject({
-                ModelObject: new Catalogo_Clientes({ Transaction_Contratos: { type: "MASTERDETAIL", ModelObject: new Transaction_Contratos_ModelComponent() } }),
+                ModelObject: new Catalogo_Clientes({ Transaction_Contratos: 
+                    { type: "MASTERDETAIL", ModelObject: ()=> new Transaction_Contratos_ModelComponent(), Dataset: response } }),
                 ObjectDetail: cliente
             }))
         }))
