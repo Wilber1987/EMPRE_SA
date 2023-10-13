@@ -174,7 +174,7 @@ class GestionCuentaComponent extends HTMLElement {
         }));
         //TODO REVISAR COLUMNS CART
         console.log(movimientos, movimientosMap);
-        const columChartMovimientos = new ColumChart({
+        this.columChartMovimientos = new ColumChart({
             Title: "Movimientos",
             // @ts-ignore
             TypeChart: "Line",
@@ -211,10 +211,9 @@ class GestionCuentaComponent extends HTMLElement {
         const creadito = WRender.Create({ className: "creadito" });
         const saldo = WRender.Create({ className: "saldo" });
         this.buildDetailMovimientos(movimientos, detalle, fecha, debito, creadito, saldo);
-        detail.append(detalleCuenta, filterOptions, detalle, fecha, debito, creadito, saldo, columChartMovimientos);
+        detail.append(detalleCuenta, filterOptions, detalle, fecha, debito, creadito, saldo/* , this.columChartMovimientos */);
         return detail;
     }
-
     /**
      * @param {any[]} movimientos
      * @param {HTMLElement} detalle
@@ -252,6 +251,7 @@ class GestionCuentaComponent extends HTMLElement {
         detalle.append(WRender.Create({ className: "total ", innerHTML: "Total" }));
         debito.append(WRender.Create({ className: "debito-label total", children: [currency, "- " + WArrayF.SumValAtt(movimientos, debitoProp).toFixed(3)] }));
         creadito.append(WRender.Create({ className: "creadito-label total", children: [currency, "+ " + WArrayF.SumValAtt(movimientos, creaditoProp).toFixed(3)] }));
+        //this.columChartMovimientos
     }
 
     CustomStyle = css`
@@ -279,12 +279,12 @@ class GestionCuentaComponent extends HTMLElement {
         .fecha ,
         .debito ,
         .creadito, .detalle, .saldo {
-            border: solid 1px #888;
+            border: solid 1px #e3e3e3;
             padding: 10px
         } 
         .header  {
             color: #000;
-            border-bottom: solid 1px #888; 
+            border-bottom: solid 2px #0c3b79; 
             padding: 10px;   
             margin-bottom: 10px;
             font-weight: bold;
