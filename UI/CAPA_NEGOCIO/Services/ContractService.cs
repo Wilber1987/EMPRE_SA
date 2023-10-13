@@ -25,14 +25,14 @@ namespace CAPA_NEGOCIO.Services
         public static async Task<byte[]> GeneratePdfFromRazorTemplateAsync<TModel>(string razorTemplate, TModel model)
         {
             var engine = new RazorLightEngineBuilder()
-                .UseFileSystemProject(System.IO.Path.GetFullPath("../UI/Pages/Contracts"))
+                .UseFileSystemProject(System.IO.Path.GetFullPath("./Pages/Contracts"))
                 .UseMemoryCachingProvider()
                 .Build();
 
             string renderedHtml = await engine.CompileRenderAsync(razorTemplate, model);
 
             // Generar el PDF a partir del HTML renderizado
-            var pdfFilePath = Path.Combine(System.IO.Path.GetFullPath("../UI/Pages/Contracts"), "output.pdf");
+            var pdfFilePath = Path.Combine(System.IO.Path.GetFullPath("./Pages/Contracts"), "output.pdf");
             GeneratePdfFromHtml(renderedHtml, pdfFilePath);
 
             // Leer el contenido del archivo PDF generado y devolverlo como un arreglo de bytes
@@ -50,7 +50,7 @@ namespace CAPA_NEGOCIO.Services
             {
                 rutaArchivo = "contrato_prestamo.cshtml";
             }
-            var templatePath = Path.Combine(System.IO.Path.GetFullPath("../UI/Pages/Contracts"), rutaArchivo);
+            var templatePath = Path.Combine(System.IO.Path.GetFullPath("./Pages/Contracts"), rutaArchivo);
             var templateContent = File.ReadAllText(templatePath);
 
              templateContent = templateContent.Replace("{{cuotafija}}", Math.Round((decimal)model.cuotafija, 2).ToString())
@@ -108,7 +108,7 @@ namespace CAPA_NEGOCIO.Services
                 .Replace("{{anio}}", DateTime.Now.Year.ToString())
                 .Replace("{{tbody_amortizacion}}", GenerateTableHtml(model.Tbl_Cuotas));
             // Generar el PDF
-            var pdfFilePath = Path.Combine(System.IO.Path.GetFullPath("../UI/wwwroot/Contracts"), "output.pdf");
+            var pdfFilePath = Path.Combine(System.IO.Path.GetFullPath("./wwwroot/Contracts"), "output.pdf");
             GeneratePdfFromHtml(renderedHtml, pdfFilePath);
 
         }
