@@ -480,6 +480,7 @@ namespace DataBaseModel
         public int? id_sucursal { get; set; }
         public DateTime? fecha { get; set; }
         public int? id_usuario { get; set; }
+        public string? estado { get; set; }
         
         [JsonProp]
         public Factura_contrato Factura_contrato { get; set; }

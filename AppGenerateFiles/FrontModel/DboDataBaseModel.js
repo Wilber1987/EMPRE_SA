@@ -108,6 +108,7 @@ class Transaccion_Factura extends EntityClass {
    /**@type {Date}*/ fecha;
    /**@type {Number}*/ id_usuario;
    /**@type {String}*/ Factura_contrato;
+   /**@type {String}*/ estado;
    /**@type {Array<Detalle_Factura_Recibo>} OneToMany*/ Detalle_Factura_Recibo;
 }
 export { Transaccion_Factura }

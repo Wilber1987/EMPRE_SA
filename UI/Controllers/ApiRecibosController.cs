@@ -28,5 +28,11 @@ namespace API.Controllers
             return true;
             //return inst.Update();
         }
+        [HttpPost]
+        [AuthController]
+        public object anularRecibo(Recibos inst)
+        {            
+            return inst.AnularFactura(HttpContext.Session.GetString("seassonKey"));
+        }
     }
 }

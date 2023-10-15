@@ -168,24 +168,6 @@ class Gestion_RecibosView extends HTMLElement {
             }
         }))
 
-        // this.OptionContainer.append(WRender.Create({
-        //     tagName: 'button', className: 'Block-Success', innerText: 'Generar Recibo',
-        //     onclick: async () => {
-        //         if (this.Contrato?.codigo_cliente == undefined) {
-        //             this.append(ModalMessege("Seleccione un cliente para continuar"));
-        //             return;
-        //         }
-        //         const contract = await this.entity.VerContrato();
-        //         this.shadowRoot?.append(new WModalForm({
-        //             ObjectModal: WRender.Create({
-        //                 tagName: "iframe", src: contract.value, style: {
-        //                     width: "100%",
-        //                     minHeight: "700px"
-        //                 }
-        //             })
-        //         }))
-        //     }
-        // }))
     }
     selectContrato = (/**@type {Transaction_Contratos} */ selectContrato) => {
         //console.log(selectContrato);

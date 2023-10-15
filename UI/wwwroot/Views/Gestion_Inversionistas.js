@@ -26,14 +26,14 @@ class Gestion_InversionistaView extends HTMLElement {
                 UserActions: [
                     {
                         name: "Editar", action: (cliente) => {
-                            this.Gestion_InversionistaForm.cliente = cliente
+                            this.Gestion_InversionistaForm.cliente = cliente;
                             this.Gestion_InversionistaForm.Draw();
                             this.NewTransaction();
                         }
                     }
                 ]
             }
-        })
+        });
         this.FilterOptions = new WFilterOptions({
             Dataset: dataset,
             ModelObject: model,

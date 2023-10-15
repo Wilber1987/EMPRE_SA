@@ -118,6 +118,7 @@ namespace Transactions
                 var factura = new Transaccion_Factura()
                 {
                     tipo = "RECIBO", //TODO ENUM
+                    estado = "ACTIVO",//TODO ENUM
                     concepto = "Pago de cuota contrato No: " + this.numero_contrato,
                     tasa_cambio = this.tasa_cambio,
                     total = this.paga_dolares,
@@ -204,6 +205,112 @@ namespace Transactions
                 };
             }
 
+        }        
+    
+        public object? AnularFactura(string token)
+        {
+            try
+            {
+
+                var user = AuthNetCore.User(token);
+                var dbUser = new API.Extended.Security_Users { Id_User = user.UserId }.Find<API.Extended.Security_Users>();
+                var factura = new Transaccion_Factura() { id_factura = this.id_recibo }.Find<Transaccion_Factura>();
+
+                if (factura == null)
+                {
+                    return new ResponseService()
+                    {
+                        status = 400,
+                        message = "Factura no encontrada"
+                    };
+                }
+
+                if (factura.estado != "ACTIVA")//todo enum
+                {
+                    return new ResponseService()
+                    {
+                        status = 400,
+                        message = "La factura no se encuentra activa"
+                    };
+                }
+
+                factura.estado = "ANULADO";
+                factura.Update();
+
+                
+                BeginGlobalTransaction();
+                var contrato = new Transaction_Contratos() { numero_contrato = factura.Factura_contrato.numero_contrato }.Find<Transaction_Contratos>();
+
+                //si existe contrato se debe anular el recibo y regresarse el saldo
+                if (contrato != null)
+                {
+                    var saldo = contrato.saldo;
+                    var totalfactura = factura.total;
+                    contrato.saldo = contrato.saldo + factura.total;
+                    contrato.Update();
+                }
+
+
+                
+                var cuentaDestino = new Catalogo_Cuentas()
+                {
+                    id_categoria = 6,
+                    id_sucursal = dbUser.Id_Sucursal
+                }.Find<Catalogo_Cuentas>();
+
+                var cuentaOrigen = new Catalogo_Cuentas()
+                {
+                    id_sucursal = dbUser.Id_Sucursal,
+                    id_categoria = 1
+                }.Find<Catalogo_Cuentas>();
+
+                if (cuentaDestino == null || cuentaOrigen == null)
+                {
+                    RollBackGlobalTransaction();
+                    return new ResponseService()
+                    {
+                        status = 400,
+                        message = "Cuentas para anulacion de factura no configuradas correctamente"
+                    };
+                }
+
+
+                ResponseService response = new Movimientos_Cuentas
+                {
+                    Catalogo_Cuentas_Destino = cuentaDestino,
+                    Catalogo_Cuentas_Origen = cuentaOrigen,
+                    concepto = contrato != null ? "Anulación de cuota, contrato No: " + factura.Factura_contrato.numero_contrato : "Anulación de factura",
+                    descripcion = contrato != null ? "Anulación de cuota, contrato No: " + factura.Factura_contrato.numero_contrato : "Anulación de factura",
+                    moneda = "DOLARES",
+                    monto = this.paga_dolares,
+                    tasa_cambio = this.tasa_cambio,
+                    tasa_cambio_compra = this.tasa_cambio_compra
+                }.SaveMovimiento(token);
+
+                if (response.status == 400)
+                {
+                    RollBackGlobalTransaction();
+                    return response;
+                }
+                CommitGlobalTransaction();
+
+                return new ResponseService()
+                {
+                    status = 200,
+                    message = "Factura anulada correctamente",
+                    body = factura
+                };
+
+            }
+            catch (System.Exception ex)
+            {
+                RollBackGlobalTransaction();
+                return new ResponseService()
+                {
+                    message = "Error:" + ex.ToString(),
+                    status = 400
+                };
+            }
         }        
     }
 }
