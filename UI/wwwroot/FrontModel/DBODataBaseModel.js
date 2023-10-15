@@ -241,7 +241,7 @@ class Transaction_Contratos_ModelComponent extends EntityClass {
     codigo_cliente = { type: "number", hiddenInTable: true, hiddenFilter: true };
     saldo = { type: "number", hiddenFilter: true, hiddenInTable: true };
     abonos = { type: "number", hiddenInTable: true, hiddenFilter: true };
-    tipo = { type: "number", hiddenInTable: true, hiddenFilter: true };
+    tipo = { type: "text", hiddenInTable: true, hiddenFilter: true };
     entregado = { type: "text", hiddenInTable: true, hiddenFilter: true };
     interes_actual = { type: "number", hiddenInTable: true, hiddenFilter: true };
     observaciones = { type: "text", hiddenInTable: true, hiddenFilter: true };
@@ -265,7 +265,7 @@ class Transaction_Contratos_ModelComponent extends EntityClass {
     total_pagar_cordobas = { type: "number", hiddenInTable: true, hiddenFilter: true };
     total_pagar_dolares = { type: "number", hiddenInTable: true, hiddenFilter: true };
     interes_dolares = { type: "number", hiddenInTable: true, hiddenFilter: true };
-    Id_User = { type: "number", hiddenInTable: true, hiddenFilter: true };
+    Id_User = { type: "number", hidden: true, hiddenFilter: true };
     Catalogo_Agentes = { type: 'WSELECT', ModelObject: () => new Catalogo_Agentes(), hiddenInTable: true, hiddenFilter: true };
     Detail_Prendas = { type: 'MasterDetail', ModelObject: () => new Detail_Prendas_ModelComponent(), hiddenFilter: true };
     Tbl_Cuotas = { type: 'MasterDetail', ModelObject: () => new Tbl_Cuotas_ModelComponent(), hiddenFilter: true };
@@ -360,8 +360,6 @@ class Detail_Prendas_ModelComponent extends EntityClass {
     color = { type: 'COLOR' };
     //factura = { type: 'text' };
     //tipo_movimiento = { type: 'text' , hiddenInTable: true};
-    uso = { type: 'select', Dataset: ["PRIVADO", "PARTICULAR"], hiddenInTable: true };
-    servicio = { type: 'select', Dataset: ["PRIVADO", "PARTICULAR"], hiddenInTable: true };
     //v_porcentage_etiqueta = { type: 'number' , hiddenInTable: true};
     Catalogo_Categoria = {
         hiddenInTable: true,
@@ -398,6 +396,9 @@ class Detail_Prendas_Vehiculos_ModelComponent extends EntityClass {
     porcentage_descuento_maximo = { type: 'number' };
     fecha_seguro = { type: 'date' };
     combustible = { type: 'text' };
+    uso = { type: 'select', Dataset: ["PRIVADO", "PARTICULAR"], hiddenInTable: true };
+    servicio = { type: 'select', Dataset: ["PRIVADO", "PARTICULAR"], hiddenInTable: true };
+  
 }
 export { Detail_Prendas_Vehiculos_ModelComponent }
 
@@ -718,19 +719,25 @@ class Recibos extends EntityClass {
             this[prop] = props[prop];
         }
     }
+   // title1 = { type: "title", label: "Datos de contrato:" };  
+
+    numero_contrato = { type: "number", disabled: true, hidden: true };
+    //monto = { type: "number", disabled: true };
+    //saldo_actual_cordobas = { type: "number", disabled: true };
+    //saldo_actual_dolares = { type: "number", disabled: true };
+    //plazo = { type: "number", disabled: true };
+
+
+    //tasa_cambio = { type: "number", hiddenInTable: true, disabled: true };
+    //tasa_cambio_compra = { type: "number", hiddenInTable: true, disabled: true };
+    //interes_demas_cargos_pagar_cordobas = { type: "number", hiddenInTable: true, disabled: true };
+    //interes_demas_cargos_pagar_dolares = { type: "number", hiddenInTable: true, disabled: true };
+    //interes_cargos = { type: "number", disabled: true };
+
+    title2 = { type: "title", label: "Datos de recibo:" };  
+
     id_recibo = { type: "number", primary: true };
-    consecutivo = { type: "number", hidden: true, require: false };
-    temporal = { type: "checkbox", require: false };
-    numero_contrato = { type: "number", hidden: true, disabled: true };
-    monto = { type: "number", disabled: true };
-    saldo_actual_cordobas = { type: "number", disabled: true };
-    saldo_actual_dolares = { type: "number", disabled: true };
-    plazo = { type: "number", disabled: true };
-    interes_cargos = { type: "number", disabled: true };
-    tasa_cambio = { type: "number", hiddenInTable: true, disabled: true };
-    tasa_cambio_compra = { type: "number", hiddenInTable: true, disabled: true };
-    interes_demas_cargos_pagar_cordobas = { type: "number", hiddenInTable: true, disabled: true };
-    interes_demas_cargos_pagar_dolares = { type: "number", hiddenInTable: true, disabled: true };
+    consecutivo = { type: "number", hidden: true, require: false };    
     abono_capital_cordobas = { type: "number", hiddenInTable: true, disabled: true };
     abono_capital_dolares = { type: "number", hiddenInTable: true, disabled: true };
     cuota_pagar_cordobas = { type: "number", hiddenInTable: true, disabled: true };
@@ -744,10 +751,14 @@ class Recibos extends EntityClass {
     total_parciales = { type: "number", hiddenInTable: true, disabled: true };
 
     fecha_roc = { type: "date", disabled: true };
+   
+
+    title3 = { type: "title", label: "Opciones:" };    
+    //solo_abono = { type: "checkbox", hiddenInTable: true, require: false };
+   
     paga_cordobas = { type: "number", hiddenInTable: true };
     paga_dolares = { type: "number", hiddenInTable: true };
-    title = { type: "title", label: "Opciones:" };    
-    //solo_abono = { type: "checkbox", hiddenInTable: true, require: false };
+    temporal = { type: "checkbox", require: false };
     cancelar = { type: "checkbox", hiddenInTable: true, require: false };
 
     VerRecibo = async () => {

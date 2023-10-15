@@ -36,7 +36,7 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
                 Search: true, //UrlSearch: "../application/controllers/Vehiculos_Controller.php/get" + Model.constructor.name,
                 UserActions: [
                     {
-                        name: "Contra Partida", action: (movimiento) => {
+                        name: "Anular movimiento", action: (movimiento) => {
                             const modelContrapartida = new Movimientos_Cuentas();
                             modelContrapartida.Catalogo_Cuentas_Destino.Dataset = [movimiento.Catalogo_Cuentas_Origen];
                             modelContrapartida.Catalogo_Cuentas_Origen.Dataset = [movimiento.Catalogo_Cuentas_Destino];
@@ -55,7 +55,7 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
                             // @ts-ignore
                             modelContrapartida.Catalogo_Cuentas_Origen.ModelObject = undefined;
                             modelContrapartida.monto.disabled = true;
-                            modelContrapartida.total.disabled = true;
+                            //modelContrapartida.total.disabled = true;
                             this.append(new WModalForm({
                                 EditObject: MovimientoContrapartida,
                                 ObjectOptions: {
@@ -65,7 +65,7 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
                                         this.TableComponent.DrawTable();
                                     }
                                 },
-                                title: "Anulación Contrapartida", ModelObject: modelContrapartida, AutoSave: true
+                                title: "Anulación movimiento", ModelObject: modelContrapartida, AutoSave: true
                             }))
                         }
                     }
@@ -81,10 +81,10 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
                 this.TableComponent?.DrawTable(DFilt);
             }
         });
-        const ObjectOptions={
-            SaveFunction: (param,response) => {
+        const ObjectOptions = {
+            SaveFunction: (param, response) => {
                 console.log(response)
-                this.append(ModalMessege(response.message))               
+                this.append(ModalMessege(response.message))
             }
         }
 
@@ -97,11 +97,11 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
             tagName: 'button', className: 'Block-Secundary', innerText: 'Registrar Movimiento',
             onclick: () => {
                 const modelExterno = new Movimientos_Cuentas();
-                modelExterno.Catalogo_Cuentas_Destino.Dataset =  model.Catalogo_Cuentas_Destino.Dataset.filter(x => x.tipo_cuenta == "PROPIA");                
+                modelExterno.Catalogo_Cuentas_Destino.Dataset = model.Catalogo_Cuentas_Destino.Dataset.filter(x => x.tipo_cuenta == "PROPIA");
                 modelExterno.Catalogo_Cuentas_Origen.Dataset = model.Catalogo_Cuentas_Origen.Dataset.filter(x => x.tipo_cuenta == "PROPIA");
                 modelExterno.tasa_cambio = model.tasa_cambio;
                 modelExterno.tasa_cambio_compra = model.tasa_cambio_compra;
-                this.append(new WModalForm({title:"Movimiento a cuenta", ModelObject: modelExterno, AutoSave: true, ObjectOptions: ObjectOptions}))
+                this.append(new WModalForm({ title: "Movimiento a cuenta", ModelObject: modelExterno, AutoSave: true, ObjectOptions: ObjectOptions }))
             }
         }))
 
@@ -111,10 +111,10 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
             onclick: () => {
                 const modelExterno = new Movimientos_Cuentas();
                 modelExterno.Catalogo_Cuentas_Origen.Dataset = model.Catalogo_Cuentas_Origen.Dataset.filter(x => x.tipo_cuenta != "PROPIA");
-                modelExterno.Catalogo_Cuentas_Destino.Dataset = model.Catalogo_Cuentas_Destino.Dataset.filter(x => x.tipo_cuenta == "PROPIA");                
+                modelExterno.Catalogo_Cuentas_Destino.Dataset = model.Catalogo_Cuentas_Destino.Dataset.filter(x => x.tipo_cuenta == "PROPIA");
                 modelExterno.tasa_cambio = model.tasa_cambio;
                 modelExterno.tasa_cambio_compra = model.tasa_cambio_compra;
-                this.append(new WModalForm({title:"Ingreso", ModelObject: modelExterno, AutoSave: true }))
+                this.append(new WModalForm({ title: "Ingreso", ModelObject: modelExterno, AutoSave: true, ObjectOptions: this.ObjectOptionsModal  }))
             }
         }))
 
@@ -123,11 +123,11 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
             onclick: () => {
                 const modelExterno = new Movimientos_Cuentas();
                 modelExterno.Catalogo_Cuentas_Origen.Dataset = model.Catalogo_Cuentas_Origen.Dataset.filter(x => x.tipo_cuenta == "PROPIA");
-                modelExterno.Catalogo_Cuentas_Destino.Dataset =  model.Catalogo_Cuentas_Destino.Dataset.filter(x => x.tipo_cuenta != "PROPIA");
-                
+                modelExterno.Catalogo_Cuentas_Destino.Dataset = model.Catalogo_Cuentas_Destino.Dataset.filter(x => x.tipo_cuenta != "PROPIA");
+
                 modelExterno.tasa_cambio = model.tasa_cambio;
                 modelExterno.tasa_cambio_compra = model.tasa_cambio_compra;
-                this.append(new WModalForm({title:"Egreso", ModelObject: modelExterno, AutoSave: true }))
+                this.append(new WModalForm({ title: "Egreso", ModelObject: modelExterno, AutoSave: true, ObjectOptions: this.ObjectOptionsModal  }))
             }
         }))
 
@@ -136,11 +136,11 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
             onclick: () => {
                 const modelExterno = new Movimientos_Cuentas();
                 modelExterno.Catalogo_Cuentas_Origen.Dataset = model.Catalogo_Cuentas_Origen.Dataset.filter(x => x.tipo_cuenta == "PROPIA");
-                modelExterno.Catalogo_Cuentas_Destino.Dataset =  model.Catalogo_Cuentas_Destino.Dataset.filter(x => x.tipo_cuenta == "PAGO");
-                
+                modelExterno.Catalogo_Cuentas_Destino.Dataset = model.Catalogo_Cuentas_Destino.Dataset.filter(x => x.tipo_cuenta == "PAGO");
+
                 modelExterno.tasa_cambio = model.tasa_cambio;
                 modelExterno.tasa_cambio_compra = model.tasa_cambio_compra;
-                this.append(new WModalForm({title:"Egreso", ModelObject: modelExterno, AutoSave: true }))
+                this.append(new WModalForm({ title: "Egreso", ModelObject: modelExterno, AutoSave: true, ObjectOptions: this.ObjectOptionsModal  }))
             }
         }))
 
@@ -157,6 +157,16 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
         );
 
 
+    }
+    ObjectOptionsModal = {
+        SaveFunction: async (profile, response) => {
+            this.append(ModalMessege(response.message))
+            if (response.status == 200) {
+                const dataset = await new Movimientos_Cuentas().Get();
+                this.TableComponent.Dataset = dataset;
+                this.TableComponent.DrawTable();       
+            }
+        }
     }
     /*Gestion_CuentasForm = new Gestion_CuentasForm();
     NewTransaction(Model) {

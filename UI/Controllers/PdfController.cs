@@ -12,13 +12,27 @@ namespace UI.Controllers
         [HttpPost]
         public ResponseService GeneratePdfContract(Transaction_Contratos Inst)
         {
-            var model = Inst.Find<Transaction_Contratos>();
-            ContractService.generaPDF(model);
-            return new ResponseService()
+            try
             {
-                message = "success",
-                value = "../Contracts/output.pdf"
-            };
+                var model = Inst.Find<Transaction_Contratos>();
+                ContractService.generaPDF(model);
+                return new ResponseService()
+                {
+                    message = "success",
+                    value = "../Contracts/output.pdf"
+                };
+            }
+            catch (System.Exception ex)
+            {
+                return new ResponseService()
+                {
+                    status = 500,
+                    message = "success",
+                    value = "../Contracts/output.pdf",
+                    body = ex
+                };
+            }
+
         }
     }
 }

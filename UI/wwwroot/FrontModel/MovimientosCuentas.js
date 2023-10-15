@@ -17,9 +17,9 @@ class Movimientos_Cuentas extends EntityClass {
 	tasa_cambio_compra = { type: "number", disabled: true };
 	moneda = { type: "radio", Dataset: ["CORDOBAS", "DOLARES"] };
 	id_usuario_crea = { type: "number", hidden: true };
-	fecha = { type: "date", disabled: true, required: false, hidden: true };
-	descripcion = { type: "textarea" };
+	fecha = { type: "date", disabled: true, required: false, hidden: true };	
 	concepto = { type: "textarea" };
+	descripcion = { type: "textarea", required: false };
 	correo_enviado = { type: "checkbox", require: false, hiddenInTable: true, hidden: true };
 }
 export { Movimientos_Cuentas }

@@ -2,7 +2,7 @@ EXEC sp_rename 'Transaction_Contratos', 'Transaction_Contratos_old';
 
 
 
-create table Transaction_Contratos;
+DROP table Transaction_Contratos;
 
 
 CREATE TABLE dbo.Transaction_Contratos(
