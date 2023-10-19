@@ -1,4 +1,5 @@
 using CAPA_DATOS;
+using Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace DataBaseModel
         public string? Valor { get; set; }
         public string? Tipo_Configuracion { get; set; }
         internal Transactional_Configuraciones GetConfig(String prop)
-        {
+        {           
             Nombre = prop;
             return Find<Transactional_Configuraciones>();
         }

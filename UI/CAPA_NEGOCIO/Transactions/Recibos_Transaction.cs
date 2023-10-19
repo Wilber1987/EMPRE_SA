@@ -270,7 +270,7 @@ namespace Transactions
                     return new ResponseService()
                     {
                         status = 400,
-                        message = "Cuentas para anulacion de factura no configuradas correctamente"
+                        message = "Cuentas para anulación de factura no configuradas correctamente"
                     };
                 }
 
