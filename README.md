@@ -5,6 +5,7 @@ clonar con todos los submodulos:
 
 clonar solo sub modulos:
 ´´git submodule update --init --recursive´´
+git submodule update --init --remote
 
 
 configuracion de modulos
