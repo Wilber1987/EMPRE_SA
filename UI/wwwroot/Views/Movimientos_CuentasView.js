@@ -63,8 +63,7 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
                             this.append(new WModalForm({
                                 EditObject: MovimientoContrapartida,
                                 ObjectOptions: {
-                                    Url: "/Api/ApiEntityDBO/saveMovimientos_Cuentas", SaveFunction: (param) => {
-                                        console.log(param)
+                                    Url: "/Api/ApiEntityDBO/saveMovimientos_Cuentas", SaveFunction: (param) => {                                        
                                         this.TableComponent.Dataset.push(param);
                                         this.TableComponent.DrawTable();
                                     }
