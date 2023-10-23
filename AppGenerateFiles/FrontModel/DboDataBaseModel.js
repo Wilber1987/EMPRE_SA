@@ -61,6 +61,7 @@ class Transaction_Movimiento extends EntityClass {
    /**@type {Number}*/ tasa_cambio;
    /**@type {Number}*/ tasa_cambio_compra;
    /**@type {Boolean}*/ correo_enviado;
+   /**@type {Boolean}*/ is_transaction;
 }
 export { Transaction_Movimiento }
 class Transactional_Valoracion extends EntityClass {

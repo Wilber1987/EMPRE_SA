@@ -21,6 +21,7 @@ class Movimientos_Cuentas extends EntityClass {
 	concepto = { type: "textarea" };
 	descripcion = { type: "textarea", required: false };
 	correo_enviado = { type: "checkbox", require: false, hiddenInTable: true, hidden: true };
+	is_transaction = { type: "checkbox", require: false, disabled: true, hidden: true};
 }
 export { Movimientos_Cuentas }
 
