@@ -185,7 +185,7 @@ namespace DataBaseModel
         public Categoria_Cuentas? Categoria_Cuentas { get; set; }*/
     }
 
-      public enum Tipo_Cuenta
+    public enum Tipo_Cuenta
     {
         PROPIA, EXTERNA, PAGO
     }
