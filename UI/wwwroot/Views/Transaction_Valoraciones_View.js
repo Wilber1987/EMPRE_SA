@@ -14,7 +14,7 @@ import { AmoritizationModule } from "../modules/AmortizacionModule.js";
 import { clientSearcher, ValoracionesSearch } from "../modules/SerchersModules.js";
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
-class Transaction_Valoraciones_View extends HTMLElement {   
+class Transaction_Valoraciones_View extends HTMLElement {
     // @ts-ignore
     constructor(props) {
         super();
@@ -22,7 +22,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
         this.TabContainer = WRender.Create({ className: "TabContainer", id: 'TabContainer' });
         this.Manager = new ComponentsManager({ MainContainer: this.TabContainer, SPAManage: false });
         this.valoracionesContainer = WRender.Create({ className: "valoraciones-container" });
-        this.append(this.CustomStyle);        
+        this.append(this.CustomStyle);
         /**
          * @type {Catalogo_Clientes}
          */
@@ -40,6 +40,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
     }
     Draw = async () => {
         this.valoracionesContainer.innerHTML = "";
+        /** @type {Array<Catalogo_Cambio_Dolar>} */
         this.tasasCambio = await new Catalogo_Cambio_Dolar().Get();
         const estadosArticulos = await new Catalogo_Estados_Articulos().Get();
         this.Categorias = await new Catalogo_Categoria().Get();
@@ -330,16 +331,19 @@ class Transaction_Valoraciones_View extends HTMLElement {
             },
         });
     }
-    calculoCordobas = (porcentaje) => {
-        return (this.avgValores() * (porcentaje / 100)).toFixed(2);
+    calculoCordobas = (porcentaje) => {        
+        // @ts-ignore
+        /**@type {Number} */ const tasa_cambio = this.tasasCambio[0]?.valor_de_compra;
+        return (this.calculoDolares(porcentaje) * tasa_cambio).toFixed(2);
     }
-    calculoDolares = (porcentaje, tasa_cambio) => {
-        return Math.round((this.avgValores() * (porcentaje / 100)) / tasa_cambio).toFixed(2);
+    /** @return {Number} */ calculoDolares = (porcentaje, tasa_cambio) => {
+        // @ts-ignore
+        return Math.round((this.avgValores() * (porcentaje / 100))).toFixed(2);
     }
     avgValores() {
-        return ((parseFloat(this.valoresObject.Valoracion_1.toString()) +
-            parseFloat(this.valoresObject.Valoracion_2.toString()) +
-            parseFloat(this.valoresObject.Valoracion_3.toString())) / 3);
+        return ((parseFloat(this.valoresObject.dolares_1.toString()) +
+            parseFloat(this.valoresObject.dolares_2.toString()) +
+            parseFloat(this.valoresObject.dolares_3.toString())) / 3);
     }
     SetOption() {
         this.OptionContainer.append(WRender.Create({
@@ -380,8 +384,6 @@ class Transaction_Valoraciones_View extends HTMLElement {
                     this.append(ModalMessege("Anteriormente valoro un artículo distinto de vehículo por lo tanto no puede agregar valoraciones de esta categoría"));
                     return;
                 }
-
-
                 const newValoracion = {};
                 for (const prop in this.valoracionesForm?.FormObject) {
                     newValoracion[prop] = this.valoracionesForm?.FormObject[prop];
@@ -463,13 +465,14 @@ class Transaction_Valoraciones_View extends HTMLElement {
             return 6 + this.InteresBase;
         }
     }
-    selectValoracion = (valoracion) => {
+    selectValoracion = (/**@type {Transactional_Valoracion}*/valoracion) => {
         if (this.valoracionesForm != undefined) {
             for (const prop in this.valoracionesForm?.FormObject) {
                 if (prop == "Detail_Valores") continue;
                 if (prop == "Tasa_interes") continue;
                 this.valoracionesForm.FormObject[prop] = valoracion[prop]
             }
+            this.valoracionesForm.Config.ModelObject?.Catalogo_Categoria?.action(this.valoracionesForm.FormObject, this.valoracionesForm);
             this.valoracionesForm.DrawComponent();
             if (this.valoresForm != undefined) {
                 // @ts-ignore
@@ -493,6 +496,8 @@ class Transaction_Valoraciones_View extends HTMLElement {
             }
         }
         this.beneficiosDetailUpdate();
+        this.multiSelectEstadosArticulos?.SetOperationValues();
+        this.multiSelectEstadosArticulos?.DrawTable();
         this.Manager.NavigateFunction("valoraciones", this.valoracionesContainer);
     }
     beneficiosDetailUpdate() {
@@ -542,7 +547,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
         const total = this.valoracionesTable?.Dataset.reduce((sum, value) => (typeof value.Edad == "number" ? sum + value.Edad : sum), 0);
         const contrato = new ValoracionesTransaction();
         // @ts-ignore
-        contrato.valoraciones = this.valoracionesTable?.Dataset;        
+        contrato.valoraciones = this.valoracionesTable?.Dataset;
         contrato.Transaction_Contratos = new Transaction_Contratos({
             tasas_interes: this.getTasaInteres() / 100,
             fecha: new Date(),
@@ -552,7 +557,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
             taza_interes_cargos: this.InteresBase,
             Catalogo_Clientes: this.Cliente.codigo_cliente != undefined ? this.Cliente : this.GenerateClient(),
             gestion_crediticia: this.Cliente.Catalogo_Clasificacion_Interes?.porcentaje ?? 6,
-        });       
+        });
         AmoritizationModule.calculoAmortizacion(contrato);
         //console.log(AmoritizationModule.calculoAmortizacion(contrato));
 
@@ -568,7 +573,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
         return contrato;
     }
     GenerateClient() {
-      return  { 
+        return {
             "Catalogo_Clasificacion_Interes": {
                 "id_clasificacion_interes": 6,
                 "Descripcion": "RANGO 6",
