@@ -16,6 +16,7 @@ namespace Transactions
         public string? moneda { get; set; }
         public int? id_usuario_crea { get; set; }
         public DateTime? fecha { get; set; }
+        public bool? is_transaction { get; set; }
 
         public int? id_cuenta_origen { get; set; }
         [ManyToOne(TableName = "Catalogo_Cuentas", KeyColumn = "id_cuentas", ForeignKeyColumn = "id_cuenta_origen")]
@@ -76,6 +77,7 @@ namespace Transactions
                     Catalogo_Cuentas_Destino = constDestino?.catalogo_Cuentas,
                     id_cuenta_origen = constOrigen?.id_cuenta,
                     id_cuenta_destino = constDestino?.id_cuenta,
+                    is_transaction = z.is_transaction
                 };
             }
             ).ToList();
@@ -84,6 +86,14 @@ namespace Transactions
         internal ResponseService SaveMovimiento(string token)
         {
             var user = AuthNetCore.User(token);
+            if ((bool)this.is_transaction)
+            {
+                return new ResponseService()
+                {
+                    status = 400,
+                    message = "No se permite anular un movimiento asociado a una transaccioón"
+                };
+            }
             var cuentaDestino = new Catalogo_Cuentas()
             {
                 id_cuentas = this.Catalogo_Cuentas_Destino?.id_cuentas
@@ -149,6 +159,7 @@ namespace Transactions
                     tasa_cambio = this.tasa_cambio,
                     tasa_cambio_compra = this.tasa_cambio_compra,
                     correo_enviado = false,
+                    is_transaction = this.is_transaction,
                     Detail_Movimiento = new List<Detail_Movimiento>(){
                             new Detail_Movimiento(){
                                 id_cuenta = this.Catalogo_Cuentas_Origen?.id_cuentas,

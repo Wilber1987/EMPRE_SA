@@ -37,6 +37,9 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
                 UserActions: [
                     {
                         name: "Anular movimiento", action: (movimiento) => {
+                            if (movimiento.is_transaction) {
+                                return false;
+                            }
                             const modelContrapartida = new Movimientos_Cuentas();
                             modelContrapartida.Catalogo_Cuentas_Destino.Dataset = [movimiento.Catalogo_Cuentas_Origen];
                             modelContrapartida.Catalogo_Cuentas_Origen.Dataset = [movimiento.Catalogo_Cuentas_Destino];
@@ -49,6 +52,7 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
                                 total: movimiento.total.toFixed(2).toString(),
                                 descripcion: movimiento.descripcion,
                                 concepto: "Anulación de movimiento",
+                                is_transaction: movimiento.is_transaction
                             };
                             // @ts-ignore
                             modelContrapartida.Catalogo_Cuentas_Destino.ModelObject = undefined;
@@ -59,8 +63,7 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
                             this.append(new WModalForm({
                                 EditObject: MovimientoContrapartida,
                                 ObjectOptions: {
-                                    Url: "/Api/ApiEntityDBO/saveMovimientos_Cuentas", SaveFunction: (param) => {
-                                        console.log(param)
+                                    Url: "/Api/ApiEntityDBO/saveMovimientos_Cuentas", SaveFunction: (param) => {                                        
                                         this.TableComponent.Dataset.push(param);
                                         this.TableComponent.DrawTable();
                                     }
