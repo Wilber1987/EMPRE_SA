@@ -285,7 +285,9 @@ namespace Transactions
                     moneda = "DOLARES",
                     monto = this.paga_dolares,
                     tasa_cambio = this.tasa_cambio,
-                    tasa_cambio_compra = this.tasa_cambio_compra
+                    tasa_cambio_compra = this.tasa_cambio_compra,
+                    //is_anulacion = true,
+                    is_transaction = true
                 }.SaveMovimiento(token);
 
                 if (response.status == 400)

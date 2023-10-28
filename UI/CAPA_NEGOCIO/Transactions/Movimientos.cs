@@ -17,6 +17,7 @@ namespace Transactions
         public int? id_usuario_crea { get; set; }
         public DateTime? fecha { get; set; }
         public bool? is_transaction { get; set; }
+        //public bool? is_anulacion { get; set; }
 
         public int? id_cuenta_origen { get; set; }
         [ManyToOne(TableName = "Catalogo_Cuentas", KeyColumn = "id_cuentas", ForeignKeyColumn = "id_cuenta_origen")]
@@ -31,6 +32,14 @@ namespace Transactions
             try
             {
                 BeginGlobalTransaction();
+                if ((bool)this.is_transaction)
+                {
+                    return new ResponseService()
+                    {
+                        status = 400,
+                        message = "No se permite anular un movimiento asociado a una transacción"
+                    };
+                }
                 ResponseService response = SaveMovimiento(token);
                 if (response.status == 200)
                 {
@@ -85,14 +94,7 @@ namespace Transactions
         internal ResponseService SaveMovimiento(string token)
         {
             var user = AuthNetCore.User(token);
-            if ((bool)this.is_transaction)
-            {
-                return new ResponseService()
-                {
-                    status = 400,
-                    message = "No se permite anular un movimiento asociado a una transaccioón"
-                };
-            }
+
             var cuentaDestino = new Catalogo_Cuentas()
             {
                 id_cuentas = this.Catalogo_Cuentas_Destino?.id_cuentas
@@ -102,6 +104,33 @@ namespace Transactions
             {
                 id_cuentas = this.Catalogo_Cuentas_Origen?.id_cuentas
             }.Find<Catalogo_Cuentas>();
+
+            var permiso_cuenta_origen = new Permisos_Cuentas(){
+                id_categoria_cuenta_destino = cuentaOrigen.Categoria_Cuentas.id_categoria
+            }.Find<Permisos_Cuentas>();
+
+            var permiso_cuenta_destino = new Permisos_Cuentas(){
+                id_categoria_cuenta_destino = cuentaDestino.Categoria_Cuentas.id_categoria
+            }.Find<Permisos_Cuentas>();
+
+            if (permiso_cuenta_origen!= null && (bool)!permiso_cuenta_origen.permite_debito)
+            {
+                return new ResponseService()
+                {
+                    status = 400,
+                    message = "La cuenta "+cuentaOrigen.nombre+" no permite débitos hacia la cuenta: "+cuentaDestino.nombre
+                };
+            }
+
+            if (permiso_cuenta_destino !=null && (bool)!permiso_cuenta_destino.permite_credito)
+            {
+                return new ResponseService()
+                {
+                    status = 400,
+                    message = "La cuenta "+cuentaDestino.nombre+" no permite créditos desde la cuenta: "+cuentaOrigen.nombre
+                };
+            }
+            
             if (cuentaOrigen != null && cuentaDestino != null)
             {
                 cuentaOrigen.saldo = cuentaOrigen?.saldo ?? 0;
