@@ -118,7 +118,7 @@ namespace Transactions
                 var factura = new Transaccion_Factura()
                 {
                     tipo = "RECIBO", //TODO ENUM
-                    estado = "ACTIVO",//TODO ENUM
+                    estado = EstadoEnum.ACTIVO.ToString(),
                     concepto = "Pago de cuota contrato No: " + this.numero_contrato,
                     tasa_cambio = this.tasa_cambio,
                     total = this.paga_dolares,
@@ -222,20 +222,20 @@ namespace Transactions
                     return new ResponseService()
                     {
                         status = 400,
-                        message = "Factura no encontrada"
+                        message = "Recibo no encontrado"
                     };
                 }
 
-                if (factura.estado != "ACTIVA")//todo enum
+                if (factura.estado != EstadoEnum.ACTIVO.ToString())//todo enum
                 {
                     return new ResponseService()
                     {
                         status = 400,
-                        message = "La factura no se encuentra activa"
+                        message = "Recibo no se encuentra activo"
                     };
                 }
 
-                factura.estado = "ANULADO";
+                factura.estado = EstadoEnum.ANULADO.ToString();
                 factura.Update();
 
                 

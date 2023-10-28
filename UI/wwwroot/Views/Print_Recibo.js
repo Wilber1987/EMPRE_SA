@@ -2,8 +2,6 @@
 import { WRender, ComponentsManager, WAjaxTools, WArrayF } from "../WDevCore/WModules/WComponentsTools.js";
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js"
 import { css } from "../WDevCore/WModules/WStyledRender.js";
-import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
-import { Transaction_Contratos, ValoracionesTransaction } from "../FrontModel/Model.js";
 import { Recibos } from "../FrontModel/DBODataBaseModel.js";//todo eliminar notulizados
 
 class Print_Recibo  extends HTMLElement {
