@@ -23,30 +23,8 @@ class Gestion_ClientesView extends HTMLElement {
 
         this.OptionContainer = WRender.Create({ className: "OptionContainer" });
         this.TabContainer = WRender.Create({ className: "TabContainer", id: 'TabContainer' });
-
-        this.Manager = new ComponentsManager({ MainContainer: this.TabContainer, SPAManage: false });
-        this.TableComponent = new WTableComponent({
-            ModelObject: model, Dataset: [], Options: {
-                UserActions: [
-                    {
-                        name: "Editar", action: (cliente) => {
-                            this.Gestion_ClientesForm.cliente = cliente
-                            this.Gestion_ClientesForm.Draw();
-                            this.NewTransaction();
-                        }
-                    }
-                ]
-            }
-        })
-        this.FilterOptions = new WFilterOptions({
-            Dataset: [],
-            ModelObject: model,
-            Display: true,
-            FilterFunction: (DFilt) => {
-                this.TableComponent?.DrawTable(DFilt);
-            }
-        });
-        this.MainComponent = WRender.Create({ className: "main-container", children: [this.FilterOptions, this.TableComponent] })
+        this.Manager = new ComponentsManager({ MainContainer: this.TabContainer, SPAManage: false });     
+        
         this.OptionContainer.append(WRender.Create({
             tagName: 'button', className: 'Block-Secundary', innerText: 'Historial de Clientes',
             onclick: () => this.NewGestionClientes()
@@ -59,10 +37,37 @@ class Gestion_ClientesView extends HTMLElement {
         this.OptionContainer.append(WRender.Create({
             tagName: 'button', className: 'Block-Tertiary', innerText: 'Editar cliente',
             onclick: async () => {
-                const datasetUpdated = await model.Get();
-                // @ts-ignore
-                this.TableComponent.Dataset = datasetUpdated;
-                this.TableComponent?.DrawTable();
+                if (this.TableComponent != undefined) {
+                    const datasetUpdated = await model.Get();
+                    // @ts-ignore
+                    this.TableComponent.Dataset = datasetUpdated;
+                    this.TableComponent?.DrawTable();
+                    
+                } else {
+                    this.MainComponent = WRender.Create({ className: "main-container", children: [this.FilterOptions, this.TableComponent] })
+                    const data = await model.Get();       
+                    this.TableComponent = new WTableComponent({
+                        ModelObject: model, Dataset: data, Options: {
+                            UserActions: [
+                                {
+                                    name: "Editar", action: (cliente) => {
+                                        this.Gestion_ClientesForm.cliente = cliente
+                                        this.Gestion_ClientesForm.Draw();
+                                        this.NewTransaction();
+                                    }
+                                }
+                            ]
+                        }
+                    })
+                    this.FilterOptions = new WFilterOptions({
+                        Dataset: data,
+                        ModelObject: model,
+                        Display: true,
+                        FilterFunction: (DFilt) => {
+                            this.TableComponent?.DrawTable(DFilt);
+                        }
+                    });
+                }              
                 this.Manager?.NavigateFunction("tabla", this.MainComponent);
             }
         }))

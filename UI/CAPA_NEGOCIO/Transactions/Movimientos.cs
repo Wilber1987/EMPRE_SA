@@ -78,6 +78,7 @@ namespace Transactions
                     concepto = z.concepto,
                     monto = constDestino?.credito,
                     tasa_cambio = constDestino?.tasa_cambio,
+                    tasa_cambio_compra = constDestino?.tasa_cambio_compra,
                     moneda = constDestino.moneda,
                     id_usuario_crea = z.id_usuario_crea,
                     fecha = z.fecha,

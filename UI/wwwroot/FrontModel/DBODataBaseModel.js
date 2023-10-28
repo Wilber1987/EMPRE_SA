@@ -58,6 +58,7 @@ class Transactional_Valoracion extends EntityClass {
 
     precio_venta_empeño_cordobas = { type: 'number', hidden: true };
     precio_venta_empeño_dolares = { type: 'number', hidden: true };
+    Detail_Valores = { type: 'MASTERDETAIL', hidden: true }
     GuardarValoraciones = async (valoraciones) => {
         return await this.SaveData("Transactional_Valoracion/GuardarValoraciones", { valoraciones: valoraciones })
     }
@@ -398,7 +399,7 @@ class Detail_Prendas_Vehiculos_ModelComponent extends EntityClass {
     combustible = { type: 'text' };
     uso = { type: 'select', Dataset: ["PRIVADO", "PARTICULAR"], hiddenInTable: true };
     servicio = { type: 'select', Dataset: ["PRIVADO", "PARTICULAR"], hiddenInTable: true };
-  
+
 }
 export { Detail_Prendas_Vehiculos_ModelComponent }
 
@@ -719,7 +720,7 @@ class Recibos extends EntityClass {
             this[prop] = props[prop];
         }
     }
-   // title1 = { type: "title", label: "Datos de contrato:" };  
+    // title1 = { type: "title", label: "Datos de contrato:" };  
 
     numero_contrato = { type: "number", disabled: true, hidden: true };
     //monto = { type: "number", disabled: true };
@@ -734,10 +735,10 @@ class Recibos extends EntityClass {
     //interes_demas_cargos_pagar_dolares = { type: "number", hiddenInTable: true, disabled: true };
     //interes_cargos = { type: "number", disabled: true };
 
-    title2 = { type: "title", label: "Datos de recibo:" };  
+    title2 = { type: "title", label: "Datos de recibo:" };
 
     id_recibo = { type: "number", primary: true };
-    consecutivo = { type: "number", hidden: true, require: false };    
+    consecutivo = { type: "number", hidden: true, require: false };
     abono_capital_cordobas = { type: "number", hiddenInTable: true, disabled: true };
     abono_capital_dolares = { type: "number", hiddenInTable: true, disabled: true };
     cuota_pagar_cordobas = { type: "number", hiddenInTable: true, disabled: true };
@@ -751,11 +752,11 @@ class Recibos extends EntityClass {
     total_parciales = { type: "number", hiddenInTable: true, disabled: true };
 
     fecha_roc = { type: "date", disabled: true };
-   
 
-    title3 = { type: "title", label: "Opciones:" };    
+
+    title3 = { type: "title", label: "Opciones:" };
     //solo_abono = { type: "checkbox", hiddenInTable: true, require: false };
-   
+
     paga_cordobas = { type: "number", hiddenInTable: true };
     paga_dolares = { type: "number", hiddenInTable: true };
     temporal = { type: "checkbox", require: false };
