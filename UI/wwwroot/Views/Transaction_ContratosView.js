@@ -14,6 +14,7 @@ import { ModalMessege, ModalVericateAction } from "../WDevCore/WComponents/WForm
 import { AmoritizationModule } from "../modules/AmortizacionModule.js";
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
+import { Transactional_Configuraciones } from "../FrontModel/ADMINISTRATIVE_ACCESSDataBaseModel.js";
 
 /**
  * @typedef {Object} ContratosConfig
@@ -28,7 +29,7 @@ class Transaction_ContratosView extends HTMLElement {
         super();
         this.attachShadow({ mode: 'open' });
         //models
-        this.entity = new ValoracionesTransaction(props?.Entity) ?? new ValoracionesTransaction();
+        this.entity = new ValoracionesTransaction(props?.Entity) ?? new ValoracionesTransaction();        
         this.entity.Transaction_Contratos = this.entity.Transaction_Contratos ?? {}
         //this.entity = testData        
         this.componentsModel = new Transaction_Contratos_ModelComponent();
@@ -57,6 +58,10 @@ class Transaction_ContratosView extends HTMLElement {
     }
     Draw = async () => {
         this.tasasCambio = await new Catalogo_Cambio_Dolar().Get();
+        this.Intereses = await new Transactional_Configuraciones().getTransactional_Configuraciones_Intereses();
+        this.InteresBase = WArrayF.SumValAtt(this.Intereses, "Valor");
+        this.entity.Transaction_Contratos.taza_interes_cargos = this.InteresBase;
+        AmoritizationModule.calculoAmortizacion(this.entity);
         /**@type  {Catalogo_Cambio_Dolar}*/
         this.tasaActual = this.tasasCambio[0];
         // @ts-ignore
@@ -195,7 +200,6 @@ class Transaction_ContratosView extends HTMLElement {
      * @returns 
      */
     valoracionResumen(entity) {
-        console.log(entity);
         this.amortizacionResumen.innerHTML = "";
         if (entity.Transaction_Contratos.total_pagar_cordobas == undefined) {
             this.amortizacionResumen.innerHTML = `<div class="detail-container">Agregue prendas</div>`;
@@ -214,11 +218,11 @@ class Transaction_ContratosView extends HTMLElement {
                 
                 <label class="value-container">
                     CAMBIO DE DÓLAR A CÓRDOBAS: 
-                    <span>$ ${this.tasaActual?.valor_de_venta}</span>
+                    <span>$ ${this.tasaActual?.valor_de_compra}</span>
                 </label>
                 <label class="value-container">
                     CAMBIO DE CÓRDOBAS A DÓLAR: 
-                    <span>$ ${this.tasaActual?.valor_de_compra}</span>
+                    <span>$ ${this.tasaActual?.valor_de_venta}</span>
                 </label>
             </div>
             <div>
@@ -309,6 +313,9 @@ class Transaction_ContratosView extends HTMLElement {
     update() {
         AmoritizationModule.calculoAmortizacion(this.entity);
         if (this.prendasTable != undefined && this.entity.Transaction_Contratos.Detail_Prendas != undefined) {
+            this.entity.Transaction_Contratos?.Detail_Prendas.forEach(detalle => {
+                detalle.pprenda_dolares = detalle.Transactional_Valoracion.valoracion_empeño_dolares
+            })
             this.prendasTable.Dataset = this.entity.Transaction_Contratos.Detail_Prendas;
             this.prendasTable?.DrawTable();
         }
@@ -368,10 +375,9 @@ export { Transaction_ContratosView }
 class MainContract extends HTMLElement {
     constructor(contrato) {
         super();
-        // AmoritizationModule.calculoAmortizacion(contrato);
-        console.log(contrato);
+        // AmoritizationModule.calculoAmortizacion(contrato);     
         if (contrato.Transaction_Contratos != null) {
-            AmoritizationModule.calculoAmortizacion(contrato);
+            // AmoritizationModule.calculoAmortizacion(contrato);
             this.ElementsNav.unshift({
                 name: "Contrato valorado", action: () => this.Manager.NavigateFunction("contrato-valorado", new Transaction_ContratosView({ Entity: contrato }))
             });

@@ -32,8 +32,10 @@ class AmoritizationModule {
         contrato.Transaction_Contratos.valoracion_compra_dolares = AmoritizationModule.round(WArrayF.SumValAtt(contrato.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion), "valoracion_compra_dolares"));
         contrato.Transaction_Contratos.valoracion_empeño_cordobas = AmoritizationModule.round(WArrayF.SumValAtt(contrato.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion), "valoracion_empeño_cordobas"));
         contrato.Transaction_Contratos.valoracion_empeño_dolares = AmoritizationModule.round(WArrayF.SumValAtt(contrato.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion), "valoracion_empeño_dolares"));
-        contrato.Transaction_Contratos.taza_interes_cargos = contrato.Transaction_Contratos.taza_interes_cargos ?? 0.9
-        contrato.Transaction_Contratos.tasas_interes = (parseFloat(contrato.Transaction_Contratos?.Catalogo_Clientes?.Catalogo_Clasificacion_Interes?.porcentaje) + contrato.Transaction_Contratos?.taza_interes_cargos) / 100;
+        //contrato.Transaction_Contratos.taza_interes_cargos = contrato.Transaction_Contratos.taza_interes_cargos ?? 0.09
+        contrato.Transaction_Contratos.tasas_interes = 
+        (parseFloat(contrato.Transaction_Contratos?.Catalogo_Clientes?.Catalogo_Clasificacion_Interes?.porcentaje)
+         + contrato.Transaction_Contratos?.taza_interes_cargos) / 100;
         contrato.Transaction_Contratos.plazo = contrato.Transaction_Contratos.plazo ?? 1;
         contrato.Transaction_Contratos.fecha = new Date(contrato.Transaction_Contratos.fecha);
         contrato.Transaction_Contratos.Catalogo_Clientes = contrato.Transaction_Contratos.Catalogo_Clientes;
@@ -46,7 +48,7 @@ class AmoritizationModule {
 
         contrato.Transaction_Contratos.total_pagar_cordobas = (WArrayF.SumValAtt(contrato.Transaction_Contratos.Tbl_Cuotas, "total") * contrato.Transaction_Contratos.taza_cambio);
         contrato.Transaction_Contratos.total_pagar_dolares = (WArrayF.SumValAtt(contrato.Transaction_Contratos.Tbl_Cuotas, "total"));
-        console.log(contrato.Transaction_Contratos.total_pagar_cordobas, contrato.Transaction_Contratos.total_pagar_dolares);
+        //console.log(contrato.Transaction_Contratos.total_pagar_cordobas, contrato.Transaction_Contratos.total_pagar_dolares);
 
         contrato.Transaction_Contratos.interes = (WArrayF.SumValAtt(contrato.Transaction_Contratos.Tbl_Cuotas, "interes"));
         contrato.Transaction_Contratos.interes_dolares = (WArrayF.SumValAtt(contrato.Transaction_Contratos.Tbl_Cuotas, "interes") / contrato.Transaction_Contratos.taza_cambio);
@@ -55,10 +57,11 @@ class AmoritizationModule {
 
     static getPago = (contrato) => {
         const monto = contrato.Transaction_Contratos.valoracion_empeño_dolares;
-        console.log(monto);
+        //console.log(monto);
         const cuotas = contrato.Transaction_Contratos.plazo;
         const tasa = contrato.Transaction_Contratos.tasas_interes;
         const payment = ((tasa * Math.pow(1 + tasa, cuotas)) * monto) / (Math.pow(1 + tasa, cuotas) - 1);
+        console.log(monto, cuotas, tasa, payment);
         return payment;
     }
     static getPagoValoracion = (valoracion) => {

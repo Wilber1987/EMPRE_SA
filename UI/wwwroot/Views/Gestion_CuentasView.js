@@ -246,7 +246,7 @@ class GestionCuentaComponent extends HTMLElement {
             fecha.append(WRender.Create({ className: "fecha-label", children: [movimiento.fecha?.toDateFormatEs()] }));
             debito.append(WRender.Create({ className: "debito-label", children: [currency, "- " + movimiento[debitoProp]?.toFixed(3)] }));
             creadito.append(WRender.Create({ className: "creadito-label", children: [currency, "+ " + movimiento[creaditoProp]?.toFixed(3)] }));
-            saldo.append(WRender.Create({ className: "saldo-label", children: [currency, movimiento[montoProp]?.toFixed(3)] }));
+            saldo.append(WRender.Create({ className: "saldo-label", children: [currency, movimiento[montoProp] != null ? movimiento[montoProp]?.toFixed(3) : "0.000"] }));
         });
         detalle.append(WRender.Create({ className: "total ", innerHTML: "Total" }));
         debito.append(WRender.Create({ className: "debito-label total", children: [currency, "- " + WArrayF.SumValAtt(movimientos, debitoProp).toFixed(3)] }));

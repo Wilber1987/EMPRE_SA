@@ -199,6 +199,7 @@ class Detail_Prendas extends EntityClass {
     /**@type {Number} */ numero_contrato_OLD;
     /**@type {Number} */ Descripcion;
     /**@type {Number} */ pprenda;
+    /**@type {Number} */ pprenda_dolares;
     /**@type {Number} */ Tipo;
     /**@type {Number} */ marca;
     /**@type {Number} */ serie;

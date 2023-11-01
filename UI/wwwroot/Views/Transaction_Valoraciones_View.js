@@ -289,11 +289,11 @@ class Transaction_Valoraciones_View extends HTMLElement {
                 }
             }, total_cordobas: {
                 type: "operation", label: "Total - C$", disabled: true, action: (data) => {
-                    return ((parseFloat(data.Valoracion_1) + parseFloat(data.Valoracion_2) + parseFloat(data.Valoracion_3)) / 3).toFixed(2)
+                    return ((parseFloat(data.Valoracion_1) + parseFloat(data.Valoracion_2) + parseFloat(data.Valoracion_3)) / 3).toFixed(3)
                 }
             }, total_dolares: {
                 type: "operation", label: "$:", disabled: true, action: (data) => {
-                    return ((parseFloat(data.dolares_1) + parseFloat(data.dolares_2) + parseFloat(data.dolares_3)) / 3).toFixed(2)
+                    return ((parseFloat(data.dolares_1) + parseFloat(data.dolares_2) + parseFloat(data.dolares_3)) / 3).toFixed(3)
                 }
             }
         };
@@ -321,12 +321,12 @@ class Transaction_Valoraciones_View extends HTMLElement {
             }, valoracion_compra_dolares: {
                 // @ts-ignore
                 type: 'operation', action: (/**@type {Transactional_Valoracion} */ valoracion) => {
-                    return this.calculoDolares(multiSelectEstadosArticulos.selectedItems[0].porcentaje_compra, tasasCambio[0].valor_de_compra);
+                    return this.calculoDolares(multiSelectEstadosArticulos.selectedItems[0].porcentaje_compra);
                 }, hidden: true
             }, valoracion_empeño_dolares: {
                 // @ts-ignore
                 type: 'operation', action: (/**@type {Transactional_Valoracion} */ valoracion) => {
-                    return this.calculoDolares(multiSelectEstadosArticulos.selectedItems[0].porcentaje_empeno, tasasCambio[0].valor_de_compra);
+                    return this.calculoDolares(multiSelectEstadosArticulos.selectedItems[0].porcentaje_empeno);
                 }, hidden: true
             },
         });
@@ -334,11 +334,11 @@ class Transaction_Valoraciones_View extends HTMLElement {
     calculoCordobas = (porcentaje) => {        
         // @ts-ignore
         /**@type {Number} */ const tasa_cambio = this.tasasCambio[0]?.valor_de_compra;
-        return (this.calculoDolares(porcentaje) * tasa_cambio).toFixed(2);
+        return (this.calculoDolares(porcentaje) * tasa_cambio).toFixed(3);
     }
-    /** @return {Number} */ calculoDolares = (porcentaje, tasa_cambio) => {
+    /** @return {Number} */ calculoDolares = (porcentaje) => {
         // @ts-ignore
-        return Math.round((this.avgValores() * (porcentaje / 100))).toFixed(2);
+        return Math.round((this.avgValores().toFixed(0) * (porcentaje / 100))).toFixed(3);
     }
     avgValores() {
         return ((parseFloat(this.valoresObject.dolares_1.toString()) +
@@ -466,6 +466,8 @@ class Transaction_Valoraciones_View extends HTMLElement {
         }
     }
     selectValoracion = (/**@type {Transactional_Valoracion}*/valoracion) => {
+        // @ts-ignore
+        valoracion.Tasa_de_cambio = this.tasasCambio[0]?.valor_de_compra
         if (this.valoracionesForm != undefined) {
             for (const prop in this.valoracionesForm?.FormObject) {
                 if (prop == "Detail_Valores") continue;
@@ -496,8 +498,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
             }
         }
         this.beneficiosDetailUpdate();
-        this.multiSelectEstadosArticulos?.SetOperationValues();
-        this.multiSelectEstadosArticulos?.DrawTable();
+        
         this.Manager.NavigateFunction("valoraciones", this.valoracionesContainer);
     }
     beneficiosDetailUpdate() {
@@ -521,19 +522,21 @@ class Transaction_Valoraciones_View extends HTMLElement {
             <h4>BENEFICIOS:</h4>
             <div class="column-venta">
                 <label>VENTA DE COMPRA</label>
-                <span>C$ ${((detail.valoracion_compra_cordobas) * (beneficioVentaC.Valor / 100 + 1)).toFixed(2)}</span>
-                <span>$ ${((detail.valoracion_compra_dolares) * (beneficioVentaC.Valor / 100 + 1)).toFixed(2)}</span>
+                <span>C$ ${((detail.valoracion_compra_cordobas) * (beneficioVentaC.Valor / 100 + 1)).toFixed(3)}</span>
+                <span>$ ${((detail.valoracion_compra_dolares) * (beneficioVentaC.Valor / 100 + 1)).toFixed(3)}</span>
             </div> 
             <div class="column-venta">
                 <label>VENTA DE EMPEÑO</label>
                 <span>C$ ${precio_venta_empeño.toString() == "NaN" ? "0.00"
-                : precio_venta_empeño.toFixed(2)}</span>
+                : precio_venta_empeño.toFixed(3)}</span>
                 <span>$ ${precio_venta_empeño.toString() == "NaN" ? "0.00"
                 : (precio_venta_empeño /
                     // @ts-ignore
-                    this.tasasCambio[0].valor_de_compra).toFixed(2)}</span>
+                    this.tasasCambio[0].valor_de_compra).toFixed(3)}</span>
             </div> 
         </div>`));
+        this.multiSelectEstadosArticulos?.SetOperationValues();
+        this.multiSelectEstadosArticulos?.DrawTable();
     }
     /**
      * 

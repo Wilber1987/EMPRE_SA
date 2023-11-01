@@ -36,7 +36,7 @@ class Transactional_Valoracion extends EntityClass {
     Catalogo_Categoria = {
         type: 'WSELECT',
         ModelObject: () => new Catalogo_Categoria(), action: (ObjectF, /**@type {WForm} */ form, InputControl, prop) => {
-            console.log(ObjectF.Catalogo_Categoria.plazo_limite);
+           // console.log(ObjectF.Catalogo_Categoria.plazo_limite);
             this.Plazo.max = ObjectF.Catalogo_Categoria.plazo_limite;
             if (ObjectF.Plazo > this.Plazo.max) {
                 ObjectF.Plazo = this.Plazo.max;
@@ -349,14 +349,15 @@ class Detail_Prendas_ModelComponent extends EntityClass {
     marca = { type: 'text' };
     serie = { type: 'text' };
     modelo = { type: 'text' };
-    pprenda = { type: 'number', label: "Monto aprob." };
+    pprenda = { type: 'number', label: "Monto aprob. cordobas" };
+    pprenda_dolares = { type: 'number', label: "Monto aprob. dolares" };
     iva = { type: 'text', hidden: true };
     //margen = { type: 'text', hiddenInTable: true };
     estado = { type: 'select', Dataset: ["ACTIVO", "INACTIVO"], hiddenInTable: true };
     //interesl = { type: 'number' , hiddenInTable: true};
     //moral = { type: 'number' , hiddenInTable: true};
     //fliquidacion = { type: 'date', hiddenInTable: true };
-    precio_venta = { type: 'number', hiddenInTable: true };
+    precio_venta = { type: 'number', hiddenInTable: true, hidden: true };
     en_manos_de = { type: 'select', Dataset: ["ACREEDOR", "DEUDOR"], hiddenInTable: true };
     color = { type: 'COLOR' };
     //factura = { type: 'text' };
@@ -391,10 +392,10 @@ class Detail_Prendas_Vehiculos_ModelComponent extends EntityClass {
     chasis = { type: 'text' };
     placa = { type: 'text' };
     circuacion = { type: 'text' };
-    defectuoso = { type: 'text' };
-    fecha_aut_descuento = { type: 'date' };
-    defecto = { type: 'text' };
-    porcentage_descuento_maximo = { type: 'number' };
+    defectuoso = { type: 'text', hidden: true };
+    fecha_aut_descuento = { type: 'date' , hidden: true };
+    defecto = { type: 'text', hidden: true  };
+    porcentage_descuento_maximo = { type: 'number', hidden: true  };
     fecha_seguro = { type: 'date' };
     combustible = { type: 'text' };
     uso = { type: 'select', Dataset: ["PRIVADO", "PARTICULAR"], hiddenInTable: true };

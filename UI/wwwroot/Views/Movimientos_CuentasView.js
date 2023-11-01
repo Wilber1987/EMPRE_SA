@@ -36,7 +36,12 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
                 Search: true, //UrlSearch: "../application/controllers/Vehiculos_Controller.php/get" + Model.constructor.name,
                 UserActions: [
                     {
-                        name: "Anular movimiento", action: (movimiento) => {
+                        name: "Anular movimiento", rendered: (/** @type {Movimientos_Cuentas} */ movimiento)=> {
+                            //console.log(movimiento.is_transaction, movimiento.is_transaction == true);
+                            // @ts-ignore
+                            return movimiento.is_transaction == true;
+                        },
+                         action: (movimiento) => {
                             /*if (movimiento.is_transaction) {
                                 return false;
                             }*/
