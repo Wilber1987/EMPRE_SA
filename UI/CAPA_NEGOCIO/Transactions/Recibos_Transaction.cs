@@ -314,6 +314,18 @@ namespace Transactions
                     status = 400
                 };
             }
-        }        
+        }       
+
+        public void PrintRecibo(string token){
+            try
+            {
+
+            }
+            catch (System.Exception)
+            {
+                
+                throw;
+            }
+        }
     }
 }

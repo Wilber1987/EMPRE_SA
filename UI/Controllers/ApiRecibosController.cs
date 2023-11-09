@@ -34,5 +34,12 @@ namespace API.Controllers
         {            
             return inst.AnularFactura(HttpContext.Session.GetString("seassonKey"));
         }
+
+        [HttpPost]
+        [AuthController]
+        public object printRecibo(Recibos inst)
+        {            
+            return inst.PrintRecibo(HttpContext.Session.GetString("seassonKey"));
+        }
     }
 }
