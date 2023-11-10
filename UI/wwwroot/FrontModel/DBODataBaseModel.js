@@ -359,7 +359,7 @@ class Detail_Prendas_ModelComponent extends EntityClass {
     //fliquidacion = { type: 'date', hiddenInTable: true };
     precio_venta = { type: 'number', hiddenInTable: true, hidden: true };
     en_manos_de = { type: 'select', Dataset: ["ACREEDOR", "DEUDOR"], hiddenInTable: true };
-    color = { type: 'COLOR' };
+    color = { type: 'text' };
     //factura = { type: 'text' };
     //tipo_movimiento = { type: 'text' , hiddenInTable: true};
     //v_porcentage_etiqueta = { type: 'number' , hiddenInTable: true};

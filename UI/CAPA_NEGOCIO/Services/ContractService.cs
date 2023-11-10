@@ -71,29 +71,35 @@ namespace CAPA_NEGOCIO.Services
             {
                 templateContent = ContractsTemplates.ContractPrestamo;
             }
+            DateTime? fechaPrimeraCuota = model.Tbl_Cuotas.Select(c => c.fecha).ToList().Min();
+            DateTime? fechaUltimaCuota = model.Tbl_Cuotas.Select(c => c.fecha).ToList().Max();
             templateContent = templateContent.Replace("{{cuotafija}}", Math.Round((decimal)model.cuotafija, 2).ToString())
-               .Replace("{{cuotafija_label}}", NumberUtility.NumeroALetras(model.cuotafija))
+               .Replace("{{fecha_contrato_label}}", model.fecha_contrato?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy"))
+               .Replace("{{fecha_primera_cuota}}", fechaPrimeraCuota?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy"))
+               .Replace("{{fecha_ultima_cuota}}", fechaUltimaCuota?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy"))
+               .Replace("{{cuotafija_label}}", NumberUtility.NumeroALetras(model.cuotafija, "córdobas"))
                .Replace("{{cuotafija_dolares}}", Math.Round((decimal)model.cuotafija_dolares, 2).ToString())
-               .Replace("{{cuotafija_dolares_label}}", NumberUtility.NumeroALetras(model.cuotafija_dolares))
+               .Replace("{{cuotafija_dolares_label}}", NumberUtility.NumeroALetras(model.cuotafija_dolares, "dólares"))
                .Replace("{{valoracion_empeño_cordobas}}", Math.Round((decimal)model.valoracion_empeño_cordobas, 2).ToString())
-               .Replace("{{valoracion_empeño_cordobas_label}}", NumberUtility.NumeroALetras(model.valoracion_empeño_cordobas))
-               .Replace("{{valoracion_empeño_dolares}}", Math.Round((decimal)model.valoracion_compra_dolares, 2).ToString())
-               .Replace("{{valoracion_empeño_dolares_label}}", NumberUtility.NumeroALetras(model.valoracion_compra_dolares));
+               .Replace("{{valoracion_empeño_cordobas_label}}", NumberUtility.NumeroALetras(model.valoracion_empeño_cordobas, "córdobas"))
+               .Replace("{{valoracion_empeño_dolares}}", Math.Round((decimal)model.valoracion_empeño_dolares, 2).ToString())
+               .Replace("{{valoracion_empeño_dolares_label}}", NumberUtility.NumeroALetras(model.valoracion_empeño_dolares, "dólares"));
 
             var renderedHtml = RenderTemplate(templateContent, model);
 
-            LoggerServices.AddMessageInfo("FIN DE RENDER");
+            //LoggerServices.AddMessageInfo("FIN DE RENDER");
             var configuraciones = new Transactional_Configuraciones().GetIntereses();
             //var interes = configuraciones.Select(i => Convert.ToInt32(i.Valor)).ToArray().Sum();
-            LoggerServices.AddMessageInfo("FIN DE GET INTERESE");
+            //LoggerServices.AddMessageInfo("FIN DE GET INTERESE");
+            Catalogo_Clientes? cliente = model.Catalogo_Clientes?.Find<Catalogo_Clientes>();
 
-            renderedHtml = RenderTemplate(renderedHtml, model.Catalogo_Clientes)
-                .Replace("{{municipio}}", model.Catalogo_Clientes.Catalogo_Municipio?.nombre)
-                .Replace("{{departamento}}", model.Catalogo_Clientes.Catalogo_Departamento?.nombre)
+            renderedHtml = RenderTemplate(renderedHtml, cliente)
+                .Replace("{{municipio}}", cliente.Catalogo_Municipio?.nombre)
+                .Replace("{{departamento}}", cliente.Catalogo_Departamento?.nombre)
                 .Replace("{{tabla_articulos}}", GenerateTableHtml(model.Detail_Prendas))
 
                 /*INTERESES*/
-                .Replace("{{interes_inicial}}", model.Catalogo_Clientes.Catalogo_Clasificacion_Interes?.porcentaje.ToString() ?? "6")
+                .Replace("{{interes_inicial}}", cliente.Catalogo_Clasificacion_Interes?.porcentaje.ToString() ?? "6")
                 .Replace("{{interes_inicial_label}}", NumberUtility.NumeroALetras(
                     Convert.ToDecimal(model.Catalogo_Clientes.Catalogo_Clasificacion_Interes?.porcentaje.ToString() ?? "6")))
 
@@ -104,9 +110,9 @@ namespace CAPA_NEGOCIO.Services
                     c.Nombre.Equals(InteresesPrestamosEnum.GASTOS_ADMINISTRATIVOS.ToString()))?.Valor)))
 
                 .Replace("{{interes_gastos_legales}}",
-                    configuraciones.Find(c => c.Nombre.Equals(InteresesPrestamosEnum.GASTOS_ADMINISTRATIVOS.ToString()))?.Valor)
+                    configuraciones.Find(c => c.Nombre.Equals(InteresesPrestamosEnum.GASTOS_LEGALES.ToString()))?.Valor)
                 .Replace("{{interes_gastos_legales_label}}", NumberUtility.NumeroALetras(Convert.ToDecimal(configuraciones.Find(c =>
-                    c.Nombre.Equals(InteresesPrestamosEnum.GASTOS_ADMINISTRATIVOS.ToString()))?.Valor)))
+                    c.Nombre.Equals(InteresesPrestamosEnum.GASTOS_LEGALES.ToString()))?.Valor)))
 
                 .Replace("{{interes_comisiones_label}}", NumberUtility.NumeroALetras(Convert.ToDecimal(configuraciones.Find(c =>
                     c.Nombre.Equals(InteresesPrestamosEnum.COMISIONES.ToString()))?.Valor)))

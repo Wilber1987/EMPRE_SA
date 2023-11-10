@@ -197,7 +197,7 @@ namespace DataBaseModel
         public string? descripcion { get; set; }
         public int? plazo_limite { get; set; }
         public int? prioridad { get; set; }
-        //TODO relaciones
+        public bool? isEditable { get; set; }
     }
 
     public class Catalogo_Departamento : EntityClass

@@ -38,8 +38,9 @@ namespace API.Controllers
         [HttpPost]
         [AuthController]
         public object printRecibo(Recibos inst)
-        {            
-            return inst.PrintRecibo(HttpContext.Session.GetString("seassonKey"));
+        {  
+            return null;          
+            //return inst.PrintRecibo(HttpContext.Session.GetString("seassonKey"));
         }
     }
 }
