@@ -85,43 +85,38 @@ public class DocumentsTemplates
 
             <div class='w-50 ' >
                 <p class='w-50 '><strong>Total Pagado:</strong>{{total_pagado}}</p>    
-                <p class='w-50 '><strong>Total Pagado:</strong>{{total_pagado}}</p>
+                <p class='w-50 '><strong>Total Pagado:</strong>{{total_pagado_dolares}}</p>
             </div>
             
             <div class='w-50 ' >
                 <p class='w-50 '><strong>Reestructuracion:</strong>{{reestructuracion}}</p>    
-                <p class='w-50 '><strong>Reestructuracion:</strong>{{reestructuracion}}</p>
+                <p class='w-50 '><strong>Reestructuracion:</strong>{{reestructuracion_dolares}}</p>
             </div>
 
             <div class='w-50 ' >
                 <p class='w-50 '><strong>Perdida Doc.:</strong>{{perdida_doc}}</p>
-                <p class='w-50 '><strong>Perdida Doc.:</strong>{{perdida_doc}}</p>
+                <p class='w-50 '><strong>Perdida Doc.:</strong>{{perdida_doc_dolares}}</p>
             </div>
 
             <div class='w-50 ' >
                 <p class='w-50 '><strong>Mora:</strong>{{mora}}</p>
-                <p class='w-50 '><strong>Mora:</strong>{{mora}}</p>
+                <p class='w-50 '><strong>Mora:</strong>{{mora_dolares}}</p>
             </div>
 
             <div class='w-50 ' >
                 <p class='w-50 '><strong>IDCP:</strong>{{idcp}}</p>
-                <p class='w-50 '><strong>IDCP:</strong>{{idcp}}</p>
+                <p class='w-50 '><strong>IDCP:</strong>{{idcp_dolares}}</p>
             </div>
 
             <div class='w-50 ' >
                 <p class='w-50 '><strong>Abono a Capital:</strong>{{abono_capital}}</p>
-                <p class='w-50 '><strong>Abono a Capital:</strong>{{abono_capital}}</p>
+                <p class='w-50 '><strong>Abono a Capital:</strong>{{abono_capital_dolares}}</p>
             </div>
             
             <div class='w-50 ' >
                 <p class='w-50 '><strong>Saldo Actual:</strong>{{saldo_actual}}</p>
-                <p class='w-50 '><strong>Saldo Actual:</strong>{{saldo_actual}}</p>
-            </div>
-
-            <div class='w-50 ' >
-                <p class='w-50 '><strong>Saldo Actual:</strong>{{saldo_actual}}</p>
-                <p class='w-50 '><strong>Saldo Actual:</strong>{{saldo_actual}}</p>
-            </div>
+                <p class='w-50 '><strong>Saldo Actual:</strong>{{saldo_actual_dolares}}</p>
+            </div>        
             
             <br><br>
             <p><strong>Próximo Pago:</strong> {{proximo_pago}}</p>

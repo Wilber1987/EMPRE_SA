@@ -1,5 +1,6 @@
 using API.Controllers;
 using CAPA_DATOS;
+using CAPA_NEGOCIO.Services;
 using DataBaseModel;
 using iText.Kernel.Pdf.Annot.DA;
 using Model;
@@ -111,8 +112,7 @@ namespace Transactions
 
                 int ultimoConsecutivo = new Recibos().Get<Recibos>().Max(r => (int?)r.consecutivo) ?? 0;
 
-                var cuotasPendiente = Get<Tbl_Cuotas>()
-                .Where(x => x.total > x.abono_capital).ToList();
+                var cuotasPendiente = Get<Tbl_Cuotas>().Where(x => x.total > x.abono_capital).ToList();
 
                 //guardado de factura
                 var factura = new Transaccion_Factura()
@@ -169,7 +169,6 @@ namespace Transactions
                     };
                 }
 
-
                 ResponseService response = new Movimientos_Cuentas
                 {
                     Catalogo_Cuentas_Destino = cuentaDestino,
@@ -182,6 +181,7 @@ namespace Transactions
                     tasa_cambio_compra = this.tasa_cambio_compra,
                     is_transaction = true
                 }.SaveMovimiento(token);
+
                 if (response.status == 400)
                 {
                     RollBackGlobalTransaction();
@@ -191,7 +191,7 @@ namespace Transactions
                 return new ResponseService()
                 {
                     status = 200,
-                    message = "Recibo registrado correctamente",
+                    message = "Factura registrada correctamente",
                     body = factura
                 };
 
@@ -316,16 +316,62 @@ namespace Transactions
             }
         }       
 
-        public void PrintRecibo(string token){
+        public object? PrintRecibo(string token){
             try
-            {
+            {   
+                string templateContent = DocumentsTemplates.recibo;
+
+                var contrato = new Transaction_Contratos() { numero_contrato = this.numero_contrato }.Find<Transaction_Contratos>();
+
+                var reciboData = new Recibos() { id_recibo = this.id_recibo }.Find<Recibos>();
+
+                var factura = new Factura_contrato(){numero_contrato = this.numero_contrato}.Find<Factura_contrato>();
+
+                templateContent = templateContent.Replace("{{recibo_num}}", reciboData.consecutivo.ToString())
+                .Replace("{{cambio}}", Math.Round((decimal) factura.tasa_cambio, 2).ToString())
+                .Replace("{{fecha}}", reciboData.fecha_roc.ToString())
+                .Replace("{{sucursal}}", "todo")
+                .Replace("{{cajero}}", "todo")
+                .Replace("{{cliente}}", contrato.Catalogo_Clientes.primer_nombre+" "+contrato.Catalogo_Clientes.primer_apellido+" "+contrato.Catalogo_Clientes.segundo_apellidio)
+                //.Replace("{{clasificacion}}", contrato.Catalogo_Clientes.Catalogo_Clasificacion_Interes.porcentaje.ToString())
+                //.Replace("{{categoria}}", contrato.Catalogo_Clientes.Catalogo_Clasificacion_Cliente.Descripcion)
+                .Replace("{{cuotas}}", reciboData.plazo.ToString())
+                .Replace("{{cuotas_pendientes}}", "todo")
+                .Replace("{{saldo_anterior}}", "todo")
+                .Replace("{{saldo_actual}}", Math.Round((decimal) factura.total, 2).ToString())
+                .Replace("{{total_pagado}}", Math.Round((decimal) factura.total/(decimal)factura.tasa_cambio, 2).ToString())
+                .Replace("{{total_pagado_dolares}}", Math.Round((decimal) reciboData.monto, 2).ToString())
+                .Replace("{{reestructuracion}}", "todo")
+                .Replace("{{reestructuracion_dolares}}", "todo")
+                .Replace("{{perdida_doc}}", "todo")
+                .Replace("{{perdida_doc_dolares}}", 1.ToString())
+                .Replace("{{mora}}", "todo")
+                .Replace("{{mora_dolares}}", "todo")
+                .Replace("{{idcp}}", "todo")
+                .Replace("{{idcp_dolares}}", "todo")
+                .Replace("{{abono_capital}}", "todo")
+                .Replace("{{abono_capital_dolares}}", "todo")
+                .Replace("{{saldo_actual}}", Math.Round((decimal) factura.saldo_actual, 2).ToString() )
+                .Replace("{{saldo_actual_dolares}}", Math.Round((decimal) factura.saldo_actual, 2).ToString() )
+                .Replace("{{proximo_pago}}", "todo");
+
+                return new ResponseService()
+                {
+                    status = 200,
+                    message = templateContent
+                };
+
 
             }
-            catch (System.Exception)
+            catch (System.Exception ex)
             {
-                
-                throw;
+                return new ResponseService()
+                {
+                    status = 500,
+                    message = "Error, intentelo nuevamente"+ex.Message
+                };
             }
         }
+
     }
 }

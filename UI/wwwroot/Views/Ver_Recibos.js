@@ -30,14 +30,21 @@ class Ver_RecibosView extends HTMLElement {
                                 
                                 modal.close();
                             }, "¿Esta seguro que desea anular este recibo?"))
-                        },name: "Imprimir", action: (factura) => {
+                        }, name: "Imprimir", action: (factura) => {
                             this.append(ModalVericateAction(async () => {
                                 const response = await WAjaxTools.PostRequest("../api/ApiRecibos/printRecibo", {id_recibo : factura.id_factura, tasa_cambio: tasa[0].valor_de_compra});
                                 
-                                //this.append(ModalMessege(response.message));
+                                //this.append(ModalMessege(response.message));                                
                                 const nuevaVentana = window.open();
                                 nuevaVentana.document.write(response.message);
-                                //modal.close();
+
+                                nuevaVentana.addEventListener('afterprint', function() {
+                                    nuevaVentana.close();
+                                });
+                                
+                                nuevaVentana.print();
+
+                                
                             }, "¿Esta seguro que desea imprimir este recibo?"))
                         }
                     }

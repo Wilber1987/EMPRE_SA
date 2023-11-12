@@ -473,6 +473,7 @@ namespace DataBaseModel
     {
         [PrimaryKey(Identity = true)]
         public int? id_factura { get; set; }
+        public int? numero_contrato { get; set; }
         public string? tipo { get; set; }
         public string? concepto { get; set; }
         public double? tasa_cambio { get; set; }
