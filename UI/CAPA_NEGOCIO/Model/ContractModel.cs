@@ -43,12 +43,12 @@ namespace Model
                 Transaction_Contratos.fecha_vencimiento = Transaction_Contratos.Tbl_Cuotas.Select(c => c.fecha).ToList().Max();//TODO PREGUNTAR
                 var valoracion = Transaction_Contratos.Detail_Prendas[0];
                 if (valoracion.en_manos_de == EnManosDe.ACREEDOR.ToString()
-                && valoracion.Catalogo_Categoria.descripcion != "Vehículos")
+                && valoracion.Catalogo_Categoria.tipo.ToUpper() != "Vehículos".ToUpper())
                 {
                     Transaction_Contratos.tipo = Contratos_Type.EMPENO.ToString();
                 }
                 else if (valoracion.en_manos_de == EnManosDe.ACREEDOR.ToString()
-                 && valoracion.Catalogo_Categoria.descripcion == "Vehículos")
+                 && valoracion.Catalogo_Categoria.tipo.ToUpper() == "Vehículos".ToUpper())
                 {
 
                     Transaction_Contratos.tipo = Contratos_Type.EMPENO_VEHICULO.ToString();

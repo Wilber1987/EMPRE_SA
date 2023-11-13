@@ -1,21 +1,105 @@
 namespace CAPA_NEGOCIO.Services;
 public class ContractsTemplates
 {
+    public static string ContractTable = @"<style>
+                td {
+                    border: 1px black solid;
+                    padding: 5px;
+                    width: 7.14% !important;
+                }
+
+                td.col2 {
+                    width: 14.28% !important;
+                }
+
+                td.col6 {
+                    width: 42.85% !important;
+                }
+
+                td.val {
+                    text-align: right;
+                }
+            </style>
+            <table style='width: 100%;font-size:9px !important; border-collapse: collapse;'>
+                <thead>
+                    <tr>
+                        <td colspan='2' class='col2'><span lang='ES-NI'>CAPITAL PRESTADO C$</span></td>
+                        <td colspan='2' class='col2'> <span lang='ES-NI'>C$ {{valoracion_empeño_cordobas}}</span></td>
+                        <td colspan='6' class='col6' rowspan='2'>
+                        <span lang='ES-NI'>TABLA DE AMORTIZACION DE DEUDA POR GARANTIA PRENDARIA</span>
+                        </td>
+                        <td colspan='2' class='col2'><span lang='ES-NI'>CUOTA C$</span></td>
+                        <td colspan='2' class='col2'> <span lang='ES-NI'>C$ {{cuotafija}}</span></td>
+                    </tr>
+                    <tr>
+                        <td colspan='2' class='col2'> CAPITAL PRESTADO $</td>
+                        <td colspan='2' class='col2'> $ {{valoracion_empeño_dolares}}</td>
+                        <td colspan='2' class='col2'><span lang='ES-NI'>CUOTA FIJA<br>$</br></span> </td>
+                        <td colspan='2' class='col2'>$ {{cuotafija_dolares}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan='2' class='col2'>
+                        <span lang='ES-NI'>PLAZO PARA CANCELAR: {{plazo}} mes(es)</span>
+                        </td>
+                        <td colspan='2' class='col2'>
+                        <p style='margin-bottom:0cm;text-align:center;line-height:normal'>
+                            <span lang='ES-NI'>INTERÉS NETO CORRIENTE(a): 1%</span>
+                        </p>
+                        </td>
+                        <td colspan='2' class='col2'>
+                        <span lang='ES-NI'>Demás cargos a
+                            pagar en relación con lo pactado (b)</span>
+                        </td>
+                        <td colspan='2' class='col2'>
+                        <span lang='ES-NI'>Interés Neto
+                            corriente más demás cargos a
+                            pagar en relación con lo pactado</span>
+                        </td>
+                        <td colspan='2' class='col2'>
+                        <span lang='ES-NI'>ABONO AL
+                            CAPITAL</span>
+                        </td>
+                        <td colspan='2' class='col2'>
+                        <span lang='ES-NI'>TOTAL A
+                            PAGAR</span>
+                        </td>
+                        <td colspan='2' class='col2'>
+                        <span lang='ES-NI'>MONTO
+                            RESTANTE</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan='2' class='col2'><span lang='ES-NI'>FECHAS DE PAGO</span></td>
+                        <td><span lang='ES-NI'>C$</span></td>
+                        <td><span lang='ES-NI'>$</span></td>
+                        <td><span lang='ES-NI'>C$</span></td>
+                        <td><span lang='ES-NI'>$</span></td>
+                        <td><span lang='ES-NI'>C$</span></td>
+                        <td><span lang='ES-NI'>$</span></td>
+                        <td><span lang='ES-NI'>C$</span></td>
+                        <td><span lang='ES-NI'>$</span></td>
+                        <td><span lang='ES-NI'>C$</span></td>
+                        <td><span lang='ES-NI'>$</span></td>
+                        <td><span lang='ES-NI'>C$</span></td>
+                        <td><span lang='ES-NI'>$</span></td>
+                    </tr>
+                </thead>
+                {{tbody_amortizacion}}
+            </table>
+    ";
     public static string ContractPrestamo = @"
         <!DOCTYPE html>
             <html>
-
             <head>
             </head>
-
             <body>
                 <p style='font-size:9.5px; margin-top:0px; margin-bottom:0px; text-align:center; padding-bottom:0px'>
                     EMPEÑOS Y PRÉSTAMOS S.A 'EMPRE SA'
                     Carazo - Nicaragua
                 </p>
                 <p style='font-size:9.5px; margin-top:0px; margin-bottom:0px; text-align:center; padding-bottom:0px'>“Tu
-                    Prosperidad, Es Nuestro Éxito….”
-                    {{fecha}}
+                    Prosperidad, Es Nuestro Éxito….”<br/>
+                    {{fecha_contrato_label}}
                 </p>
 
                 <p style='font-size: 9.5px; margin-top: 0px; margin-bottom: 0px; text-align: left; padding-bottom: 0px;'>
@@ -51,7 +135,7 @@ public class ContractsTemplates
                     recibido de parte del acreedor, un préstamo en calidad de
                     mutuo, por la cantidad de: C$. {{monto}} , equivalente a moneda de los Estados Unidos de América: $
                     {{cuotafija_dolares}}, Según el valor de la
-                    compra del dólar a la fecha de hoy de: C${{taza_cambio}} Suma de dinero que el deudor, se obliga a destinar,
+                    compra del dólar a la fecha de hoy {{fecha_contrato_label}} de: C${{taza_cambio}} Suma de dinero que el deudor, se obliga a destinar,
                     única y
                     exclusivamente
                     al pago del préstamo otorgado. El deudor acepta estar conforme de recibir mensajes de texto en su teléfono
@@ -125,11 +209,10 @@ public class ContractsTemplates
                 <p style='text-align: justify; font-size:9.5px;'><u>3. TERCERA (PLAZO Y FORMA DE PAGO):</u> El deudor decide en
                     cuantas cuotas mensuales cancelar su préstamo,
                     pero no podrá exceder los veinticuatro meses, los pagos se realizarán en cuotas fijas de C$ {{cuotafija}} , que
-                    serán
-                    modificables al tipo de cambio del dólar, en la fecha que el cliente haga efectivo su pago. Los pagos se
+                    serán  modificables al tipo de cambio del dólar, en la fecha que el cliente haga efectivo su pago. Los pagos se
                     realizarán en córdobas o el equivalente a $ {{cuotafija_dolares}}, Estadounidenses, Según tasa de cambio del
                     Banco Central de
-                    Nicaragua, iniciando la primera cuota el día y la última el día . El deudor se obliga a pagar al acreedor; La
+                    Nicaragua, iniciando la primera cuota el día {{fecha_primera_cuota}} y la última el día {{fecha_ultima_cuota}}. El deudor se obliga a pagar al acreedor; La
                     mora, el interés neto corriente, demás cargos a pagar en relación con lo pactado, y el capital prestado, en las
                     oficinas principales del acreedor o realizar el pago de su cuota en línea en cualquier sucursal o agente Banpro
                     en la cuenta en córdobas No 1001 3700 0011 66, o en la cuenta en dólares No 1001 3710 0012 05, a nombre de Juan
@@ -158,7 +241,7 @@ public class ContractsTemplates
                     {{interes_demas_cargos_label}} porciento ({{interes_demas_cargos}}%) de Gestiones crediticias; Todos estos
                     demás cargos son aplicados sobre el monto restante.
                 </p>
-                <p style='text-align: justify; font-size:9.5px;'><u>5. QUINTA ( MORA):</u> El deudor podrá realizar el pago de su
+                <p style='text-align: justify; font-size:9.5px;'><u>5. QUINTA (MORA):</u> El deudor podrá realizar el pago de su
                     cuota anticipada a su fecha de pago de cuota,
                     con el fin de evitarse mora; En caso que el Deudor no pague en la fecha de pago de cada cuota mensual,
                     automáticamente quedará constituido en mora y por el sólo hecho de incumplimiento, sin necesidad de intimidación
@@ -250,92 +333,7 @@ public class ContractsTemplates
                     conforme, aprobamos, ratificamos, rubricamos y firmamos, en la ciudad de San Marcos a los .
                 </p>
             <br></br>
-                <style>
-                td {
-                    border: 1px black solid;
-                    padding: 5px;
-                    width: 7.14% !important;
-                }
-
-                td.col2 {
-                    width: 14.28% !important;
-                }
-
-                td.col6 {
-                    width: 42.85% !important;
-                }
-
-                td.val {
-                    text-align: right;
-                }
-            </style>
-            <table style='width: 100%;font-size:9px !important; border-collapse: collapse;'>
-                <thead>
-                    <tr>
-                        <td colspan='2' class='col2'><span lang='ES-NI'>CAPITAL PRESTADO C$</span></td>
-                        <td colspan='2' class='col2'> <span lang='ES-NI'>C$ {{valoracion_empeño_cordobas}}</span></td>
-                        <td colspan='6' class='col6' rowspan='2'>
-                        <span lang='ES-NI'>TABLA DE AMORTIZACION DE DEUDA POR GARANTIA PRENDARIA</span>
-                        </td>
-                        <td colspan='2' class='col2'><span lang='ES-NI'>CUOTA C$</span></td>
-                        <td colspan='2' class='col2'> <span lang='ES-NI'>C$ {{cuotafija}}</span></td>
-                    </tr>
-                    <tr>
-                        <td colspan='2' class='col2'> CAPITAL PRESTADO $</td>
-                        <td colspan='2' class='col2'> $ {{valoracion_empeño_dolares}}</td>
-                        <td colspan='2' class='col2'><span lang='ES-NI'>CUOTA FIJA<br>$</br></span> </td>
-                        <td colspan='2' class='col2'>$ {{cuotafija_dolares}}</td>
-                    </tr>
-                    <tr>
-                        <td colspan='2' class='col2'>
-                        <span lang='ES-NI'>PLAZO PARA CANCELAR: {{plazo}} mes(es)</span>
-                        </td>
-                        <td colspan='2' class='col2'>
-                        <p style='margin-bottom:0cm;text-align:center;line-height:normal'>
-                            <span lang='ES-NI'>INTERÉS NETO CORRIENTE(a): 1%</span>
-                        </p>
-                        </td>
-                        <td colspan='2' class='col2'>
-                        <span lang='ES-NI'>Demás cargos a
-                            pagar en relación con lo pactado (b)</span>
-                        </td>
-                        <td colspan='2' class='col2'>
-                        <span lang='ES-NI'>Interés Neto
-                            corriente más demás cargos a
-                            pagar en relación con lo pactado</span>
-                        </td>
-                        <td colspan='2' class='col2'>
-                        <span lang='ES-NI'>ABONO AL
-                            CAPITAL</span>
-                        </td>
-                        <td colspan='2' class='col2'>
-                        <span lang='ES-NI'>TOTAL A
-                            PAGAR</span>
-                        </td>
-                        <td colspan='2' class='col2'>
-                        <span lang='ES-NI'>MONTO
-                            RESTANTE</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan='2' class='col2'><span lang='ES-NI'>FECHAS DE PAGO</span></td>
-                        <td><span lang='ES-NI'>C$</span></td>
-                        <td><span lang='ES-NI'>$</span></td>
-                        <td><span lang='ES-NI'>C$</span></td>
-                        <td><span lang='ES-NI'>$</span></td>
-                        <td><span lang='ES-NI'>C$</span></td>
-                        <td><span lang='ES-NI'>$</span></td>
-                        <td><span lang='ES-NI'>C$</span></td>
-                        <td><span lang='ES-NI'>$</span></td>
-                        <td><span lang='ES-NI'>C$</span></td>
-                        <td><span lang='ES-NI'>$</span></td>
-                        <td><span lang='ES-NI'>C$</span></td>
-                        <td><span lang='ES-NI'>$</span></td>
-                    </tr>
-                </thead>
-                {{tbody_amortizacion}}
-
-            </table>
+            "+ContractTable+@"
                 <p style='text-align:left; font-size:10px; margin-top:50px; padding-bottom:0px; margin-bottom:0px;'>
                     Deudor: {{primer_nombre}} {{segundo_nombre}} {{primer_apellido}} {{segundo_apellidio}}
                 </p>
@@ -362,8 +360,8 @@ public class ContractsTemplates
                 Carazo - Nicaragua
             </p>
             <p style='font-size:9.5px; margin-top:0px; margin-bottom:0px; text-align:center; padding-bottom:0px'>“Tu
-                Prosperidad, Es Nuestro Éxito….”
-                {{fecha}}
+                Prosperidad, Es Nuestro Éxito….”<br/>
+                {{fecha_contrato_label}}
             </p>
 
             <p style='font-size: 9.5px; margin-top: 0px; margin-bottom: 0px; text-align: left; padding-bottom: 0px;'>
@@ -396,10 +394,10 @@ public class ContractsTemplates
             </p>
             <p style='text-align: justify; font-size:9.5px;'>
                 <u>1. PRIMERA (MONTO DE EMPEÑO):</u> El deudor confiesa tener recibido de parte del acreedor, la cantidad de: C$
-            {{valoracion_empeño_cordobas}}, ({{valoracion_empeño_cordobas_label}} ) equivalente a moneda de los Estados Unidos
+            {{valoracion_empeño_cordobas}}, ({{valoracion_empeño_cordobas_label}}) equivalente a moneda de los Estados Unidos
             de América: $
-            {{valoracion_empeño_dolares}}, ( {{valoracion_empeño_dolares_label}}), Según el valor de
-            la compra del dólar a la fecha de hoy de: {{taza_cambio}} C$
+            {{valoracion_empeño_dolares}}, ({{valoracion_empeño_dolares_label}}), Según el valor de
+            la compra del dólar a la fecha de hoy {{fecha_contrato_label}} de: {{taza_cambio}} C$
             </p>
             <p style='text-align: justify; font-size:9.5px;'>
                 <u>2. SEGUNDA (DESCRIPCION DE LOS BIENES EMPEÑADOS):</u> En garantía del pago a la cantidad debida, el deudor
@@ -431,13 +429,12 @@ public class ContractsTemplates
             <p style='text-align: justify; font-size:9.5px;'>
                 <u>5. QUINTA (PLAZO Y FORMA DE PAGO):</u>El plazo del empeño lo decidirá el deudor, siendo un plazo máximo de 12
                 meses. Los pagos se realizarán en cuotas fijas de C$ {{cuotafija}}, según el cambio del córdoba a dólar a la
-                fecha de hoy de:
-                C$ {{taza_cambio}}, que serán modificables al tipo de cambio del dólar, en la fecha que el cliente haga efectivo
-                su pago. Los
-                pagos se realizarán en córdobas o el equivalente a $ {{cuotafija_dolares}}, Estadounidenses, Según tasa de
-                cambio del Banco Central de
-                Nicaragua, iniciando la primera cuota el día y la última el día El deudor se obliga a pagar al acreedor; La mora
-                ( en caso de incurrir), el interés neto corriente, demás cargos a pagar en relación con lo pactado y el monto de
+                fecha de hoy {{fecha_contrato_label}} de: C$ {{taza_cambio}}, que serán modificables al tipo de cambio del dólar, 
+                en la fecha que el cliente haga efectivo su pago. Los pagos se realizarán en córdobas o el equivalente a 
+                $ {{cuotafija_dolares}}, Estadounidenses, Según tasa de cambio del Banco Central de
+                Nicaragua, iniciando la primera cuota el día {{fecha_primera_cuota}} y la última el día {{fecha_ultima_cuota}}.
+                El deudor se obliga a pagar al acreedor; La mora
+                (en caso de incurrir), el interés neto corriente, demás cargos a pagar en relación con lo pactado y el monto de
                 empeño en las oficinas del acreedor, los pagos serán todos en cuotas fijas según tabla de amortización de deuda
                 aquí estipulada al final de este contrato. En ningún momento el deudor podrá cancelar el monto total de su monto
                 de empeño, sin antes haber pagado mora (en caso de incurrir), interés neto corriente, más los demás cargos a
@@ -478,7 +475,7 @@ public class ContractsTemplates
                 <u>8. OCTAVA (MORA):</u> En caso de que el Deudor no pague en la fecha de cada cuota mensual, automáticamente
                 quedará constituido en mora y por el sólo hecho de incumplimiento, y desde esa fecha hasta el pago efectivo
                 de su cuota, reconocerá al acreedor un factor moratorio de aplicado a la cuota fija, equivalente en este
-                caso a {{mora}}%, por cada día transcurrido hasta el pago efectivo de su cuota o cancelación.
+                caso a {{mora}}, por cada día transcurrido hasta el pago efectivo de su cuota o cancelación.
             </p>
             <p style='text-align: justify; font-size:9.5px;'>
                 <u>9. NOVENA (PÉRDIDA DEL VEHÍCULO):</u> El deudor declara compromiso puntual de pago, pero si llegase a 20 días
@@ -539,93 +536,7 @@ public class ContractsTemplates
                 ratificamos y firmamos, en la ciudad de San Marcos a los {{dias}} dias del mes {{mes}} del año {{anio}}.
             </p>
             <br></br>
-            <style>
-            td {
-                border: 1px black solid;
-                padding: 5px;
-                width: 7.14% !important;
-            }
-
-            td.col2 {
-                width: 14.28% !important;
-            }
-
-            td.col6 {
-                width: 42.85% !important;
-            }
-
-            td.val {
-                text-align: right;
-            }
-        </style>
-        <table style='width: 100%;font-size:9px !important; border-collapse: collapse;'>
-            <thead>
-                <tr>
-                    <td colspan='2' class='col2'><span lang='ES-NI'>CAPITAL PRESTADO C$</span></td>
-                    <td colspan='2' class='col2'> <span lang='ES-NI'>C$ {{valoracion_empeño_cordobas}}</span></td>
-                    <td colspan='6' class='col6' rowspan='2'>
-                    <span lang='ES-NI'>TABLA DE AMORTIZACION DE DEUDA POR GARANTIA PRENDARIA</span>
-                    </td>
-                    <td colspan='2' class='col2'><span lang='ES-NI'>CUOTA C$</span></td>
-                    <td colspan='2' class='col2'> <span lang='ES-NI'>C$ {{cuotafija}}</span></td>
-                </tr>
-                <tr>
-                    <td colspan='2' class='col2'> CAPITAL PRESTADO $</td>
-                    <td colspan='2' class='col2'> $ {{valoracion_empeño_dolares}}</td>
-                    <td colspan='2' class='col2'><span lang='ES-NI'>CUOTA FIJA<br>$</br></span> </td>
-                    <td colspan='2' class='col2'>$ {{cuotafija_dolares}}</td>
-                </tr>
-                <tr>
-                    <td colspan='2' class='col2'>
-                    <span lang='ES-NI'>PLAZO PARA CANCELAR: {{plazo}} mes(es)</span>
-                    </td>
-                    <td colspan='2' class='col2'>
-                    <p style='margin-bottom:0cm;text-align:center;line-height:normal'>
-                        <span lang='ES-NI'>INTERÉS NETO CORRIENTE(a): 1%</span>
-                    </p>
-                    </td>
-                    <td colspan='2' class='col2'>
-                    <span lang='ES-NI'>Demás cargos a
-                        pagar en relación con lo pactado (b)</span>
-                    </td>
-                    <td colspan='2' class='col2'>
-                    <span lang='ES-NI'>Interés Neto
-                        corriente más demás cargos a
-                        pagar en relación con lo pactado</span>
-                    </td>
-                    <td colspan='2' class='col2'>
-                    <span lang='ES-NI'>ABONO AL
-                        CAPITAL</span>
-                    </td>
-                    <td colspan='2' class='col2'>
-                    <span lang='ES-NI'>TOTAL A
-                        PAGAR</span>
-                    </td>
-                    <td colspan='2' class='col2'>
-                    <span lang='ES-NI'>MONTO
-                        RESTANTE</span>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan='2' class='col2'><span lang='ES-NI'>FECHAS DE PAGO</span></td>
-                    <td><span lang='ES-NI'>C$</span></td>
-                    <td><span lang='ES-NI'>$</span></td>
-                    <td><span lang='ES-NI'>C$</span></td>
-                    <td><span lang='ES-NI'>$</span></td>
-                    <td><span lang='ES-NI'>C$</span></td>
-                    <td><span lang='ES-NI'>$</span></td>
-                    <td><span lang='ES-NI'>C$</span></td>
-                    <td><span lang='ES-NI'>$</span></td>
-                    <td><span lang='ES-NI'>C$</span></td>
-                    <td><span lang='ES-NI'>$</span></td>
-                    <td><span lang='ES-NI'>C$</span></td>
-                    <td><span lang='ES-NI'>$</span></td>
-                </tr>
-            </thead>
-            {{tbody_amortizacion}}
-
-        </table>
-
+              "+ContractTable+@"
             <p style='text-align:left; font-size:10px; margin-top:50px; padding-bottom:0px; margin-bottom:0px;'>
                 Deudor:{{primer_nombre}}  {{segundo_nombre}}  {{primer_apellido}}  {{segundo_apellidio}}
             </p>
@@ -641,20 +552,15 @@ public class ContractsTemplates
     public static string ContractEmpeno = @"
         <!DOCTYPE html>
         <html>
-
         <head>
         </head>
-
         <body>
-
-
-
         <p style='font-size:9.5px; margin-top:0px; margin-bottom:0px; text-align:center; padding-bottom:0px'>
             EMPEÑOS Y PRÉSTAMOS S.A 'EMPRE SA'
             RUC J0310000300895     
         </p>
         <p style='font-size:9.5px; margin-top:0px; margin-bottom:0px; text-align:center; padding-bottom:0px'>
-            “Tu Prosperidad, Es Nuestro Éxito….”      
+            “Tu Prosperidad, Es Nuestro Éxito….” <br/>
         </p>
 
         <p style='font-size: 9.5px; margin-top: 0px; margin-bottom: 0px; text-align: left; float: left; width: 40%'>
@@ -663,7 +569,7 @@ public class ContractsTemplates
         </p>
             <p style='font-size: 9.5px; margin-top: 0px; margin-bottom: 0px; text-align: right; float: right; width: 40%'>
             Carazo - Nicaragua
-            {{fecha}}
+            {{fecha_contrato_label}}
         </p>
 
         <p style='font-size:9.5px; margin-top:0px; margin-bottom:0px; text-align:center; padding-bottom:0px'>Oficina Central
@@ -693,10 +599,10 @@ public class ContractsTemplates
         </p>
         <p style='text-align: justify; font-size:9.5px;'>
             <u>1. PRIMERA (MONTO DE EMPEÑO):</u> El deudor confiesa tener recibido de parte del acreedor, la cantidad de: C$
-            {{valoracion_empeño_cordobas}}, ({{valoracion_empeño_cordobas_label}} ) equivalente a moneda de los Estados Unidos
+            {{valoracion_empeño_cordobas}}, ({{valoracion_empeño_cordobas_label}}) equivalente a moneda de los Estados Unidos
             de América: $
-            {{valoracion_empeño_dolares}}, ( {{valoracion_empeño_dolares_label}}), Según el valor de
-            la compra del dólar a la fecha de hoy de: {{taza_cambio}} C$
+            {{valoracion_empeño_dolares}}, ({{valoracion_empeño_dolares_label}}), Según el valor de
+            la compra del dólar a la fecha de hoy {{fecha_contrato_label}} de: {{taza_cambio}} C$
         </p>
         <p style='text-align: justify; font-size:9.5px;'>
             <u>2. SEGUNDA (DESCRIPCION DE LOS BIENES EMPEÑADOS):</u> En garantía del pago a la cantidad debida, el deudor
@@ -725,15 +631,14 @@ public class ContractsTemplates
             <u>4. CUARTA (PLAZO Y FORMA DE PAGO):</u> El deudor decide en cuantas cuotas mensuales cancela su empeño, siendo
             el plazo máximo de 3 meses para artículos electrónicos, 6 meses
             para artículos no electrónicos y 12 meses para automotores; los pagos se realizarán en cuotas fijas MENSUALES de
-            C$ {{cuotafija}}, ( {{cuotafija_label}}), según el cambio del córdoba a dólar a la fecha de hoy de: C$
-            {{taza_cambio}}
-            que serán modificables al tipo de cambio del dólar, en la fecha que el cliente haga efectivo su pago. Los pagos se
-            realizarán en córdobas o el equivalente a $ {{cuotafija_dolares}} , ({{cuotafija_dolares_label}}) Estadounidenses,
-            Según tasa de cambio del Banco Central de Nicaragua, iniciando la primera cuota mensual el día y la última cuota
-            mensual el día El deudor acepta realizar sus pagos mensuales en las oficinas del acreedor,
+            C$ {{cuotafija}}, ({{cuotafija_label}}), según el cambio del córdoba a dólar a la fecha de hoy {{fecha_contrato_label}} de: C$
+            {{taza_cambio}} que serán modificables al tipo de cambio del dólar, en la fecha que el cliente haga efectivo su pago. Los pagos se 
+            realizarán en córdobas o el equivalente a $ {{cuotafija_dolares}} , ({{cuotafija_dolares_label}}) Estadounidenses, 
+            Según tasa de cambio del Banco Central de Nicaragua, iniciando la primera cuota mensual el día {{fecha_primera_cuota}} 
+            y la última cuota mensual el día {{fecha_ultima_cuota}}.El deudor acepta realizar sus pagos mensuales en las oficinas del acreedor,
             los pagos serán todos en cuotas fijas mensuales a como se muestra en la tabla de amortización de deuda por
             garantía prendaria indicada al final de este contrato. En ningún momento el deudor podrá cancelar el
-            monto total de su empeño, sin antes haber pagado mora (en caso de incurrir, hasta un máximo de 20 días en mora),
+            monto total de su empeño, sin antes haber pagado mora (en caso de incurrir, hasta un máximo de 20 días calendarios en mora),
             interés neto corriente, más los demás cargos a pagar en relación con lo pactado mensuales.
             En caso que sea imposible para el deudor cumplir con su abono pactado, este podrá pagar al acreedor de forma
             mensual, la mora, el interés neto corriente y demás cargos a pagar en relación con lo pactado.
@@ -830,93 +735,7 @@ public class ContractsTemplates
             con los términos relacionados, Y leído el presente contrato por las partes lo encontramos conforme, aprobamos,
             ratificamos y firmamos, en la ciudad de San Marcos a los {{dias}} dias del mes {{mes}} del año {{anio}}.
         </p><br></br>
-        <style>
-            td {
-                border: 1px black solid;
-                padding: 5px;
-                width: 7.14% !important;
-            }
-
-            td.col2 {
-                width: 14.28% !important;
-            }
-
-            td.col6 {
-                width: 42.85% !important;
-            }
-
-            td.val {
-                text-align: right;
-            }
-        </style>
-        <table style='width: 100%;font-size:9px !important; border-collapse: collapse;'>
-            <thead>
-                <tr>
-                    <td colspan='2' class='col2'><span lang='ES-NI'>CAPITAL PRESTADO C$</span></td>
-                    <td colspan='2' class='col2'> <span lang='ES-NI'>C$ {{valoracion_empeño_cordobas}}</span></td>
-                    <td colspan='6' class='col6' rowspan='2'>
-                    <span lang='ES-NI'>TABLA DE AMORTIZACION DE DEUDA POR GARANTIA PRENDARIA</span>
-                    </td>
-                    <td colspan='2' class='col2'><span lang='ES-NI'>CUOTA C$</span></td>
-                    <td colspan='2' class='col2'> <span lang='ES-NI'>C$ {{cuotafija}}</span></td>
-                </tr>
-                <tr>
-                    <td colspan='2' class='col2'> CAPITAL PRESTADO $</td>
-                    <td colspan='2' class='col2'> $ {{valoracion_empeño_dolares}}</td>
-                    <td colspan='2' class='col2'><span lang='ES-NI'>CUOTA FIJA<br>$</br></span> </td>
-                    <td colspan='2' class='col2'>$ {{cuotafija_dolares}}</td>
-                </tr>
-                <tr>
-                    <td colspan='2' class='col2'>
-                    <span lang='ES-NI'>PLAZO PARA CANCELAR: {{plazo}} mes(es)</span>
-                    </td>
-                    <td colspan='2' class='col2'>
-                    <p style='margin-bottom:0cm;text-align:center;line-height:normal'>
-                        <span lang='ES-NI'>INTERÉS NETO CORRIENTE(a): 1%</span>
-                    </p>
-                    </td>
-                    <td colspan='2' class='col2'>
-                    <span lang='ES-NI'>Demás cargos a
-                        pagar en relación con lo pactado (b)</span>
-                    </td>
-                    <td colspan='2' class='col2'>
-                    <span lang='ES-NI'>Interés Neto
-                        corriente más demás cargos a
-                        pagar en relación con lo pactado</span>
-                    </td>
-                    <td colspan='2' class='col2'>
-                    <span lang='ES-NI'>ABONO AL
-                        CAPITAL</span>
-                    </td>
-                    <td colspan='2' class='col2'>
-                    <span lang='ES-NI'>TOTAL A
-                        PAGAR</span>
-                    </td>
-                    <td colspan='2' class='col2'>
-                    <span lang='ES-NI'>MONTO
-                        RESTANTE</span>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan='2' class='col2'><span lang='ES-NI'>FECHAS DE PAGO</span></td>
-                    <td><span lang='ES-NI'>C$</span></td>
-                    <td><span lang='ES-NI'>$</span></td>
-                    <td><span lang='ES-NI'>C$</span></td>
-                    <td><span lang='ES-NI'>$</span></td>
-                    <td><span lang='ES-NI'>C$</span></td>
-                    <td><span lang='ES-NI'>$</span></td>
-                    <td><span lang='ES-NI'>C$</span></td>
-                    <td><span lang='ES-NI'>$</span></td>
-                    <td><span lang='ES-NI'>C$</span></td>
-                    <td><span lang='ES-NI'>$</span></td>
-                    <td><span lang='ES-NI'>C$</span></td>
-                    <td><span lang='ES-NI'>$</span></td>
-                </tr>
-            </thead>
-            {{tbody_amortizacion}}
-
-        </table>
-
+          "+ContractTable+@"
         <p style='text-align:left; font-size:10px; margin-top:50px; padding-bottom:0px; margin-bottom:0px;'>
             Deudor: {{primer_nombre}} {{segundo_nombre}} {{primer_apellido}} {{segundo_apellidio}}
         </p>
@@ -925,11 +744,8 @@ public class ContractsTemplates
         </p>
         <p style='text-align:left; font-size:10px; margin-top:0px; padding-bottom:0px; margin-bottom:0px;'>Cel:{{telefono}}
         </p>
-
         </body>
-
         </html>
-
     ";
 
 }

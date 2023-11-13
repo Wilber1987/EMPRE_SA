@@ -325,11 +325,13 @@ namespace Transactions
 
                 var reciboData = new Recibos() { id_recibo = this.id_recibo }.Find<Recibos>();
 
-                var factura = new Factura_contrato(){numero_contrato = this.numero_contrato}.Find<Factura_contrato>();
+                var factura = new Transaccion_Factura(){ numero_contrato = this.numero_contrato}.Find<Transaccion_Factura>();
+                var ultimoDetalle = factura.Detalle_Factura_Recibo.OrderByDescending(d => d.id).FirstOrDefault();
+
 
                 templateContent = templateContent.Replace("{{recibo_num}}", reciboData.consecutivo.ToString())
                 .Replace("{{cambio}}", Math.Round((decimal) factura.tasa_cambio, 2).ToString())
-                .Replace("{{fecha}}", reciboData.fecha_roc.ToString())
+                .Replace("{{fecha}}", factura.fecha.ToString())
                 .Replace("{{sucursal}}", "todo")
                 .Replace("{{cajero}}", "todo")
                 .Replace("{{cliente}}", contrato.Catalogo_Clientes.primer_nombre+" "+contrato.Catalogo_Clientes.primer_apellido+" "+contrato.Catalogo_Clientes.segundo_apellidio)
@@ -340,20 +342,20 @@ namespace Transactions
                 .Replace("{{saldo_anterior}}", "todo")
                 .Replace("{{saldo_actual}}", Math.Round((decimal) factura.total, 2).ToString())
                 .Replace("{{total_pagado}}", Math.Round((decimal) factura.total/(decimal)factura.tasa_cambio, 2).ToString())
-                .Replace("{{total_pagado_dolares}}", Math.Round((decimal) reciboData.monto, 2).ToString())
-                .Replace("{{reestructuracion}}", "todo")
-                .Replace("{{reestructuracion_dolares}}", "todo")
-                .Replace("{{perdida_doc}}", "todo")
+                .Replace("{{total_pagado_dolares}}", Math.Round((decimal) factura.total, 2).ToString())
+                .Replace("{{reestructuracion}}", Math.Round((decimal)factura.tasa_cambio, 2).ToString())
+                .Replace("{{reestructuracion_dolares}}", 1.ToString())
+                .Replace("{{perdida_doc}}",  Math.Round((decimal)factura.tasa_cambio, 2).ToString())
                 .Replace("{{perdida_doc_dolares}}", 1.ToString())
-                .Replace("{{mora}}", "todo")
-                .Replace("{{mora_dolares}}", "todo")
+                .Replace("{{mora}}",  Math.Round((decimal)factura.tasa_cambio, 2).ToString())
+                .Replace("{{mora_dolares}}", 1.ToString())
                 .Replace("{{idcp}}", "todo")
                 .Replace("{{idcp_dolares}}", "todo")
-                .Replace("{{abono_capital}}", "todo")
-                .Replace("{{abono_capital_dolares}}", "todo")
-                .Replace("{{saldo_actual}}", Math.Round((decimal) factura.saldo_actual, 2).ToString() )
-                .Replace("{{saldo_actual_dolares}}", Math.Round((decimal) factura.saldo_actual, 2).ToString() )
-                .Replace("{{proximo_pago}}", "todo");
+                .Replace("{{abono_capital}}", Math.Round((decimal) ultimoDetalle.capital_restante, 2).ToString() )
+                .Replace("{{abono_capital_dolares}}", Math.Round((decimal) ultimoDetalle.capital_restante, 2).ToString() )
+                .Replace("{{saldo_actual}}", Math.Round((decimal) ultimoDetalle.capital_restante, 2).ToString() )
+                .Replace("{{saldo_actual_dolares}}", Math.Round((decimal) ultimoDetalle.capital_restante/(decimal)factura.tasa_cambio, 2).ToString() )
+                .Replace("{{proximo_pago}}", "todo mela");
 
                 return new ResponseService()
                 {
