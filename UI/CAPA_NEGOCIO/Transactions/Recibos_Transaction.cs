@@ -326,20 +326,32 @@ namespace Transactions
                 var reciboData = new Recibos() { id_recibo = this.id_recibo }.Find<Recibos>();
 
                 var factura = new Transaccion_Factura(){ numero_contrato = this.numero_contrato}.Find<Transaccion_Factura>();
+                var cliente = contrato.Catalogo_Clientes.Find<Catalogo_Clientes>();
                 var ultimoDetalle = factura.Detalle_Factura_Recibo.OrderByDescending(d => d.id).FirstOrDefault();
+                var detalleIds = factura.Detalle_Factura_Recibo.Select(d => d.id_cuota).ToList();
+                var cuotas = Get<Tbl_Cuotas>().Where(c => detalleIds.Contains(c.id_cuota)).ToList();
 
+                var dbUser = new API.Extended.Security_Users { Id_User = factura.id_usuario }.Find<API.Extended.Security_Users>();
+
+                var sucursal = new Catalogo_Sucursales(){ Id_Sucursal = dbUser.Id_Sucursal}.Find<Catalogo_Sucursales>();
+
+                decimal sumaInteres = (decimal)cuotas.Where(c => c.interes.HasValue).Sum(c => c.mora.Value);
+
+                decimal sumaMora = (decimal)cuotas.Where(c => c.mora.HasValue).Sum(c => c.mora.Value);
+
+                var cuotasPendiente = Get<Tbl_Cuotas>().Count(c => c.id_cuota.HasValue && c.capital_restante > 0);
 
                 templateContent = templateContent.Replace("{{recibo_num}}", reciboData.consecutivo.ToString())
                 .Replace("{{cambio}}", Math.Round((decimal) factura.tasa_cambio, 2).ToString())
                 .Replace("{{fecha}}", factura.fecha.ToString())
-                .Replace("{{sucursal}}", "todo")
-                .Replace("{{cajero}}", "todo")
+                .Replace("{{sucursal}}", sucursal.Nombre)
+                .Replace("{{cajero}}", dbUser.Nombres)
                 .Replace("{{cliente}}", contrato.Catalogo_Clientes.primer_nombre+" "+contrato.Catalogo_Clientes.primer_apellido+" "+contrato.Catalogo_Clientes.segundo_apellidio)
-                //.Replace("{{clasificacion}}", contrato.Catalogo_Clientes.Catalogo_Clasificacion_Interes.porcentaje.ToString())
-                //.Replace("{{categoria}}", contrato.Catalogo_Clientes.Catalogo_Clasificacion_Cliente.Descripcion)
-                .Replace("{{cuotas}}", reciboData.plazo.ToString())
-                .Replace("{{cuotas_pendientes}}", "todo")
-                .Replace("{{saldo_anterior}}", "todo")
+                .Replace("{{clasificacion}}", cliente.Catalogo_Clasificacion_Interes.porcentaje.ToString())
+                .Replace("{{categoria}}", cliente.Catalogo_Clasificacion_Cliente.Descripcion)
+                .Replace("{{cuotas}}", contrato.plazo.ToString())
+                .Replace("{{cuotas_pendientes}}", cuotasPendiente.ToString())
+                .Replace("{{saldo_anterior}}", "")
                 .Replace("{{saldo_actual}}", Math.Round((decimal) factura.total, 2).ToString())
                 .Replace("{{total_pagado}}", Math.Round((decimal) factura.total/(decimal)factura.tasa_cambio, 2).ToString())
                 .Replace("{{total_pagado_dolares}}", Math.Round((decimal) factura.total, 2).ToString())
@@ -347,15 +359,15 @@ namespace Transactions
                 .Replace("{{reestructuracion_dolares}}", 1.ToString())
                 .Replace("{{perdida_doc}}",  Math.Round((decimal)factura.tasa_cambio, 2).ToString())
                 .Replace("{{perdida_doc_dolares}}", 1.ToString())
-                .Replace("{{mora}}",  Math.Round((decimal)factura.tasa_cambio, 2).ToString())
-                .Replace("{{mora_dolares}}", 1.ToString())
-                .Replace("{{idcp}}", "todo")
-                .Replace("{{idcp_dolares}}", "todo")
+                .Replace("{{mora}}",  Math.Round((decimal)sumaMora, 2).ToString())
+                .Replace("{{mora_dolares}}", Math.Round((decimal)sumaMora/(decimal)factura.tasa_cambio, 2).ToString())
+                .Replace("{{idcp}}", Math.Round((decimal)sumaInteres, 2).ToString())
+                .Replace("{{idcp_dolares}}", Math.Round((decimal)sumaInteres, 2).ToString())
                 .Replace("{{abono_capital}}", Math.Round((decimal) ultimoDetalle.capital_restante, 2).ToString() )
                 .Replace("{{abono_capital_dolares}}", Math.Round((decimal) ultimoDetalle.capital_restante, 2).ToString() )
                 .Replace("{{saldo_actual}}", Math.Round((decimal) ultimoDetalle.capital_restante, 2).ToString() )
                 .Replace("{{saldo_actual_dolares}}", Math.Round((decimal) ultimoDetalle.capital_restante/(decimal)factura.tasa_cambio, 2).ToString() )
-                .Replace("{{proximo_pago}}", "todo mela");
+                .Replace("{{proximo_pago}}", "");
 
                 return new ResponseService()
                 {
