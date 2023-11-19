@@ -341,6 +341,8 @@ namespace Transactions
 
                 var cuotasPendiente = Get<Tbl_Cuotas>().Count(c => c.id_cuota.HasValue && c.capital_restante > 0);
 
+                var mela = factura.Factura_contrato.numero_contrato;
+
                 templateContent = templateContent.Replace("{{recibo_num}}", reciboData.consecutivo.ToString())
                 .Replace("{{cambio}}", Math.Round((decimal) factura.tasa_cambio, 2).ToString())
                 .Replace("{{fecha}}", factura.fecha.ToString())
