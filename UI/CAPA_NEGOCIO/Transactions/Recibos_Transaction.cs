@@ -322,9 +322,7 @@ namespace Transactions
                 string templateContent = DocumentsTemplates.recibo;
 
                 var contrato = new Transaction_Contratos() { numero_contrato = this.numero_contrato }.Find<Transaction_Contratos>();
-
-                var reciboData = new Recibos() { id_recibo = this.id_recibo }.Find<Recibos>();
-
+                //var reciboData = new Recibos() { id_recibo = this.id_recibo }.Find<Recibos>();
                 var factura = new Transaccion_Factura(){ numero_contrato = this.numero_contrato}.Find<Transaccion_Factura>();
                 var cliente = contrato.Catalogo_Clientes.Find<Catalogo_Clientes>();
                 var ultimoDetalle = factura.Detalle_Factura_Recibo.OrderByDescending(d => d.id).FirstOrDefault();
@@ -343,7 +341,7 @@ namespace Transactions
 
                 var mela = factura.Factura_contrato.numero_contrato;
 
-                templateContent = templateContent.Replace("{{recibo_num}}", reciboData.consecutivo.ToString())
+                templateContent = templateContent.Replace("{{recibo_num}}", factura.id_factura.ToString())
                 .Replace("{{cambio}}", Math.Round((decimal) factura.tasa_cambio, 2).ToString())
                 .Replace("{{fecha}}", factura.fecha.ToString())
                 .Replace("{{sucursal}}", sucursal.Nombre)
