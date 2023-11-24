@@ -77,6 +77,8 @@ const clientSearcher = (action) => {
     const model = new Catalogo_Clientes();
     const TableComponent = new WTableComponent({
         ModelObject: model, Dataset: [], Options: {
+            Filter: true,
+            FilterDisplay: true,
             UserActions: [{
                 name: "Selecionar",
                 action: async (cliente) => {
@@ -84,17 +86,8 @@ const clientSearcher = (action) => {
                 }
             }]
         }
-    })
-    const FilterOptions = new WFilterOptions({
-        Dataset: [],
-        ModelObject: model,
-        Display: true,
-        FilterFunction: (DFilt) => {
-            TableComponent.Dataset = DFilt;
-            TableComponent?.DrawTable();
-        }
-    });
-    return WRender.Create({ className: "main-container", children: [FilterOptions, TableComponent] });
+    })    
+    return WRender.Create({ className: "main-container", children: [TableComponent] });
 }
 export { clientSearcher }
 

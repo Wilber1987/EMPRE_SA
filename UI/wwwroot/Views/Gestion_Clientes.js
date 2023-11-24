@@ -44,10 +44,11 @@ class Gestion_ClientesView extends HTMLElement {
                     this.TableComponent?.DrawTable();
                     
                 } else {
-                    this.MainComponent = WRender.Create({ className: "main-container", children: [this.FilterOptions, this.TableComponent] })
                     const data = await model.Get();       
                     this.TableComponent = new WTableComponent({
                         ModelObject: model, Dataset: data, Options: {
+                            Filter: true,
+                            FilterDisplay: true,
                             UserActions: [
                                 {
                                     name: "Editar", action: (cliente) => {
@@ -59,15 +60,8 @@ class Gestion_ClientesView extends HTMLElement {
                             ]
                         }
                     })
-                    this.FilterOptions = new WFilterOptions({
-                        Dataset: data,
-                        ModelObject: model,
-                        Display: true,
-                        FilterFunction: (DFilt) => {
-                            this.TableComponent?.DrawTable(DFilt);
-                        }
-                    });
-                }              
+                    this.MainComponent = WRender.Create({ className: "main-container", children: [this.TableComponent] })
+                } 
                 this.Manager?.NavigateFunction("tabla", this.MainComponent);
             }
         }))

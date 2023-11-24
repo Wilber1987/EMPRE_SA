@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using CAPA_NEGOCIO.Services;
+using CAPA_DATOS;
 using iText.IO.Source;
 using iText.Kernel.Pdf;
 using iText.Html2pdf;
@@ -23,21 +24,23 @@ namespace API.Controllers
         // }
 
         [HttpGet]
-        public object SendMail(){
-            return MailServices.SendMailContract(new List<String>(){"wilberj1987@gmail.com","alderhernandez@gmail.com"},"noreply@noreply","Usted es un mela","example.cshtml",
-                    new {
+        public object SendMail()
+        {
+            return MailServices.SendMailContract(new List<String>() { "wilberj1987@gmail.com", "alderhernandez@gmail.com" }, "noreply@noreply", "Usted es un mela", "example.cshtml",
+                    new
+                    {
                         numero_contrato = 123,
                         monto = 1000,
                         observaciones = "Ejemplo de observaciones",
                         // Otras propiedades...
                     } as dynamic
-                );            
+                );
         }
 
 
         [HttpPost]
         [AuthController]
-        public List<Catalogo_Clasificacion_Interes> getCatalogo_Clasificacion_Interes(Catalogo_Clasificacion_Interes Inst)
+        public List<Catalogo_Clasificacion_Interes> getCatalogo_Clasificacion_Interes(Catalogo_Clasificacion_Interes Inst, [FromQuery] SearchData? pageData)
         {
             return Inst.Get<Catalogo_Clasificacion_Interes>();
         }
@@ -55,7 +58,7 @@ namespace API.Controllers
         }
         [HttpPost]
         [AuthController]
-        public List<Catalogo_Estados_Articulos> getCatalogo_Estados_Articulos(Catalogo_Estados_Articulos Inst)
+        public List<Catalogo_Estados_Articulos> getCatalogo_Estados_Articulos(Catalogo_Estados_Articulos Inst, [FromQuery] SearchData? pageData)
         {
             return Inst.Get<Catalogo_Estados_Articulos>();
         }
@@ -74,7 +77,7 @@ namespace API.Controllers
         //Transactional_Valoracion
         [HttpPost]
         [AuthController]
-        public List<Transactional_Valoracion> getTransactional_Valoracion(Transactional_Valoracion Inst)
+        public List<Transactional_Valoracion> getTransactional_Valoracion(Transactional_Valoracion Inst, [FromQuery] SearchData? pageData)
         {
             return Inst.Get<Transactional_Valoracion>();
         }
@@ -93,7 +96,7 @@ namespace API.Controllers
         //Catalogo_Agentes
         [HttpPost]
         [AuthController]
-        public List<Catalogo_Agentes> getCatalogo_Agentes(Catalogo_Agentes Inst)
+        public List<Catalogo_Agentes> getCatalogo_Agentes(Catalogo_Agentes Inst, [FromQuery] SearchData? pageData)
         {
             return Inst.Get<Catalogo_Agentes>();
         }
@@ -112,7 +115,7 @@ namespace API.Controllers
         //Catalogo_Clasificacion_Cliente
         [HttpPost]
         [AuthController]
-        public List<Catalogo_Clasificacion_Cliente> getCatalogo_Clasificacion_Cliente(Catalogo_Clasificacion_Cliente Inst)
+        public List<Catalogo_Clasificacion_Cliente> getCatalogo_Clasificacion_Cliente(Catalogo_Clasificacion_Cliente Inst, [FromQuery] SearchData? pageData)
         {
             return Inst.Get<Catalogo_Clasificacion_Cliente>();
         }
@@ -131,7 +134,7 @@ namespace API.Controllers
         //Catalogo_Clientes
         [HttpPost]
         [AuthController]
-        public List<Catalogo_Clientes> getCatalogo_Clientes(Catalogo_Clientes Inst)
+        public List<Catalogo_Clientes> getCatalogo_Clientes(Catalogo_Clientes Inst, [FromQuery] SearchData? pageData)
         {
             return Inst.Get<Catalogo_Clientes>();
         }
@@ -150,23 +153,26 @@ namespace API.Controllers
         //Condicion_Laboral_Cliente
         [HttpPost]
         [AuthController]
-        public List<Condicion_Laboral_Cliente> getCondicion_Laboral_Cliente(Condicion_Laboral_Cliente Inst) {
+        public List<Condicion_Laboral_Cliente> getCondicion_Laboral_Cliente(Condicion_Laboral_Cliente Inst, [FromQuery] SearchData? pageData)
+        {
             return Inst.Get<Condicion_Laboral_Cliente>();
         }
         [HttpPost]
         [AuthController]
-        public object saveCondicion_Laboral_Cliente(Condicion_Laboral_Cliente inst) {
+        public object saveCondicion_Laboral_Cliente(Condicion_Laboral_Cliente inst)
+        {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateCondicion_Laboral_Cliente(Condicion_Laboral_Cliente inst) {
+        public object updateCondicion_Laboral_Cliente(Condicion_Laboral_Cliente inst)
+        {
             return inst.Update();
         }
         //Catalogo_Tipo_Agente
         [HttpPost]
         [AuthController]
-        public List<Catalogo_Tipo_Agente> getCatalogo_Tipo_Agente(Catalogo_Tipo_Agente Inst)
+        public List<Catalogo_Tipo_Agente> getCatalogo_Tipo_Agente(Catalogo_Tipo_Agente Inst, [FromQuery] SearchData? pageData)
         {
             return Inst.Get<Catalogo_Tipo_Agente>();
         }
@@ -185,7 +191,7 @@ namespace API.Controllers
         //Catalogo_Tipo_Identificacion
         [HttpPost]
         [AuthController]
-        public List<Catalogo_Tipo_Identificacion> getCatalogo_Tipo_Identificacion(Catalogo_Tipo_Identificacion Inst)
+        public List<Catalogo_Tipo_Identificacion> getCatalogo_Tipo_Identificacion(Catalogo_Tipo_Identificacion Inst, [FromQuery] SearchData? pageData)
         {
             return Inst.Get<Catalogo_Tipo_Identificacion>();
         }
@@ -204,7 +210,7 @@ namespace API.Controllers
         //Transaction_Contratos
         [HttpPost]
         [AuthController]
-        public List<Transaction_Contratos> getTransaction_Contratos(Transaction_Contratos Inst)
+        public List<Transaction_Contratos> getTransaction_Contratos(Transaction_Contratos Inst, [FromQuery] SearchData? pageData)
         {
             return Inst.Get<Transaction_Contratos>();
         }
@@ -223,7 +229,7 @@ namespace API.Controllers
         //Detail_Prendas
         [HttpPost]
         [AuthController]
-        public List<Detail_Prendas> getDetail_Prendas(Detail_Prendas Inst)
+        public List<Detail_Prendas> getDetail_Prendas(Detail_Prendas Inst, [FromQuery] SearchData? pageData)
         {
             return Inst.Get<Detail_Prendas>();
         }
@@ -242,7 +248,7 @@ namespace API.Controllers
         //Detail_Prendas_Vehiculos
         [HttpPost]
         [AuthController]
-        public List<Detail_Prendas_Vehiculos> getDetail_Prendas_Vehiculos(Detail_Prendas_Vehiculos Inst)
+        public List<Detail_Prendas_Vehiculos> getDetail_Prendas_Vehiculos(Detail_Prendas_Vehiculos Inst, [FromQuery] SearchData? pageData)
         {
             return Inst.Get<Detail_Prendas_Vehiculos>();
         }
@@ -261,7 +267,7 @@ namespace API.Controllers
         //Catalogo_Cambio_Dolar
         [HttpPost]
         [AuthController]
-        public List<Catalogo_Cambio_Dolar> getCatalogo_Cambio_Dolar(Catalogo_Cambio_Dolar Inst)
+        public List<Catalogo_Cambio_Dolar> getCatalogo_Cambio_Dolar(Catalogo_Cambio_Dolar Inst, [FromQuery] SearchData? pageData)
         {
             return Inst.Get<Catalogo_Cambio_Dolar>();
         }
@@ -280,7 +286,7 @@ namespace API.Controllers
         //Catalogo_Cuentas
         [HttpPost]
         [AuthController]
-        public List<Catalogo_Cuentas> getCatalogo_Cuentas(Catalogo_Cuentas Inst)
+        public List<Catalogo_Cuentas> getCatalogo_Cuentas(Catalogo_Cuentas Inst, [FromQuery] SearchData? pageData)
         {
             return Inst.Get<Catalogo_Cuentas>();
         }
@@ -299,7 +305,7 @@ namespace API.Controllers
         //Categoria_Cuentas
         [HttpPost]
         [AuthController]
-        public List<Categoria_Cuentas> getCategoria_Cuentas(Categoria_Cuentas Inst)
+        public List<Categoria_Cuentas> getCategoria_Cuentas(Categoria_Cuentas Inst, [FromQuery] SearchData? pageData)
         {
             return Inst.Get<Categoria_Cuentas>();
         }
@@ -318,7 +324,7 @@ namespace API.Controllers
         //Permisos_Cuentas
         [HttpPost]
         [AuthController]
-        public List<Permisos_Cuentas> getPermisos_Cuentas(Permisos_Cuentas Inst)
+        public List<Permisos_Cuentas> getPermisos_Cuentas(Permisos_Cuentas Inst, [FromQuery] SearchData? pageData)
         {
             return Inst.Get<Permisos_Cuentas>();
         }
@@ -334,11 +340,11 @@ namespace API.Controllers
         {
             return inst.Update();
         }
-             
+
         //Catalogo_Departamento
         [HttpPost]
         [AuthController]
-        public List<Catalogo_Departamento> getCatalogo_Departamento(Catalogo_Departamento Inst)
+        public List<Catalogo_Departamento> getCatalogo_Departamento(Catalogo_Departamento Inst, [FromQuery] SearchData? pageData)
         {
             return Inst.Get<Catalogo_Departamento>();
         }
@@ -357,7 +363,7 @@ namespace API.Controllers
         //Catalogo_Inversores
         [HttpPost]
         [AuthController]
-        public List<Catalogo_Inversores> getCatalogo_Inversores(Catalogo_Inversores Inst)
+        public List<Catalogo_Inversores> getCatalogo_Inversores(Catalogo_Inversores Inst, [FromQuery] SearchData? pageData)
         {
             return Inst.Get<Catalogo_Inversores>();
         }
@@ -376,7 +382,7 @@ namespace API.Controllers
         //Catalogo_Municipio
         [HttpPost]
         [AuthController]
-        public List<Catalogo_Municipio> getCatalogo_Municipio(Catalogo_Municipio Inst)
+        public List<Catalogo_Municipio> getCatalogo_Municipio(Catalogo_Municipio Inst, [FromQuery] SearchData? pageData)
         {
             return Inst.Get<Catalogo_Municipio>();
         }
@@ -395,7 +401,7 @@ namespace API.Controllers
         //Catalogo_Nacionalidad
         [HttpPost]
         [AuthController]
-        public List<Catalogo_Nacionalidad> getCatalogo_Nacionalidad(Catalogo_Nacionalidad Inst)
+        public List<Catalogo_Nacionalidad> getCatalogo_Nacionalidad(Catalogo_Nacionalidad Inst, [FromQuery] SearchData? pageData)
         {
             return Inst.Get<Catalogo_Nacionalidad>();
         }
@@ -414,7 +420,7 @@ namespace API.Controllers
         //Catalogo_Profesiones
         [HttpPost]
         [AuthController]
-        public List<Catalogo_Profesiones> getCatalogo_Profesiones(Catalogo_Profesiones Inst)
+        public List<Catalogo_Profesiones> getCatalogo_Profesiones(Catalogo_Profesiones Inst, [FromQuery] SearchData? pageData)
         {
             return Inst.Get<Catalogo_Profesiones>();
         }
@@ -433,7 +439,7 @@ namespace API.Controllers
         //Catalogo_Tipo_Transaccion
         [HttpPost]
         [AuthController]
-        public List<Catalogo_Tipo_Transaccion> getCatalogo_Tipo_Transaccion(Catalogo_Tipo_Transaccion Inst)
+        public List<Catalogo_Tipo_Transaccion> getCatalogo_Tipo_Transaccion(Catalogo_Tipo_Transaccion Inst, [FromQuery] SearchData? pageData)
         {
             return Inst.Get<Catalogo_Tipo_Transaccion>();
         }
@@ -452,7 +458,7 @@ namespace API.Controllers
         //Transaction_Contratos_Inversionistas
         [HttpPost]
         [AuthController]
-        public List<Transaction_Contratos_Inversionistas> getTransaction_Contratos_Inversionistas(Transaction_Contratos_Inversionistas Inst)
+        public List<Transaction_Contratos_Inversionistas> getTransaction_Contratos_Inversionistas(Transaction_Contratos_Inversionistas Inst, [FromQuery] SearchData? pageData)
         {
             return Inst.Get<Transaction_Contratos_Inversionistas>();
         }
@@ -471,7 +477,7 @@ namespace API.Controllers
         //Transaction_Egresos
         [HttpPost]
         [AuthController]
-        public List<Transaction_Egresos> getTransaction_Egresos(Transaction_Egresos Inst)
+        public List<Transaction_Egresos> getTransaction_Egresos(Transaction_Egresos Inst, [FromQuery] SearchData? pageData)
         {
             return Inst.Get<Transaction_Egresos>();
         }
@@ -490,7 +496,7 @@ namespace API.Controllers
         //Transaction_Facturas
         [HttpPost]
         [AuthController]
-        public List<Transaction_Facturas> getTransaction_Facturas(Transaction_Facturas Inst)
+        public List<Transaction_Facturas> getTransaction_Facturas(Transaction_Facturas Inst, [FromQuery] SearchData? pageData)
         {
             return Inst.Get<Transaction_Facturas>();
         }
@@ -509,7 +515,7 @@ namespace API.Controllers
         //Transaction_Ingresos
         [HttpPost]
         [AuthController]
-        public List<Transaction_Ingresos> getTransaction_Ingresos(Transaction_Ingresos Inst)
+        public List<Transaction_Ingresos> getTransaction_Ingresos(Transaction_Ingresos Inst, [FromQuery] SearchData? pageData)
         {
             return Inst.Get<Transaction_Ingresos>();
         }
@@ -528,7 +534,7 @@ namespace API.Controllers
         //Transaction_Ingresos_Egresos
         [HttpPost]
         [AuthController]
-        public List<Transaction_Ingresos_Egresos> getTransaction_Ingresos_Egresos(Transaction_Ingresos_Egresos Inst)
+        public List<Transaction_Ingresos_Egresos> getTransaction_Ingresos_Egresos(Transaction_Ingresos_Egresos Inst, [FromQuery] SearchData? pageData)
         {
             return Inst.Get<Transaction_Ingresos_Egresos>();
         }
@@ -547,7 +553,7 @@ namespace API.Controllers
         //Catalogo_Sucursales
         [HttpPost]
         [AuthController]
-        public List<Catalogo_Sucursales> getCatalogo_Sucursales(Catalogo_Sucursales Inst)
+        public List<Catalogo_Sucursales> getCatalogo_Sucursales(Catalogo_Sucursales Inst, [FromQuery] SearchData? pageData)
         {
             return Inst.Get<Catalogo_Sucursales>();
         }
@@ -566,7 +572,7 @@ namespace API.Controllers
         //Datos_Configuracion
         [HttpPost]
         [AuthController]
-        public List<Datos_Configuracion> getDatos_Configuracion(Datos_Configuracion Inst)
+        public List<Datos_Configuracion> getDatos_Configuracion(Datos_Configuracion Inst, [FromQuery] SearchData? pageData)
         {
             return Inst.Get<Datos_Configuracion>();
         }
@@ -585,7 +591,7 @@ namespace API.Controllers
         //Catalogo_Categoria
         [HttpPost]
         [AuthController]
-        public List<Catalogo_Categoria> getCatalogo_Categoria(Catalogo_Categoria Inst)
+        public List<Catalogo_Categoria> getCatalogo_Categoria(Catalogo_Categoria Inst, [FromQuery] SearchData? pageData)
         {
             return Inst.Get<Catalogo_Categoria>();
         }
@@ -601,22 +607,25 @@ namespace API.Controllers
         {
             return inst.Update();
         }
-         //Transaccion_Factura
-       [HttpPost]
-       [AuthController]
-       public List<Transaccion_Factura> getTransaccion_Factura(Transaccion_Factura Inst) {
-           return Inst.Get<Transaccion_Factura>();
-       }
-       [HttpPost]
-       [AuthController]
-       public object saveTransaccion_Factura(Transaccion_Factura inst) {
-           return inst.Save();
-       }
-       [HttpPost]
-       [AuthController]
-       public object updateTransaccion_Factura(Transaccion_Factura inst) {
-           return inst.Update();
-       }
-        
+        //Transaccion_Factura
+        [HttpPost]
+        [AuthController]
+        public List<Transaccion_Factura> getTransaccion_Factura(Transaccion_Factura Inst, [FromQuery] SearchData? pageData)
+        {
+            return Inst.Get<Transaccion_Factura>();
+        }
+        [HttpPost]
+        [AuthController]
+        public object saveTransaccion_Factura(Transaccion_Factura inst)
+        {
+            return inst.Save();
+        }
+        [HttpPost]
+        [AuthController]
+        public object updateTransaccion_Factura(Transaccion_Factura inst)
+        {
+            return inst.Update();
+        }
+
     }
 }
