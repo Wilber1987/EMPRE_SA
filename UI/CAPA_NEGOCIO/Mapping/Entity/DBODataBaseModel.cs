@@ -1,5 +1,6 @@
 using CAPA_DATOS;
 using CAPA_DATOS.Security;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Model;
 using System;
 using System.Collections.Generic;
@@ -132,6 +133,7 @@ namespace DataBaseModel
         public Double? total_pagar_dolares { get; set; }
         public Double? interes_dolares { get; set; }
         public int? Id_User { get; set; }
+        public int? reestructurado { get; set; }
         /*public int? numero_contrato { get; set; }
         public DateTime? fecha_contrato { get; set; }
         public DateTime? fecha_cancelar { get; set; }
@@ -214,6 +216,47 @@ namespace DataBaseModel
         /*public List<Transaction_Facturas>? Transaction_Facturas { get; set; }
         [OneToMany(TableName = "Tbl_Cuotas", KeyColumn = "numero_contrato", ForeignKeyColumn = "numero_contrato")]*/
         public List<Tbl_Cuotas>? Tbl_Cuotas { get; set; }
+
+        public void Reestructurar(double? reestructuracion_value)
+        { 
+            if (true)
+            {
+                
+            }          
+            this.reestructurado += 1; 
+            CrearCuotas(this.saldo, reestructuracion_value);
+        }
+        public void CrearCuotas(double? monto, double? plazo)
+        {
+            var tasasCambio = new Catalogo_Cambio_Dolar().Get<Catalogo_Cambio_Dolar>()[0].valor_de_venta;
+            this.cuotafija_dolares = this.GetPago(monto, plazo);
+            this.cuotafija = this.cuotafija_dolares * this.taza_cambio;
+            var capital = this.valoracion_empeño_dolares;
+
+            for (var index = 0; index < plazo; index++)
+            {
+                var abono_capital = this.cuotafija_dolares - (capital * this.tasas_interes);
+                var cuota = new Tbl_Cuotas
+                {
+                    fecha =  this.fecha?.AddMonths(1),
+                    total = this.cuotafija_dolares,
+                    interes = capital * this.tasas_interes,
+                    abono_capital = abono_capital,
+                    capital_restante = (capital - abono_capital) < 0 ? 0 : (capital - abono_capital),
+                    tasa_cambio = tasasCambio,
+                    numero_contrato = this.numero_contrato
+                };
+                capital -= abono_capital;
+                cuota.Save();
+            }
+        }
+        private double? GetPago(double? monto, double? cuotas)
+        {
+            var tasa = this.tasas_interes;
+            var payment = tasa * Math.Pow(Convert.ToDouble(1 + tasa), Convert.ToDouble(cuotas)) * monto 
+                / (Math.Pow(Convert.ToDouble(1 + tasa), Convert.ToDouble(cuotas)) - 1);
+            return payment;
+        }
     }
 
     public enum Contratos_State
@@ -245,7 +288,7 @@ namespace DataBaseModel
         public string? en_manos_de { get; set; }
         public string? color { get; set; }
         public string? factura { get; set; }
-        public string? tipo_movimiento { get; set; }      
+        public string? tipo_movimiento { get; set; }
         public Double? v_porcentage_etiqueta { get; set; }
         public int? id_categoria { get; set; }
         public int? id_valoracion { get; set; }
@@ -483,7 +526,7 @@ namespace DataBaseModel
         public DateTime? fecha { get; set; }
         public int? id_usuario { get; set; }
         public string? estado { get; set; }
-        
+
         [JsonProp]
         public Factura_contrato Factura_contrato { get; set; }
 
@@ -491,7 +534,7 @@ namespace DataBaseModel
         public List<Detalle_Factura_Recibo>? Detalle_Factura_Recibo { get; set; }
     }
 
-    public class Factura_contrato 
+    public class Factura_contrato
     {
         public int? numero_contrato { get; set; }
         public int? cuotas_pactadas { get; set; }
@@ -508,14 +551,15 @@ namespace DataBaseModel
         public double? tasa_cambio { get; set; }
         public int? id_cliente { get; set; }
         public int? id_sucursal { get; set; }
-        
+        public int? reestructuracion { get; set; }
+
     }
 
     public class Detalle_Factura_Recibo : EntityClass
     {
         [PrimaryKey(Identity = true)]
         public int? id { get; set; }
-        
+
         public int? id_cuota { get; set; }
         public double? total_cuota { get; set; }
         public double? monto_pagado { get; set; }
@@ -525,9 +569,9 @@ namespace DataBaseModel
 
         public int? id_factura { get; set; }
 
-       //[ManyToOne(TableName = "Transaccion_Factura", KeyColumn = "id_factura", ForeignKeyColumn = "id_factura")]
+        //[ManyToOne(TableName = "Transaccion_Factura", KeyColumn = "id_factura", ForeignKeyColumn = "id_factura")]
         public Transaccion_Factura? Transaccion_Factura { get; set; }
 
-        
+
     }
 }

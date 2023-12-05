@@ -39,6 +39,8 @@ namespace Transactions
         public double? paga_dolares { get; set; }
         public bool? solo_abono { get; set; }
         public bool? cancelar { get; set; }
+        public bool? reestructurar { get; set; }
+        public double? reestructurar_value { get; set; }
 
 
         public object? SaveRecibos(string token)
@@ -48,7 +50,6 @@ namespace Transactions
                 var user = AuthNetCore.User(token);
                 var dbUser = new API.Extended.Security_Users { Id_User = user.UserId }.Find<API.Extended.Security_Users>();
                 var contrato = new Transaction_Contratos() { numero_contrato = this.numero_contrato }.Find<Transaction_Contratos>();
-
                 if (contrato == null)
                 {
                     return new ResponseService()
@@ -57,7 +58,6 @@ namespace Transactions
                         message = "Nº contrato no encontrado"
                     };
                 }
-
                 if (this.cancelar.HasValue && this.cancelar.Value && this.paga_dolares < contrato.saldo)
                 {
                     return new ResponseService()
@@ -67,11 +67,9 @@ namespace Transactions
                     };
                 }
                 double monto = (double)this.paga_dolares;
-
                 BeginGlobalTransaction();
-                var cuotasPagadas = new List<Detalle_Factura_Recibo>();                
-
-
+                
+                var cuotasPagadas = new List<Detalle_Factura_Recibo>(); 
                 foreach (var item in contrato.Tbl_Cuotas.OrderBy(c => c.id_cuota).ToList())
                 {
                     if (monto >= item.total && monto > 0)
@@ -104,8 +102,12 @@ namespace Transactions
                 }
                 var saldoRespaldo = contrato.saldo;
 
-                contrato.saldo = contrato.saldo - this.paga_dolares;
+                contrato.saldo = contrato.saldo - this.paga_dolares;  
                 contrato.Update();
+                if (this.reestructurar == true)
+                {
+                    contrato.Reestructurar(this.reestructurar_value);   
+                }
 
                 //fecha de proximo pago
                 var fechaProximoPago = contrato.Tbl_Cuotas.Find(x => x.total< x.pago_contado || x.pago_contado == null);
@@ -121,11 +123,11 @@ namespace Transactions
                     estado = EstadoEnum.ACTIVO.ToString(),
                     concepto = "Pago de cuota contrato No: " + this.numero_contrato,
                     tasa_cambio = this.tasa_cambio,
-                    total = this.paga_dolares,
+                    total = this.paga_dolares + (this.reestructurar == true ? 1 : 0),
                     id_cliente = contrato.codigo_cliente,
                     id_sucursal = dbUser.Id_Sucursal,
                     fecha = DateTime.Now,
-                    id_usuario = 1,//todo
+                    id_usuario = user.UserId,
                     Factura_contrato = new Factura_contrato()
                     {
                         numero_contrato = this.numero_contrato,
@@ -142,7 +144,8 @@ namespace Transactions
                         total = this.total_dolares,
                         tasa_cambio = this.tasa_cambio,
                         id_cliente = contrato.codigo_cliente,
-                        id_sucursal = dbUser.Id_Sucursal
+                        id_sucursal = dbUser.Id_Sucursal,
+                        reestructuracion = this.reestructurar == true ? 1 : 0
                     },
                     Detalle_Factura_Recibo = cuotasPagadas
                 };

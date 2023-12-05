@@ -762,6 +762,13 @@ class Recibos extends EntityClass {
     paga_dolares = { type: "number", hiddenInTable: true };
     temporal = { type: "checkbox", require: false };
     cancelar = { type: "checkbox", hiddenInTable: true, require: false };
+    reestructurar = { type: "checkbox", hidden: true, require: false , action:(recibo, form)=>{
+        if (recibo.reestructurar == true) {
+            this.reestructurar_value.hidden = false;
+            form.DrawComponent();
+        }
+    }};
+    reestructurar_value = { type: "number", hidden: true , min: 1};
 
     VerRecibo = async () => {
         return await this.SaveData("PDF/GeneratePdfContract", this)

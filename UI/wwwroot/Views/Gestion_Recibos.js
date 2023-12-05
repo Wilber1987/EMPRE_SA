@@ -7,7 +7,7 @@ import { ComponentsManager, WRender } from "../WDevCore/WModules/WComponentsTool
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 import { contratosSearcher } from "../modules/SerchersModules.js";
 class Gestion_RecibosView extends HTMLElement {
-    // @ts-ignore
+       // @ts-ignore
     constructor(props) {
         super();
         this.OptionContainer = WRender.Create({ className: "OptionContainer" });
@@ -15,7 +15,7 @@ class Gestion_RecibosView extends HTMLElement {
         this.Manager = new ComponentsManager({ MainContainer: this.TabContainer, SPAManage: false });
         this.valoracionesContainer = WRender.Create({ className: "valoraciones-container" });
         this.append(this.CustomStyle);
-        this.Contrato = {}
+        this.Contrato = new Transaction_Contratos()
         this.valoracionesDataset = [];
         this.selectedClientDetail = WRender.Create({ tagName: "label", className: "selected-client" });
 
@@ -23,7 +23,20 @@ class Gestion_RecibosView extends HTMLElement {
     }
     Draw = async () => {
         this.valoracionesContainer.innerHTML = "";
-        this.tasasCambio = await new Catalogo_Cambio_Dolar().Get();
+        this.tasasCambio = await new Catalogo_Cambio_Dolar().Get();        
+        if (!this.contratosSearcher) {
+            this.contratosSearcher = contratosSearcher(this.selectContrato);
+        }
+        this.Manager.NavigateFunction("buscar-contrato", this.contratosSearcher);
+        this.append(
+            StylesControlsV2.cloneNode(true),
+            StyleScrolls.cloneNode(true),
+            StylesControlsV3.cloneNode(true),
+            this.OptionContainer,
+            this.TabContainer
+        );
+    }
+    generateRecibo() {
         this.reciboModel = new Recibos({
             paga_cordobas: {
                 type: 'number', action: (ObjectF, form) => {
@@ -51,6 +64,11 @@ class Gestion_RecibosView extends HTMLElement {
                 this.reciboForm?.DrawComponent();
             }
         };
+        const reestructure = this.ReestructurateData(this.Contrato);
+        if (reestructure.canReestructure) {
+            this.reciboModel.reestructurar.hidden = false;
+            this.reciboModel.reestructurar_value.max = reestructure.max;
+        }
         this.SetOption();
         this.reciboForm = new WForm({
             ModelObject: this.reciboModel,
@@ -64,17 +82,17 @@ class Gestion_RecibosView extends HTMLElement {
                     return;
                 }
                 // @ts-ignore
-                const response = await new Recibos(this.reciboForm?.FormObject).Save() //this.reciboModel?.Save() // this.reciboModel?.GuardarValoraciones(this.valoracionesTable?.Dataset);
+                const response = await new Recibos(this.reciboForm?.FormObject).Save(); //this.reciboModel?.Save() // this.reciboModel?.GuardarValoraciones(this.valoracionesTable?.Dataset);
                 if (response.status == 200) {
                     //location.href = "/PagesViews/Ver_Recibos";
                     this.append(ModalVericateAction(() => {
                         location.href = "/PagesViews/Ver_Recibos";
                         //location.href = "/PagesViews/Print_Recibo?id_Recibo=" + response.body.id_recibo;
-                    }, response.message))
+                    }, response.message));
                 } else if (response.status == 400) {
                     this.append(ModalVericateAction(() => {
                         location.href = "/PagesViews/Gestion_Recibos";
-                    }, response.message))
+                    }, response.message));
                 }
             }, CustomStyle: css`
                 .divForm{
@@ -96,15 +114,10 @@ class Gestion_RecibosView extends HTMLElement {
                     margin: 0px;
                 } `
         });
-
-
         this.contratoDetail = WRender.Create({ className: "info-header-contrato" });
-
-
-
         this.TabContainerTables = WRender.Create({ className: "TabContainerTables", id: 'TabContainerTables' });
         this.ManagerTables = new ComponentsManager({ MainContainer: this.TabContainerTables });
-
+        this.valoracionesContainer.innerHTML = "";
 
         this.valoracionesContainer.append(
             this.selectedClientDetail,
@@ -112,17 +125,26 @@ class Gestion_RecibosView extends HTMLElement {
             this.contratoDetail,
             this.TabContainerTables
         );
-        if (!this.contratosSearcher) {
-            this.contratosSearcher = contratosSearcher(this.selectContrato);
+    }
+
+    /**
+     * @param {Transaction_Contratos} Contrato
+     */
+    ReestructurateData(Contrato) {
+        console.log(Contrato);
+        const categoria = Contrato.Detail_Prendas[0].Catalogo_Categoria;
+        const plazo = Contrato.plazo;
+        let canReestructure = false;
+        // @ts-ignore
+        if (categoria.descripcion != "vehiculos" && categoria.plazo_limite > plazo  ) {
+            canReestructure = true;
         }
-        this.Manager.NavigateFunction("buscar-contrato", this.contratosSearcher);
-        this.append(
-            StylesControlsV2.cloneNode(true),
-            StyleScrolls.cloneNode(true),
-            StylesControlsV3.cloneNode(true),
-            this.OptionContainer,
-            this.TabContainer
-        );
+        return {
+            canReestructure: true,//canReestructure,
+            min: 1,
+            // @ts-ignore
+            max: categoria.plazo_limite - plazo 
+        }
     }
 
     /**
@@ -224,8 +246,9 @@ class Gestion_RecibosView extends HTMLElement {
                 <div>
                     <h4 style="text-align:center;">DATOS DEL RECIBO OFICIAL DE CAJA</h4>
                 </div>`;
+        this.generateRecibo();
         this.calculoRecibo(selectContrato, this.tasasCambio);
-
+       
         this.Manager.NavigateFunction("valoraciones", this.valoracionesContainer);
         //this.contratoDetailUpdate();
     }
@@ -264,15 +287,12 @@ class Gestion_RecibosView extends HTMLElement {
                     break;
                 }
             }
-
             for (const cuota of contrato.Tbl_Cuotas) {
                 if ((cuota.total - (cuota.pago_contado || 0)) > 0) {
                     totalRestante += cuota.total - (cuota.pago_contado || 0);
                     interes_cargos += cuota.interes || 0;
                 }
             }
-
-
             this.reciboForm.FormObject["numero_contrato"] = contrato["numero_contrato"];
             //this.reciboForm.FormObject["saldo_actual"] = contrato["saldo_actual"];
             this.reciboForm.FormObject["tasa_cambio"] = tasasCambio[0].valor_de_compra;
@@ -300,9 +320,6 @@ class Gestion_RecibosView extends HTMLElement {
             this.reciboForm.FormObject["paga_dolares"] = primeraCuotaConCapitalMayorACero;
             this.reciboForm.FormObject["solo_abono"] = true;
             this.reciboForm.FormObject["cancelar"] = false;
-
-
-
         }
 
     }

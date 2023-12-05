@@ -42,3 +42,8 @@ CREATE TABLE security.Tbl_Profile (
 
 ALTER TABLE Tbl_Profile ADD CONSTRAINT FK_Tbl_InvestigatorProfile_Cat_Nacionalidad FOREIGN KEY (Id_Pais_Origen) REFERENCES security.Cat_Paises(Id_Pais);
 ALTER TABLE Tbl_Profile ADD CONSTRAINT FK_Tbl_InvestigatorProfile_Security_Users FOREIGN KEY (IdUser) REFERENCES [security].Security_Users(Id_User);
+
+
+
+ALTER TABLE EMPRE_SA.dbo.Transaction_Contratos ADD reestructurado int NULL;
+EXEC EMPRE_SA.sys.sp_addextendedproperty 'MS_Description', N'numero de reestructuraciones', 'schema', N'dbo', 'table', N'Transaction_Contratos', 'column', N'reestructurado';
