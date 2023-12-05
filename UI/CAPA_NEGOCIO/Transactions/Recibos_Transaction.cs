@@ -41,6 +41,7 @@ namespace Transactions
         public bool? cancelar { get; set; }
         public bool? reestructurar { get; set; }
         public double? reestructurar_value { get; set; }
+        public double? total_apagar_dolares { get; set; }
 
 
         public object? SaveRecibos(string token)
@@ -145,7 +146,8 @@ namespace Transactions
                         tasa_cambio = this.tasa_cambio,
                         id_cliente = contrato.codigo_cliente,
                         id_sucursal = dbUser.Id_Sucursal,
-                        reestructuracion = this.reestructurar == true ? 1 : 0
+                        reestructuracion = this.reestructurar == true ? 1 : 0,
+                        total_pagado = this.total_apagar_dolares
                     },
                     Detalle_Factura_Recibo = cuotasPagadas
                 };

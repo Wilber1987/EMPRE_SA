@@ -218,12 +218,14 @@ namespace DataBaseModel
         public List<Tbl_Cuotas>? Tbl_Cuotas { get; set; }
 
         public void Reestructurar(double? reestructuracion_value)
-        { 
-            if (true)
+        {
+            if (this.reestructurado == null)
             {
-                
-            }          
-            this.reestructurado += 1; 
+                this.reestructurado = 0;
+            }
+            this.plazo += Convert.ToInt32(reestructuracion_value);
+            this.reestructurado += 1;
+            this.Update();
             CrearCuotas(this.saldo, reestructuracion_value);
         }
         public void CrearCuotas(double? monto, double? plazo)
@@ -238,7 +240,7 @@ namespace DataBaseModel
                 var abono_capital = this.cuotafija_dolares - (capital * this.tasas_interes);
                 var cuota = new Tbl_Cuotas
                 {
-                    fecha =  this.fecha?.AddMonths(1),
+                    fecha = this.fecha?.AddMonths(1),
                     total = this.cuotafija_dolares,
                     interes = capital * this.tasas_interes,
                     abono_capital = abono_capital,
@@ -253,7 +255,7 @@ namespace DataBaseModel
         private double? GetPago(double? monto, double? cuotas)
         {
             var tasa = this.tasas_interes;
-            var payment = tasa * Math.Pow(Convert.ToDouble(1 + tasa), Convert.ToDouble(cuotas)) * monto 
+            var payment = tasa * Math.Pow(Convert.ToDouble(1 + tasa), Convert.ToDouble(cuotas)) * monto
                 / (Math.Pow(Convert.ToDouble(1 + tasa), Convert.ToDouble(cuotas)) - 1);
             return payment;
         }
@@ -552,6 +554,7 @@ namespace DataBaseModel
         public int? id_cliente { get; set; }
         public int? id_sucursal { get; set; }
         public int? reestructuracion { get; set; }
+        public double? total_pagado { get; set; }
 
     }
 

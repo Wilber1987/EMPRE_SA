@@ -40,7 +40,7 @@ namespace BackgroundJob.Cron.Jobs
                     int diasDeDiferencia = diferencia.Days;
 
 
-                    var montoMora = /*cuota.total*/ sumaCapitalRestante * ((cuota.Transaction_Contratos?.mora/100) ?? 0.005) * 1;//como el cronjob es diario se va cargando mora cada dia
+                    var montoMora = cuota.total * ((cuota.Transaction_Contratos?.mora/100) ?? 0.005) * 1;//como el cronjob es diario se va cargando mora cada dia
                     cuota.mora = cuota.mora + montoMora;
                     cuota.total += cuota.total + montoMora; 
                     

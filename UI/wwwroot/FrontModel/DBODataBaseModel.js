@@ -36,7 +36,7 @@ class Transactional_Valoracion extends EntityClass {
     Catalogo_Categoria = {
         type: 'WSELECT',
         ModelObject: () => new Catalogo_Categoria(), action: (ObjectF, /**@type {WForm} */ form, InputControl, prop) => {
-           // console.log(ObjectF.Catalogo_Categoria.plazo_limite);
+            // console.log(ObjectF.Catalogo_Categoria.plazo_limite);
             this.Plazo.max = ObjectF.Catalogo_Categoria.plazo_limite;
             if (ObjectF.Plazo > this.Plazo.max) {
                 ObjectF.Plazo = this.Plazo.max;
@@ -393,9 +393,9 @@ class Detail_Prendas_Vehiculos_ModelComponent extends EntityClass {
     placa = { type: 'text' };
     circuacion = { type: 'text' };
     defectuoso = { type: 'text', hidden: true };
-    fecha_aut_descuento = { type: 'date' , hidden: true };
-    defecto = { type: 'text', hidden: true  };
-    porcentage_descuento_maximo = { type: 'number', hidden: true  };
+    fecha_aut_descuento = { type: 'date', hidden: true };
+    defecto = { type: 'text', hidden: true };
+    porcentage_descuento_maximo = { type: 'number', hidden: true };
     fecha_seguro = { type: 'date' };
     combustible = { type: 'text' };
     uso = { type: 'select', Dataset: ["PRIVADO", "PARTICULAR"], hiddenInTable: true };
@@ -737,7 +737,9 @@ class Recibos extends EntityClass {
     //interes_cargos = { type: "number", disabled: true };
 
     title2 = { type: "title", label: "Datos de recibo:" };
-
+    fecha = {
+        type: "date", hidden: true
+    };
     id_recibo = { type: "number", primary: true };
     consecutivo = { type: "number", hidden: true, require: false };
     abono_capital_cordobas = { type: "number", hiddenInTable: true, disabled: true };
@@ -750,8 +752,8 @@ class Recibos extends EntityClass {
     mora_interes_dolares = { type: "number", hiddenInTable: true, disabled: true };
     total_cordobas = { type: "number", hiddenInTable: true, disabled: true };
     total_dolares = { type: "number", hiddenInTable: true, disabled: true };
-    total_parciales = { type: "number", hiddenInTable: true, disabled: true };
-
+    //total_parciales = { type: "number", hiddenInTable: true, disabled: true };
+    reestructurar_monto = { type: "number", disabled: true, defaultValue: 0 };
     fecha_roc = { type: "date", disabled: true };
 
 
@@ -762,14 +764,30 @@ class Recibos extends EntityClass {
     paga_dolares = { type: "number", hiddenInTable: true };
     temporal = { type: "checkbox", require: false };
     cancelar = { type: "checkbox", hiddenInTable: true, require: false };
-    reestructurar = { type: "checkbox", hidden: true, require: false , action:(recibo, form)=>{
-        if (recibo.reestructurar == true) {
-            this.reestructurar_value.hidden = false;
+    reestructurar = {
+        type: "checkbox", hidden: true, require: false,
+        action: (recibo, form) => {
+            if (recibo.reestructurar == true) {
+                this.reestructurar_value.hidden = false;
+                //this.reestructurar_monto.hidden = false;  
+                recibo.reestructurar_monto = 1;
+            } else {
+                this.reestructurar_value.hidden = true;
+                //this.reestructurar_monto.hidden = true; 
+                recibo.reestructurar_monto = 0;
+            }
             form.DrawComponent();
         }
-    }};
-    reestructurar_value = { type: "number", hidden: true , min: 1};
-
+    };
+    reestructurar_value = { type: "number", hidden: true, min: 1 };
+    total_apagar_dolares = {
+        type: "operation", action: (recibo, form) => {
+            const val = parseFloat(recibo.paga_dolares ?? 0) 
+            + parseFloat(recibo.mora_dolares ?? 0)
+            + parseFloat(recibo.reestructurar_monto ?? 0)
+            return val.toFixed(3);
+        }
+    };
     VerRecibo = async () => {
         return await this.SaveData("PDF/GeneratePdfContract", this)
     }
