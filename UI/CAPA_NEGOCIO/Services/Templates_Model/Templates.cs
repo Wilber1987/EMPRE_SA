@@ -1,6 +1,58 @@
 namespace CAPA_NEGOCIO.Services;
 public class ContractsTemplates
 {
+    public static string ContractStyle = @"<style>
+                .table td {
+                    border: 1px black solid;
+                    padding: 5px;
+                    width: 7.14% !important;
+                }
+
+                td.col2 {
+                    width: 14.28% !important;
+                }
+
+                td.col6 {
+                    width: 42.85% !important;
+                }
+
+                td.val {
+                    text-align: right;
+                }
+                span.sombrear {
+                    background-color:#FFFF00;
+                }
+            </style>
+    ";
+     public static string ContractHeader = @"
+        <p style='font-size:9.5px; margin-top:0px; margin-bottom:0px; text-align:center; padding-bottom:0px'>
+                    EMPEÑOS Y PRÉSTAMOS S.A 'EMPRE SA'
+                    <br/>
+                    Carazo - Nicaragua
+                     <br/>
+                    “Tu Prosperidad, Es Nuestro Éxito….”
+                      <br/>
+                     RUC J0310000300895
+        </p>
+        <table style='margin-top: 0px; margin-bottom: 0px;  width: 100%'>
+        <tbody>
+        <tr style='margin-top: 0px; margin-bottom: 0px;  width: 100%'> 
+            <td style='font-size: 9.5px; text-align: left;  width: 50%'>
+                No Contrato: {{numero_contrato}}
+            </td>       
+            <td style='font-size: 9.5px; text-align: right;  width: 50%'>
+            {{fecha_contrato_label}}
+            </td>   
+        </tr> 
+        </tbody>
+        </table>              
+       
+        <p style='font-size:9.5px; margin-top:0px; margin-bottom:0px; text-align:center; padding-bottom:0px'>Oficina Central
+                    82572062 (Mov); 57199497 (Cl), 25353613 (Planta)</p>
+        <p style='font-size:9.5px; margin-top:0px; margin-bottom:0px; text-align:center; padding-bottom:0px'>CONTRATO DE
+                MUTUO GARANTIZADO CON PRENDA COMERCIAL</p>
+    ";
+
     public static string ContractTable = @"<style>
                 td {
                     border: 1px black solid;
@@ -19,11 +71,13 @@ public class ContractsTemplates
                 td.val {
                     text-align: right;
                 }
-                .sombrear {
-                    background:#FFFF00;
+                span.sombrear {
+                     border: 1px black solid;
+                    color:#FFFF00;
+                    background-color:#FFFF00;
                 }
             </style>
-            <table style='width: 100%;font-size:9px !important; border-collapse: collapse;'>
+            <table class='table' style='width: 100%;font-size:9px !important; border-collapse: collapse;'>
                 <thead>
                     <tr>
                         <td colspan='2' class='col2'><span lang='ES-NI'>CAPITAL PRESTADO C$</span></td>
@@ -46,12 +100,12 @@ public class ContractsTemplates
                         </td>
                         <td colspan='2' class='col2'>
                         <p style='margin-bottom:0cm;text-align:center;line-height:normal'>
-                            <span lang='ES-NI'>INTERÉS NETO CORRIENTE(a): 1%</span>
+                            <span lang='ES-NI'>INTERÉS NETO CORRIENTE(a): {{interes_inicial}}%</span>
                         </p>
                         </td>
                         <td colspan='2' class='col2'>
                         <span lang='ES-NI'>Demás cargos a
-                            pagar en relación con lo pactado (b)</span>
+                            pagar en relación con lo pactado(b): {{sum_intereses}}%</span>
                         </td>
                         <td colspan='2' class='col2'>
                         <span lang='ES-NI'>Interés Neto
@@ -93,28 +147,8 @@ public class ContractsTemplates
     public static string ContractPrestamo = @"
         <!DOCTYPE html>
             <html>
-            <head>
-            </head>
-            <body>
-                <p style='font-size:9.5px; margin-top:0px; margin-bottom:0px; text-align:center; padding-bottom:0px'>
-                    EMPEÑOS Y PRÉSTAMOS S.A 'EMPRE SA'
-                    Carazo - Nicaragua
-                </p>
-                <p style='font-size:9.5px; margin-top:0px; margin-bottom:0px; text-align:center; padding-bottom:0px'>“Tu
-                    Prosperidad, Es Nuestro Éxito….”<br/>
-                    {{fecha_contrato_label}}
-                </p>
-
-                <p style='font-size: 9.5px; margin-top: 0px; margin-bottom: 0px; text-align: left; padding-bottom: 0px;'>
-                    No Contrato:
-                    {{numero_contrato}}
-                    RUC J0310000300895
-                </p>
-
-                <p style='font-size:9.5px; margin-top:0px; margin-bottom:0px; text-align:center; padding-bottom:0px'>Oficina Central
-                    82572062 (Mov); 57199497 (Cl), 25353613 (Planta)</p>
-                <p style='font-size:9.5px; margin-top:0px; margin-bottom:0px; text-align:center; padding-bottom:0px'>CONTRATO DE
-                    MUTUO GARANTIZADO CON PRENDA COMERCIAL</p>
+            <head>" + ContractStyle + @"</head>
+            <body>"+ ContractHeader+@"
                 <p style='text-align: justify; font-size:9.5px; margin-top:20px'>Nosotros: {{datos_apoderado}}, actuando en calidad de apoderado generalísimo
                     de la sociedad Anónima denominada: ' EMPEÑOS Y PRESTAMOS S.A ' EMPRE S.A, Sociedad que es de este domicilio,
                     constituida, autorizada y existente de conformidad a las leyes de la República de Nicaragua, en escritura
@@ -332,7 +366,7 @@ public class ContractsTemplates
                     conforme, aprobamos, ratificamos, rubricamos y firmamos, en la ciudad de San Marcos a los .
                 </p>
             <br></br>
-            "+ContractTable+@"
+            " + ContractTable + @"
                 <p style='text-align:left; font-size:10px; margin-top:50px; padding-bottom:0px; margin-bottom:0px;'>
                     Deudor: {{primer_nombre}} {{segundo_nombre}} {{primer_apellido}} {{segundo_apellidio}}
                 </p>
@@ -349,30 +383,8 @@ public class ContractsTemplates
     public static string ContractEmpenoVehiculo = @"
     <!DOCTYPE html>
         <html>
-
-        <head>
-        </head>
-
-        <body>
-            <p style='font-size:9.5px; margin-top:0px; margin-bottom:0px; text-align:center; padding-bottom:0px'>
-                EMPEÑOS Y PRÉSTAMOS S.A 'EMPRE SA'
-                Carazo - Nicaragua
-            </p>
-            <p style='font-size:9.5px; margin-top:0px; margin-bottom:0px; text-align:center; padding-bottom:0px'>“Tu
-                Prosperidad, Es Nuestro Éxito….”<br/>
-                {{fecha_contrato_label}}
-            </p>
-
-            <p style='font-size: 9.5px; margin-top: 0px; margin-bottom: 0px; text-align: left; padding-bottom: 0px;'>
-                No Contrato:
-                {{numero_contrato}}
-                RUC J0310000300895
-            </p>
-
-            <p style='font-size:9.5px; margin-top:0px; margin-bottom:0px; text-align:center; padding-bottom:0px'>Oficina Central
-                82572062 (Mov); 57199497 (Cl), 25353613 (Planta)</p>
-            <p style='font-size:9.5px; margin-top:0px; margin-bottom:0px; text-align:center; padding-bottom:0px'>CONTRATO DE
-                MUTUO GARANTIZADO CON PRENDA COMERCIAL</p>
+        <head>" + ContractStyle + @"</head>
+        <body>"+ ContractHeader+@"
             <p style='text-align: justify; font-size:9.5px; margin-top:20px'>Nosotros: {{datos_apoderado}} actuando en calidad de apoderado generalísimo
                 de la sociedad Anónima denominada: ' EMPEÑOS Y PRESTAMOS S.A ' EMPRE S.A, Sociedad que es de este domicilio,
                 constituida, autorizada y existente de conformidad a las leyes de la República de Nicaragua, en escritura
@@ -511,7 +523,7 @@ public class ContractsTemplates
                 ratificamos y firmamos, en la ciudad de San Marcos a los {{dias}} dias del mes {{mes}} del año {{anio}}.
             </p>
             <br></br>
-              "+ContractTable+@"
+              " + ContractTable + @"
             <p style='text-align:left; font-size:10px; margin-top:50px; padding-bottom:0px; margin-bottom:0px;'>
                 Deudor:{{primer_nombre}}  {{segundo_nombre}}  {{primer_apellido}}  {{segundo_apellidio}}
             </p>
@@ -527,33 +539,8 @@ public class ContractsTemplates
     public static string ContractEmpeno = @"
         <!DOCTYPE html>
         <html>
-        <head>
-        </head>
-        <body>
-        <p style='font-size:9.5px; margin-top:0px; margin-bottom:0px; text-align:center; padding-bottom:0px'>
-            EMPEÑOS Y PRÉSTAMOS S.A 'EMPRE SA'
-            RUC J0310000300895     
-        </p>
-        <p style='font-size:9.5px; margin-top:0px; margin-bottom:0px; text-align:center; padding-bottom:0px'>
-            “Tu Prosperidad, Es Nuestro Éxito….” <br/>
-        </p>
-
-        <p style='font-size: 9.5px; margin-top: 0px; margin-bottom: 0px; text-align: left; float: left; width: 40%'>
-            No Contrato:
-            {{numero_contrato}}      
-        </p>
-            <p style='font-size: 9.5px; margin-top: 0px; margin-bottom: 0px; text-align: right; float: right; width: 40%'>
-            Carazo - Nicaragua
-            {{fecha_contrato_label}}
-        </p>
-
-        <p style='font-size:9.5px; margin-top:0px; margin-bottom:0px; text-align:center; padding-bottom:0px'>Oficina Central
-            82572062 (Mov); 57199497 (Cl), 25353613 (Planta)</p>
-        <p style='font-size:9.5px; margin-top:0px; margin-bottom:0px; text-align:center; padding-bottom:0px'>CONTRATO DE
-            MUTUO GARANTIZADO CON PRENDA COMERCIAL</p>
-
-
-
+         <head>" + ContractStyle + @"</head>
+        <body>"+ ContractHeader+@"      
         <p style='text-align: justify; font-size:9.5px; margin-top:20px'>Nosotros: {{datos_apoderado}}, actuando en calidad de apoderado generalísimo
             de la sociedad Anónima denominada: ' EMPEÑOS Y PRESTAMOS S.A ' EMPRE S.A, Sociedad que es de este domicilio,
             constituida, autorizada y existente de conformidad a las leyes de la República de Nicaragua, en escritura pública
@@ -714,7 +701,7 @@ public class ContractsTemplates
             con los términos relacionados, Y leído el presente contrato por las partes lo encontramos conforme, aprobamos,
             ratificamos y firmamos, en la ciudad de San Marcos a los {{dias}} dias del mes {{mes}} del año {{anio}}.
         </p><br></br>
-          "+ContractTable+@"
+          " + ContractTable + @"
         <p style='text-align:left; font-size:10px; margin-top:50px; padding-bottom:0px; margin-bottom:0px;'>
             Deudor: {{primer_nombre}} {{segundo_nombre}} {{primer_apellido}} {{segundo_apellidio}}
         </p>

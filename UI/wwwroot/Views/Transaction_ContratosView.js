@@ -20,7 +20,7 @@ import { Transactional_Configuraciones } from "../FrontModel/ADMINISTRATIVE_ACCE
  * @typedef {Object} ContratosConfig
  * * @property {ValoracionesTransaction} [Entity]
  */
-class Transaction_ContratosView extends HTMLElement {
+class Transaction_ContratosView extends HTMLElement {   
     /**
      * 
      * @param {ContratosConfig} props 
@@ -79,10 +79,12 @@ class Transaction_ContratosView extends HTMLElement {
             EntityModel: new Detail_Prendas({}),
             ModelObject: modelPrendas,
             AddItemsFromApi: false,
+            AutoSave: false,
             Options: {
                 Delete: true,
                 Edit: true,
-                Search: true
+                Search: true,
+                DeleteAction: () => this.deletePrenda(),
             }
         })
 
@@ -200,6 +202,7 @@ class Transaction_ContratosView extends HTMLElement {
      * @returns 
      */
     valoracionResumen(entity) {
+        
         this.amortizacionResumen.innerHTML = "";
         if (entity.Transaction_Contratos.total_pagar_cordobas == undefined) {
             this.amortizacionResumen.innerHTML = `<div class="detail-container">Agregue prendas</div>`;
@@ -309,6 +312,16 @@ class Transaction_ContratosView extends HTMLElement {
         this.entity.Transaction_Contratos.taza_cambio = this.tasaActual?.valor_de_compra;
         this.update();
         this.Manager.NavigateFunction("valoraciones");
+    }
+    deletePrenda() {
+        // @ts-ignore
+        this.inputPlazo.max = this.prioridadEnElPlazo();
+        // @ts-ignore
+        this.entity.Transaction_Contratos.Detail_Prendas = this.prendasTable?.Dataset;        
+        this.entity = AmoritizationModule.calculoAmortizacion(this.entity, false);
+        console.log(this.entity);
+        this.clientResumen(this.entity.Transaction_Contratos.Catalogo_Clientes);
+        this.valoracionResumen(this.entity);
     }
     update() {
         AmoritizationModule.calculoAmortizacion(this.entity);

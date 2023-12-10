@@ -5,43 +5,47 @@ import { WArrayF } from "../WDevCore/WModules/WComponentsTools.js";
 
 class AmoritizationModule {
     /**
-     * @param {ValoracionesTransaction} contrato
+     * @param {ValoracionesTransaction} contrato 
+     * @param {boolean} [withValoraciones]
      * @returns {ValoracionesTransaction}
      */
-    static calculoAmortizacion = (contrato) => {
-        if (contrato.Transaction_Contratos.Catalogo_Clientes == undefined 
+    static calculoAmortizacion = (contrato, withValoraciones = true) => {
+        if (contrato.Transaction_Contratos.Catalogo_Clientes == undefined
             || contrato.valoraciones == undefined) {
             return new ValoracionesTransaction();
         }
-        contrato.Transaction_Contratos =  contrato.Transaction_Contratos ?? new Transaction_Contratos();
-        contrato.Transaction_Contratos.Detail_Prendas = contrato.valoraciones.map(
+        contrato.Transaction_Contratos = contrato.Transaction_Contratos ?? new Transaction_Contratos();
+        if (withValoraciones) {
+            contrato.Transaction_Contratos.Detail_Prendas = contrato.valoraciones.map(
             // @ts-ignore
             /**@type {Transactional_Valoracion}*/valoracion => new Detail_Prendas({
-            Descripcion: valoracion.Descripcion,
-            modelo: valoracion.Modelo,
-            marca: valoracion.Marca,
-            serie: valoracion.Serie,
-            pprenda: valoracion.valoracion_empeño_cordobas,
-            color: "#000",
-            en_manos_de: undefined,
-            precio_venta: valoracion.precio_venta_empeño_dolares,
-            Catalogo_Categoria: valoracion.Catalogo_Categoria,
-            Transactional_Valoracion: valoracion
-        }));
+                Descripcion: valoracion.Descripcion,
+                modelo: valoracion.Modelo,
+                marca: valoracion.Marca,
+                serie: valoracion.Serie,
+                pprenda: valoracion.valoracion_empeño_cordobas,
+                color: "#000",
+                en_manos_de: undefined,
+                precio_venta: valoracion.precio_venta_empeño_dolares,
+                Catalogo_Categoria: valoracion.Catalogo_Categoria,
+                Transactional_Valoracion: valoracion
+            }));
+        }
+
         contrato.Transaction_Contratos.valoracion_compra_cordobas = AmoritizationModule.round(WArrayF.SumValAtt(contrato.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion), "valoracion_compra_cordobas"));
         contrato.Transaction_Contratos.valoracion_compra_dolares = AmoritizationModule.round(WArrayF.SumValAtt(contrato.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion), "valoracion_compra_dolares"));
         contrato.Transaction_Contratos.valoracion_empeño_cordobas = AmoritizationModule.round(WArrayF.SumValAtt(contrato.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion), "valoracion_empeño_cordobas"));
         contrato.Transaction_Contratos.valoracion_empeño_dolares = AmoritizationModule.round(WArrayF.SumValAtt(contrato.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion), "valoracion_empeño_dolares"));
         //contrato.Transaction_Contratos.taza_interes_cargos = contrato.Transaction_Contratos.taza_interes_cargos ?? 0.09
-        contrato.Transaction_Contratos.tasas_interes = 
-        (parseFloat(contrato.Transaction_Contratos?.Catalogo_Clientes?.Catalogo_Clasificacion_Interes?.porcentaje)
-         + contrato.Transaction_Contratos?.taza_interes_cargos) / 100;
+        contrato.Transaction_Contratos.tasas_interes =
+            (parseFloat(contrato.Transaction_Contratos?.Catalogo_Clientes?.Catalogo_Clasificacion_Interes?.porcentaje)
+                + contrato.Transaction_Contratos?.taza_interes_cargos) / 100;
         contrato.Transaction_Contratos.plazo = contrato.Transaction_Contratos.plazo ?? 1;
         contrato.Transaction_Contratos.fecha = new Date(contrato.Transaction_Contratos.fecha);
         contrato.Transaction_Contratos.Catalogo_Clientes = contrato.Transaction_Contratos.Catalogo_Clientes;
         //contrato.fecha = new Date(contrato.Transaction_Contratos.fecha)
 
-        contrato.Transaction_Contratos.Tbl_Cuotas = new Array();       
+        contrato.Transaction_Contratos.Tbl_Cuotas = new Array();
         contrato.Transaction_Contratos.gestion_crediticia = contrato.Transaction_Contratos.Catalogo_Clientes?.Catalogo_Clasificacion_Interes?.porcentaje ?? 6;
 
         AmoritizationModule.crearCuotas(contrato);
@@ -61,7 +65,7 @@ class AmoritizationModule {
         const cuotas = contrato.Transaction_Contratos.plazo;
         const tasa = contrato.Transaction_Contratos.tasas_interes;
         const payment = ((tasa * Math.pow(1 + tasa, cuotas)) * monto) / (Math.pow(1 + tasa, cuotas) - 1);
-        console.log(monto, cuotas, tasa, payment);
+        //console.log(monto, cuotas, tasa, payment);
         return payment;
     }
     static getPagoValoracion = (valoracion) => {
@@ -85,8 +89,8 @@ class AmoritizationModule {
         let capital = (parseFloat(contrato.Transaction_Contratos.valoracion_empeño_dolares));
         for (let index = 0; index < contrato.Transaction_Contratos.plazo; index++) {
             // @ts-ignore
-            const abono_capital = (parseFloat(contrato.Transaction_Contratos.cuotafija_dolares) 
-            - (capital * contrato.Transaction_Contratos.tasas_interes));
+            const abono_capital = (parseFloat(contrato.Transaction_Contratos.cuotafija_dolares)
+                - (capital * contrato.Transaction_Contratos.tasas_interes));
             //console.log(abono_capital);
             const cuota = new Tbl_Cuotas({
                 // @ts-ignore

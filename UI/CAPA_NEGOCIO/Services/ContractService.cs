@@ -80,6 +80,7 @@ namespace CAPA_NEGOCIO.Services
 
 
             templateContent = templateContent.Replace("{{cuotafija}}", Math.Round((decimal)model.cuotafija, 2).ToString())
+                .Replace("{{numero_contrato}}", model.numero_contrato?.ToString("D9"))
                 .Replace("{{datos_apoderado}}", configuraciones.Find(c => c.Nombre.Equals(GeneralDataEnum.APODERADO.ToString()))?.Valor)
                 .Replace("{{fecha_contrato_label}}", model.fecha_contrato?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy"))
                 .Replace("{{fecha_primera_cuota}}", fechaPrimeraCuota?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy"))
@@ -99,7 +100,7 @@ namespace CAPA_NEGOCIO.Services
             //var interes = configuraciones.Select(i => Convert.ToInt32(i.Valor)).ToArray().Sum();
             //LoggerServices.AddMessageInfo("FIN DE GET INTERESE");
             Catalogo_Clientes? cliente = model.Catalogo_Clientes?.Find<Catalogo_Clientes>();
-
+            double valorInteres = configuraciones.Select(c => Convert.ToDouble(c.Valor)).ToList().Sum();
             renderedHtml = RenderTemplate(renderedHtml, cliente)
                 .Replace("{{municipio}}", cliente.Catalogo_Municipio?.nombre)
                 .Replace("{{departamento}}", cliente.Catalogo_Departamento?.nombre)
@@ -139,10 +140,11 @@ namespace CAPA_NEGOCIO.Services
                 .Replace("{{interes_demas_cargos}}",
                     configuraciones.Find(c => c.Nombre.Equals(InteresesPrestamosEnum.GESTIONES_CREDITICIAS.ToString()))?.Valor)
 
+                .Replace("{{sum_intereses}}", valorInteres.ToString())
                 .Replace("{{dias}}", DateTime.Now.Day.ToString())
                 .Replace("{{mes}}", DateTime.Now.Month.ToString())
                 .Replace("{{anio}}", DateTime.Now.Year.ToString())
-                .Replace("{{tbody_amortizacion}}", GenerateTableHtml(model.Tbl_Cuotas));
+                .Replace("{{tbody_amortizacion}}", GenerateTableHtml(model.Tbl_Cuotas, configuraciones, cliente));
             LoggerServices.AddMessageInfo("FIN DE RENDER 2");
             // Generar el PDF
             var pdfFilePath = Path.Combine(System.IO.Path.GetFullPath("./wwwroot/Contracts"), "output.pdf");
@@ -255,7 +257,7 @@ namespace CAPA_NEGOCIO.Services
         {
             StringBuilder htmlBuilder = new StringBuilder();
             // Abrir la etiqueta de la tabla con atributos de estilo para bordes y ancho 100%
-            htmlBuilder.Append("<table style=\"font-size:9px;border-collapse: collapse; width: 100%;\">");
+            htmlBuilder.Append("<table class='table' style=\"font-size:9px;border-collapse: collapse; width: 100%;\">");
             // Encabezados de la tabla (opcional)
             htmlBuilder.Append("<tr>");
             htmlBuilder.Append("<th style=\"font-size:9px; text-align: center; padding: 4px; border: 1px solid black;\">Bienes</th>");
@@ -283,29 +285,39 @@ namespace CAPA_NEGOCIO.Services
             return htmlBuilder.ToString();
         }
 
-        static string GenerateTableHtml(List<Tbl_Cuotas> listaDatos)
+        static string GenerateTableHtml(List<Tbl_Cuotas> listaDatos, List<Transactional_Configuraciones> configuraciones, Catalogo_Clientes cliente)
         {
             List<Tbl_Cuotas> objListOrder = listaDatos.OrderBy(order => order.fecha).ToList();
             StringBuilder htmlBuilder = new StringBuilder();
             // Abrir la etiqueta de la tabla con atributos de estilo para bordes y ancho 100%
             htmlBuilder.Append("<tbody>");
             // Contenido de la tabla
+            double valorInteres = configuraciones.Select(c => Convert.ToDouble(c.Valor)).ToList().Sum() / 100;
             foreach (var dato in objListOrder)
             {
+               
+
+
                 htmlBuilder.Append("<tr>");
                 htmlBuilder.Append($"<td class=\"desc\" colspan=\"2\">{Convert.ToDateTime(dato.fecha.ToString()).ToString("dd-MM-yyyy")}</td>");
-                htmlBuilder.Append($"<td class=\"val\"></td>");
-                htmlBuilder.Append($"<td class=\"val\"></td>");
-                htmlBuilder.Append($"<td class=\"val\"></td>");
-                htmlBuilder.Append($"<td class=\"val\"></td>");
-                htmlBuilder.Append($"<td class=\"val\">{Math.Round((decimal)(dato.interes * dato.tasa_cambio), 2)}</td>");
-                htmlBuilder.Append($"<td class=\"val\">{Math.Round((decimal)dato.interes, 2)}</td>");
-                htmlBuilder.Append($"<td class=\"val\">{Math.Round((decimal)(dato.abono_capital * dato.tasa_cambio), 2)}</td>");
-                htmlBuilder.Append($"<td class=\"val\">{Math.Round((decimal)dato.abono_capital, 2)}</td>");
-                htmlBuilder.Append($"<td class=\"val\">{Math.Round((decimal)(dato.total * dato.tasa_cambio), 2)}</td>");
-                htmlBuilder.Append($"<td class=\"val\">{Math.Round((decimal)dato.total, 2)}</td>");
-                htmlBuilder.Append($"<td class=\"val\">{Math.Round((decimal)(dato.capital_restante * dato.tasa_cambio), 2)}</td>");
-                htmlBuilder.Append($"<td class=\"val\">{Math.Round((decimal)dato.capital_restante, 2)}</td>");
+                var value1 = dato.capital_restante * dato.tasa_cambio * (cliente.Catalogo_Clasificacion_Interes.porcentaje / 100);
+                var value2 = dato.capital_restante * (cliente.Catalogo_Clasificacion_Interes.porcentaje / 100);
+
+                htmlBuilder.Append($"<td class=\"val\">{Math.Round(Convert.ToDecimal(value1), 2)}</td>");
+                htmlBuilder.Append($"<td class=\"val\">{Math.Round(Convert.ToDecimal(value2), 2)}</td>");
+
+                htmlBuilder.Append($"<td class=\"val\">{Math.Round(Convert.ToDecimal(dato.capital_restante * dato.tasa_cambio * valorInteres), 2)}</td>");
+                htmlBuilder.Append($"<td class=\"val\">{Math.Round(Convert.ToDecimal(dato.capital_restante * valorInteres), 2)}</td>");
+
+
+                htmlBuilder.Append($"<td class=\"val\">{Math.Round(Convert.ToDecimal(dato.interes * dato.tasa_cambio), 2)}</td>");
+                htmlBuilder.Append($"<td class=\"val\">{Math.Round(Convert.ToDecimal(dato.interes), 2)}</td>");
+                htmlBuilder.Append($"<td class=\"val\">{Math.Round(Convert.ToDecimal(dato.abono_capital * dato.tasa_cambio), 2)}</td>");
+                htmlBuilder.Append($"<td class=\"val\">{Math.Round(Convert.ToDecimal(dato.abono_capital), 2)}</td>");
+                htmlBuilder.Append($"<td class=\"val\">{Math.Round(Convert.ToDecimal(dato.total * dato.tasa_cambio), 2)}</td>");
+                htmlBuilder.Append($"<td class=\"val\">{Math.Round(Convert.ToDecimal(dato.total), 2)}</td>");
+                htmlBuilder.Append($"<td class=\"val\">{Math.Round(Convert.ToDecimal(dato.capital_restante * dato.tasa_cambio), 2)}</td>");
+                htmlBuilder.Append($"<td class=\"val\">{Math.Round(Convert.ToDecimal(dato.capital_restante), 2)}</td>");
 
 
                 // Agregar más columnas según las propiedades de tu objeto DatosTabla
