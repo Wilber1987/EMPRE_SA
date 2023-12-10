@@ -47,3 +47,7 @@ ALTER TABLE Tbl_Profile ADD CONSTRAINT FK_Tbl_InvestigatorProfile_Security_Users
 
 ALTER TABLE EMPRE_SA.dbo.Transaction_Contratos ADD reestructurado int NULL;
 EXEC EMPRE_SA.sys.sp_addextendedproperty 'MS_Description', N'numero de reestructuraciones', 'schema', N'dbo', 'table', N'Transaction_Contratos', 'column', N'reestructurado';
+
+INSERT INTO EMPRE_SA.administrative_access.Transactional_Configuraciones
+(Nombre, Descripcion, Valor, Tipo_Configuracion)
+VALUES(N'APODERADO', N'Datos del apoderado', N' Juan José Villavicencio Navarro, mayor de', N'GENERAL_DATA');

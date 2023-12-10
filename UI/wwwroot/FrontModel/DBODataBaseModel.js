@@ -267,6 +267,7 @@ class Transaction_Contratos_ModelComponent extends EntityClass {
     total_pagar_dolares = { type: "number", hiddenInTable: true, hiddenFilter: true };
     interes_dolares = { type: "number", hiddenInTable: true, hiddenFilter: true };
     Id_User = { type: "number", hidden: true, hiddenFilter: true };
+    reestructurado = { type: "number" };
     Catalogo_Agentes = { type: 'WSELECT', ModelObject: () => new Catalogo_Agentes(), hiddenInTable: true, hiddenFilter: true };
     Detail_Prendas = { type: 'MasterDetail', ModelObject: () => new Detail_Prendas_ModelComponent(), hiddenFilter: true };
     Tbl_Cuotas = { type: 'MasterDetail', ModelObject: () => new Tbl_Cuotas_ModelComponent(), hiddenFilter: true };

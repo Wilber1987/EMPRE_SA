@@ -69,8 +69,8 @@ namespace Transactions
                 }
                 double monto = (double)this.paga_dolares;
                 BeginGlobalTransaction();
-                
-                var cuotasPagadas = new List<Detalle_Factura_Recibo>(); 
+
+                var cuotasPagadas = new List<Detalle_Factura_Recibo>();
                 foreach (var item in contrato.Tbl_Cuotas.OrderBy(c => c.id_cuota).ToList())
                 {
                     if (monto >= item.total && monto > 0)
@@ -94,24 +94,35 @@ namespace Transactions
                             total_cuota = item.total,
                             monto_pagado = item.abono_capital,
                             capital_restante = item.capital_restante,
-                            concepto = this.numero_contrato + item.abono_capital < item.total ? "Pago parcial de cuota" : "Pago de completo de cuota, contrato No: " + this.numero_contrato,
+                            concepto = this.numero_contrato + item.abono_capital < item.total
+                            ? "Pago parcial de cuota" : "Pago de completo de cuota, contrato No: " + this.numero_contrato,
                             tasa_cambio = this.tasa_cambio
                         }
-                    );                    
+                    );
                     item.Update();
-                    
+
                 }
                 var saldoRespaldo = contrato.saldo;
 
-                contrato.saldo = contrato.saldo - this.paga_dolares;  
+                contrato.saldo = contrato.saldo - this.paga_dolares;
                 contrato.Update();
                 if (this.reestructurar == true)
                 {
-                    contrato.Reestructurar(this.reestructurar_value);   
+                    contrato.Reestructurar(this.reestructurar_value);
+                    cuotasPagadas.Add(
+                        new Detalle_Factura_Recibo()
+                        {
+                            total_cuota = 1,
+                            monto_pagado = 1,
+                            capital_restante = 0,
+                            concepto = "Pago por tramite bde reestructuración de cuota",
+                            tasa_cambio = this.tasa_cambio
+                        }
+                    );
                 }
 
                 //fecha de proximo pago
-                var fechaProximoPago = contrato.Tbl_Cuotas.Find(x => x.total< x.pago_contado || x.pago_contado == null);
+                var fechaProximoPago = contrato.Tbl_Cuotas.Find(x => x.total < x.pago_contado || x.pago_contado == null);
 
                 int ultimoConsecutivo = new Recibos().Get<Recibos>().Max(r => (int?)r.consecutivo) ?? 0;
 
@@ -211,8 +222,8 @@ namespace Transactions
                 };
             }
 
-        }        
-    
+        }
+
         public object? AnularFactura(string token)
         {
             try
@@ -243,7 +254,7 @@ namespace Transactions
                 factura.estado = EstadoEnum.ANULADO.ToString();
                 factura.Update();
 
-                
+
                 BeginGlobalTransaction();
                 var contrato = new Transaction_Contratos() { numero_contrato = factura.Factura_contrato.numero_contrato }.Find<Transaction_Contratos>();
 
@@ -257,7 +268,7 @@ namespace Transactions
                 }
 
 
-                
+
                 var cuentaDestino = new Catalogo_Cuentas()
                 {
                     id_categoria = 6,
@@ -319,16 +330,17 @@ namespace Transactions
                     status = 400
                 };
             }
-        }       
+        }
 
-        public object? PrintRecibo(string token){
+        public object? PrintRecibo(string token)
+        {
             try
-            {   
+            {
                 string templateContent = DocumentsTemplates.recibo;
 
                 var contrato = new Transaction_Contratos() { numero_contrato = this.numero_contrato }.Find<Transaction_Contratos>();
                 //var reciboData = new Recibos() { id_recibo = this.id_recibo }.Find<Recibos>();
-                var factura = new Transaccion_Factura(){ numero_contrato = this.numero_contrato}.Find<Transaccion_Factura>();
+                var factura = new Transaccion_Factura() { numero_contrato = this.numero_contrato }.Find<Transaccion_Factura>();
                 var cliente = contrato.Catalogo_Clientes.Find<Catalogo_Clientes>();
                 var ultimoDetalle = factura.Detalle_Factura_Recibo.OrderByDescending(d => d.id).FirstOrDefault();
                 var detalleIds = factura.Detalle_Factura_Recibo.Select(d => d.id_cuota).ToList();
@@ -336,7 +348,7 @@ namespace Transactions
 
                 var dbUser = new API.Extended.Security_Users { Id_User = factura.id_usuario }.Find<API.Extended.Security_Users>();
 
-                var sucursal = new Catalogo_Sucursales(){ Id_Sucursal = dbUser.Id_Sucursal}.Find<Catalogo_Sucursales>();
+                var sucursal = new Catalogo_Sucursales() { Id_Sucursal = dbUser.Id_Sucursal }.Find<Catalogo_Sucursales>();
 
                 decimal sumaInteres = (decimal)cuotas.Where(c => c.interes.HasValue).Sum(c => c.mora.Value);
 
@@ -347,31 +359,31 @@ namespace Transactions
                 var mela = factura.Factura_contrato.numero_contrato;
 
                 templateContent = templateContent.Replace("{{recibo_num}}", factura.id_factura.ToString())
-                .Replace("{{cambio}}", Math.Round((decimal) factura.tasa_cambio, 2).ToString())
+                .Replace("{{cambio}}", Math.Round((decimal)factura.tasa_cambio, 2).ToString())
                 .Replace("{{fecha}}", factura.fecha.ToString())
                 .Replace("{{sucursal}}", sucursal.Nombre)
                 .Replace("{{cajero}}", dbUser.Nombres)
-                .Replace("{{cliente}}", contrato.Catalogo_Clientes.primer_nombre+" "+contrato.Catalogo_Clientes.primer_apellido+" "+contrato.Catalogo_Clientes.segundo_apellidio)
+                .Replace("{{cliente}}", contrato.Catalogo_Clientes.primer_nombre + " " + contrato.Catalogo_Clientes.primer_apellido + " " + contrato.Catalogo_Clientes.segundo_apellidio)
                 .Replace("{{clasificacion}}", cliente.Catalogo_Clasificacion_Interes.porcentaje.ToString())
                 .Replace("{{categoria}}", cliente.Catalogo_Clasificacion_Cliente.Descripcion)
                 .Replace("{{cuotas}}", contrato.plazo.ToString())
                 .Replace("{{cuotas_pendientes}}", cuotasPendiente.ToString())
                 .Replace("{{saldo_anterior}}", "")
-                .Replace("{{saldo_actual}}", Math.Round((decimal) factura.total, 2).ToString())
-                .Replace("{{total_pagado}}", Math.Round((decimal) factura.total/(decimal)factura.tasa_cambio, 2).ToString())
-                .Replace("{{total_pagado_dolares}}", Math.Round((decimal) factura.total, 2).ToString())
+                .Replace("{{saldo_actual}}", Math.Round((decimal)factura.total, 2).ToString())
+                .Replace("{{total_pagado}}", Math.Round((decimal)factura.total / (decimal)factura.tasa_cambio, 2).ToString())
+                .Replace("{{total_pagado_dolares}}", Math.Round((decimal)factura.total, 2).ToString())
                 .Replace("{{reestructuracion}}", Math.Round((decimal)factura.tasa_cambio, 2).ToString())
                 .Replace("{{reestructuracion_dolares}}", 1.ToString())
-                .Replace("{{perdida_doc}}",  Math.Round((decimal)factura.tasa_cambio, 2).ToString())
+                .Replace("{{perdida_doc}}", Math.Round((decimal)factura.tasa_cambio, 2).ToString())
                 .Replace("{{perdida_doc_dolares}}", 1.ToString())
-                .Replace("{{mora}}",  Math.Round((decimal)sumaMora, 2).ToString())
-                .Replace("{{mora_dolares}}", Math.Round((decimal)sumaMora/(decimal)factura.tasa_cambio, 2).ToString())
+                .Replace("{{mora}}", Math.Round((decimal)sumaMora, 2).ToString())
+                .Replace("{{mora_dolares}}", Math.Round((decimal)sumaMora / (decimal)factura.tasa_cambio, 2).ToString())
                 .Replace("{{idcp}}", Math.Round((decimal)sumaInteres, 2).ToString())
                 .Replace("{{idcp_dolares}}", Math.Round((decimal)sumaInteres, 2).ToString())
-                .Replace("{{abono_capital}}", Math.Round((decimal) ultimoDetalle.capital_restante, 2).ToString() )
-                .Replace("{{abono_capital_dolares}}", Math.Round((decimal) ultimoDetalle.capital_restante, 2).ToString() )
-                .Replace("{{saldo_actual}}", Math.Round((decimal) ultimoDetalle.capital_restante, 2).ToString() )
-                .Replace("{{saldo_actual_dolares}}", Math.Round((decimal) ultimoDetalle.capital_restante/(decimal)factura.tasa_cambio, 2).ToString() )
+                .Replace("{{abono_capital}}", Math.Round((decimal)ultimoDetalle.capital_restante, 2).ToString())
+                .Replace("{{abono_capital_dolares}}", Math.Round((decimal)ultimoDetalle.capital_restante, 2).ToString())
+                .Replace("{{saldo_actual}}", Math.Round((decimal)ultimoDetalle.capital_restante, 2).ToString())
+                .Replace("{{saldo_actual_dolares}}", Math.Round((decimal)ultimoDetalle.capital_restante / (decimal)factura.tasa_cambio, 2).ToString())
                 .Replace("{{proximo_pago}}", "");
 
                 return new ResponseService()
@@ -387,7 +399,7 @@ namespace Transactions
                 return new ResponseService()
                 {
                     status = 500,
-                    message = "Error, intentelo nuevamente"+ex.Message
+                    message = "Error, intentelo nuevamente" + ex.Message
                 };
             }
         }

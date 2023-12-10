@@ -36,11 +36,18 @@ namespace DataBaseModel
             return Get<Transactional_Configuraciones>()
                 .Where(x => x.Tipo_Configuracion.Equals(ConfiguracionesTypeEnum.BENEFICIOS.ToString())).ToList();
         }
+
+        internal object GetGeneralData()
+        {
+             return Get<Transactional_Configuraciones>()
+                .Where(x => x.Tipo_Configuracion.Equals(ConfiguracionesTypeEnum.GENERAL_DATA.ToString())).ToList();
+        }
     }
 
     public enum ConfiguracionesTypeEnum
     {
-        INTERESES, BENEFICIOS, THEME, INTERESES_MORA
+        INTERESES, BENEFICIOS, THEME, INTERESES_MORA,
+        GENERAL_DATA
     }
 
     public enum ConfiguracionesThemeEnum
@@ -60,6 +67,11 @@ namespace DataBaseModel
         MANTENIMIENTO_VALOR,
         GASTOS_LEGALES,
         GESTIONES_CREDITICIAS
+    }
+
+    public enum GeneralDataEnum
+    {       
+       APODERADO
     }
 
 

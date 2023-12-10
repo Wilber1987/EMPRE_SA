@@ -19,6 +19,9 @@ public class ContractsTemplates
                 td.val {
                     text-align: right;
                 }
+                .sombrear {
+                    background:#FFFF00;
+                }
             </style>
             <table style='width: 100%;font-size:9px !important; border-collapse: collapse;'>
                 <thead>
@@ -112,9 +115,7 @@ public class ContractsTemplates
                     82572062 (Mov); 57199497 (Cl), 25353613 (Planta)</p>
                 <p style='font-size:9.5px; margin-top:0px; margin-bottom:0px; text-align:center; padding-bottom:0px'>CONTRATO DE
                     MUTUO GARANTIZADO CON PRENDA COMERCIAL</p>
-                <p style='text-align: justify; font-size:9.5px; margin-top:20px'>Nosotros: Juan José Villavicencio Navarro, mayor de
-                    edad, casado, ingeniero Industrial, con cédula Nº 043-240688-0001M, Nicaragüense y de este domicilio de San
-                    Marcos, actuando en calidad de apoderado generalísimo
+                <p style='text-align: justify; font-size:9.5px; margin-top:20px'>Nosotros: {{datos_apoderado}}, actuando en calidad de apoderado generalísimo
                     de la sociedad Anónima denominada: ' EMPEÑOS Y PRESTAMOS S.A ' EMPRE S.A, Sociedad que es de este domicilio,
                     constituida, autorizada y existente de conformidad a las leyes de la República de Nicaragua, en escritura
                     pública
@@ -212,8 +213,9 @@ public class ContractsTemplates
                     serán  modificables al tipo de cambio del dólar, en la fecha que el cliente haga efectivo su pago. Los pagos se
                     realizarán en córdobas o el equivalente a $ {{cuotafija_dolares}}, Estadounidenses, Según tasa de cambio del
                     Banco Central de
-                    Nicaragua, iniciando la primera cuota el día {{fecha_primera_cuota}} y la última el día {{fecha_ultima_cuota}}. El deudor se obliga a pagar al acreedor; La
-                    mora, el interés neto corriente, demás cargos a pagar en relación con lo pactado, y el capital prestado, en las
+                    Nicaragua, iniciando la primera cuota el día {{fecha_primera_cuota}} y la última el día {{fecha_ultima_cuota}}. 
+                    El deudor se obliga a pagar al acreedor; La mora, el interés neto corriente, demás cargos a pagar en relación con lo pactado, 
+                    y el capital prestado, en las
                     oficinas principales del acreedor o realizar el pago de su cuota en línea en cualquier sucursal o agente Banpro
                     en la cuenta en córdobas No 1001 3700 0011 66, o en la cuenta en dólares No 1001 3710 0012 05, a nombre de Juan
                     Jose Villavicencio Navarro Y/O Jose Adilio Aguirre Jarquin con previa notificación a la oficina donde se le
@@ -241,15 +243,12 @@ public class ContractsTemplates
                     {{interes_demas_cargos_label}} porciento ({{interes_demas_cargos}}%) de Gestiones crediticias; Todos estos
                     demás cargos son aplicados sobre el monto restante.
                 </p>
-                <p style='text-align: justify; font-size:9.5px;'><u>5. QUINTA (MORA):</u> El deudor podrá realizar el pago de su
-                    cuota anticipada a su fecha de pago de cuota,
-                    con el fin de evitarse mora; En caso que el Deudor no pague en la fecha de pago de cada cuota mensual,
-                    automáticamente quedará constituido en mora y por el sólo hecho de incumplimiento, sin necesidad de intimidación
-                    o requerimiento alguno judicial o extrajudicial y desde esa fecha hasta el pago efectivo de su cuota, reconocerá
-                    al acreedor un recargo moratorio de 0.005 que corresponde al 50%, del 1 % del interés corriente pactado (Ley
-                    176_Arto4), aplicado a la cuota fija en mora, equivalente a C$ , La mora se calcula multiplicando el recargo
-                    moratorio, multiplicado por la cuota fija en C$ en mora, y por los días que hayan trascurrido desde su fecha que
-                    debió pagar, hasta el pago efectivo de su cuota.
+                <p style='text-align: justify; font-size:9.5px;'><u>5. QUINTA (MORA):
+                    </u> El deudor podrá realizar el pago de su cuota anticipada a su fecha de pago, con el fin de
+                    evitarse mora; En caso que el Deudor no pague en la fecha de cada cuota mensual,
+                    automáticamente quedará constituido en mora y por el sólo hecho de incumplimiento, y desde esa fecha hasta el pago
+                    efectivo de su cuota, reconocerá al acreedor un factor mora {{mora}}% de aplicado a la cuota fija,
+                    equivalente a {{valor_mora}}, ({{valor_mora_label}}%) por cada día transcurrido en mora hasta el pago efectivo de su cuota.
                 </p>
                 <p style='text-align: justify; font-size:9.5px;'><u>6. SEXTA (VENCIMIENTO ANTICIPADO):</u> No obstante al plazo
                     prefijado y la forma de pago convenida, y sin
@@ -311,8 +310,8 @@ public class ContractsTemplates
                     de 8:30 am - 5:00 Pm y Sábados de 8:30 am - 11:00 Am)
                 </p>
                 <p style='text-align: justify; font-size:9.5px;'><u>10. DECIMA (OBLIGACIONES DEL DEUDOR):</u> El Deudor se obliga
-                    expresamente a lo siguiente: A. Debe leer de
-                    previo el contrato y solicitar aclaraciones al acreedor. B. A suministrar al acreedor toda la información que
+                    expresamente a lo siguiente: A. Debe leer de previo el contrato y solicitar aclaraciones al acreedor. 
+                    B. A suministrar al acreedor toda la información que
                     éste le solicite sobre la garantía descrita en este contrato. C. Actualizar cualquier cambio de su información
                     brindada. D. El acreedor y El Deudor acuerdan que cualquier información o notificación que El acreedor deba
                     notificar a El Deudor, se reputará válidamente hecha por cualquiera de los siguientes canales de información:
@@ -374,9 +373,7 @@ public class ContractsTemplates
                 82572062 (Mov); 57199497 (Cl), 25353613 (Planta)</p>
             <p style='font-size:9.5px; margin-top:0px; margin-bottom:0px; text-align:center; padding-bottom:0px'>CONTRATO DE
                 MUTUO GARANTIZADO CON PRENDA COMERCIAL</p>
-            <p style='text-align: justify; font-size:9.5px; margin-top:20px'>Nosotros: Juan José Villavicencio Navarro, mayor de
-                edad, casado, ingeniero Industrial, con cédula Nº 043-240688-0001M, Nicaragüense y de este domicilio de San
-                Marcos, actuando en calidad de apoderado generalísimo
+            <p style='text-align: justify; font-size:9.5px; margin-top:20px'>Nosotros: {{datos_apoderado}} actuando en calidad de apoderado generalísimo
                 de la sociedad Anónima denominada: ' EMPEÑOS Y PRESTAMOS S.A ' EMPRE S.A, Sociedad que es de este domicilio,
                 constituida, autorizada y existente de conformidad a las leyes de la República de Nicaragua, en escritura
                 pública
@@ -407,57 +404,32 @@ public class ContractsTemplates
                 {{tabla_articulos}}
             </div>
             <p style='text-align: justify; font-size:9.5px;'>
-                <u>3. TERCERA (INSPECCIÓN DEL VEHÍCULO):</u> El deudor cede los derechos al acreedor para que este realice una
-                inspección del estado físico del VEHÍCULO, la cual quedará evidenciada en los formatos de verificación del
-                acreedor, así como en fotografías tomadas en diferentes ángulos. El deudor no debe dejar ninguna pertenencia
-                ajena al VEHÍCULO, en caso de dejar alguna pertenencia, el acreedor no se hace responsable por la pérdida de
-                estas.
+                <u>3. TERCERA (RESPONSABILIDAD LIMITADA DEL ACREEDOR):</u> El acreedor no se responsabiliza por deterioros de los bienes empeñados 
+                por consecuencias de  terremotos, inundaciones, incendios,  derrumbes, erupciones, y cualquier otro hecho social, natural o 
+                delictivo que atente contra la integridad física y funcional de los bienes durante el tiempo de almacenamiento en las instalaciones 
+                del acreedor. Al momento de empeñar los bienes estos serán inspeccionados física y funcionalmente por el personal de atención a clientes, 
+                pero al momento de cancelación y entrega de los bienes, estos no serán probados funcionalmente, lo único que se verificará al deudor es 
+                su estructura física y los accesorios indicados en la descripción y observaciones plasmados en la cláusula dos de este contrato.
             </p>
             <p style='text-align: justify; font-size:9.5px;'>
-                <u>4. CUARTA (RESPONSABILIDAD LIMITADA DEL ACREEDOR):</u> El acreedor no se responsabiliza por deterioros del
-                VEHÍCULO empeñado por consecuencias de terremotos, inundaciones, incendios, derrumbes, erupciones, hecho
-                antisocial, natural o delictivo que atente contra la integridad física y funcional del VEHÍCULO durante el
-                tiempo de almacenamiento en las instalaciones del acreedor, así mismo el acreedor no se responsabiliza por
-                desperfectos mecánicos que se presenten por consecuencias de almacenamientos, no obstante el acreedor realizará
-                calentamiento de motor 1 vez por semana, el acreedor no se responsabiliza por cualquier accidente que se
-                presente durante el traslado del VEHÍCULO hacia el lugar donde quedará almacenado, toda lesiones físicas o
-                mortales del conductor o terceros que se vean involucrados, incluyendo los daños físicos a tercero, el único
-                responsable será el deudor, quien lo acepta con la firma de este contrato. En caso de que ocurra un accidente
-                que este fuera del trayecto de las oficinas hacia la bodega de almacenamiento de VEHÍCULO será asumido por el
-                acreedor.
-            </p>
+                <u>4. CUARTO (PLAZO Y FORMA DE PAGO):</u>
+                El deudor decide en cuantas cuotas mensuales cancela su empeño, siendo el plazo máximo de 3 meses para artículos electrónicos, 
+                6 meses para artículos no electrónicos y 12 meses para automotores; los pagos se realizarán en cuotas fijas  <span class='sombrear'>MENSUALES</span> de  C$ {{cuotafija}} , 
+                ({{cuotafija_label}}), según el cambio del córdoba a dólar a la fecha de hoy {{fecha_contrato_label}} de: C$ {{taza_cambio}} que serán 
+                modificables al tipo de cambio del dólar, en la fecha que el cliente haga efectivo su pago. Los pagos se realizarán en córdobas o el 
+                equivalente a $ {{cuotafija_dolares}}, ($ {{cuotafija_dolares_label}})  Estadounidenses, Según tasa de cambio del Banco Central de Nicaragua,  
+                iniciando la primera cuota mensual el día {{fecha_primera_cuota}} y la última el día {{fecha_ultima_cuota}}. El deudor acepta  
+                 realizar sus pagos mensuales en  las  oficinas  del acreedor, los pagos serán  todos  en  cuotas  fijas mensuales a como se muestra 
+                 en la tabla de amortización de  deuda  por garantía prendaria indicada al final de este contrato. En ningún momento el deudor podrá 
+                 cancelar el monto total de su empeño, sin antes haber pagado mora (en caso de incurrir,  <span class='sombrear'>hasta un máximo de 20 días en mora</span>), 
+                 interés neto corriente,  más los demás cargos a pagar en relación con lo pactado mensuales. En caso que sea imposible para el deudor cumplir 
+                 con su abono pactado, este podrá pagar al acreedor de forma mensual, la mora, el interés neto corriente y demás cargos a pagar en 
+                 relación con lo pactado.  <span class='sombrear'>El deudor no debe presentarse a cancelar hasta la última fecha de pago que se muestra en la tabla de amortización 
+                 al final de este contrato sin antes haber realizado los pagos respetivos mensuales de todas las fechas anteriores que se muestran en esta misma 
+                 tabla; porque de no realizar pagos mensuales e incurrir en 21 días  mora su artículo estará en liquidación</span>.
+            </p>            
             <p style='text-align: justify; font-size:9.5px;'>
-                <u>5. QUINTA (PLAZO Y FORMA DE PAGO):</u>El plazo del empeño lo decidirá el deudor, siendo un plazo máximo de 12
-                meses. Los pagos se realizarán en cuotas fijas de C$ {{cuotafija}}, según el cambio del córdoba a dólar a la
-                fecha de hoy {{fecha_contrato_label}} de: C$ {{taza_cambio}}, que serán modificables al tipo de cambio del dólar, 
-                en la fecha que el cliente haga efectivo su pago. Los pagos se realizarán en córdobas o el equivalente a 
-                $ {{cuotafija_dolares}}, Estadounidenses, Según tasa de cambio del Banco Central de
-                Nicaragua, iniciando la primera cuota el día {{fecha_primera_cuota}} y la última el día {{fecha_ultima_cuota}}.
-                El deudor se obliga a pagar al acreedor; La mora
-                (en caso de incurrir), el interés neto corriente, demás cargos a pagar en relación con lo pactado y el monto de
-                empeño en las oficinas del acreedor, los pagos serán todos en cuotas fijas según tabla de amortización de deuda
-                aquí estipulada al final de este contrato. En ningún momento el deudor podrá cancelar el monto total de su monto
-                de empeño, sin antes haber pagado mora (en caso de incurrir), interés neto corriente, más los demás cargos a
-                pagar en relación con lo pactado. En caso de que sea imposible para el deudor cumplir con su abono pactado, este
-                podrá pagar al acreedor la mora, el interés neto corriente y demás cargos a pagar en relación con lo pactado,
-                sin realizar abonos a su monto de empeño, pero al cumplirse la fecha de cancelación que se muestra en la tabla
-                de amortización de deuda, el monto de empeño otorgado tendrá que pagarse en su totalidad.
-
-            </p>
-            <p style='text-align: justify; font-size:9.5px;'>
-                <u>6. SEXTA (PAGO ANTICIPADO):</u>En caso de que el deudor realice cancelación anticipada, las partes acuerdan
-                que el Deudor reconocerá y pagará únicamente el interés neto y demás cargos en relación con lo pactado,
-                devengados al día de la cancelación anticipada. En caso de abonos anticipados, estos se aplicarán al principal
-                del monto de empeño, con lo que no variará el plan de pagos del monto en relación con la periodicidad y fechas
-                de las cuotas, sino en la proporción del monto de empeño e intereses de cada cuota, además, en dependencia del
-                monto del (los) pago (s) anticipado (s) es posible que se reduzca el plazo total del empeño. Si el deudor
-                cancela su contrato antes de los primeros treinta días después de haber firmado este contrato, deberá pagar el
-                Interés neto corriente y todo lo demás cargos a pagar en relación con lo pactado correspondiente a un mes, al
-                cancelar después del primer mes pagará únicamente los recargos sobre los días transcurridos hasta la fecha de su
-                cancelación.
-            </p>
-            <p style='text-align: justify; font-size:9.5px;'>
-                <u>7. SÉPTIMA (INTERÉS CORRIENTE Y DEMÁS CARGOS MENSUALES A PAGAR EN RELACIÓN CON LO PACTADO):</u> El monto de
+                <u>5. QUINTA (INTERÉS CORRIENTE Y DEMÁS CARGOS MENSUALES A PAGAR EN RELACIÓN CON LO PACTADO):</u> El monto de
                 empeño devengará una tasa de interés corriente inicial del {{interes_inicial_label}} por ciento
                 ({{interes_inicial}}%) sobre saldo, la cual será
                 verificable mensualmente de acuerdo con la tasa promedio ponderada que emita el Banco Central de Nicaragua. Los
@@ -472,24 +444,38 @@ public class ContractsTemplates
                 demás cargos son aplicados sobre el monto restante.
             </p>
             <p style='text-align: justify; font-size:9.5px;'>
-                <u>8. OCTAVA (MORA):</u> En caso de que el Deudor no pague en la fecha de cada cuota mensual, automáticamente
-                quedará constituido en mora y por el sólo hecho de incumplimiento, y desde esa fecha hasta el pago efectivo
-                de su cuota, reconocerá al acreedor un factor moratorio de aplicado a la cuota fija, equivalente en este
-                caso a {{mora}}, por cada día transcurrido hasta el pago efectivo de su cuota o cancelación.
+                <u>6. SEXTA (MORA):</u> El deudor podrá realizar el pago de su cuota anticipada a su fecha de pago, con el fin de
+                evitarse mora; En caso que el Deudor no pague en la fecha de cada cuota mensual,
+                automáticamente quedará constituido en mora y por el sólo hecho de incumplimiento, y desde esa fecha hasta el pago
+                efectivo de su cuota, reconocerá al acreedor un factor mora {{mora}}% de aplicado a la cuota fija,
+                equivalente a {{valor_mora}}, ({{valor_mora_label}}%) por cada día transcurrido en mora hasta el pago efectivo de su cuota o cancelación.
             </p>
             <p style='text-align: justify; font-size:9.5px;'>
-                <u>9. NOVENA (PÉRDIDA DEL VEHÍCULO):</u> El deudor declara compromiso puntual de pago, pero si llegase a 20 días
-                en mora el deudor pierde total derecho sobre el VEHÍCULO bajo el común acuerdo de este contrato, sin negación
-                alguna, para lo cual el ACREEDOR tendrá el total derecho de poner a la venta el VEHÍCULO descrito en este
-                contrato.
+                <u>7. SÉPTIMA (PÉRDIDA DE LA(S) GARANTÍA(S)): </u> El deudor debe realizar sus pagos mensuales, <span class='sombrear'>pero si llegase a 21 
+                días en mora</span> el deudor pierde total derecho sobre  la (s) garantía (s) descrita(s) bajo el común acuerdo de 
+                este contrato, para lo cual el ACREEDOR tendrá el total derecho de poner a la venta la(s) garantía(s), no 
+                obstante el mismo deudor podrá recuperar sus bienes mediante la compra de los mismos a través de una factura 
+                de compra al contado o de sistema de apartado, siempre y cuando el/los bien(es) aún esté (n) en el inventario de venta del ACREEDOR.
             </p>
             <p style='text-align: justify; font-size:9.5px;'>
-                <u>10. DECIMA (RE-EMPEÑO):</u> Una vez cancelado el contrato, el VEHÍCULO podrá ser empeñado nuevamente, siempre
+                <u>8. OCTAVA (PAGO ANTICIPADO):</u>En caso de que el deudor realice cancelación anticipada, las partes acuerdan
+                que el Deudor reconocerá y pagará únicamente el interés neto y demás cargos en relación con lo pactado,
+                devengados al día de la cancelación anticipada. En caso de abonos anticipados, estos se aplicarán al principal
+                del monto de empeño, con lo que no variará el plan de pagos del monto en relación con la periodicidad y fechas
+                de las cuotas, sino en la proporción del monto de empeño e intereses de cada cuota, además, en dependencia del
+                monto del (los) pago (s) anticipado (s) es posible que se reduzca el plazo total del empeño. <span class='sombrear'>Si el deudor
+                cancela su contrato antes de los primeros treinta días después de haber firmado este contrato, deberá pagar el
+                Interés neto corriente y todo lo demás cargos a pagar en relación con lo pactado correspondiente a un mes</span>, al
+                cancelar después del primer mes pagará únicamente los recargos sobre los días transcurridos hasta la fecha de su
+                cancelación.
+            </p>
+            <p style='text-align: justify; font-size:9.5px;'>
+                <u>9. NOVENO (RE-EMPEÑO):</u> Una vez cancelado el contrato, el VEHÍCULO podrá ser empeñado nuevamente, siempre
                 y cuando el seguro este vigente, en caso de no estar vigente el seguro el deudor deberá de presentar un nuevo
                 seguro del VEHÍCULO que está bajo empeño.
             </p>
             <p style='text-align: justify; font-size:9.5px;'>
-                <u>11. DECIMA PRIMERA (DERECHOS DEL DEUDOR):</u>El Deudor tiene los siguientes derechos de conformidad con la
+                <u>10. DECIMA (DERECHOS DEL DEUDOR):</u>El Deudor tiene los siguientes derechos de conformidad con la
                 Norma
                 sobre la transparencia de las operaciones: A. Ser informados de forma clara, completa, oportuna y adecuada
                 de los servicios del acreedor y adicionalmente de recibir información fiscal básica: B. Recibir información
@@ -504,34 +490,23 @@ public class ContractsTemplates
                 deudor.
             </p>
             <p style='text-align: justify; font-size:9.5px;'>
-                <u>12. DECIMA SEGUNDA (OBLIGACIONES DEL DEUDOR):</u> El Deudor se obliga expresamente a lo siguiente: A. Debe
+                <u>11. DECIMA PRIMERA (OBLIGACIONES DEL DEUDOR):</u> El Deudor se obliga expresamente a lo siguiente: A. Debe
                 leer
                 de previo el contrato y solicitar aclaraciones al acreedor. B. Suministrar al acreedor toda la información
                 que éste le solicite sobre el VEHÍCULO. C. Entregar la copia del contrato al momento de la cancelación de
-                este, en caso de pérdida del contrato deberá pagar la cantidad de $ 1.00 (un dólar) o su equivalente en
-                Córdoba por pérdida de documento. D. el deudor deberá de pagar $11.00 (once dólares) de deducción por
-                desembolso.
+                este, en caso de pérdida del contrato deberá pagar la cantidad de <span class='sombrear'>$ 1.00 (un dólar) o su equivalente en
+                Córdoba por pérdida de documento.</span> D. En caso de que el/los bien (es) no pueda (n) ser retirados por el DEUDOR, este podrá 
+                enviar a un tercero quién deberá presentar: su cédula original más cédula original del DEUDOR y el contrato privado, 
+                de faltar uno de estos tres documentos NO se entregarán el/los bien (es) empeñados a terceras personas.
+
             </p>
             <p style='text-align: justify; font-size:9.5px;'>
-                <u>13. DECIMA TERCERA (ENTREGA DEL VEHÍCULO):</u> Antes de que el deudor cancele su contrato deberá preguntar en
-                la
-                caja sí el seguro del VEHÍCULO está vigente, en caso de que el seguro este expirado NO se entregará el
-                VEHÍCULO hasta que el cliente traiga un nuevo seguro vigente, esto con el fin de evitar inconvenientes
-                varios que puedan presentarse al trasladar el VEHÍCULO desde las bodegas de almacenamiento hasta las
-                oficinas en donde se entregará. En caso de que el deudor no pueda retirar personalmente el VEHÍCULO una vez
-                que este haya sido cancelado, podrá enviar a un tercero quién deberá presentar: su cédula original más
-                cedula original del DEUDOR y el contrato privado, de faltar uno de estos tres documentos NO se entregará. En
-                la entrega del VEHÍCULO, este no será probado funcionalmente, lo único que se verificará al cliente es su
-                estructura física y los accesorios indicados en la descripción y observaciones plasmados en la cláusula dos
-                de este contrato.
+                <u>12. DÉCIMA SEGUNDA (RÉGIMEN LEGAL):</u> El presente contrato, y todos los derechos o actos que se deriven 
+                o sean consecuencia del mismo, quedan sometidos a la Ley 842, ley 176, ley 146, Código Civil, Código de Comercio y
+                 demás leyes de la República de Nicaragua.	
             </p>
             <p style='text-align: justify; font-size:9.5px;'>
-                <u>14. DECIMA CUARTA (RÉGIMEN LEGAL):</u> El presente contrato, y todos los derechos o actos que se deriven o
-                sean consecuencia de este, quedan sometidos a la Ley 842 y sus reformas, ley 176, Código Civil, Código de
-                Comercio y demás leyes de la República de Nicaragua pertinentes al acto de mutuo.
-            </p>
-            <p style='text-align: justify; font-size:9.5px;'>
-                <u>15. DECIMA QUINTA (ACEPTACIÓN): </u>Los comparecientes declaran expresamente que aceptan el presente contrato
+                <u>13. DECIMA TERCERA (ACEPTACIÓN): </u>Los comparecientes declaran expresamente que aceptan el presente contrato
                 con los términos relacionados, Y leído el presente contrato por las partes lo encontramos conforme, aprobamos,
                 ratificamos y firmamos, en la ciudad de San Marcos a los {{dias}} dias del mes {{mes}} del año {{anio}}.
             </p>
@@ -579,9 +554,7 @@ public class ContractsTemplates
 
 
 
-        <p style='text-align: justify; font-size:9.5px; margin-top:20px'>Nosotros: Juan José Villavicencio Navarro, mayor de
-            edad, casado, ingeniero Industrial, con cédula Nº 043-240688-0001M, Nicaragüense y de este domicilio de San
-            Marcos, actuando en calidad de apoderado generalísimo
+        <p style='text-align: justify; font-size:9.5px; margin-top:20px'>Nosotros: {{datos_apoderado}}, actuando en calidad de apoderado generalísimo
             de la sociedad Anónima denominada: ' EMPEÑOS Y PRESTAMOS S.A ' EMPRE S.A, Sociedad que es de este domicilio,
             constituida, autorizada y existente de conformidad a las leyes de la República de Nicaragua, en escritura pública
             #51, Constitución de Sociedad Anónima y estatutos,
@@ -630,7 +603,7 @@ public class ContractsTemplates
         <p style='text-align: justify; font-size:9.5px;'>
             <u>4. CUARTA (PLAZO Y FORMA DE PAGO):</u> El deudor decide en cuantas cuotas mensuales cancela su empeño, siendo
             el plazo máximo de 3 meses para artículos electrónicos, 6 meses
-            para artículos no electrónicos y 12 meses para automotores; los pagos se realizarán en cuotas fijas MENSUALES de
+            para artículos no electrónicos y 12 meses para automotores; los pagos se realizarán en cuotas fijas <span class='sombrear'>MENSUALES</span> de
             C$ {{cuotafija}}, ({{cuotafija_label}}), según el cambio del córdoba a dólar a la fecha de hoy {{fecha_contrato_label}} de: C$
             {{taza_cambio}} que serán modificables al tipo de cambio del dólar, en la fecha que el cliente haga efectivo su pago. Los pagos se 
             realizarán en córdobas o el equivalente a $ {{cuotafija_dolares}} , ({{cuotafija_dolares_label}}) Estadounidenses, 
@@ -638,14 +611,14 @@ public class ContractsTemplates
             y la última cuota mensual el día {{fecha_ultima_cuota}}.El deudor acepta realizar sus pagos mensuales en las oficinas del acreedor,
             los pagos serán todos en cuotas fijas mensuales a como se muestra en la tabla de amortización de deuda por
             garantía prendaria indicada al final de este contrato. En ningún momento el deudor podrá cancelar el
-            monto total de su empeño, sin antes haber pagado mora (en caso de incurrir, hasta un máximo de 20 días calendarios en mora),
+            monto total de su empeño, sin antes haber pagado mora (en caso de incurrir, <span class='sombrear'>hasta un máximo de 20 días calendarios en mora</span>),
             interés neto corriente, más los demás cargos a pagar en relación con lo pactado mensuales.
             En caso que sea imposible para el deudor cumplir con su abono pactado, este podrá pagar al acreedor de forma
             mensual, la mora, el interés neto corriente y demás cargos a pagar en relación con lo pactado.
-            El deudor no debe presentarse a cancelar hasta la última fecha de pago que se muestra en la tabla de amortización
+            <span class='sombrear'>El deudor no debe presentarse a cancelar hasta la última fecha de pago que se muestra en la tabla de amortización
             al final de este contrato sin antes haber realizado los pagos respetivos mensuales de todas las fechas anteriores
             que se muestran en esta misma tabla;
-            porque de no realizar pagos mensuales e incurrir en 21 días mora su artículo estará en liquidación.
+            porque de no realizar pagos mensuales e incurrir en 21 días mora su artículo estará en liquidación.</span>
         </p>
         <p style='text-align: justify; font-size:9.5px;'>
             <u>5. QUINTA (INTERES CORRIENTE Y DEMÁS CARGOS MENSUALES A PAGAR EN RELACION CON LO PACTADO):</u> El monto de
@@ -663,14 +636,14 @@ public class ContractsTemplates
             demás cargos son aplicados sobre el monto restante.
         </p>
         <p style='text-align: justify; font-size:9.5px;'>
-            <u>6. SEXTA ( MORA):</u> El deudor podrá realizar el pago de su cuota anticipada a su fecha de pago, con el fin de
+            <u>6. SEXTA (MORA):</u> El deudor podrá realizar el pago de su cuota anticipada a su fecha de pago, con el fin de
             evitarse mora; En caso que el Deudor no pague en la fecha de cada cuota mensual,
             automáticamente quedará constituido en mora y por el sólo hecho de incumplimiento, y desde esa fecha hasta el pago
-            efectivo de su cuota, reconocerá al acreedor un factor mora de aplicado a la cuota fija,
-            equivalente a {{mora}}%, por cada día transcurrido en mora hasta el pago efectivo de su cuota.
+            efectivo de su cuota, reconocerá al acreedor un factor mora {{mora}}% de aplicado a la cuota fija,
+            equivalente a {{valor_mora}}, ({{valor_mora_label}}%) por cada día transcurrido en mora hasta el pago efectivo de su cuota.
         </p>
         <p style='text-align: justify; font-size:9.5px;'> <u> 7. SEPTIMA (PÉRDIDA DE LA(S) GARANTIA(S)):</u> El deudor debe
-            realizar sus pagos mensuales, pero si llegase a 21 días en mora el deudor pierde total derecho sobre la (s)
+            realizar sus pagos mensuales, <span class='sombrear'>pero si llegase a 21 días en mora</span> el deudor pierde total derecho sobre la (s)
             garantía (s) descrita(s) bajo el común acuerdo de este contrato, para lo cual el ACREEDOR tendrá el total derecho
             de poner a la venta la(s) garantía(s), no obstante el mismo
             deudor podrá recuperar sus bienes mediante la compra de los mismos a través de una factura de compra al contado o
@@ -683,15 +656,15 @@ public class ContractsTemplates
             En caso de abonos anticipados, estos se aplicarán al principal del monto de empeño, con lo que no variará el plan
             de pagos del monto en relación a la periodicidad y fechas de las cuotas, sino en la proporción del monto de empeño
             e intereses de cada cuota, además,
-            en dependencia del monto del (los) pago (s) anticipado (s) es posible que se reduzca el plazo total del empeño. Si
+            en dependencia del monto del (los) pago (s) anticipado (s) es posible que se reduzca el plazo total del empeño. <span class='sombrear'>Si
             el deudor cancela su contrato antes de los primeros treinta días después de haber firmado este contrato, deberá
             pagar el Interés neto corriente y todo lo demás cargos a pagar en relación con lo pactado correspondiente a un
-            mes,
+            mes</span>,
             al cancelar después del primer mes, pagará únicamente los recargos sobre los días transcurridos hasta la fecha de
             su cancelación.
         </p>
         <p style='text-align: justify; font-size:9.5px;'>
-            <u>9. DECIMA (REEMPEÑO):</u> Una vez cancelado el contrato, los bienes podrán ser empeñados nuevamente después de
+            <u>9. NOVENA (REEMPEÑO):</u> Una vez cancelado el contrato, los bienes podrán ser empeñados nuevamente después de
             24 horas, aplica para artículos electrónicos o que se demuestre que el tiempo puede impactar en su rendimiento y
             funcionamiento.
             En caso que el/los bien (es) haya(n) sido empeñado en un menor plazo del permitido (3meses), se podrá re empeñar
@@ -700,7 +673,7 @@ public class ContractsTemplates
             anterior.
         </p>
         <p style='text-align: justify; font-size:9.5px;'>
-            <u>10. DECIMA PRIMERA (DERECHOS DEL DEUDOR):</u> El Deudor tiene los siguientes derechos de conformidad con la
+            <u>10. DECIMA (DERECHOS DEL DEUDOR):</u> El Deudor tiene los siguientes derechos de conformidad con la
             Norma sobre la transparencia de las operaciones: A. A ser informados de forma clara, completa,
             oportuna y adecuada de los servicios del acreedor y adicionalmente de recibir información fiscal básica: B.
             Recibir información previa antes de la suscripción del contrato: El acreedor le pondrá a disposición el contrato,
@@ -714,7 +687,7 @@ public class ContractsTemplates
             4:30 Pm y Sábados de 8:30 am - 11:00 Am). E .la información es brindada únicamente al deudor.
         </p>
         <p style='text-align: justify; font-size:9.5px;'>
-            <u>11. DECIMA SEGUNDA (OBLIGACIONES DEL DEUDOR):</u> El Deudor se obliga expresamente a lo siguiente: A. Debe leer
+            <u>11. DECIMA PRIMERA (OBLIGACIONES DEL DEUDOR):</u> El Deudor se obliga expresamente a lo siguiente: A. Debe leer
             de previo el contrato y solicitar aclaraciones al acreedor. B. A suministrar al acreedor toda la información que
             éste le solicite sobre la garantía descrita en este contrato.
             C. A entregar la copia del contrato al momento de la cancelación del mismo, en caso de pérdida debe de pagar la
@@ -726,12 +699,18 @@ public class ContractsTemplates
             de este contrato.
         </p>
         <p style='text-align: justify; font-size:9.5px;'>
-            12. DECIMA TERCERA (REGIMEN LEGAL): El presente contrato, y todos los derechos o actos que se deriven o sean
+            12. DECIMA SEGUNDA (REGIMEN LEGAL): El presente contrato, y todos los derechos o actos que se deriven o sean
             consecuencia del mismo, quedan sometidos a la Ley 842, ley 176, ley 146, Código Civil, Código de Comercio y demás
             leyes de la República de Nicaragua.
         </p>
         <p style='text-align: justify; font-size:9.5px;'>
-            <u>13. DECIMA CUARTA (ACEPACCIÓN):</u> Los comparecientes declaran expresamente que aceptan el presente contrato
+            13. DECIMA TERCERA (TITULARIDAD Y POSESIÓN DE LAS GARANTÍAS): El deudor declara con su firma en este contrato que es 
+            dueño titular de los bienes acá descritos, por no tener factura; pero por posesión en sus manos se declara dueño absoluto,
+             como lo indica la ley 936 en su artículo 11; el deudor asume  todo procedimiento legal que implique 
+             la ilegitimidad del origen de los bienes acá descritos.
+        </p>
+        <p style='text-align: justify; font-size:9.5px;'>
+            <u>14. DECIMA CUARTA (ACEPACCIÓN):</u> Los comparecientes declaran expresamente que aceptan el presente contrato
             con los términos relacionados, Y leído el presente contrato por las partes lo encontramos conforme, aprobamos,
             ratificamos y firmamos, en la ciudad de San Marcos a los {{dias}} dias del mes {{mes}} del año {{anio}}.
         </p><br></br>

@@ -73,22 +73,29 @@ namespace CAPA_NEGOCIO.Services
             }
             DateTime? fechaPrimeraCuota = model.Tbl_Cuotas.Select(c => c.fecha).ToList().Min();
             DateTime? fechaUltimaCuota = model.Tbl_Cuotas.Select(c => c.fecha).ToList().Max();
+
+            var configuraciones_generales = new Transactional_Configuraciones().GetGeneralData();
+
+            var configuraciones = new Transactional_Configuraciones().GetIntereses();
+
+
             templateContent = templateContent.Replace("{{cuotafija}}", Math.Round((decimal)model.cuotafija, 2).ToString())
-               .Replace("{{fecha_contrato_label}}", model.fecha_contrato?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy"))
-               .Replace("{{fecha_primera_cuota}}", fechaPrimeraCuota?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy"))
-               .Replace("{{fecha_ultima_cuota}}", fechaUltimaCuota?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy"))
-               .Replace("{{cuotafija_label}}", NumberUtility.NumeroALetras(model.cuotafija, "córdobas"))
-               .Replace("{{cuotafija_dolares}}", Math.Round((decimal)model.cuotafija_dolares, 2).ToString())
-               .Replace("{{cuotafija_dolares_label}}", NumberUtility.NumeroALetras(model.cuotafija_dolares, "dólares"))
-               .Replace("{{valoracion_empeño_cordobas}}", Math.Round((decimal)model.valoracion_empeño_cordobas, 2).ToString())
-               .Replace("{{valoracion_empeño_cordobas_label}}", NumberUtility.NumeroALetras(model.valoracion_empeño_cordobas, "córdobas"))
-               .Replace("{{valoracion_empeño_dolares}}", Math.Round((decimal)model.valoracion_empeño_dolares, 2).ToString())
-               .Replace("{{valoracion_empeño_dolares_label}}", NumberUtility.NumeroALetras(model.valoracion_empeño_dolares, "dólares"));
+                .Replace("{{datos_apoderado}}", configuraciones.Find(c => c.Nombre.Equals(GeneralDataEnum.APODERADO.ToString()))?.Valor)
+                .Replace("{{fecha_contrato_label}}", model.fecha_contrato?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy"))
+                .Replace("{{fecha_primera_cuota}}", fechaPrimeraCuota?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy"))
+                .Replace("{{fecha_ultima_cuota}}", fechaUltimaCuota?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy"))
+                .Replace("{{cuotafija_label}}", NumberUtility.NumeroALetras(model.cuotafija, "córdobas"))
+                .Replace("{{cuotafija_dolares}}", Math.Round((decimal)model.cuotafija_dolares, 2).ToString())
+                .Replace("{{cuotafija_dolares_label}}", NumberUtility.NumeroALetras(model.cuotafija_dolares, "dólares"))
+                .Replace("{{valoracion_empeño_cordobas}}", Math.Round((decimal)model.valoracion_empeño_cordobas, 2).ToString())
+                .Replace("{{valoracion_empeño_cordobas_label}}", NumberUtility.NumeroALetras(model.valoracion_empeño_cordobas, "córdobas"))
+                .Replace("{{valoracion_empeño_dolares}}", Math.Round((decimal)model.valoracion_empeño_dolares, 2).ToString())
+                .Replace("{{valoracion_empeño_dolares_label}}", NumberUtility.NumeroALetras(model.valoracion_empeño_dolares, "dólares"));
 
             var renderedHtml = RenderTemplate(templateContent, model);
 
             //LoggerServices.AddMessageInfo("FIN DE RENDER");
-            var configuraciones = new Transactional_Configuraciones().GetIntereses();
+
             //var interes = configuraciones.Select(i => Convert.ToInt32(i.Valor)).ToArray().Sum();
             //LoggerServices.AddMessageInfo("FIN DE GET INTERESE");
             Catalogo_Clientes? cliente = model.Catalogo_Clientes?.Find<Catalogo_Clientes>();
@@ -96,7 +103,10 @@ namespace CAPA_NEGOCIO.Services
             renderedHtml = RenderTemplate(renderedHtml, cliente)
                 .Replace("{{municipio}}", cliente.Catalogo_Municipio?.nombre)
                 .Replace("{{departamento}}", cliente.Catalogo_Departamento?.nombre)
-                .Replace("{{tabla_articulos}}", GenerateTableHtml(model.Detail_Prendas))
+                .Replace("{{tabla_articulos}}", GenerateTableHtml(model.Detail_Prendas, model.tipo.Equals(Contratos_Type.EMPENO_VEHICULO.ToString())))
+                //MORA                
+                .Replace("{{valor_mora}}", Math.Round((decimal)model.mora, 2).ToString())
+                .Replace("{{valor_mora_label}}", NumberUtility.NumeroALetras(model.cuotafija_dolares * (model.mora / 100), "dólares"))
 
                 /*INTERESES*/
                 .Replace("{{interes_inicial}}", cliente.Catalogo_Clasificacion_Interes?.porcentaje.ToString() ?? "6")
@@ -186,7 +196,62 @@ namespace CAPA_NEGOCIO.Services
             }
         }
 
-        static string GenerateTableHtml(List<Detail_Prendas> listaDatos)
+        static string GenerateTableHtml(List<Detail_Prendas> listaDatos, bool isVehiculo)
+        {
+            if (isVehiculo)
+            {
+                return vehiculoTable(listaDatos);
+            }
+            return basicTable(listaDatos);
+        }
+
+        private static string vehiculoTable(List<Detail_Prendas> listaDatos)
+        {
+            StringBuilder htmlBuilder = new StringBuilder();
+            // Abrir la etiqueta de la tabla con atributos de estilo para bordes y ancho 100%
+            htmlBuilder.Append("<table style=\"font-size:9px;border-collapse: collapse; width: 100%;\">");
+            // Encabezados de la tabla (opcional)
+            htmlBuilder.Append("<tr>");
+            htmlBuilder.Append("<th style=\"font-size:9px; text-align: center; padding: 4px; border: 1px solid black;\">VEHÍCULO</th>");
+            htmlBuilder.Append("<th style=\"font-size:9px; text-align: center; padding: 4px; border: 1px solid black;\">COLOR</th>");
+            htmlBuilder.Append("<th style=\"font-size:9px; text-align: center; padding: 4px; border: 1px solid black;\">CAP/CILINDRO</th>");
+            htmlBuilder.Append("<th style=\"font-size:9px; text-align: center; padding: 4px; border: 1px solid black;\">CANT/CILINDRO</th>");
+            htmlBuilder.Append("<th style=\"font-size:9px; text-align: center; padding: 4px; border: 1px solid black;\">CANT/PASAJEROS</th>");
+            htmlBuilder.Append("<th style=\"font-size:9px; text-align: center; padding: 4px; border: 1px solid black;\">AÑO</th>");
+            htmlBuilder.Append("<th style=\"font-size:9px; text-align: center; padding: 4px; border: 1px solid black;\">MARCA</th>");
+            htmlBuilder.Append("<th style=\"font-size:9px; text-align: center; padding: 4px; border: 1px solid black;\">MODELO</th>");
+            htmlBuilder.Append("<th style=\"font-size:9px; text-align: center; padding: 4px; border: 1px solid black;\">N° MOTOR</th>");
+            htmlBuilder.Append("<th style=\"font-size:9px; text-align: center; padding: 4px; border: 1px solid black;\">CHASIS</th>");
+            htmlBuilder.Append("<th style=\"font-size:9px; text-align: center; padding: 4px; border: 1px solid black;\">PLACA</th>");
+            htmlBuilder.Append("<th style=\"font-size:9px; text-align: center; padding: 4px; border: 1px solid black;\">N° DE CIRCULACIÓN</th>");
+            // Agregar más encabezados según tus necesidades
+            htmlBuilder.Append("</tr>");
+            // Contenido de la tabla
+            foreach (var dato in listaDatos)
+            {
+                htmlBuilder.Append("<tr>");
+                htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\">{dato.Descripcion}</td>");
+                htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\">{dato.color}</td>");
+                htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\">{dato.Detail_Prendas_Vehiculos?.capacidad_cilindros}</td>");
+                htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\">{dato.Detail_Prendas_Vehiculos?.cantidad_cilindros}</td>");
+                htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\">{dato.Detail_Prendas_Vehiculos?.cantidad_pasajeros}</td>");
+                htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\">{dato.Detail_Prendas_Vehiculos?.year_vehiculo}</td>");
+                htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\">{dato.marca}</td>");
+                htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\">{dato.modelo}</td>");
+                htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\">{dato.Detail_Prendas_Vehiculos?.montor}</td>");
+                htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\">{dato.Detail_Prendas_Vehiculos?.chasis}</td>");
+                htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\">{dato.Detail_Prendas_Vehiculos?.placa}</td>");
+                htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\">{dato.Detail_Prendas_Vehiculos?.circuacion}</td>");
+                // Agregar más columnas según las propiedades de tu objeto DatosTabla
+                htmlBuilder.Append("</tr>");
+            }
+
+            // Cerrar la etiqueta de la tabla
+            htmlBuilder.Append("</table>");
+            return htmlBuilder.ToString();
+        }
+
+        private static string basicTable(List<Detail_Prendas> listaDatos)
         {
             StringBuilder htmlBuilder = new StringBuilder();
             // Abrir la etiqueta de la tabla con atributos de estilo para bordes y ancho 100%
@@ -217,6 +282,7 @@ namespace CAPA_NEGOCIO.Services
             htmlBuilder.Append("</table>");
             return htmlBuilder.ToString();
         }
+
         static string GenerateTableHtml(List<Tbl_Cuotas> listaDatos)
         {
             List<Tbl_Cuotas> objListOrder = listaDatos.OrderBy(order => order.fecha).ToList();
