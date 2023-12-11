@@ -295,9 +295,6 @@ namespace CAPA_NEGOCIO.Services
             double valorInteres = configuraciones.Select(c => Convert.ToDouble(c.Valor)).ToList().Sum() / 100;
             foreach (var dato in objListOrder)
             {
-               
-
-
                 htmlBuilder.Append("<tr>");
                 htmlBuilder.Append($"<td class=\"desc\" colspan=\"2\">{Convert.ToDateTime(dato.fecha.ToString()).ToString("dd-MM-yyyy")}</td>");
                 var value1 = dato.capital_restante * dato.tasa_cambio * (cliente.Catalogo_Clasificacion_Interes.porcentaje / 100);
