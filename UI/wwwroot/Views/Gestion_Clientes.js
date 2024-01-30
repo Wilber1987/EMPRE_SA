@@ -23,8 +23,8 @@ class Gestion_ClientesView extends HTMLElement {
 
         this.OptionContainer = WRender.Create({ className: "OptionContainer" });
         this.TabContainer = WRender.Create({ className: "TabContainer", id: 'TabContainer' });
-        this.Manager = new ComponentsManager({ MainContainer: this.TabContainer, SPAManage: false });     
-        
+        this.Manager = new ComponentsManager({ MainContainer: this.TabContainer, SPAManage: false });
+
         this.OptionContainer.append(WRender.Create({
             tagName: 'button', className: 'Block-Secundary', innerText: 'Historial de Clientes',
             onclick: () => this.NewGestionClientes()
@@ -42,9 +42,9 @@ class Gestion_ClientesView extends HTMLElement {
                     // @ts-ignore
                     this.TableComponent.Dataset = datasetUpdated;
                     this.TableComponent?.DrawTable();
-                    
+
                 } else {
-                    const data = await model.Get();       
+                    const data = await model.Get();
                     this.TableComponent = new WTableComponent({
                         ModelObject: model, Dataset: data, Options: {
                             Filter: true,
@@ -52,16 +52,19 @@ class Gestion_ClientesView extends HTMLElement {
                             UserActions: [
                                 {
                                     name: "Editar", action: (cliente) => {
-                                        this.Gestion_ClientesForm.cliente = cliente
-                                        this.Gestion_ClientesForm.Draw();
-                                        this.NewTransaction();
+                                        if (this.Gestion_ClientesForm != null) {
+                                            this.Gestion_ClientesForm.cliente = cliente
+                                            this.Gestion_ClientesForm.Draw();
+                                            this.NewTransaction();
+                                        }
+
                                     }
                                 }
                             ]
                         }
                     })
                     this.MainComponent = WRender.Create({ className: "main-container", children: [this.TableComponent] })
-                } 
+                }
                 this.Manager?.NavigateFunction("tabla", this.MainComponent);
             }
         }))
@@ -78,8 +81,9 @@ class Gestion_ClientesView extends HTMLElement {
 
 
     }
-    Gestion_ClientesForm = new Gestion_ClientesForm();
+
     NewTransaction(Model) {
+        this.Gestion_ClientesForm = new Gestion_ClientesForm();
         this.Manager?.NavigateFunction("Gestion_ClientesForm", this.Gestion_ClientesForm)
     }
     NewGestionClientes() {
@@ -87,8 +91,10 @@ class Gestion_ClientesView extends HTMLElement {
             const response = await new Transaction_Contratos({ codigo_cliente: cliente.codigo_cliente }).Get();
             cliente.Transaction_Contratos = response;
             this.Manager?.NavigateFunction("Gestion_ClientesDetail" + cliente.codigo_cliente, new WDetailObject({
-                ModelObject: new Catalogo_Clientes({ Transaction_Contratos: 
-                    { type: "MASTERDETAIL", ModelObject: ()=> new Transaction_Contratos_ModelComponent(), Dataset: response } }),
+                ModelObject: new Catalogo_Clientes({
+                    Transaction_Contratos:
+                        { type: "MASTERDETAIL", ModelObject: () => new Transaction_Contratos_ModelComponent(), Dataset: response }
+                }),
                 ObjectDetail: cliente
             }))
         }))
