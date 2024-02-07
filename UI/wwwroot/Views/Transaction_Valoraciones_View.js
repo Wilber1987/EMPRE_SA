@@ -359,7 +359,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
 
         this.OptionContainer.append(WRender.Create({
             tagName: 'button', className: 'Block-Tertiary', innerText: 'Buscar valoraciones',
-            onclick: () => this.Manager.NavigateFunction("Searcher", new ValoracionesSearch(this.selectValoracion))
+            onclick: () => this.Manager.NavigateFunction("Searcher", new ValoracionesSearch(this.selectValoracion,this.facturartValoracion))
         }))
         this.OptionContainer.append(WRender.Create({
             tagName: 'button', className: 'Block-Fourth', innerText: 'Añadir',
@@ -440,6 +440,20 @@ class Transaction_Valoraciones_View extends HTMLElement {
                 }
             }
         }))
+        this.OptionContainer.append(WRender.Create({
+            tagName: 'button', className: 'Block-Success', innerText: 'Facturar',
+            onclick: async () => {
+                if (this.valoracionesTable?.Dataset.length == 0) {
+                    this.append(ModalMessege("Agregue valoraciones para poder continuar"));
+                    return;
+                }                                
+                const response = await this.calculoAmortizacion().SaveDataContract();
+                if (response) {
+                    // @ts-ignore
+                    window.location = "/PagesViews/Transaction_ContratosView";
+                }
+            }
+        }))
     }
     selectCliente = (/**@type {Catalogo_Clientes} */ selectCliente) => {
         console.log(selectCliente);
@@ -499,6 +513,9 @@ class Transaction_Valoraciones_View extends HTMLElement {
         this.beneficiosDetailUpdate();
         
         this.Manager.NavigateFunction("valoraciones", this.valoracionesContainer);
+    }
+    facturartValoracion = (/**@type {Transactional_Valoracion}*/valoracion) =>{
+        console.log(valoracion);
     }
     beneficiosDetailUpdate() {
         // @ts-ignore

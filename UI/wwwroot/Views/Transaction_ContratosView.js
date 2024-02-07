@@ -408,7 +408,7 @@ class MainContract extends HTMLElement {
     ElementsNav = [
         {
             name: "Contratos", action: () => {
-                this.Manager.NavigateFunction("contratos", contratosSearcher((contrato) => {
+                this.Manager.NavigateFunction("contratos", contratosSearcher((contrato) => {                    
                     location.href = "/PagesViews/Transaction_ContratosViewDetail?numero_contrato=" + contrato.numero_contrato;
                 }))
             }
