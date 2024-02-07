@@ -1,17 +1,21 @@
 using RazorLight;
 using System;
 using System.IO;
-using iTextSharp.text;
-using iTextSharp.text.pdf;
-using iTextSharp.text.html.simpleparser;
+// using iTextSharp.text;
+// using iTextSharp.text.pdf;
+// using iTextSharp.text.html.simpleparser;
 using UI.Controllers;
-using iTextSharp.tool.xml;
+//using iTextSharp.tool.xml;
 using DataBaseModel;
 using System.Text;
 using System.Reflection;
 using Model;
 using CAPA_DATOS.Services;
 using CAPA_DATOS;
+using iText.Kernel.Pdf;
+using iText.Html2pdf;
+using iText.Layout;
+using iText.Layout.Element;
 
 namespace CAPA_NEGOCIO.Services
 {
@@ -71,8 +75,8 @@ namespace CAPA_NEGOCIO.Services
 			{
 				templateContent = ContractsTemplates.ContractPrestamo;
 			}
-			DateTime? fechaPrimeraCuota = model.Tbl_Cuotas.Select(c => c.fecha).ToList().Min();
-			DateTime? fechaUltimaCuota = model.Tbl_Cuotas.Select(c => c.fecha).ToList().Max();
+			DateTime? fechaPrimeraCuota = model.Tbl_Cuotas?.Select(c => c.fecha).ToList().Min();
+			DateTime? fechaUltimaCuota = model.Tbl_Cuotas?.Select(c => c.fecha).ToList().Max();
 
 			var configuraciones_generales = new Transactional_Configuraciones().GetGeneralData();
 
@@ -81,7 +85,9 @@ namespace CAPA_NEGOCIO.Services
 
 			templateContent = templateContent.Replace("{{cuotafija}}", Math.Round((decimal)model.cuotafija, 2).ToString("0.00"))
 				.Replace("{{numero_contrato}}", model.numero_contrato?.ToString("D9"))
-				.Replace("{{datos_apoderado}}", configuraciones.Find(c => c.Nombre.Equals(GeneralDataEnum.APODERADO.ToString()))?.Valor)
+				.Replace("{{datos_apoderado}}", configuraciones_generales.Find(c => c.Nombre.Equals(GeneralDataEnum.APODERADO.ToString()))?.Valor)
+				.Replace("{{resumen_datos_apoderado}}", configuraciones_generales.Find(c => c.Nombre.Equals(GeneralDataEnum.DATOS_APODERADO.ToString()))?.Valor)
+				.Replace("{{firma}}", configuraciones_generales.Find(c => c.Nombre.Equals(GeneralDataEnum.FIRMA_DIGITAL_APODERADO.ToString()))?.Valor)
 				.Replace("{{fecha_contrato_label}}", model.fecha_contrato?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy"))
 				.Replace("{{fecha_primera_cuota}}", fechaPrimeraCuota?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy"))
 				.Replace("{{fecha_ultima_cuota}}", fechaUltimaCuota?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy"))
@@ -101,10 +107,10 @@ namespace CAPA_NEGOCIO.Services
 			//LoggerServices.AddMessageInfo("FIN DE GET INTERESE");
 			Catalogo_Clientes? cliente = model.Catalogo_Clientes?.Find<Catalogo_Clientes>();
 			double valorInteres = configuraciones.Select(c => Convert.ToDouble(c.Valor)).ToList().Sum();
-			
-			
-            var montoMora = model.cuotafija * ((model?.mora/100) ?? 0.005) * 1;//como el cronjob es diario se va cargando mora cada dia
-                    
+
+
+			var montoMora = model.cuotafija * ((model?.mora / 100) ?? 0.005) * 1;//como el cronjob es diario se va cargando mora cada dia
+
 			renderedHtml = RenderTemplate(renderedHtml, cliente)
 				.Replace("{{municipio}}", cliente.Catalogo_Municipio?.nombre)
 				.Replace("{{departamento}}", cliente.Catalogo_Departamento?.nombre)
@@ -182,21 +188,40 @@ namespace CAPA_NEGOCIO.Services
 
 		static void GeneratePdfFromHtml(string html, string outputPath)
 		{
-			using (var stream = new FileStream(outputPath, FileMode.Create))
+			// using (var stream = new FileStream(outputPath, FileMode.Create))
+			// {
+			// 	using (var document = new Document(PageSize.A4))
+			// 	{
+			// 		using (var writer = PdfWriter.GetInstance(document, stream))
+			// 		{
+			// 			document.Open();
+
+			// 			using (var sr = new StringReader(html))
+			// 			{
+			// 				// Use XMLWorkerHelper to parse the HTML with CSS support
+			// 				XMLWorkerHelper.GetInstance().ParseXHtml(writer, document, sr);
+			// 			}
+
+			// 			document.Close();
+			// 		}
+			// 	}
+			// }
+			//string html = "<html><body><img src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAcklEQVR42mP8/wcAAwAB/AB+AAD/AAAA//8AAB+AAD/AAAA/wAAHgAAfQAABwAAAAAA////AAAA/wD5+fn/AIgB5eXl/AFBQUF9pAAAAAElFTkSuQmCC'></body></html>";
+
+			// Ruta del archivo PDF de salida
+			//string outputPath = "output.pdf";
+
+			// Crear el documento PDF
+			using (FileStream outputStream = new FileStream(outputPath, FileMode.Create))
 			{
-				using (var document = new Document(PageSize.A4))
+				using (var writer = new PdfWriter(outputStream))
 				{
-					using (var writer = PdfWriter.GetInstance(document, stream))
+					using (var pdfDocument = new PdfDocument(writer))
 					{
-						document.Open();
+						// Crear el documento PDF a partir del HTML
+						HtmlConverter.ConvertToPdf(html, pdfDocument, new ConverterProperties());
 
-						using (var sr = new StringReader(html))
-						{
-							// Use XMLWorkerHelper to parse the HTML with CSS support
-							XMLWorkerHelper.GetInstance().ParseXHtml(writer, document, sr);
-						}
-
-						document.Close();
+						Console.WriteLine("PDF generado con éxito en: " + outputPath);
 					}
 				}
 			}
@@ -291,18 +316,18 @@ namespace CAPA_NEGOCIO.Services
 
 		static string GenerateTableHtml(List<Tbl_Cuotas> listaDatos, List<Transactional_Configuraciones> configuraciones, Catalogo_Clientes cliente)
 		{
-			List<Tbl_Cuotas> objListOrder = listaDatos.OrderBy(order => order.fecha).ToList();
+			List<Tbl_Cuotas>? objListOrder = listaDatos?.OrderBy(order => order.fecha).ToList();
 			StringBuilder htmlBuilder = new StringBuilder();
 			// Abrir la etiqueta de la tabla con atributos de estilo para bordes y ancho 100%
 			htmlBuilder.Append("<tbody>");
 			// Contenido de la tabla
 			double valorInteres = configuraciones.Select(c => Convert.ToDouble(c.Valor)).ToList().Sum() / 100;
-			foreach (var dato in objListOrder)
+			objListOrder?.ForEach(dato =>
 			{
 				htmlBuilder.Append("<tr>");
-				htmlBuilder.Append($"<td class=\"desc\" colspan=\"2\">{Convert.ToDateTime(dato.fecha.ToString()).ToString("dd-MM-yyyy")}</td>");
-				var value1 = dato.capital_restante * dato.tasa_cambio * (cliente.Catalogo_Clasificacion_Interes.porcentaje / 100);
-				var value2 = dato.capital_restante * (cliente.Catalogo_Clasificacion_Interes.porcentaje / 100);
+				htmlBuilder.Append($"<td class=\"desc\" colspan=\"2\">{dato.fecha?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy")}</td>");
+				var value1 = dato.capital_restante * dato.tasa_cambio * (cliente.Catalogo_Clasificacion_Interes?.porcentaje / 100);
+				var value2 = dato.capital_restante * (cliente.Catalogo_Clasificacion_Interes?.porcentaje / 100);
 
 				htmlBuilder.Append($"<td class=\"val\">{Math.Round(Convert.ToDecimal(value1), 2)}</td>");
 				htmlBuilder.Append($"<td class=\"val\">{Math.Round(Convert.ToDecimal(value2), 2)}</td>");
@@ -323,7 +348,7 @@ namespace CAPA_NEGOCIO.Services
 
 				// Agregar más columnas según las propiedades de tu objeto DatosTabla
 				htmlBuilder.Append("</tr>");
-			}
+			});
 
 			// Cerrar la etiqueta de la tabla
 			htmlBuilder.Append("</tbody>");

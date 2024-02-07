@@ -26,3 +26,14 @@ git commit && git push
 
 push de submodule
 git push origin HEAD:main
+
+
+ELIMINAR DATOS DE PRUEBA: 
+
+delete from Detail_Prendas_Vehiculos;
+delete from Detail_Prendas;
+DELETE from Detalle_Factura_Recibo ;
+DELETE from Tbl_Cuotas ;
+delete from Recibos ;
+DELETE from Transaction_Contratos ;
+DELETE  from Catalogo_Clientes where codigo_cliente  < 4000;

@@ -22,7 +22,7 @@ class Transactional_ConfiguracionesView extends HTMLElement {
                             this.append(new WModalForm({
                                 AutoSave: true,
                                 ModelObject: new Transactional_Configuraciones({
-                                    Valor: { type: this.IsNumber(element) ? "NUMBER" : "TEXT" }
+                                    Valor: { type: this.ConfigType(element) }
                                 }),
                                 EditObject: element
                             }))
@@ -47,9 +47,20 @@ class Transactional_ConfiguracionesView extends HTMLElement {
             this.TabContainer
         );
     }
+    ConfigType(element) {
+        if (this.IsImage(element)) {
+            return "DRAW";
+        } else if (this.IsNumber(element)) {
+            return "NUMBER";
+        }
+        return "TEXT"
+    }
 
     IsNumber(element) {
         return element.Tipo_Configuracion == "INTERESES" || element.Tipo_Configuracion == "BENEFICIOS";
+    }
+    IsImage(element) {
+        return element.Nombre == "FIRMA_DIGITAL_APODERADO"
     }
 }
 customElements.define('w-transactional_configuraciones', Transactional_ConfiguracionesView);

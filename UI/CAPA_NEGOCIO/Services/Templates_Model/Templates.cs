@@ -20,11 +20,13 @@ public class ContractsTemplates
                     text-align: right;
                 }
                 span.sombrear {
-                    background-color:#FFFF00;
+                    color: #000 !important;
+                    border: none !important;
+                    background-color:#FFFF00 !important;
                 }
             </style>
     ";
-     public static string ContractHeader = @"
+    public static string ContractHeader = @"
         <p style='font-size:9.5px; margin-top:0px; margin-bottom:0px; text-align:center; padding-bottom:0px'>
                     EMPEÑOS Y PRÉSTAMOS S.A 'EMPRE SA'
                     <br/>
@@ -37,10 +39,10 @@ public class ContractsTemplates
         <table style='margin-top: 0px; margin-bottom: 0px;  width: 100%'>
         <tbody>
         <tr style='margin-top: 0px; margin-bottom: 0px;  width: 100%'> 
-            <td style='font-size: 9.5px; text-align: left;  width: 50%'>
+            <td style='font-size: 9.5px; text-align: left;  width: 50%; border: none !important' >
                 No Contrato: {{numero_contrato}}
             </td>       
-            <td style='font-size: 9.5px; text-align: right;  width: 50%'>
+            <td style='font-size: 9.5px; text-align: right;  width: 50%; border: none !important'>
             {{fecha_contrato_label}}
             </td>   
         </tr> 
@@ -148,8 +150,8 @@ public class ContractsTemplates
         <!DOCTYPE html>
             <html>
             <head>" + ContractStyle + @"</head>
-            <body>"+ ContractHeader+@"
-                <p style='text-align: justify; font-size:9.5px; margin-top:20px'>Nosotros: {{datos_apoderado}}, actuando en calidad de apoderado generalísimo
+            <body>" + ContractHeader + @"
+                <p style='text-align: justify; font-size:9.5px; margin-top:20px'>Nosotros: {{datos_apoderado}} {{resumen_datos_apoderado}}, actuando en calidad de apoderado generalísimo
                     de la sociedad Anónima denominada: ' EMPEÑOS Y PRESTAMOS S.A ' EMPRE S.A, Sociedad que es de este domicilio,
                     constituida, autorizada y existente de conformidad a las leyes de la República de Nicaragua, en escritura
                     pública
@@ -366,16 +368,7 @@ public class ContractsTemplates
                     conforme, aprobamos, ratificamos, rubricamos y firmamos, en la ciudad de San Marcos a los .
                 </p>
             <br></br>
-            " + ContractTable + @"
-                <p style='text-align:left; font-size:10px; margin-top:50px; padding-bottom:0px; margin-bottom:0px;'>
-                    Deudor: {{primer_nombre}} {{segundo_nombre}} {{primer_apellido}} {{segundo_apellidio}}
-                </p>
-                <p style='text-align:left; font-size:10px; margin-top:0px; padding-bottom:0px; margin-bottom:0px;'>Cédula:
-                    {{identificacion}}
-                </p>
-                <p style='text-align:left; font-size:10px; margin-top:0px; padding-bottom:0px; margin-bottom:0px;'>Cel:{{telefono}}
-                </p>
-
+            " + ContractTable + $"<br></br>{Footer}" + @" 
             </body>
 
             </html>
@@ -384,8 +377,8 @@ public class ContractsTemplates
     <!DOCTYPE html>
         <html>
         <head>" + ContractStyle + @"</head>
-        <body>"+ ContractHeader+@"
-            <p style='text-align: justify; font-size:9.5px; margin-top:20px'>Nosotros: {{datos_apoderado}} actuando en calidad de apoderado generalísimo
+        <body>" + ContractHeader + @"
+            <p style='text-align: justify; font-size:9.5px; margin-top:20px'>Nosotros: {{datos_apoderado}} {{resumen_datos_apoderado}} actuando en calidad de apoderado generalísimo
                 de la sociedad Anónima denominada: ' EMPEÑOS Y PRESTAMOS S.A ' EMPRE S.A, Sociedad que es de este domicilio,
                 constituida, autorizada y existente de conformidad a las leyes de la República de Nicaragua, en escritura
                 pública
@@ -523,25 +516,16 @@ public class ContractsTemplates
                 ratificamos y firmamos, en la ciudad de San Marcos a los {{dias}} dias del mes {{mes}} del año {{anio}}.
             </p>
             <br></br>
-              " + ContractTable + @"
-            <p style='text-align:left; font-size:10px; margin-top:50px; padding-bottom:0px; margin-bottom:0px;'>
-                Deudor:{{primer_nombre}}  {{segundo_nombre}}  {{primer_apellido}}  {{segundo_apellidio}}
-            </p>
-            <p style='text-align:left; font-size:10px; margin-top:0px; padding-bottom:0px; margin-bottom:0px;'>Cédula:
-                {{identificacion}}
-            </p>
-            <p style='text-align:left; font-size:10px; margin-top:0px; padding-bottom:0px; margin-bottom:0px;'>Cel:{{telefono}}
-            </p>
+              " + ContractTable + $"<br></br>{Footer}" + @" 
         </body>
-
         </html>
     ";
     public static string ContractEmpeno = @"
         <!DOCTYPE html>
         <html>
          <head>" + ContractStyle + @"</head>
-        <body>"+ ContractHeader+@"      
-        <p style='text-align: justify; font-size:9.5px; margin-top:20px'>Nosotros: {{datos_apoderado}}, actuando en calidad de apoderado generalísimo
+        <body>" + ContractHeader + @"      
+        <p style='text-align: justify; font-size:9.5px; margin-top:20px'>Nosotros: {{datos_apoderado}} {{resumen_datos_apoderado}}, actuando en calidad de apoderado generalísimo
             de la sociedad Anónima denominada: ' EMPEÑOS Y PRESTAMOS S.A ' EMPRE S.A, Sociedad que es de este domicilio,
             constituida, autorizada y existente de conformidad a las leyes de la República de Nicaragua, en escritura pública
             #51, Constitución de Sociedad Anónima y estatutos,
@@ -701,17 +685,34 @@ public class ContractsTemplates
             con los términos relacionados, Y leído el presente contrato por las partes lo encontramos conforme, aprobamos,
             ratificamos y firmamos, en la ciudad de San Marcos a los {{dias}} dias del mes {{mes}} del año {{anio}}.
         </p><br></br>
-          " + ContractTable + @"
-        <p style='text-align:left; font-size:10px; margin-top:50px; padding-bottom:0px; margin-bottom:0px;'>
-            Deudor: {{primer_nombre}} {{segundo_nombre}} {{primer_apellido}} {{segundo_apellidio}}
-        </p>
-        <p style='text-align:left; font-size:10px; margin-top:0px; padding-bottom:0px; margin-bottom:0px;'>Cédula:
-            {{identificacion}}
-        </p>
-        <p style='text-align:left; font-size:10px; margin-top:0px; padding-bottom:0px; margin-bottom:0px;'>Cel:{{telefono}}
-        </p>
+          " + ContractTable + $"<br></br>{Footer}" + @" 
         </body>
         </html>
+    ";
+    public const string Footer = @"<table style='margin-top: 0px; margin-bottom: 0px;  width: 100%'>
+     <tbody>
+        <tr style='margin-top: 0px; margin-bottom: 0px;  width: 100%'> 
+            <td style='font-size: 9.5px; text-align: left;  width: 30%; border: none !important;'>
+                <p style='text-align:left; font-size:10px;width: 200px !important; margin-top:100px; border-top: solid 2px #000 !important; padding-bottom:0px; margin-bottom:0px; ; padding-top:10px'>
+                    Deudor: {{primer_nombre}} {{segundo_nombre}} {{primer_apellido}} {{segundo_apellidio}}
+                </p>
+                <p style='text-align:left; font-size:10px; margin-top:0px; padding-bottom:0px; margin-bottom:0px;'>Cédula:
+                    {{identificacion}}
+                </p>
+                <p style='text-align:left; font-size:10px; margin-top:0px; padding-bottom:0px; margin-bottom:0px;'>Cel:{{telefono}}
+                </p>
+            </td>       
+            <td style='font-size: 9.5px; text-align: right !important;  width: 70%; border: none !important'>
+                <p style='text-align:right; font-size:10px; margin-top:0px; padding-bottom:0px; margin-bottom:0px;'>
+                    <img style='heigth:100px; width:140px;' src='{{firma}}'/>
+                </p>
+                <p style='text-align:right; font-size:10px; margin-top:0px; padding-bottom:0px; margin-bottom:0px; border-top: none !important; width: 100% !important; padding-top:10px'>
+                    {{datos_apoderado}}
+                </p>
+            </td>   
+        </tr> 
+        </tbody>
+        </table>  
     ";
 
 }

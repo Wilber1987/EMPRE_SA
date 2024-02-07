@@ -1,4 +1,6 @@
+using API.Controllers;
 using CAPA_DATOS;
+using CAPA_DATOS.Services;
 using Model;
 using System;
 using System.Collections.Generic;
@@ -16,7 +18,7 @@ namespace DataBaseModel
         public string? Valor { get; set; }
         public string? Tipo_Configuracion { get; set; }
         internal Transactional_Configuraciones GetConfig(String prop)
-        {           
+        {
             Nombre = prop;
             return Find<Transactional_Configuraciones>();
         }
@@ -37,10 +39,29 @@ namespace DataBaseModel
                 .Where(x => x.Tipo_Configuracion.Equals(ConfiguracionesTypeEnum.BENEFICIOS.ToString())).ToList();
         }
 
-        internal object GetGeneralData()
+        internal List<Transactional_Configuraciones>  GetGeneralData()
         {
-             return Get<Transactional_Configuraciones>()
-                .Where(x => x.Tipo_Configuracion.Equals(ConfiguracionesTypeEnum.GENERAL_DATA.ToString())).ToList();
+            return Get<Transactional_Configuraciones>()
+               .Where(x => x.Tipo_Configuracion.Equals(ConfiguracionesTypeEnum.GENERAL_DATA.ToString())).ToList();
+        }
+
+        internal object? UpdateConfig(string? identity)
+        {
+            if (!AuthNetCore.HavePermission(CAPA_DATOS.Security.PermissionsEnum.ADMIN_ACCESS.ToString(), identity))
+            {
+                throw new Exception("no tienes permisos para configurar la aplicación");
+            }
+            if (Nombre.Equals(GeneralDataEnum.FIRMA_DIGITAL_APODERADO.ToString()))
+            {
+                var pic = (ModelFiles)FileService.upload("profiles\\", new ModelFiles
+                {
+                    Value = Valor,
+                    Type = "png",
+                    Name = "profile"
+                }).body;
+                //Valor = pic.Value.Replace("wwwroot", "");
+            }
+            return this.Update();
         }
     }
 
@@ -61,7 +82,7 @@ namespace DataBaseModel
     }
 
     public enum InteresesPrestamosEnum
-    {       
+    {
         GASTOS_ADMINISTRATIVOS,
         COMISIONES,
         MANTENIMIENTO_VALOR,
@@ -70,8 +91,8 @@ namespace DataBaseModel
     }
 
     public enum GeneralDataEnum
-    {       
-       APODERADO
+    {
+        APODERADO, FIRMA_DIGITAL_APODERADO,  DATOS_APODERADO
     }
 
 

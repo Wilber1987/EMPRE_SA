@@ -34,8 +34,8 @@ namespace API.Controllers {
        }
        [HttpPost]
        [AuthController]
-       public object updateTransactional_Configuraciones(Transactional_Configuraciones inst) {
-           return inst.Update();
+       public object? updateTransactional_Configuraciones(Transactional_Configuraciones inst) {
+           return inst.UpdateConfig(HttpContext.Session.GetString("seassonKey"));
        }
    }
 }

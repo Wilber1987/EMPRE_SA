@@ -50,4 +50,17 @@ EXEC EMPRE_SA.sys.sp_addextendedproperty 'MS_Description', N'numero de reestruct
 
 INSERT INTO EMPRE_SA.administrative_access.Transactional_Configuraciones
 (Nombre, Descripcion, Valor, Tipo_Configuracion)
-VALUES(N'APODERADO', N'Datos del representante legal de la empresa', N' Juan José Villavicencio Navarro, mayor de', N'GENERAL_DATA');
+VALUES(N'APODERADO', N'Representante legal de la empresa', N'Juan José Villavicencio Navarro', N'GENERAL_DATA');
+
+INSERT INTO EMPRE_SA.administrative_access.Transactional_Configuraciones
+(Nombre, Descripcion, Valor, Tipo_Configuracion)
+VALUES(N'DATOS_APODERADO', N'Resumnen de datos del representante legal de la empresa', N'mayo de edad con cedula....', N'GENERAL_DATA');
+
+
+
+INSERT INTO EMPRE_SA.administrative_access.Transactional_Configuraciones
+(Nombre, Descripcion, Valor, Tipo_Configuracion)
+VALUES(N'FIRMA_DIGITAL_APODERADO', N'Firma digital del representante legal', NULL, N'GENERAL_DATA');
+
+
+ALTER TABLE EMPRE_SA.administrative_access.Transactional_Configuraciones ALTER COLUMN Valor nvarchar(MAX) COLLATE Modern_Spanish_CI_AS NULL;
