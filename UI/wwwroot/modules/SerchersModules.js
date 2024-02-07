@@ -11,11 +11,12 @@ import { Tbl_Cuotas, Transaction_Contratos, ValoracionesTransaction } from "../F
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 import { Tbl_Cuotas_ModelComponent } from "../FrontModel/ModelComponents.js";
 class ValoracionesSearch extends HTMLElement {
-    constructor(/** @type {Function} */ action) {
+    constructor(/** @type {Function} */ action,/** @type {Function} */ secondAction) {
         super();
         this.TabContainer = WRender.Create({ className: "TabContainer", id: 'TabContainer' });
         this.Manager = new ComponentsManager({ MainContainer: this.TabContainer, SPAManage: false });
         this.action = action;
+        this.secondAction = secondAction;
         this.DrawComponent();
     }
     DrawComponent = async () => {
@@ -35,8 +36,12 @@ class ValoracionesSearch extends HTMLElement {
             Options: {
                 UserActions: [
                     {
-                        name: "seleccionar", action: (/**@type {Transactional_Valoracion}*/ selected) => {
+                        name: "Seleccionar", action: (/**@type {Transactional_Valoracion}*/ selected) => {
                             this.action(selected);
+                        }
+                    },{
+                        name: "Facturar", action: (/**@type {Transactional_Valoracion}*/ selected) => {
+                            this.secondAction(selected);
                         }
                     }
                 ]

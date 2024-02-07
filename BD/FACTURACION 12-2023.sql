@@ -1,89 +1,74 @@
-CREATE SCHEMA [facturacion]
+CREATE SCHEMA facturacion
 GO
-
 
 ALTER SCHEMA facturacion TRANSFER dbo.Transaccion_Factura;
 
-
-ALTER TABLE facturacion.Transaccion_Factura
+ALTER TABLE facturacion.transaccion_factura
 ADD 
-	No_Factura nvarchar(50) not null default '0',
-	SubTotal float default 0 not null,
-	Iva float default 0
+	no_factura nvarchar(50) not null default '0',
+	subtotal float default 0 not null,
+	iva float default 0
 GO
 
-
-CREATE TABLE facturacion.Transaccion_Factura_Detalle(
-	Id_Detalle_Factura int IDENTITY(1,1) NOT NULL PRIMARY KEY,
-	Id_Factura int not null,
-	Id_Producto int not NULL,
-	Cantidad float not null,
-	Precio_Venta float not null,
-	Iva float,
-	Total float	
+CREATE TABLE facturacion.transaccion_factura_detalle (
+	id_detalle_factura int IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	id_factura int not null,
+	id_producto int not NULL,
+	cantidad float not null,
+	precio_venta float not null,
+	iva float,
+	total float	
 )
 GO
 
-ALTER TABLE facturacion.Transaccion_Factura_Detalle
-ADD CONSTRAINT FK_Transaccion_Factura_Detalle_Transaccion_Factura
-FOREIGN KEY (Id_Factura)
-REFERENCES facturacion.Transaccion_Factura(Id_Factura);
+ALTER TABLE facturacion.transaccion_factura_detalle
+ADD CONSTRAINT fk_transaccion_factura_detalle_transaccion_factura
+FOREIGN KEY (id_factura)
+REFERENCES facturacion.transaccion_factura(id_factura);
 
-
-
-
-CREATE TABLE facturacion.Catalogo_Producto(
-	Id_Producto	 int IDENTITY(1,1) NOT NULL PRIMARY KEY,
-	Descripcion	varchar(100),
-	Id_Categoria int,
-	Id_Marca int
+CREATE TABLE facturacion.catalogo_producto (
+	id_producto	 int IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	descripcion	varchar(100),
+	id_categoria int,
+	id_marca int
 )
-go
+GO
 
-
-
-
-CREATE TABLE facturacion.Catalogo_Marca(
-	Id_Marca  int IDENTITY(1,1) NOT NULL PRIMARY KEY,
-	Nombre	nvarchar(150),
-	Descripcion nvarchar(150),
-	Estado nvarchar(50)	
+CREATE TABLE facturacion.catalogo_marca (
+	id_marca  int IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	nombre	nvarchar(150),
+	descripcion nvarchar(150),
+	estado nvarchar(50)	
 )
-go
+GO
 
+ALTER TABLE facturacion.catalogo_producto
+ADD CONSTRAINT fk_catalogo_productos_catalogo_marcas
+FOREIGN KEY (id_marca)
+REFERENCES facturacion.catalogo_marca(id_marca);
 
-
-ALTER TABLE facturacion.Catalogo_Producto
-ADD CONSTRAINT FK_Transaccion_Catalogo_Productos_Catalogo_Marcas
-FOREIGN KEY (Id_Marca)
-REFERENCES facturacion.Catalogo_Marca(Id_Marca);
-
-
-
-CREATE TABLE facturacion.Catalogo_Categorias(
-	Id_Categoria int IDENTITY(1,1) NOT NULL PRIMARY KEY,
-	Descripcion	varchar(100),
-	Estado	nvarchar(50)
+CREATE TABLE facturacion.catalogo_categorias (
+	id_categoria int IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	descripcion	varchar(100),
+	estado	nvarchar(50)
 )
-go
+GO
 
-
-CREATE TABLE facturacion.Transaction_Lotes(
-	Id_Transaccion int IDENTITY(1,1) NOT NULL PRIMARY KEY,
-	Descripcion	varchar(100),
-	Fecha datetime,
-	Id_Usuario int,
-	Id_Tipo_Transaccion int,
-	Estado	nvarchar(50)
+CREATE TABLE facturacion.transaction_lotes (
+	id_transaccion int IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	descripcion	varchar(100),
+	fecha datetime,
+	id_usuario int,
+	id_tipo_transaccion int,
+	estado	nvarchar(50)
 )
-go
+GO
 
-CREATE TABLE facturacion.Transaction_Detalle_Lotes(
-	Id_Detalle_Transaccion int IDENTITY(1,1) NOT NULL PRIMARY KEY,
-	Id_Lote	int	,
-	Cantidad_Afectada	int	,
-	Id_Transaccion	int	,
-	Id_Detalle_Factura	int	
+CREATE TABLE facturacion.transaction_detalle_lotes (
+	id_detalle_transaccion int IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	id_lote	int	,
+	cantidad_afectada	int	,
+	id_transaccion	int	,
+	id_detalle_factura	int	
 )
-go
-
+GO

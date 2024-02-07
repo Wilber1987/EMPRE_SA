@@ -528,12 +528,18 @@ namespace DataBaseModel
         public DateTime? fecha { get; set; }
         public int? id_usuario { get; set; }
         public string? estado { get; set; }
+        public string? no_factura { get; set; }
+        public double? subtotal { get; set; }
+        public double? iva { get; set; }
 
         [JsonProp]
         public Factura_contrato Factura_contrato { get; set; }
 
         [OneToMany(TableName = "Detalle_Factura_Recibo", KeyColumn = "id_factura", ForeignKeyColumn = "id_factura")]
         public List<Detalle_Factura_Recibo>? Detalle_Factura_Recibo { get; set; }
+
+        [OneToMany(TableName = "Transaccion_Factura_Detalle", KeyColumn = "id_factura", ForeignKeyColumn = "id_factura")]
+        public List<Transaccion_Factura_Detalle>? Detalle_Factura { get; set; }
     }
 
     public class Factura_contrato
@@ -556,6 +562,64 @@ namespace DataBaseModel
         public int? reestructuracion { get; set; }
         public double? total_pagado { get; set; }
 
+    }
+
+    public class Transaccion_Factura_Detalle: EntityClass {
+        [PrimaryKey(Identity = true)]
+        public int? id_detalle_factura { get; set; }
+        public int id_factura { get; set; }
+        public int id_producto { get; set; }
+        public string cantidad { get; set; }
+        public string precio_venta { get; set; }
+        public string? iva { get; set; }
+        public string? total { get; set; }
+    }
+
+    public class Catalogo_Producto: EntityClass {
+        [PrimaryKey(Identity = true)]
+        public int? id_producto { get; set; }
+        public string descripcion { get; set; }
+        public int? id_categoria { get; set; }
+        public int? id_marca { get; set; }
+    }
+ 
+    public class Catalogo_Marca: EntityClass {
+        [PrimaryKey(Identity = true)]
+        public int? id_marca { get; set; }
+        public string nombre { get; set; }
+        public string descripcion { get; set; }
+        public string estado { get; set; }
+
+        [OneToMany(TableName = "Catalogo_Producto", KeyColumn = "id_marca", ForeignKeyColumn = "id_marca")]
+        public List<Catalogo_Producto>? Detalle_Factura { get; set; }
+    }
+
+
+    public class Catalogo_Categorias: EntityClass {
+        [PrimaryKey(Identity = true)]
+        public int? id_categoria { get; set; }
+        public string descripcion { get; set; }
+        public string estado { get; set; }
+    }
+
+    public class Transaction_Lotes: EntityClass {
+        [PrimaryKey(Identity = true)]
+        public int? id_transaccion { get; set; }
+        public string descripcion { get; set; }
+        public DateTime? fecha { get; set; }
+        public int? id_usuario { get; set; }
+        public int? id_tipo_transaccion { get; set; }
+        public string estado { get; set; }
+    }
+
+    
+    public class Transaction_Detalle_Lotes: EntityClass {
+        [PrimaryKey(Identity = true)]
+        public int? id_detalle_transaccion { get; set; }
+        public int? id_lote { get; set; }
+        public int? cantidad_afectada { get; set; }
+        public int? id_transaccion { get; set; }
+        public int? id_detalle_factura { get; set; }
     }
 
     public class Detalle_Factura_Recibo : EntityClass
