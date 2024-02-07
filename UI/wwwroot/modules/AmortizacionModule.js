@@ -7,14 +7,16 @@ class AmoritizationModule {
     /**
      * @param {ValoracionesTransaction} contrato 
      * @param {boolean} [withValoraciones]
+     * @param {String} [tipo_contrato]
      * @returns {ValoracionesTransaction}
      */
-    static calculoAmortizacion = (contrato, withValoraciones = true) => {
+    static calculoAmortizacion = (contrato, withValoraciones = true, tipo_contrato = "EMPEÑO") => {
         if (contrato.Transaction_Contratos.Catalogo_Clientes == undefined
             || contrato.valoraciones == undefined) {
             return new ValoracionesTransaction();
         }
         contrato.Transaction_Contratos = contrato.Transaction_Contratos ?? new Transaction_Contratos();
+        
         if (withValoraciones) {
             contrato.Transaction_Contratos.Detail_Prendas = contrato.valoraciones.map(
             // @ts-ignore
@@ -25,7 +27,7 @@ class AmoritizationModule {
                 serie: valoracion.Serie,
                 pprenda: valoracion.valoracion_empeño_cordobas,
                 color: "#000",
-                en_manos_de: undefined,
+                en_manos_de: tipo_contrato == "EMPEÑO" ? "ACREEDOR": "DEUDOR",
                 precio_venta: valoracion.precio_venta_empeño_dolares,
                 Catalogo_Categoria: valoracion.Catalogo_Categoria,
                 Transactional_Valoracion: valoracion

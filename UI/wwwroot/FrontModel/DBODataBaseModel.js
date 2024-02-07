@@ -350,8 +350,8 @@ class Detail_Prendas_ModelComponent extends EntityClass {
     marca = { type: 'text' };
     serie = { type: 'text' };
     modelo = { type: 'text' };
-    pprenda = { type: 'number', label: "Monto aprob. cordobas" };
-    pprenda_dolares = { type: 'number', label: "Monto aprob. dolares" };
+    pprenda = { type: 'number', label: "Monto aprob. cordobas", disabled: true };
+    pprenda_dolares = { type: 'number', label: "Monto aprob. dolares", disabled: true  };
     iva = { type: 'text', hidden: true };
     //margen = { type: 'text', hiddenInTable: true };
     estado = { type: 'select', Dataset: ["ACTIVO", "INACTIVO"], hiddenInTable: true };

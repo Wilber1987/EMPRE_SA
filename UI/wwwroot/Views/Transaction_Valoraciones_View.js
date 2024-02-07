@@ -62,7 +62,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
                 }, valor_compra_dolares: {
                     type: "operation", action: (element) => {
                         // @ts-ignore
-                        return this.calculoDolares(element.porcentaje_compra, this.tasasCambio[0].valor_de_compra);
+                        return this.calculoDolares(element.porcentaje_compra, this.tasasCambio[0].valor_de_venta);
                     }
                 },
                 valor_empeño_cordobas: {
@@ -72,7 +72,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
                 }, valor_empeño_dolares: {
                     type: "operation", action: (element) => {
                         // @ts-ignore
-                        return this.calculoDolares(element.porcentaje_empeno, this.tasasCambio[0].valor_de_compra);
+                        return this.calculoDolares(element.porcentaje_empeno, this.tasasCambio[0].valor_de_venta);
                     }
                 }
             }),
@@ -218,90 +218,123 @@ class Transaction_Valoraciones_View extends HTMLElement {
         this.valoresModel = {
             Valoracion_1: {
                 type: "number", label: "Valoración 1 - C$:", action: () => {
-                    this.valoresObject.dolares_1 = this.valoresObject.Valoracion_1 / tasasCambio[0].valor_de_compra;
+                    this.valoresObject.dolares_1 = this.valoresObject.Valoracion_1 / tasasCambio[0].valor_de_venta;
                     /** @type {HTMLInputElement|undefined|null} */
                     const control = this.valoresForm?.shadowRoot?.querySelector(".dolares_1");
                     if (control != undefined || control != null) {
                         control.value = this.valoresObject.dolares_1.toString();
                     }
-                    this.multiSelectEstadosArticulos?.SetOperationValues()
+                    this.promediarValoresDolares(this.valoresObject);
+                    this.promediarValoresCordobas(this.valoresObject);
                     this.beneficiosDetailUpdate();
+                    this.multiSelectEstadosArticulos?.SetOperationValues()
                 }
             },
             dolares_1: {
                 type: "number", label: "$:", action: () => {
-                    this.valoresObject.Valoracion_1 = this.valoresObject.dolares_1 * tasasCambio[0].valor_de_compra;
+                    this.valoresObject.Valoracion_1 = this.valoresObject.dolares_1 * tasasCambio[0].valor_de_venta;
                     /** @type {HTMLInputElement|undefined|null} */
                     const control = this.valoresForm?.shadowRoot?.querySelector(".Valoracion_1");
                     if (control != undefined || control != null) {
                         control.value = this.valoresObject.Valoracion_1.toString();
                     }
-                    this.multiSelectEstadosArticulos?.SetOperationValues()
+                    this.promediarValoresDolares(this.valoresObject);
+                    this.promediarValoresCordobas(this.valoresObject);
                     this.beneficiosDetailUpdate();
+                    this.multiSelectEstadosArticulos?.SetOperationValues()
                 }
             },
             Valoracion_2: {
                 type: "number", label: "Valoración 2 - C$:", action: () => {
-                    this.valoresObject.dolares_2 = this.valoresObject.Valoracion_2 / tasasCambio[0].valor_de_compra;
+                    this.valoresObject.dolares_2 = this.valoresObject.Valoracion_2 / tasasCambio[0].valor_de_venta;
                     /** @type {HTMLInputElement|undefined|null} */
                     const control = this.valoresForm?.shadowRoot?.querySelector(".dolares_2");
                     if (control != undefined || control != null) {
                         control.value = this.valoresObject.dolares_2.toString();
                     }
-                    this.multiSelectEstadosArticulos?.SetOperationValues()
+                    this.promediarValoresDolares(this.valoresObject);
+                    this.promediarValoresCordobas(this.valoresObject);
                     this.beneficiosDetailUpdate();
+                    this.multiSelectEstadosArticulos?.SetOperationValues()
                 }
             },
             dolares_2: {
                 type: "number", label: "$:", action: () => {
-                    this.valoresObject.Valoracion_2 = this.valoresObject.dolares_2 * tasasCambio[0].valor_de_compra;
+                    this.valoresObject.Valoracion_2 = this.valoresObject.dolares_2 * tasasCambio[0].valor_de_venta;
                     /** @type {HTMLInputElement|undefined|null} */
                     const control = this.valoresForm?.shadowRoot?.querySelector(".Valoracion_2");
                     if (control != undefined || control != null) {
                         control.value = this.valoresObject.Valoracion_2.toString();
                     }
-                    this.multiSelectEstadosArticulos?.SetOperationValues()
+                    this.promediarValoresDolares(this.valoresObject);
+                    this.promediarValoresCordobas(this.valoresObject);
                     this.beneficiosDetailUpdate();
+                    this.multiSelectEstadosArticulos?.SetOperationValues()
                 }
             },
             Valoracion_3: {
                 type: "number", label: "Valoración 3 - C$:", action: () => {
-                    this.valoresObject.dolares_3 = this.valoresObject.Valoracion_3 / tasasCambio[0].valor_de_compra;
+                    this.valoresObject.dolares_3 = this.valoresObject.Valoracion_3 / tasasCambio[0].valor_de_venta;
                     /** @type {HTMLInputElement|undefined|null} */
                     const control = this.valoresForm?.shadowRoot?.querySelector(".dolares_3");
                     if (control != undefined || control != null) {
                         control.value = this.valoresObject.dolares_3.toString();
                     }
-                    this.multiSelectEstadosArticulos?.SetOperationValues()
+                    this.promediarValoresDolares(this.valoresObject);
+                    this.promediarValoresCordobas(this.valoresObject);
                     this.beneficiosDetailUpdate();
+                    this.multiSelectEstadosArticulos?.SetOperationValues()
                 }
             },
             dolares_3: {
                 type: "number", label: "$:", action: () => {
-                    this.valoresObject.Valoracion_3 = this.valoresObject.dolares_3 * tasasCambio[0].valor_de_compra;
+                    this.valoresObject.Valoracion_3 = this.valoresObject.dolares_3 * tasasCambio[0].valor_de_venta;
                     /** @type {HTMLInputElement|undefined|null} */
                     const control = this.valoresForm?.shadowRoot?.querySelector(".Valoracion_3");
                     if (control != undefined || control != null) {
                         control.value = this.valoresObject.Valoracion_3.toString();
                     }
-                    this.multiSelectEstadosArticulos?.SetOperationValues()
+                    this.promediarValoresDolares(this.valoresObject);
+                    this.promediarValoresCordobas(this.valoresObject);
                     this.beneficiosDetailUpdate();
+                    this.multiSelectEstadosArticulos?.SetOperationValues()
                 }
             }, total_cordobas: {
-                type: "operation", label: "Total - C$", disabled: true, action: (data) => {
-                    return ((parseFloat(data.Valoracion_1) + parseFloat(data.Valoracion_2) + parseFloat(data.Valoracion_3)) / 3).toFixed(3)
+                type: "text", label: "Total - C$", disabled: true, action: (data) => {
+                    //return this.promediarValoresCordobas(data)
                 }
             }, total_dolares: {
-                type: "operation", label: "$:", disabled: true, action: (data) => {
-                    return ((parseFloat(data.dolares_1) + parseFloat(data.dolares_2) + parseFloat(data.dolares_3)) / 3).toFixed(3)
+                type: "text", label: "$:", disabled: true, action: (data) => {
+                    //return this.promediarValoresDolares(data)
                 }
             }
         };
     }
+    promediarValoresDolares(data) {
+        console.log(data);
+        data.total_dolares = ((parseFloat(data.dolares_1) + parseFloat(data.dolares_2) + parseFloat(data.dolares_3)) / 3).toFixed(3);
+        const control = this.valoresForm?.shadowRoot?.querySelector(".total_dolares");
+        if (control != undefined || control != null) {
+            // @ts-ignore
+            control.value = data.total_dolares.toString();
+        }
+        return data.total_dolares;
+    }
+
+    promediarValoresCordobas(data) {
+        data.total_cordobas = ((parseFloat(data.Valoracion_1) + parseFloat(data.Valoracion_2) + parseFloat(data.Valoracion_3)) / 3).toFixed(3);
+        const control = this.valoresForm?.shadowRoot?.querySelector(".total_cordobas");
+        if (control != undefined || control != null) {
+            // @ts-ignore
+            control.value = data.total_cordobas.toString();
+        }
+        return data.total_cordobas;
+    }
+
     valoracionesModel(tasasCambio, multiSelectEstadosArticulos) {
         return new Transactional_Valoracion({
             Fecha: { type: 'date', disabled: true },
-            Tasa_de_cambio: { type: 'number', disabled: true, defaultValue: tasasCambio[0].valor_de_compra },
+            Tasa_de_cambio: { type: 'number', disabled: true, defaultValue: tasasCambio[0].valor_de_venta },
             // @ts-ignore
             Tasa_interes: { type: 'number', disabled: true, defaultValue: this.InteresBase + 6 },
             Plazo: {
@@ -331,9 +364,9 @@ class Transaction_Valoraciones_View extends HTMLElement {
             },
         });
     }
-    calculoCordobas = (porcentaje) => {        
+    calculoCordobas = (porcentaje) => {
         // @ts-ignore
-        /**@type {Number} */ const tasa_cambio = this.tasasCambio[0]?.valor_de_compra;
+        /**@type {Number} */ const tasa_cambio = this.tasasCambio[0]?.valor_de_venta;
         return (this.calculoDolares(porcentaje) * tasa_cambio).toFixed(3);
     }
     /** @return {Number} */ calculoDolares = (porcentaje) => {
@@ -398,6 +431,13 @@ class Transaction_Valoraciones_View extends HTMLElement {
                 this.valoracionesTable?.Dataset.push(newValoracion);
                 this.valoracionesTable?.DrawTable();
                 this.calculoAmortizacion();
+                this.resetValoresForm();
+                for (const prop in this.valoracionesForm?.FormObject) {
+                    if (prop == "Detail_Valores") continue;
+                    if (prop == "Tasa_interes") continue;
+                    this.valoracionesForm.FormObject[prop] = undefined;
+                }
+                this.valoracionesForm.DrawComponent();
             }
         }))
         this.OptionContainer.append(WRender.Create({
@@ -466,15 +506,22 @@ class Transaction_Valoraciones_View extends HTMLElement {
         }
     }
     selectValoracion = (/**@type {Transactional_Valoracion}*/valoracion) => {
+        if (valoracion.id_valoracion != undefined || valoracion.id_valoracion != null) {
+            const valoracionAgregada = this.valoracionesTable?.Dataset.find(d => d.id_valoracion == valoracion.id_valoracion);
+            if (valoracionAgregada != null) {
+                this.append(ModalMessege("Valoración ya esta agregada"));
+                return;
+            }
+        }
         // @ts-ignore
-        valoracion.Tasa_de_cambio = this.tasasCambio[0]?.valor_de_compra
+        valoracion.Tasa_de_cambio = this.tasasCambio[0]?.valor_de_venta
         if (this.valoracionesForm != undefined) {
             for (const prop in this.valoracionesForm?.FormObject) {
                 if (prop == "Detail_Valores") continue;
                 if (prop == "Tasa_interes") continue;
                 this.valoracionesForm.FormObject[prop] = valoracion[prop]
             }
-            this.valoracionesForm.Config.ModelObject?.Catalogo_Categoria?.action(this.valoracionesForm.FormObject, this.valoracionesForm);            
+            this.valoracionesForm.Config.ModelObject?.Catalogo_Categoria?.action(this.valoracionesForm.FormObject, this.valoracionesForm);
             if (this.valoresForm != undefined) {
                 // @ts-ignore
                 if (new Date().subtractDays(40) < new Date(valoracion.Fecha)) {
@@ -486,20 +533,24 @@ class Transaction_Valoraciones_View extends HTMLElement {
                     this.valoresObject.dolares_3 = valoracion.Detail_Valores?.dolares_3 ?? 0;
                     this.valoresForm.DrawComponent();
                 } else {
-                    this.valoresObject.Valoracion_1 = 0;
-                    this.valoresObject.dolares_1 = 0;
-                    this.valoresObject.Valoracion_2 = 0;
-                    this.valoresObject.dolares_2 = 0;
-                    this.valoresObject.Valoracion_3 = 0;
-                    this.valoresObject.dolares_3 = 0;
-                    this.valoresForm.DrawComponent();
+                    this.resetValoresForm();
                 }
             }
         }
         this.beneficiosDetailUpdate();
-        
+
         this.Manager.NavigateFunction("valoraciones", this.valoracionesContainer);
     }
+    resetValoresForm() {
+        this.valoresObject.Valoracion_1 = 0;
+        this.valoresObject.dolares_1 = 0;
+        this.valoresObject.Valoracion_2 = 0;
+        this.valoresObject.dolares_2 = 0;
+        this.valoresObject.Valoracion_3 = 0;
+        this.valoresObject.dolares_3 = 0;
+        this.valoresForm?.DrawComponent();
+    }
+
     beneficiosDetailUpdate() {
         // @ts-ignore
         this.BeneficioDetail.innerHTML = "";
@@ -514,9 +565,9 @@ class Transaction_Valoraciones_View extends HTMLElement {
         this.valoracionesForm.FormObject.precio_venta_empeño_cordobas = (precio_venta_empeño);
 
         // @ts-ignore
-        this.valoracionesForm.FormObject.precio_venta_empeño_dolares = (precio_venta_empeño / this.tasasCambio[0].valor_de_compra)
+        this.valoracionesForm.FormObject.precio_venta_empeño_dolares = (precio_venta_empeño / this.tasasCambio[0].valor_de_venta)
         // @ts-ignore
-        //const moraDolares =  mora / this.tasasCambio[0].valor_de_compra;    
+        //const moraDolares =  mora / this.tasasCambio[0].valor_de_venta;    
         this.BeneficioDetail?.append(WRender.CreateStringNode(`<div>
             <h4>BENEFICIOS:</h4>
             <div class="column-venta">
@@ -531,7 +582,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
                 <span>$ ${precio_venta_empeño.toString() == "NaN" ? "0.00"
                 : (precio_venta_empeño /
                     // @ts-ignore
-                    this.tasasCambio[0].valor_de_compra).toFixed(3)}</span>
+                    this.tasasCambio[0].valor_de_venta).toFixed(3)}</span>
             </div> 
         </div>`));
         this.multiSelectEstadosArticulos?.SetOperationValues();
@@ -555,7 +606,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
             fecha: new Date(),
             plazo: this.valoracionesForm?.FormObject.Plazo ?? 1,
             // @ts-ignore
-            taza_cambio: this.tasasCambio[0].valor_de_compra,
+            taza_cambio: this.tasasCambio[0].valor_de_venta,
             taza_interes_cargos: this.InteresBase,
             Catalogo_Clientes: this.Cliente.codigo_cliente != undefined ? this.Cliente : this.GenerateClient(),
             gestion_crediticia: this.Cliente.Catalogo_Clasificacion_Interes?.porcentaje ?? 6,

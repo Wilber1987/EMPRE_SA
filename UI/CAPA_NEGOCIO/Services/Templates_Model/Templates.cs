@@ -459,8 +459,8 @@ public class ContractsTemplates
                 <u>6. SEXTA (MORA):</u> El deudor podrá realizar el pago de su cuota anticipada a su fecha de pago, con el fin de
                 evitarse mora; En caso que el Deudor no pague en la fecha de cada cuota mensual,
                 automáticamente quedará constituido en mora y por el sólo hecho de incumplimiento, y desde esa fecha hasta el pago
-                efectivo de su cuota, reconocerá al acreedor un factor mora {{mora}}% de aplicado a la cuota fija,
-                equivalente a {{valor_mora}}, ({{valor_mora_label}}%) por cada día transcurrido en mora hasta el pago efectivo de su cuota o cancelación.
+                efectivo de su cuota, reconocerá al acreedor un factor mora {{mora}} de aplicado a la cuota fija,
+                equivalente a {{valor_mora}}, ({{valor_mora_label}}) por cada día transcurrido en mora hasta el pago efectivo de su cuota o cancelación.
             </p>
             <p style='text-align: justify; font-size:9.5px;'>
                 <u>7. SÉPTIMA (PÉRDIDA DE LA(S) GARANTÍA(S)): </u> El deudor debe realizar sus pagos mensuales, <span class='sombrear'>pero si llegase a 21 
@@ -626,8 +626,8 @@ public class ContractsTemplates
             <u>6. SEXTA (MORA):</u> El deudor podrá realizar el pago de su cuota anticipada a su fecha de pago, con el fin de
             evitarse mora; En caso que el Deudor no pague en la fecha de cada cuota mensual,
             automáticamente quedará constituido en mora y por el sólo hecho de incumplimiento, y desde esa fecha hasta el pago
-            efectivo de su cuota, reconocerá al acreedor un factor mora {{mora}}% de aplicado a la cuota fija,
-            equivalente a {{valor_mora}}, ({{valor_mora_label}}%) por cada día transcurrido en mora hasta el pago efectivo de su cuota.
+            efectivo de su cuota, reconocerá al acreedor un factor mora {{mora}} de aplicado a la cuota fija,
+            equivalente a {{valor_mora}}, ({{valor_mora_label}}) por cada día transcurrido en mora hasta el pago efectivo de su cuota.
         </p>
         <p style='text-align: justify; font-size:9.5px;'> <u> 7. SEPTIMA (PÉRDIDA DE LA(S) GARANTIA(S)):</u> El deudor debe
             realizar sus pagos mensuales, <span class='sombrear'>pero si llegase a 21 días en mora</span> el deudor pierde total derecho sobre la (s)

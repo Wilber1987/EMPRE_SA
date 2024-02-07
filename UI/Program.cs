@@ -3,7 +3,7 @@ using BackgroundJob.Cron.Jobs;
 using CAPA_DATOS.Cron.Jobs;
 using Model;
 
-SqlADOConexion.IniciarConexion();
+SqlADOConexion.IniciarConexion("sa", "zaxscd", ".", "EMPRE_SA");
 
  //var test = new test{ Parameters = new List<object> {1 , 2}}.Get<test>(true);
  //var testfilter = (from t in test where t.val1 == "1"  select t).ToList();

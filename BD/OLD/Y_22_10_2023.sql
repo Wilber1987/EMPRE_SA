@@ -50,4 +50,4 @@ EXEC EMPRE_SA.sys.sp_addextendedproperty 'MS_Description', N'numero de reestruct
 
 INSERT INTO EMPRE_SA.administrative_access.Transactional_Configuraciones
 (Nombre, Descripcion, Valor, Tipo_Configuracion)
-VALUES(N'APODERADO', N'Datos del apoderado', N' Juan José Villavicencio Navarro, mayor de', N'GENERAL_DATA');
+VALUES(N'APODERADO', N'Datos del representante legal de la empresa', N' Juan José Villavicencio Navarro, mayor de', N'GENERAL_DATA');

@@ -92,7 +92,7 @@ namespace DataBaseModel
     {
         public PageConfig()
         {
-            SqlADOConexion.IniciarConexionAnonima();
+            ///SqlADOConexion.IniciarConexion("sa", "zaxscd", ".", "EMPRE_SA");
             configuraciones = new Transactional_Configuraciones().Get<Transactional_Configuraciones>();
             TITULO = configuraciones.Find(c => c.Nombre.Equals(ConfiguracionesThemeEnum.TITULO.ToString()))?.Valor ?? TITULO;
             SUB_TITULO = configuraciones.Find(c => c.Nombre.Equals(ConfiguracionesThemeEnum.SUB_TITULO.ToString()))?.Valor ?? SUB_TITULO;
