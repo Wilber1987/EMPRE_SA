@@ -177,8 +177,6 @@ class Transaction_Contratos extends EntityClass {
     total_pagar_cordobas;
     /**@type {Number} */
     total_pagar_dolares;
-   
-    
     
 }
 

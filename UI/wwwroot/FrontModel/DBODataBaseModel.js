@@ -722,45 +722,37 @@ class Recibos extends EntityClass {
             this[prop] = props[prop];
         }
     }
-    // title1 = { type: "title", label: "Datos de contrato:" };  
-
     numero_contrato = { type: "number", disabled: true, hidden: true };
-    //monto = { type: "number", disabled: true };
-    //saldo_actual_cordobas = { type: "number", disabled: true };
-    //saldo_actual_dolares = { type: "number", disabled: true };
-    //plazo = { type: "number", disabled: true };
-
-
-    //tasa_cambio = { type: "number", hiddenInTable: true, disabled: true };
-    //tasa_cambio_compra = { type: "number", hiddenInTable: true, disabled: true };
-    //interes_demas_cargos_pagar_cordobas = { type: "number", hiddenInTable: true, disabled: true };
-    //interes_demas_cargos_pagar_dolares = { type: "number", hiddenInTable: true, disabled: true };
-    //interes_cargos = { type: "number", disabled: true };
-
     title2 = { type: "title", label: "Datos de recibo:" };
     fecha = {
         type: "date", hidden: true
     };
     id_recibo = { type: "number", primary: true };
     consecutivo = { type: "number", hidden: true, require: false };
+
+    interes_demas_cargos_pagar_cordobas = { type: "number", hiddenInTable: true, disabled: true, label : "Interes $"};
     abono_capital_cordobas = { type: "number", hiddenInTable: true, disabled: true };
-    abono_capital_dolares = { type: "number", hiddenInTable: true, disabled: true };
     cuota_pagar_cordobas = { type: "number", hiddenInTable: true, disabled: true };
-    cuota_pagar_dolares = { type: "number", hiddenInTable: true, disabled: true };
     mora_cordobas = { type: "number", hiddenInTable: true, disabled: true };
-    mora_dolares = { type: "number", hiddenInTable: true, disabled: true };
-    mora_interes_cordobas = { type: "number", hiddenInTable: true, disabled: true };
-    mora_interes_dolares = { type: "number", hiddenInTable: true, disabled: true };
+    mora_interes_cordobas = { type: "number", hiddenInTable: true, disabled: true, label : "Interes + Mora C$" };
     total_cordobas = { type: "number", hiddenInTable: true, disabled: true };
+
+    interes_demas_cargos_pagar_dolares = { type: "number", hiddenInTable: true, disabled: true, label : "Interes $"};
+    abono_capital_dolares = { type: "number", hiddenInTable: true, disabled: true };
+    cuota_pagar_dolares = { type: "number", hiddenInTable: true, disabled: true };
+    mora_dolares = { type: "number", hiddenInTable: true, disabled: true };  
+    mora_interes_dolares = { type: "number", hiddenInTable: true, disabled: true, label : "Interes + Mora $"};
     total_dolares = { type: "number", hiddenInTable: true, disabled: true };
+
     //total_parciales = { type: "number", hiddenInTable: true, disabled: true };
-    reestructurar_monto = { type: "number", disabled: true, defaultValue: 0 };
-    fecha_roc = { type: "date", disabled: true };
+    
+    fecha_roc = { type: "date", disabled: true, hidden: true };
 
 
     title3 = { type: "title", label: "Opciones:" };
     //solo_abono = { type: "checkbox", hiddenInTable: true, require: false };
 
+    reestructurar_monto = { type: "number", disabled: true, defaultValue: 0 , require: false};
     paga_cordobas = { type: "number", hiddenInTable: true };
     paga_dolares = { type: "number", hiddenInTable: true };
     temporal = { type: "checkbox", require: false };
@@ -780,7 +772,7 @@ class Recibos extends EntityClass {
             form.DrawComponent();
         }
     };
-    reestructurar_value = { type: "number", hidden: true, min: 1 };
+    reestructurar_value = { type: "number", hidden: true, min: 1, require: false };
     total_apagar_dolares = {
         type: "operation", action: (recibo, form) => {
             const val = parseFloat(recibo.paga_dolares ?? 0) 

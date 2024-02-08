@@ -72,35 +72,33 @@ namespace Transactions
                 BeginGlobalTransaction();
 
                 var cuotasPagadas = new List<Detalle_Factura_Recibo>();
-                foreach (var item in contrato.Tbl_Cuotas.OrderBy(c => c.id_cuota).ToList())
+                foreach (var cuota in contrato.Tbl_Cuotas.OrderBy(c => c.id_cuota).ToList())
                 {
-                    if (monto >= item.total && monto > 0)
+                    cuota.fecha_pago = DateTime.Now;
+                    if (monto >= cuota.total && monto > 0)
                     {
-                        item.pago_contado = item.total;
-                        monto -= (double)item.total;
+                        cuota.pago_contado = cuota.total;                        
+                        monto -= (double)cuota.total;
                     }
                     else
                     {
-                        item.pago_contado = monto;
+                        cuota.pago_contado = monto;
                         monto = 0;
-                        if (monto == 0)
-                        {
-                            break;
-                        }
+                        if (monto == 0) break;
                     }
                     cuotasPagadas.Add(
                         new Detalle_Factura_Recibo()
                         {
-                            id_cuota = item.id_cuota,
-                            total_cuota = item.total,
-                            monto_pagado = item.abono_capital,
-                            capital_restante = item.capital_restante,
-                            concepto = this.numero_contrato + item.abono_capital < item.total
+                            id_cuota = cuota.id_cuota,
+                            total_cuota = cuota.total,
+                            monto_pagado = cuota.abono_capital,
+                            capital_restante = cuota.capital_restante,
+                            concepto = this.numero_contrato + cuota.abono_capital < cuota.total
                             ? "Pago parcial de cuota" : "Pago de completo de cuota, contrato No: " + this.numero_contrato,
                             tasa_cambio = this.tasa_cambio
                         }
                     );
-                    item.Update();
+                    cuota.Update();
 
                 }
                 var saldoRespaldo = contrato.saldo;
