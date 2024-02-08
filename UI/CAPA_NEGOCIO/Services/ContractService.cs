@@ -83,7 +83,7 @@ namespace CAPA_NEGOCIO.Services
 			var configuraciones = new Transactional_Configuraciones().GetIntereses();
 
 
-			templateContent = templateContent.Replace("{{cuotafija}}", Math.Round((decimal)model.cuotafija, 2).ToString("0.00"))
+			templateContent = templateContent.Replace("{{cuotafija}}", Math.Round((decimal)model.cuotafija, 3).ToString("0.000"))
 				.Replace("{{numero_contrato}}", model.numero_contrato?.ToString("D9"))
 				.Replace("{{datos_apoderado}}", configuraciones_generales.Find(c => c.Nombre.Equals(GeneralDataEnum.APODERADO.ToString()))?.Valor)
 				.Replace("{{resumen_datos_apoderado}}", configuraciones_generales.Find(c => c.Nombre.Equals(GeneralDataEnum.DATOS_APODERADO.ToString()))?.Valor)
@@ -92,11 +92,11 @@ namespace CAPA_NEGOCIO.Services
 				.Replace("{{fecha_primera_cuota}}", fechaPrimeraCuota?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy"))
 				.Replace("{{fecha_ultima_cuota}}", fechaUltimaCuota?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy"))
 				.Replace("{{cuotafija_label}}", NumberUtility.NumeroALetras(model.cuotafija, "córdobas"))
-				.Replace("{{cuotafija_dolares}}", Math.Round((decimal)model.cuotafija_dolares, 2).ToString("0.00"))
+				.Replace("{{cuotafija_dolares}}", Math.Round((decimal)model.cuotafija_dolares, 3).ToString("0.000"))
 				.Replace("{{cuotafija_dolares_label}}", NumberUtility.NumeroALetras(model.cuotafija_dolares, "dólares"))
-				.Replace("{{valoracion_empeño_cordobas}}", Math.Round((decimal)model.valoracion_empeño_cordobas, 2).ToString("0.00"))
+				.Replace("{{valoracion_empeño_cordobas}}", Math.Round((decimal)model.valoracion_empeño_cordobas, 3).ToString("0.000"))
 				.Replace("{{valoracion_empeño_cordobas_label}}", NumberUtility.NumeroALetras(model.valoracion_empeño_cordobas, "córdobas"))
-				.Replace("{{valoracion_empeño_dolares}}", Math.Round((decimal)model.valoracion_empeño_dolares, 2).ToString("0.00"))
+				.Replace("{{valoracion_empeño_dolares}}", Math.Round((decimal)model.valoracion_empeño_dolares, 3).ToString("0.000"))
 				.Replace("{{valoracion_empeño_dolares_label}}", NumberUtility.NumeroALetras(model.valoracion_empeño_dolares, "dólares"));
 
 			var renderedHtml = RenderTemplate(templateContent, model);
@@ -116,7 +116,7 @@ namespace CAPA_NEGOCIO.Services
 				.Replace("{{departamento}}", cliente.Catalogo_Departamento?.nombre)
 				.Replace("{{tabla_articulos}}", GenerateTableHtml(model.Detail_Prendas, model.tipo.Equals(Contratos_Type.EMPENO_VEHICULO.ToString())))
 				//MORA                
-				.Replace("{{valor_mora}}", Math.Round((decimal)model.cuotafija_dolares * (decimal)model.mora, 2).ToString("0.00"))
+				.Replace("{{valor_mora}}", Math.Round((decimal)model.cuotafija_dolares * (decimal)model.mora, 3).ToString("0.000"))
 				.Replace("{{valor_mora_label}}", NumberUtility.NumeroALetras(model.cuotafija_dolares * model.mora, "dólares"))
 
 				/*INTERESES*/
@@ -154,7 +154,7 @@ namespace CAPA_NEGOCIO.Services
 				.Replace("{{dias}}", DateTime.Now.Day.ToString())
 				.Replace("{{mes}}", DateTime.Now.Month.ToString())
 				.Replace("{{anio}}", DateTime.Now.Year.ToString())
-				.Replace("{{tbody_amortizacion}}", GenerateTableHtml(model.Tbl_Cuotas, configuraciones, cliente));
+				.Replace("{{tbody_amortizacion}}", GenerateTableHtml(model.Tbl_Cuotas, configuraciones, cliente, model));
 			LoggerServices.AddMessageInfo("FIN DE RENDER 2");
 			// Generar el PDF
 			var pdfFilePath = Path.Combine(System.IO.Path.GetFullPath("./wwwroot/Contracts"), "output.pdf");
@@ -314,7 +314,7 @@ namespace CAPA_NEGOCIO.Services
 			return htmlBuilder.ToString();
 		}
 
-		static string GenerateTableHtml(List<Tbl_Cuotas> listaDatos, List<Transactional_Configuraciones> configuraciones, Catalogo_Clientes cliente)
+		static string GenerateTableHtml(List<Tbl_Cuotas> listaDatos, List<Transactional_Configuraciones> configuraciones, Catalogo_Clientes cliente, Transaction_Contratos contrato)
 		{
 			List<Tbl_Cuotas>? objListOrder = listaDatos?.OrderBy(order => order.fecha).ToList();
 			StringBuilder htmlBuilder = new StringBuilder();
@@ -326,24 +326,30 @@ namespace CAPA_NEGOCIO.Services
 			{
 				htmlBuilder.Append("<tr>");
 				htmlBuilder.Append($"<td class=\"desc\" colspan=\"2\">{dato.fecha?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy")}</td>");
-				var value1 = dato.capital_restante * dato.tasa_cambio * (cliente.Catalogo_Clasificacion_Interes?.porcentaje / 100);
-				var value2 = dato.capital_restante * (cliente.Catalogo_Clasificacion_Interes?.porcentaje / 100);
+				
+				
+				var porcentajeDeInteresSinGestionCrediticia = contrato.tasas_interes * 100 - contrato.gestion_crediticia;
+				var porcentajeGestionCrediticia = 100 / (contrato.tasas_interes * 100 ) * contrato.gestion_crediticia; 
+				var porcentajeDemasCargos = 100 / (contrato.tasas_interes * 100 ) * porcentajeDeInteresSinGestionCrediticia;
+				
+				var interesNeto = dato.interes * (porcentajeGestionCrediticia / 100);
+				var demasCargos = dato.interes - interesNeto;
 
-				htmlBuilder.Append($"<td class=\"val\">{Math.Round(Convert.ToDecimal(value1), 2)}</td>");
-				htmlBuilder.Append($"<td class=\"val\">{Math.Round(Convert.ToDecimal(value2), 2)}</td>");
+				htmlBuilder.Append($"<td class=\"val\">{Math.Round(Convert.ToDecimal(interesNeto * dato.tasa_cambio), 3).ToString("0.000")}</td>");
+				htmlBuilder.Append($"<td class=\"val\">{Math.Round(Convert.ToDecimal(interesNeto), 3).ToString("0.000")}</td>");
 
-				htmlBuilder.Append($"<td class=\"val\">{Math.Round(Convert.ToDecimal(dato.capital_restante * dato.tasa_cambio * valorInteres), 2)}</td>");
-				htmlBuilder.Append($"<td class=\"val\">{Math.Round(Convert.ToDecimal(dato.capital_restante * valorInteres), 2)}</td>");
+				htmlBuilder.Append($"<td class=\"val\">{Math.Round(Convert.ToDecimal(demasCargos * dato.tasa_cambio ), 3).ToString("0.000")}</td>");
+				htmlBuilder.Append($"<td class=\"val\">{Math.Round(Convert.ToDecimal(demasCargos), 3).ToString("0.000")}</td>");
 
 
-				htmlBuilder.Append($"<td class=\"val\">{Math.Round(Convert.ToDecimal(dato.interes * dato.tasa_cambio), 2)}</td>");
-				htmlBuilder.Append($"<td class=\"val\">{Math.Round(Convert.ToDecimal(dato.interes), 2)}</td>");
-				htmlBuilder.Append($"<td class=\"val\">{Math.Round(Convert.ToDecimal(dato.abono_capital * dato.tasa_cambio), 2)}</td>");
-				htmlBuilder.Append($"<td class=\"val\">{Math.Round(Convert.ToDecimal(dato.abono_capital), 2)}</td>");
-				htmlBuilder.Append($"<td class=\"val\">{Math.Round(Convert.ToDecimal(dato.total * dato.tasa_cambio), 2)}</td>");
-				htmlBuilder.Append($"<td class=\"val\">{Math.Round(Convert.ToDecimal(dato.total), 2)}</td>");
-				htmlBuilder.Append($"<td class=\"val\">{Math.Round(Convert.ToDecimal(dato.capital_restante * dato.tasa_cambio), 2)}</td>");
-				htmlBuilder.Append($"<td class=\"val\">{Math.Round(Convert.ToDecimal(dato.capital_restante), 2)}</td>");
+				htmlBuilder.Append($"<td class=\"val\">{Math.Round(Convert.ToDecimal(dato.interes * dato.tasa_cambio), 3).ToString("0.000")}</td>");
+				htmlBuilder.Append($"<td class=\"val\">{Math.Round(Convert.ToDecimal(dato.interes), 3).ToString("0.000")}</td>");
+				htmlBuilder.Append($"<td class=\"val\">{Math.Round(Convert.ToDecimal(dato.abono_capital * dato.tasa_cambio), 3).ToString("0.000")}</td>");
+				htmlBuilder.Append($"<td class=\"val\">{Math.Round(Convert.ToDecimal(dato.abono_capital), 3).ToString("0.000")}</td>");
+				htmlBuilder.Append($"<td class=\"val\">{Math.Round(Convert.ToDecimal(dato.total * dato.tasa_cambio), 3).ToString("0.000")}</td>");
+				htmlBuilder.Append($"<td class=\"val\">{Math.Round(Convert.ToDecimal(dato.total), 3).ToString("0.000")}</td>");
+				htmlBuilder.Append($"<td class=\"val\">{Math.Round(Convert.ToDecimal(dato.capital_restante * dato.tasa_cambio), 3).ToString("0.000")}</td>");
+				htmlBuilder.Append($"<td class=\"val\">{Math.Round(Convert.ToDecimal(dato.capital_restante), 3).ToString("0.000")}</td>");
 
 
 				// Agregar más columnas según las propiedades de tu objeto DatosTabla

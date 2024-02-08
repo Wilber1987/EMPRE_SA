@@ -435,6 +435,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
                 for (const prop in this.valoracionesForm?.FormObject) {
                     if (prop == "Detail_Valores") continue;
                     if (prop == "Tasa_interes") continue;
+                    if (prop == "Plazo") continue;
                     this.valoracionesForm.FormObject[prop] = undefined;
                 }
                 this.valoracionesForm.DrawComponent();

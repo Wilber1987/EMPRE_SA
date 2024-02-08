@@ -294,7 +294,7 @@ class Gestion_RecibosView extends HTMLElement {
                     </div>  
 
                     <div class="DataContainer">
-                        <span>Tasa de cambio compra:</span>
+                        <span>Tasa de cambio venta:</span>
                         <label>${// @ts-ignore
             this.tasasCambio[0].valor_de_venta}</label>                       
                     </div>
@@ -340,7 +340,7 @@ class Gestion_RecibosView extends HTMLElement {
             let totalRestante = 0;
 
             for (const cuota of contrato.Tbl_Cuotas) {
-                if (cuota.capital_restante > 0) {
+                if (cuota.capital_restante > 0 || contrato.Tbl_Cuotas.length == 1) {
                     primeraCuotaConCapitalMayorACero = cuota.total;
                     interes_cargos = cuota.interes;
                     interes_demas_cargos_pagar_cordobas = cuota.interes;

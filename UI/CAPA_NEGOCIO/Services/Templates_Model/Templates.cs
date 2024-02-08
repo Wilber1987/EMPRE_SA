@@ -693,7 +693,7 @@ public class ContractsTemplates
      <tbody>
         <tr style='margin-top: 0px; margin-bottom: 0px;  width: 100%'> 
             <td style='font-size: 9.5px; text-align: left;  width: 30%; border: none !important;'>
-                <p style='text-align:left; font-size:10px;width: 200px !important; margin-top:100px; border-top: solid 2px #000 !important; padding-bottom:0px; margin-bottom:0px; ; padding-top:10px'>
+                <p style='text-align:left; font-size:10px;width: 200px !important; margin-top:100px; border-top: solid 1px #000 !important; padding-bottom:0px; margin-bottom:0px; ; padding-top:10px'>
                     Deudor: {{primer_nombre}} {{segundo_nombre}} {{primer_apellido}} {{segundo_apellidio}}
                 </p>
                 <p style='text-align:left; font-size:10px; margin-top:0px; padding-bottom:0px; margin-bottom:0px;'>Cédula:

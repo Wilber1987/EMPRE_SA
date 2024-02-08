@@ -104,7 +104,7 @@ class AmoritizationModule {
                 // @ts-ignore
                 abono_capital: abono_capital.toFixed(3),
                 // @ts-ignore
-                capital_restante: ((capital - abono_capital) < 0 ? 0 : (capital - abono_capital)).toFixed(3),
+                capital_restante: (index == contrato.Transaction_Contratos.plazo - 1  ? 0 : (capital - abono_capital)).toFixed(3),
                 // @ts-ignore
                 tasa_cambio: contrato.Transaction_Contratos.taza_cambio
             });
