@@ -730,7 +730,7 @@ class Recibos extends EntityClass {
     id_recibo = { type: "number", primary: true };
     consecutivo = { type: "number", hidden: true, require: false };
 
-    interes_demas_cargos_pagar_cordobas = { type: "number", hiddenInTable: true, disabled: true, label : "Interes $"};
+    interes_demas_cargos_pagar_cordobas = { type: "number", hiddenInTable: true, disabled: true, label : "Interes C$"};
     abono_capital_cordobas = { type: "number", hiddenInTable: true, disabled: true };
     cuota_pagar_cordobas = { type: "number", hiddenInTable: true, disabled: true };
     mora_cordobas = { type: "number", hiddenInTable: true, disabled: true };

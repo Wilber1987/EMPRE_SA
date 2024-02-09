@@ -1,6 +1,10 @@
 ﻿@page
 @using API.Controllers
+@using CAPA_DATOS.Security
+@using DataBaseModel
 @{
+    string identify = HttpContext.Session.GetString("seassonKey");
+    var pageConfig = Config.pageConfig();
     //Layout = null;
     if (!SecurityController.Auth(HttpContext.Session.GetString("seassonKey")))
     {
@@ -20,7 +24,80 @@
 </head>
 
 <body id="App">    
-  
+  <div class="home-menu">
+    @if (SecurityController.HavePermission(PermissionsEnum.GESTION_PRESTAMOS_Y_EMPEÑOS.ToString(), identify))
+            {
+                <a class="title-block">PRESTAMOS Y EMPEÑOS</a>
+                <div class="block-menu">
+                    @if (SecurityController.HavePermission(PermissionsEnum.GESTION_CLIENTES.ToString(),
+                   identify))
+
+                    {
+                        <a class="" asp-area="" asp-page="/PagesViews/Gestion_Clientes">Gestión de
+                            clientes</a>
+                    }
+                    <a class="" id="Transaction_Valoraciones_View" asp-area=""
+                        asp-page="/PagesViews/Transaction_Valoraciones_View">VALORACIONES</a>
+                    <a class="" id="Transaction_ContratosView" asp-area=""
+                        asp-page="/PagesViews/Transaction_ContratosView">CONTRATOS</a>
+                </div>
+            }
+            @if (SecurityController.HavePermission(PermissionsEnum.GESTION_PRESTAMOS_Y_EMPEÑOS.ToString(), identify))
+            {
+                <a class="title-block">GESTIÓN DE RECIBOS</a>
+                <div class="block-menu">
+                    @if (SecurityController.HavePermission(PermissionsEnum.GESTION_CLIENTES.ToString(),//TODO
+                   identify))
+                    {
+                        <a class=""  asp-area="" asp-page="/PagesViews/Gestion_Recibos">Nuevo Recibo</a>
+                        <a class=""  asp-area="" asp-page="/PagesViews/Ver_Recibos">Ver Recibos</a>
+                    }
+                </div>
+            }
+            @if (SecurityController.HavePermission(PermissionsEnum.GESTION_PRESTAMOS_Y_EMPEÑOS.ToString(), identify))
+            {
+                <a class="title-block">GESTIÓN DE CUENTAS</a>
+                <div class="block-menu">
+                    @if (SecurityController.HavePermission(PermissionsEnum.GESTION_CLIENTES.ToString(),//TODO
+                   identify))
+                    {
+                        <a class=""  asp-area="" asp-page="/PagesViews/Gestion_CuentasView">Gestión de
+                            Cuentas</a>
+                        <a class=""  asp-area=""
+                            asp-page="/PagesViews/Movimientos_CuentasView">Movimientos</a>
+                    }
+                </div>
+            }
+            @if (SecurityController.HavePermission(PermissionsEnum.GESTION_CONTRATOS.ToString(), identify))
+            {
+                <a class="title-block">GESTIÓN DE CONTRATOS</a>
+                <div class="block-menu">
+                    <a class="" asp-area=""
+                        asp-page="/PagesViews/Transaction_Contratos_InversionistasView">PRESTAMOS DE PERSONAS NATURALES</a>
+                    <a class=""  asp-area=""
+                        asp-page="/PagesViews/Gestion_Inversionistas">GESTIÓN DE PERSONAS NATURALES</a>
+                </div>
+            }
+            @if (SecurityController.HavePermission(PermissionsEnum.GESTION_MOVIMIENTOS.ToString(), identify))
+            {
+                <a class="title-block">GESTIÓN DE
+                    MOVIMIENTOS</a>
+                <div class="block-menu">
+                    <a class=""  asp-area=""
+                        asp-page="/PagesViews/Transaction_Ingresos_EgresosView">EGRESOS/INGRESOS</a>
+                </div>
+            }
+            @if (SecurityController.HavePermission(PermissionsEnum.GESTION_SUCURSALES.ToString(), identify))
+            {
+                <a class="title-block"
+                    href="#SucursalesConfig">CONFIGURACIÓN DE
+                    SUCURSALES</a>
+                <div class="block-menu" >
+                    <a class=""  asp-area=""
+                        asp-page="/PagesViews/Datos_ConfiguracionView">CONFIGURACIONES</a>
+                </div>
+            }
+</div>
 </body>
 
 </html>

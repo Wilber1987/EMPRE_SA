@@ -41,3 +41,32 @@
     display: flex;
     align-items: center;
 }
+.home-menu{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-weight: 600;
+}
+.block-menu {
+    display: grid;
+    grid-template-columns: repeat(3, 30%);
+    gap: 10px;
+}
+.block-menu a{
+    display: block;
+    padding: 20px;
+    list-style: none;
+    border-radius: 10px;
+    background-color: #eee;
+    text-decoration: none;
+    color: var(--font-fourth-color);
+}
+.title-block {
+    display: block;
+    padding: 10px 20px;
+    list-style: none;
+    border-radius: 10px;
+    background-color: #193b4e;
+    color: var(--font-primary-color);
+    text-decoration: none;
+}

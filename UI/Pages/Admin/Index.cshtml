@@ -1,6 +1,10 @@
 ﻿@page
 @using API.Controllers
+@using CAPA_DATOS.Security
+@using DataBaseModel
 @{
+    string identify = HttpContext.Session.GetString("seassonKey");
+    var pageConfig = Config.pageConfig();
     if (!SecurityController.IsAdmin(HttpContext.Session.GetString("seassonKey")))
     {
         Response.Redirect("./login");
@@ -18,3 +22,5 @@
 {
     <script  src="~/Admin/AdminConfig.js" type="module"></script>
 }
+
+

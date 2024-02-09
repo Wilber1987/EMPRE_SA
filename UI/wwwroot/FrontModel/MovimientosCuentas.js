@@ -12,16 +12,14 @@ class Movimientos_Cuentas extends EntityClass {
 	Catalogo_Cuentas_Origen = { type: 'WSELECT', ModelObject: () => new Catalogo_Cuentas() };
 	Catalogo_Cuentas_Destino = { type: 'WSELECT', ModelObject: () => new Catalogo_Cuentas() };
 	//moneda = { type: 'select', Dataset: ["C$", "$"], hiddenInTable: false,hidden:true, disabled: true, require: false, };
-	monto = { type: "number" };
-	tasa_cambio = { type: "number", disabled: true };
-	tasa_cambio_compra = { type: "number", disabled: true };
+	monto = { type: "number", hiddenFilter: true };
+	tasa_cambio = { type: "number", disabled: true , hiddenFilter: true};
+	tasa_cambio_compra = { type: "number", disabled: true , hiddenFilter: true};
 	moneda = { type: "radio", Dataset: ["CORDOBAS", "DOLARES"] };
-	id_usuario_crea = { type: "number", hidden: true };
-	fecha = { type: "date", disabled: true, required: false, hidden: true };	
+	id_usuario_crea = { type: "number", hidden: true, hiddenFilter: true };
+	fecha = { type: "date", disabled: true, require: false };	
 	concepto = { type: "textarea" };
-	descripcion = { type: "textarea", required: false };
-	correo_enviado = { type: "checkbox", require: false, hiddenInTable: true, hidden: true };
-	is_transaction = { type: "checkbox", require: false, disabled: true, hidden: true};
+	descripcion = { type: "textarea", require: false , hiddenFilter: true};
 }
 export { Movimientos_Cuentas }
 

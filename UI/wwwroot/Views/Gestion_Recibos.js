@@ -230,11 +230,11 @@ class Gestion_RecibosView extends HTMLElement {
                     grid-template-columns: repeat(3, calc(33% - 15px));
                     grid-template-rows: repeat(3, auto);
                     grid-auto-flow: column;
-                }.ModalElement:nth-child(n + 1):nth-child(-n + 7) {
+                }.ModalElement:nth-child(n + 1):nth-child(-n + 8) {
                     grid-column: 1/2 !important;
-                } .ModalElement:nth-child(n + 8):nth-child(-n + 13) {                    
+                } .ModalElement:nth-child(n + 9):nth-child(-n + 14) {                    
                     grid-column: 2/3 !important;
-                } .ModalElement:nth-child(n + 14):nth-child(-n + 30) {
+                } .ModalElement:nth-child(n + 15):nth-child(-n + 30) {
                     grid-column: 3/4 !important;
                 }  .ModalElement.titleContainer:nth-child(1){
                     grid-column: 1/3 !important;
@@ -299,7 +299,7 @@ class Gestion_RecibosView extends HTMLElement {
                     <div class="DataContainer">
                         <span>F/Próximo pago:</span>
                         <label>${// @ts-ignore
-                            this.proximaCuota?.fecha?.toDateFormatEs()}</label>                       
+                            this.proximaCuota?.fecha?.toDateFormatEs() ?? "-"}</label>                       
                     </div>  
                     <div class="DataContainer">
                         <span>Fecha de cancelación:</span>
@@ -308,11 +308,11 @@ class Gestion_RecibosView extends HTMLElement {
                     <div class="DataContainer">
                         <span>Saldo actual C$:</span>                        
                         <label>${ // @ts-ignore
-                            selectContrato.saldo * this.tasasCambio[0].valor_de_venta}</label>                       
+                            (selectContrato.saldo * this.tasasCambio[0].valor_de_venta).toFixed(3)}</label>                       
                     </div>   
                     <div class="DataContainer">
                         <span>Saldo actual $:</span>                        
-                        <label>${selectContrato.saldo}</label>                       
+                        <label>${selectContrato.saldo.toFixed(3)}</label>                       
                     </div>        
                     <div class="DataContainer">
                         <span>Plazo:</span>

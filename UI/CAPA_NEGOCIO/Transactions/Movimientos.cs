@@ -32,7 +32,7 @@ namespace Transactions
             try
             {
                 BeginGlobalTransaction();
-                if ((bool)this.is_transaction)
+                if (this.is_transaction == true)
                 {
                     return new ResponseService()
                     {
