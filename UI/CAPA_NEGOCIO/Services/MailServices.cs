@@ -29,7 +29,7 @@ namespace CAPA_NEGOCIO.Services
                     "reply@noreply.com",
                     toMails,
                     subject,
-                    ContractService.RenderTemplate(templatePage, model), null,
+                    ContractTemplateService.RenderTemplate(templatePage, model), null,
                     config
                 );
                 return "true";

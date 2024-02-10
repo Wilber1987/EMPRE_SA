@@ -11,7 +11,7 @@ namespace API.Controllers
     {
         [HttpPost]
         [AuthController]
-        public List<Transactional_Valoracion> GuardarValoraciones(ValoracionesTransaction Inst)
+        public List<Transactional_Valoracion> GuardarValoraciones(ContractServices Inst)
         {
             return new Transactional_Valoracion().GuardarValoraciones(Inst.valoraciones);
         }
