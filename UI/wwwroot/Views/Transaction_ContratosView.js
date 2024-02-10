@@ -20,7 +20,7 @@ import { Transactional_Configuraciones } from "../FrontModel/ADMINISTRATIVE_ACCE
  * @typedef {Object} ContratosConfig
  * * @property {ValoracionesTransaction} [Entity]
  */
-class Transaction_ContratosView extends HTMLElement {   
+class Transaction_ContratosView extends HTMLElement {
     /**
      * 
      * @param {ContratosConfig} props 
@@ -29,7 +29,7 @@ class Transaction_ContratosView extends HTMLElement {
         super();
         this.attachShadow({ mode: 'open' });
         //models
-        this.entity = new ValoracionesTransaction(props?.Entity) ?? new ValoracionesTransaction();        
+        this.entity = new ValoracionesTransaction(props?.Entity) ?? new ValoracionesTransaction();
         this.entity.Transaction_Contratos = this.entity.Transaction_Contratos ?? {}
         //this.entity = testData        
         this.componentsModel = new Transaction_Contratos_ModelComponent();
@@ -202,7 +202,7 @@ class Transaction_ContratosView extends HTMLElement {
      * @returns 
      */
     valoracionResumen(entity) {
-        
+
         this.amortizacionResumen.innerHTML = "";
         if (entity.Transaction_Contratos.total_pagar_cordobas == undefined) {
             this.amortizacionResumen.innerHTML = `<div class="detail-container">Agregue prendas</div>`;
@@ -303,7 +303,8 @@ class Transaction_ContratosView extends HTMLElement {
             modelo: valoracion.Modelo,
             mara: valoracion.Marca,
             serie: valoracion.Serie,
-            pprenda: valoracion.valoracion_empeño_cordobas,
+            monto_aprobado_cordobas: valoracion.valoracion_empeño_cordobas,
+            monto_aprobado_dolares: valoracion.valoracion_empeño_dolares,
             en_manos_de: undefined,
             Catalogo_Categoria: valoracion.Catalogo_Categoria,
             Transactional_Valoracion: valoracion
@@ -317,7 +318,7 @@ class Transaction_ContratosView extends HTMLElement {
         // @ts-ignore
         this.inputPlazo.max = this.prioridadEnElPlazo();
         // @ts-ignore
-        this.entity.Transaction_Contratos.Detail_Prendas = this.prendasTable?.Dataset;        
+        this.entity.Transaction_Contratos.Detail_Prendas = this.prendasTable?.Dataset;
         this.entity = AmoritizationModule.calculoAmortizacion(this.entity, false);
         console.log(this.entity);
         this.clientResumen(this.entity.Transaction_Contratos.Catalogo_Clientes);
@@ -327,7 +328,7 @@ class Transaction_ContratosView extends HTMLElement {
         AmoritizationModule.calculoAmortizacion(this.entity);
         if (this.prendasTable != undefined && this.entity.Transaction_Contratos.Detail_Prendas != undefined) {
             this.entity.Transaction_Contratos?.Detail_Prendas.forEach(detalle => {
-                detalle.pprenda_dolares = detalle.Transactional_Valoracion.valoracion_empeño_dolares
+                detalle.monto_aprobado_dolares = detalle.Transactional_Valoracion.valoracion_empeño_dolares
             })
             this.prendasTable.Dataset = this.entity.Transaction_Contratos.Detail_Prendas;
             this.prendasTable?.DrawTable();
@@ -408,7 +409,7 @@ class MainContract extends HTMLElement {
     ElementsNav = [
         {
             name: "Contratos", action: () => {
-                this.Manager.NavigateFunction("contratos", contratosSearcher((contrato) => {                    
+                this.Manager.NavigateFunction("contratos", contratosSearcher((contrato) => {
                     location.href = "/PagesViews/Transaction_ContratosViewDetail?numero_contrato=" + contrato.numero_contrato;
                 }))
             }

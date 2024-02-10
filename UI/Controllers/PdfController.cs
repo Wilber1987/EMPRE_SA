@@ -15,7 +15,7 @@ namespace UI.Controllers
             try
             {
                 var model = Inst.Find<Transaction_Contratos>();
-                ContractService.generaPDF(model);
+                ContractTemplateService.generaPDF(model);
                 return new ResponseService()
                 {
                     message = "success",

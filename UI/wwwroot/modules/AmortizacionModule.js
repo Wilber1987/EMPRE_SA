@@ -16,7 +16,7 @@ class AmoritizationModule {
             return new ValoracionesTransaction();
         }
         contrato.Transaction_Contratos = contrato.Transaction_Contratos ?? new Transaction_Contratos();
-        
+
         if (withValoraciones) {
             contrato.Transaction_Contratos.Detail_Prendas = contrato.valoraciones.map(
             // @ts-ignore
@@ -25,9 +25,10 @@ class AmoritizationModule {
                 modelo: valoracion.Modelo,
                 marca: valoracion.Marca,
                 serie: valoracion.Serie,
-                pprenda: valoracion.valoracion_empeño_cordobas,
+                monto_aprobado_cordobas: valoracion.valoracion_empeño_cordobas,
+                monto_aprobado_dolares: valoracion.valoracion_empeño_dolares,
                 color: "#000",
-                en_manos_de: tipo_contrato == "EMPEÑO" ? "ACREEDOR": "DEUDOR",
+                en_manos_de: tipo_contrato == "EMPEÑO" ? "ACREEDOR" : "DEUDOR",
                 precio_venta: valoracion.precio_venta_empeño_dolares,
                 Catalogo_Categoria: valoracion.Catalogo_Categoria,
                 Transactional_Valoracion: valoracion
@@ -57,7 +58,7 @@ class AmoritizationModule {
         //console.log(contrato.Transaction_Contratos.total_pagar_cordobas, contrato.Transaction_Contratos.total_pagar_dolares);
 
         contrato.Transaction_Contratos.interes = (WArrayF.SumValAtt(contrato.Transaction_Contratos.Tbl_Cuotas, "interes"));
-        contrato.Transaction_Contratos.interes_dolares = (WArrayF.SumValAtt(contrato.Transaction_Contratos.Tbl_Cuotas, "interes") / contrato.Transaction_Contratos.taza_cambio);
+        //contrato.Transaction_Contratos.interes_dolares = (WArrayF.SumValAtt(contrato.Transaction_Contratos.Tbl_Cuotas, "interes") / contrato.Transaction_Contratos.taza_cambio);
         return contrato;
     }
 
@@ -104,7 +105,7 @@ class AmoritizationModule {
                 // @ts-ignore
                 abono_capital: abono_capital.toFixed(3),
                 // @ts-ignore
-                capital_restante: (index == contrato.Transaction_Contratos.plazo - 1  ? 0 : (capital - abono_capital)).toFixed(3),
+                capital_restante: (index == contrato.Transaction_Contratos.plazo - 1 ? 0 : (capital - abono_capital)).toFixed(3),
                 // @ts-ignore
                 tasa_cambio: contrato.Transaction_Contratos.taza_cambio
             });

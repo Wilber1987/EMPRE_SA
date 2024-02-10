@@ -19,14 +19,9 @@ using iText.Layout.Element;
 
 namespace CAPA_NEGOCIO.Services
 {
-	public class ContractService
+	public class ContractTemplateService
 	{
-		public class MyModel
-		{
-			public string Title { get; set; }
-			public string Content { get; set; }
-		}
-
+		
 		public static async Task<byte[]> GeneratePdfFromRazorTemplateAsync<TModel>(string razorTemplate, TModel model)
 		{
 			var engine = new RazorLightEngineBuilder()
@@ -109,7 +104,7 @@ namespace CAPA_NEGOCIO.Services
 			double valorInteres = configuraciones.Select(c => Convert.ToDouble(c.Valor)).ToList().Sum();
 
 
-			var montoMora = model.cuotafija * ((model?.mora / 100) ?? 0.005) * 1;//como el cronjob es diario se va cargando mora cada dia
+			//var montoMora = model.cuotafija * (model?.mora ?? 0.005) * 1;//como el cronjob es diario se va cargando mora cada dia
 
 			renderedHtml = RenderTemplate(renderedHtml, cliente)
 				.Replace("{{municipio}}", cliente.Catalogo_Municipio?.nombre)

@@ -5,7 +5,7 @@ using CAPA_DATOS.Services;
 using DataBaseModel;
 namespace Model
 {
-    public class ValoracionesTransaction
+    public class ContractServices
     {
 
         public Transaction_Contratos? Transaction_Contratos { get; set; }
@@ -60,7 +60,7 @@ namespace Model
 
                 Transaction_Contratos.monto = Transaction_Contratos.valoracion_empeño_dolares;
                 Transaction_Contratos.saldo = Transaction_Contratos.valoracion_empeño_dolares;
-                Transaction_Contratos.mora = Convert.ToDouble(configuraciones.Valor) / 100;
+                Transaction_Contratos.mora = Convert.ToDouble(configuraciones.Valor);
                 Transaction_Contratos.estado = Contratos_State.ACTIVO.ToString();
                 Transaction_Contratos.Id_User = AuthNetCore.User(seasonKey).UserId;
 
@@ -83,11 +83,11 @@ namespace Model
             }
         }
 
-        public ValoracionesTransaction GetDataContract(string seasonKey)
+        public ContractServices GetDataContract(string seasonKey)
         {
-            ValoracionesTransaction? valoracionesTransaction
-             = SeasonServices.Get<ValoracionesTransaction>("ValoracionesTransaction", seasonKey);
-            return valoracionesTransaction ?? new ValoracionesTransaction();
+            ContractServices? valoracionesTransaction
+             = SeasonServices.Get<ContractServices>("ValoracionesTransaction", seasonKey);
+            return valoracionesTransaction ?? new ContractServices();
         }
     }
 
