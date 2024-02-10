@@ -19,6 +19,7 @@ class Gestion_ClientesView extends HTMLElement {
     }
     Draw = async () => {
         const model = new Catalogo_Clientes();
+        this.Gestion_ClientesForm = new Gestion_ClientesForm();
         //const dataset = await model.Get();
 
         this.OptionContainer = WRender.Create({ className: "OptionContainer" });
@@ -34,40 +35,31 @@ class Gestion_ClientesView extends HTMLElement {
             tagName: 'button', className: 'Block-Primary', innerText: 'Ingresar Cliente',
             onclick: () => this.NewTransaction()
         }))
-        this.OptionContainer.append(WRender.Create({
-            tagName: 'button', className: 'Block-Tertiary', innerText: 'Editar cliente',
-            onclick: async () => {
-                if (this.TableComponent != undefined) {
-                    const datasetUpdated = await model.Get();
-                    // @ts-ignore
-                    this.TableComponent.Dataset = datasetUpdated;
-                    this.TableComponent?.DrawTable();
+        // this.OptionContainer.append(WRender.Create({
+        //     tagName: 'button', className: 'Block-Tertiary', innerText: 'Editar cliente',
+        //     onclick: async () => {
+        //         if (this.TableComponent != undefined) {
+        //             const datasetUpdated = await model.Get();
+        //             // @ts-ignore
+        //             this.TableComponent.Dataset = datasetUpdated;
+        //             this.TableComponent?.DrawTable();
 
-                } else {
-                    const data = await model.Get();
-                    this.TableComponent = new WTableComponent({
-                        ModelObject: model, Dataset: data, Options: {
-                            Filter: true,
-                            FilterDisplay: true,
-                            UserActions: [
-                                {
-                                    name: "Editar", action: (cliente) => {
-                                        if (this.Gestion_ClientesForm != null) {
-                                            this.Gestion_ClientesForm.cliente = cliente
-                                            this.Gestion_ClientesForm.Draw();
-                                            this.NewTransaction();
-                                        }
-
-                                    }
-                                }
-                            ]
-                        }
-                    })
-                    this.MainComponent = WRender.Create({ className: "main-container", children: [this.TableComponent] })
-                }
-                this.Manager?.NavigateFunction("tabla", this.MainComponent);
-            }
-        }))
+        //         } else {
+        //             const data = await model.Get();
+        //             this.TableComponent = new WTableComponent({
+        //                 ModelObject: model, Dataset: data, Options: {
+        //                     Filter: true,
+        //                     FilterDisplay: true,
+        //                     UserActions: [
+                               
+        //                     ]
+        //                 }
+        //             })
+        //             this.MainComponent = WRender.Create({ className: "main-container", children: [this.TableComponent] })
+        //         }
+        //         this.Manager?.NavigateFunction("tabla", this.MainComponent);
+        //     }
+        // }))
 
         //this.NewTransaction();
         this.NewGestionClientes()
@@ -82,8 +74,7 @@ class Gestion_ClientesView extends HTMLElement {
 
     }
 
-    NewTransaction(Model) {
-        this.Gestion_ClientesForm = new Gestion_ClientesForm();
+    NewTransaction(Model) {       
         this.Manager?.NavigateFunction("Gestion_ClientesForm", this.Gestion_ClientesForm)
     }
     NewGestionClientes() {
@@ -97,6 +88,15 @@ class Gestion_ClientesView extends HTMLElement {
                 }),
                 ObjectDetail: cliente
             }))
+        }, {
+            name: "Editar", action: (cliente) => {
+                if (this.Gestion_ClientesForm != null) {
+                    this.Gestion_ClientesForm.cliente = cliente
+                    this.Gestion_ClientesForm.Draw();
+                    this.NewTransaction();
+                }
+
+            }
         }))
     }
 

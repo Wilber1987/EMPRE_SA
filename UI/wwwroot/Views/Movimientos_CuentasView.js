@@ -33,6 +33,7 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
         this.Manager = new ComponentsManager({ MainContainer: this.TabContainer, SPAManage: false });
         this.TableComponent = new WTableComponent({
             ModelObject: model, Dataset: dataset, Options: {
+                Filter: true,
                 //Add: true, UrlAdd: "guardarMovimiento",
                 //Edit: true, UrlUpdate: "editarMovimiento",
                 //Search: true, //UrlSearch: "../application/controllers/Vehiculos_Controller.php/get" + Model.constructor.name,
@@ -56,7 +57,7 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
                                 monto: movimiento.monto.toFixed(2).toString(),
                                 tasa_cambio: movimiento.tasa_cambio.toFixed(2).toString(),
                                 tasa_cambio_compra: movimiento.tasa_cambio_compra.toFixed(2).toString(),
-                                total: movimiento.total.toFixed(2).toString(),
+                                total: movimiento.total?.toFixed(2).toString(),
                                 descripcion: movimiento.descripcion,
                                 concepto: "Anulación de movimiento",
                                 is_transaction: movimiento.is_transaction                                
@@ -83,14 +84,15 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
             }
         })
 
-        this.FilterOptions = new WFilterOptions({
-            Dataset: dataset,
-            ModelObject: model,
-            Display: true,
-            FilterFunction: (DFilt) => {
-                this.TableComponent?.DrawTable(DFilt);
-            }
-        });
+        // this.FilterOptions = new WFilterOptions({
+        //     Dataset: dataset,
+        //     ModelObject: model,
+        //     Display: true,
+        //     FilterFunction: (DFilt) => {
+        //         console.log(DFilt);
+        //         this.TableComponent?.DrawTable(DFilt);
+        //     }
+        // });
         const ObjectOptions = {
             SaveFunction: (param, response) => {
                 console.log(response)
@@ -99,7 +101,7 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
         }
 
 
-        this.MainComponent = WRender.Create({ className: "main-container", children: [this.FilterOptions, this.TableComponent] })
+        this.MainComponent = WRender.Create({ className: "main-container", children: [this.TableComponent] })
 
         //this.MainComponent.shadowRoot?.prepend(this.FilterOptions);
 

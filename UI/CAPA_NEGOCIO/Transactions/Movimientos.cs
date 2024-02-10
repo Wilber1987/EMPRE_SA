@@ -4,7 +4,7 @@ using DataBaseModel;
 
 namespace Transactions
 {
-    public class Movimientos_Cuentas : TransactionalClass
+    public class Movimientos_Cuentas : EntityClass
     {
         [PrimaryKey(Identity = true)]
         public int? id_movimiento { get; set; }
@@ -66,9 +66,10 @@ namespace Transactions
 
         public List<Movimientos_Cuentas> Get()
         {
-            return new Transaction_Movimiento().Get<Transaction_Movimiento>().Select(z =>
+            return new Transaction_Movimiento(){
+                filterData = this.filterData
+            }.Get<Transaction_Movimiento>().Select(z =>
             {
-
                 var constOrigen = z.Detail_Movimiento?.Find(x => x.credito == 0);
                 var constDestino = z.Detail_Movimiento?.Find(x => x.debito == 0);
                 return new Movimientos_Cuentas()

@@ -351,7 +351,7 @@ class Detail_Prendas_ModelComponent extends EntityClass {
     serie = { type: 'text' };
     modelo = { type: 'text' };
     pprenda = { type: 'number', label: "Monto aprob. cordobas", disabled: true };
-    pprenda_dolares = { type: 'number', label: "Monto aprob. dolares", disabled: true  };
+    pprenda_dolares = { type: 'number', label: "Monto aprob. dolares", disabled: true };
     iva = { type: 'text', hidden: true };
     //margen = { type: 'text', hiddenInTable: true };
     estado = { type: 'select', Dataset: ["ACTIVO", "INACTIVO"], hiddenInTable: true };
@@ -469,8 +469,8 @@ class Catalogo_Cuentas extends EntityClass {
     nombre = { type: 'text' };
     saldo = { type: 'number', disabled: true, hiddenInTable: true, require: false };
     saldo_dolares = { type: 'number', disabled: true, hiddenInTable: true, require: false };
-    permite_dolares = { type: "checkbox", require: false };
-    permite_cordobas = { type: "checkbox", require: false };
+    permite_dolares = { type: "checkbox", require: false, defaultValue: true };
+    permite_cordobas = { type: "checkbox", require: false, defaultValue: true };
     tipo_cuenta = { type: 'select', Dataset: ['PROPIA', 'PAGO', 'EXTERNA'] };
     Catalogo_Sucursales = { type: 'WSELECT', ModelObject: () => new Catalogo_Sucursales() };
     Categoria_Cuentas = { type: 'WSELECT', ModelObject: () => new Categoria_Cuentas() };
@@ -730,29 +730,29 @@ class Recibos extends EntityClass {
     id_recibo = { type: "number", primary: true };
     consecutivo = { type: "number", hidden: true, require: false };
 
-    interes_demas_cargos_pagar_cordobas = { type: "number", hiddenInTable: true, disabled: true, label : "Interes C$"};
+    interes_demas_cargos_pagar_cordobas = { type: "number", hiddenInTable: true, disabled: true, label: "Interes C$" };
     abono_capital_cordobas = { type: "number", hiddenInTable: true, disabled: true };
     cuota_pagar_cordobas = { type: "number", hiddenInTable: true, disabled: true };
     mora_cordobas = { type: "number", hiddenInTable: true, disabled: true };
-    mora_interes_cordobas = { type: "number", hiddenInTable: true, disabled: true, label : "Interes + Mora C$" };
+    mora_interes_cordobas = { type: "number", hiddenInTable: true, disabled: true, label: "Interes + Mora C$" };
     total_cordobas = { type: "number", hiddenInTable: true, disabled: true };
 
-    interes_demas_cargos_pagar_dolares = { type: "number", hiddenInTable: true, disabled: true, label : "Interes $"};
+    interes_demas_cargos_pagar_dolares = { type: "number", hiddenInTable: true, disabled: true, label: "Interes $" };
     abono_capital_dolares = { type: "number", hiddenInTable: true, disabled: true };
     cuota_pagar_dolares = { type: "number", hiddenInTable: true, disabled: true };
-    mora_dolares = { type: "number", hiddenInTable: true, disabled: true };  
-    mora_interes_dolares = { type: "number", hiddenInTable: true, disabled: true, label : "Interes + Mora $"};
+    mora_dolares = { type: "number", hiddenInTable: true, disabled: true };
+    mora_interes_dolares = { type: "number", hiddenInTable: true, disabled: true, label: "Interes + Mora $" };
     total_dolares = { type: "number", hiddenInTable: true, disabled: true };
 
     //total_parciales = { type: "number", hiddenInTable: true, disabled: true };
-    
+
     fecha_roc = { type: "date", disabled: true, hidden: true };
 
 
     title3 = { type: "title", label: "Opciones:" };
     //solo_abono = { type: "checkbox", hiddenInTable: true, require: false };
 
-    reestructurar_monto = { type: "number", disabled: true, defaultValue: 0 , require: false};
+    reestructurar_monto = { type: "number", disabled: true, defaultValue: 0, require: false };
     paga_cordobas = { type: "number", hiddenInTable: true };
     paga_dolares = { type: "number", hiddenInTable: true };
     temporal = { type: "checkbox", require: false };
@@ -775,9 +775,9 @@ class Recibos extends EntityClass {
     reestructurar_value = { type: "number", hidden: true, min: 1, require: false };
     total_apagar_dolares = {
         type: "operation", action: (recibo, form) => {
-            const val = parseFloat(recibo.paga_dolares ?? 0) 
-            + parseFloat(recibo.mora_dolares ?? 0)
-            + parseFloat(recibo.reestructurar_monto ?? 0)
+            const val = parseFloat(recibo.paga_dolares ?? 0)
+                + parseFloat(recibo.mora_dolares ?? 0)
+                + parseFloat(recibo.reestructurar_monto ?? 0)
             return val.toFixed(3);
         }
     };
