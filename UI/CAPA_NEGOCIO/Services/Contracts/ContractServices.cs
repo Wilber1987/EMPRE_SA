@@ -3,9 +3,10 @@ using API.Controllers;
 using CAPA_DATOS;
 using CAPA_DATOS.Services;
 using DataBaseModel;
+using Transactions;
 namespace Model
 {
-    public class ContractServices
+    public class ContractServices : TransactionalClass
     {
 
         public Transaction_Contratos? Transaction_Contratos { get; set; }
@@ -37,6 +38,11 @@ namespace Model
         {
             try
             {
+                BeginGlobalTransaction();
+                var User = AuthNetCore.User(seasonKey);
+                var dbUser = new API.Extended.Security_Users { Id_User = User.UserId }.Find<API.Extended.Security_Users>();
+
+
                 var configuraciones = new Transactional_Configuraciones().GetConfig(ConfiguracionesInteresesEnum.MORA_CONTRATOS_EMP.ToString());
                 Transaction_Contratos.fecha_contrato = DateTime.Now;
                 Transaction_Contratos.fecha_cancelar = Transaction_Contratos.Tbl_Cuotas.Select(c => c.fecha).ToList().Max();
@@ -62,9 +68,49 @@ namespace Model
                 Transaction_Contratos.saldo = Transaction_Contratos.valoracion_empeño_dolares;
                 Transaction_Contratos.mora = Convert.ToDouble(configuraciones.Valor);
                 Transaction_Contratos.estado = Contratos_State.ACTIVO.ToString();
-                Transaction_Contratos.Id_User = AuthNetCore.User(seasonKey).UserId;
+                Transaction_Contratos.Id_User = dbUser?.Id_User;
 
                 Transaction_Contratos.Save();
+
+                var cuentaOrigen = new Catalogo_Cuentas()
+                {
+                    id_sucursal = dbUser?.Id_Sucursal,
+                    id_categoria = 4
+                }.Find<Catalogo_Cuentas>();
+
+                var cuentaDestino = new Catalogo_Cuentas()
+                {
+                    id_categoria = 9,
+                    id_sucursal = dbUser?.Id_Sucursal
+                }.Find<Catalogo_Cuentas>();
+
+                if (cuentaDestino == null || cuentaOrigen == null)
+                {
+                    return new ResponseService()
+                    {
+                        status = 400,
+                        message = "Cuentas no configuradas correctamente"
+                    };
+                }
+
+                ResponseService response = new Movimientos_Cuentas
+                {
+                    Catalogo_Cuentas_Destino = cuentaDestino,
+                    Catalogo_Cuentas_Origen = cuentaOrigen,
+                    concepto = "Desembolso de monto para, contrato No: " + Transaction_Contratos.numero_contrato,
+                    descripcion = "Desembolso de monto para, contrato No: " + Transaction_Contratos.numero_contrato,
+                    moneda = "DOLARES",
+                    monto = Transaction_Contratos.monto,
+                    tasa_cambio = Transaction_Contratos.taza_cambio,
+                    tasa_cambio_compra = Transaction_Contratos.taza_cambio_compra,
+                    is_transaction = true
+                }.SaveMovimiento(seasonKey);
+                if (response.status != 200)
+                {
+                    RollBackGlobalTransaction();
+                    return response;
+                }
+                CommitGlobalTransaction();
                 return new ResponseService()
                 {
                     status = 200,
@@ -74,7 +120,7 @@ namespace Model
             }
             catch (System.Exception ex)
             {
-
+                RollBackGlobalTransaction();
                 return new ResponseService()
                 {
                     status = 500,

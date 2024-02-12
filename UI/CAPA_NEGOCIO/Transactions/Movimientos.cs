@@ -77,7 +77,7 @@ namespace Transactions
                     id_movimiento = z.id_movimiento,
                     descripcion = z.descripcion,
                     concepto = z.concepto,
-                    monto = constDestino?.credito,
+                    monto = constDestino.moneda?.ToUpper().Equals("DOLARES") == true ? constDestino?.credito_dolares : constDestino?.credito,
                     tasa_cambio = constDestino?.tasa_cambio,
                     tasa_cambio_compra = constDestino?.tasa_cambio_compra,
                     moneda = constDestino.moneda,
@@ -120,7 +120,7 @@ namespace Transactions
                 return new ResponseService()
                 {
                     status = 400,
-                    message = "La cuenta "+cuentaOrigen.nombre+" no permite débitos hacia la cuenta: "+cuentaDestino.nombre
+                    message = cuentaOrigen.nombre+" no permite débitos hacia la cuenta: "+cuentaDestino.nombre
                 };
             }
 
@@ -129,7 +129,7 @@ namespace Transactions
                 return new ResponseService()
                 {
                     status = 400,
-                    message = "La cuenta "+cuentaDestino.nombre+" no permite créditos desde la cuenta: "+cuentaOrigen.nombre
+                    message = cuentaDestino.nombre+" no permite créditos desde la cuenta: "+cuentaOrigen.nombre
                 };
             }
             
@@ -144,7 +144,7 @@ namespace Transactions
                     var response = new ResponseService()
                     {
                         status = 403,
-                        message = $"La cuenta {this.Catalogo_Cuentas_Origen?.nombre} no cuenta con saldo suficiente"
+                        message = $"{this.Catalogo_Cuentas_Origen?.nombre} no cuenta con saldo suficiente"
                     };
                     if (moneda == "DOLARES" && cuentaOrigen.saldo_dolares < monto)
                     {

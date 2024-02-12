@@ -15,6 +15,7 @@ import { AmoritizationModule } from "../modules/AmortizacionModule.js";
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { Transactional_Configuraciones } from "../FrontModel/ADMINISTRATIVE_ACCESSDataBaseModel.js";
+import { Tbl_Cuotas_ModelComponent } from "../FrontModel/ModelComponents.js";
 
 /**
  * @typedef {Object} ContratosConfig
@@ -86,7 +87,18 @@ class Transaction_ContratosView extends HTMLElement {
                 Search: true,
                 DeleteAction: () => this.deletePrenda(),
             }
-        })
+        });
+        this.CuotasTable = new WTableComponent({
+            Dataset: this.entity.Transaction_Contratos?.Tbl_Cuotas ?? [],
+            ModelObject: new Tbl_Cuotas_ModelComponent(),
+            paginate: false,
+            AddItemsFromApi: false,
+            AutoSave: false,
+            id: "cuotasTable",
+            Options: {
+
+            }
+        });
 
         this.inputPlazo = WRender.Create({
             tagName: 'input', type: 'number', className: "input-plazo", onchange: (ev) => {
@@ -107,11 +119,10 @@ class Transaction_ContratosView extends HTMLElement {
                 this.fechaCancelacion(), this.inputObservacion,
             ]
         });
-        this.contratosForm.append(optionContainer, this.prendasTable);
+        this.contratosForm.append(optionContainer, this.prendasTable, this.CuotasTable);
         this.Manager.NavigateFunction("valoraciones", this.contratosForm);
         this.selectCliente(this.entity.Transaction_Contratos?.Catalogo_Clientes ?? {})
-        this.valoracionResumen(this.entity)
-
+        this.valoracionResumen(this.entity);
     }
     /**
      * 
@@ -186,7 +197,9 @@ class Transaction_ContratosView extends HTMLElement {
                 if (response.status == 200) {
                     this.shadowRoot?.append(ModalVericateAction(() => {
                         location.href = "/PagesViews/Transaction_ContratosViewDetail?numero_contrato=" + response.body.numero_contrato;
-                    }, response.message))
+                    }, response.message));
+                } else {
+                    this.shadowRoot?.append(ModalMessege(response.message));
                 }
             }
         }))
@@ -202,12 +215,12 @@ class Transaction_ContratosView extends HTMLElement {
      * @returns 
      */
     valoracionResumen(entity) {
-
         this.amortizacionResumen.innerHTML = "";
         if (entity.Transaction_Contratos.total_pagar_cordobas == undefined) {
             this.amortizacionResumen.innerHTML = `<div class="detail-container">Agregue prendas</div>`;
             return;
         }
+        //.console.log(entity.Transaction_Contratos);
         this.amortizacionResumen.append(WRender.CreateStringNode(`<div class="detail-container"> 
             <div>
                 <label class="value-container">
@@ -231,37 +244,38 @@ class Transaction_ContratosView extends HTMLElement {
             <div>
                 <label class="value-container">
                      Valor Capital C$: 
-                     <span>${entity.Transaction_Contratos.valoracion_empeño_cordobas?.toFixed(2)}</span>
+                     <span>${entity.Transaction_Contratos.valoracion_empeño_cordobas?.toFixed(3)}</span>
                 </label>
                 <label class="value-container">
-                     Int. y demas cargo $: 
-                     <span>${entity.Transaction_Contratos.interes?.toFixed(2)}</span>
+                     Int. y demas cargo C$: 
+                     <span>${// @ts-ignore
+            (entity.Transaction_Contratos.interes * this.tasaActual.valor_de_venta).toFixed(3)}</span>
                 </label>
                 <label class="value-container">
                      Cuota fija C$: 
-                     <span>${entity.Transaction_Contratos.cuotafija?.toFixed(2)}</span>
+                     <span>${entity.Transaction_Contratos.cuotafija?.toFixed(3)}</span>
                 </label>
                 <label class="value-container">
                      Total a pagar C$: 
-                     <span>${entity.Transaction_Contratos.total_pagar_cordobas?.toFixed(2)}</span>
+                     <span>${entity.Transaction_Contratos.total_pagar_cordobas?.toFixed(3)}</span>
                 </label>
             </div>
             <div>
                 <label class="value-container">
                      Valor Capital $: 
-                     <span>${entity.Transaction_Contratos.valoracion_empeño_dolares?.toFixed(2)}</span>
+                     <span>${entity.Transaction_Contratos.valoracion_empeño_dolares?.toFixed(3)}</span>
                 </label>
                 <label class="value-container">
                      Int. y demas cargos $: 
-                     <span>${entity.Transaction_Contratos.interes_dolares?.toFixed(2)}</span>
+                     <span>${entity.Transaction_Contratos.interes?.toFixed(3)}</span>
                 </label>
                 <label class="value-container">
                      Cuota fija $: 
-                     <span>${entity.Transaction_Contratos.cuotafija_dolares?.toFixed(2)}</span>
+                     <span>${entity.Transaction_Contratos.cuotafija_dolares?.toFixed(3)}</span>
                 </label>
                 <label class="value-container">
                      Total a pagar  $: 
-                     <span>${entity.Transaction_Contratos.total_pagar_dolares?.toFixed(2)}</span>
+                     <span>${entity.Transaction_Contratos.total_pagar_dolares?.toFixed(3)}</span>
                 </label>
             </div>
         </div>`));
@@ -310,21 +324,31 @@ class Transaction_ContratosView extends HTMLElement {
             Transactional_Valoracion: valoracion
         }))
         // @ts-ignore
-        this.entity.Transaction_Contratos.taza_cambio = this.tasaActual?.valor_de_compra;
+        this.entity.Transaction_Contratos.taza_cambio = this.tasaActual?.valor_de_venta;
         this.update();
         this.Manager.NavigateFunction("valoraciones");
     }
     deletePrenda() {
         // @ts-ignore
         this.inputPlazo.max = this.prioridadEnElPlazo();
+        console.log();
         // @ts-ignore
         this.entity.Transaction_Contratos.Detail_Prendas = this.prendasTable?.Dataset;
-        this.entity = AmoritizationModule.calculoAmortizacion(this.entity, false);
-        console.log(this.entity);
-        this.clientResumen(this.entity.Transaction_Contratos.Catalogo_Clientes);
-        this.valoracionResumen(this.entity);
+        // @ts-ignore
+        this.CuotasTable.Dataset = undefined;
+        // @ts-ignore
+        this.entity.valoraciones = this.entity.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion);
+        this.update();
+       
     }
     update() {
+        if (this.entity.valoraciones) {
+            // @ts-ignore
+            this.inputPlazo.value = this.entity?.valoraciones[0]?.Plazo;
+            // @ts-ignore
+            this.entity.Transaction_Contratos.plazo = this.entity?.valoraciones[0]?.Plazo ?? 1;
+            this.entity.Transaction_Contratos.fecha = new Date();
+        }
         AmoritizationModule.calculoAmortizacion(this.entity);
         if (this.prendasTable != undefined && this.entity.Transaction_Contratos.Detail_Prendas != undefined) {
             this.entity.Transaction_Contratos?.Detail_Prendas.forEach(detalle => {
@@ -337,6 +361,11 @@ class Transaction_ContratosView extends HTMLElement {
         this.clientResumen(this.entity.Transaction_Contratos.Catalogo_Clientes);
         // @ts-ignore
         this.inputPlazo.max = this.prioridadEnElPlazo();
+        //console.log(this.entity.valoraciones);
+        if (this.CuotasTable != undefined) {
+            this.CuotasTable.Dataset = this.entity?.Transaction_Contratos?.Tbl_Cuotas ?? [];
+            this.CuotasTable?.DrawTable();
+        }
         this.valoracionResumen(this.entity);
     }
     CustomStyle = css`
@@ -415,38 +444,38 @@ class MainContract extends HTMLElement {
             }
         }, {
             name: "Nuevo Contrato", action: () => {
-                const date = new Date();
-                const index = this.indexContract
-                // @ts-ignore
-                const element = this.navigator.Elements.find(n => n.name == "Contratos en proceso");
-                // @ts-ignore
-                if (element != undefined) {
-                    // @ts-ignore
-                    element.SubNav.Elements.push({
-                        // @ts-ignore
-                        name: "contrato  -  " + (this.indexContract + 1),
-                        deleteOption: true,
-                        action: () => {
-                            this.Manager.NavigateFunction("contrato-" + index, new Transaction_ContratosView({}));
-                        }
-                    })
-                } else {
-                    // @ts-ignore
-                    this.navigator.Elements.push({
-                        name: "Contratos en proceso", SubNav: {
-                            Elements: [{
-                                // @ts-ignore
-                                name: "contrato  -  " + (this.indexContract + 1),
-                                deleteOption: true,
-                                action: () => {
-                                    this.Manager.NavigateFunction("contrato-" + index, new Transaction_ContratosView({}));
-                                }
-                            }]
-                        }
-                    })
-                }
-                this.navigator.DrawAppNavigator();
-                this.Manager.NavigateFunction("contrato-" + this.indexContract, new Transaction_ContratosView({}))
+                //const date = new Date();
+                //const index = this.indexContract
+                // // @ts-ignore
+                // const element = this.navigator.Elements.find(n => n.name == "Contratos en proceso");
+                // // @ts-ignore
+                // if (element != undefined) {
+                //     // @ts-ignore
+                //     element.SubNav.Elements.push({
+                //         // @ts-ignore
+                //         name: "contrato  -  " + (this.indexContract + 1),
+                //         deleteOption: true,
+                //         action: () => {
+                //             this.Manager.NavigateFunction("contrato-" + index, new Transaction_ContratosView({}));
+                //         }
+                //     })
+                // } else {
+                //     // @ts-ignore
+                //     this.navigator.Elements.push({
+                //         name: "Contratos en proceso", SubNav: {
+                //             Elements: [{
+                //                 // @ts-ignore
+                //                 name: "contrato  -  " + (this.indexContract + 1),
+                //                 deleteOption: true,
+                //                 action: () => {
+                //                     this.Manager.NavigateFunction("contrato-" + index, new Transaction_ContratosView({}));
+                //                 }
+                //             }]
+                //         }
+                //     })
+                // }
+                //this.navigator.DrawAppNavigator();
+                this.Manager.NavigateFunction("newContrato", new Transaction_ContratosView({}))
                 this.indexContract++;
             }
         }

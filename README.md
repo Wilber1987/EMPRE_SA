@@ -37,3 +37,5 @@ DELETE from Tbl_Cuotas ;
 delete from Recibos ;
 DELETE from Transaction_Contratos ;
 DELETE  from Catalogo_Clientes where codigo_cliente  < 4000;
+delete from Detail_Movimiento 
+delete from  Transaction_Movimiento

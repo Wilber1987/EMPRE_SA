@@ -86,8 +86,6 @@ class AmoritizationModule {
     static crearCuotas(contrato) {
         contrato.Transaction_Contratos.cuotafija_dolares = this.getPago(contrato);
         contrato.Transaction_Contratos.cuotafija = contrato.Transaction_Contratos.cuotafija_dolares * contrato.Transaction_Contratos.taza_cambio;
-        contrato.Transaction_Contratos.cuotafija_dolares = this.getPago(contrato);
-        contrato.Transaction_Contratos.cuotafija = contrato.Transaction_Contratos.cuotafija_dolares * contrato.Transaction_Contratos.taza_cambio;
         // @ts-ignore
         let capital = (parseFloat(contrato.Transaction_Contratos.valoracion_empeño_dolares));
         for (let index = 0; index < contrato.Transaction_Contratos.plazo; index++) {
