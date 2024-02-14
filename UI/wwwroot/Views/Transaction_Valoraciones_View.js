@@ -62,7 +62,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
                 }, valor_compra_dolares: {
                     type: "operation", action: (element) => {
                         // @ts-ignore
-                        return this.calculoDolares(element.porcentaje_compra, this.tasasCambio[0].valor_de_venta);
+                        return this.calculoDolares(element.porcentaje_compra);
                     }
                 },
                 valor_empeño_cordobas: {
@@ -72,7 +72,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
                 }, valor_empeño_dolares: {
                     type: "operation", action: (element) => {
                         // @ts-ignore
-                        return this.calculoDolares(element.porcentaje_empeno, this.tasasCambio[0].valor_de_venta);
+                        return this.calculoDolares(element.porcentaje_empeno);
                     }
                 }
             }),
@@ -364,12 +364,15 @@ class Transaction_Valoraciones_View extends HTMLElement {
             },
         });
     }
+    /** @return {Number} */ 
     calculoCordobas = (porcentaje) => {
         // @ts-ignore
-        /**@type {Number} */ const tasa_cambio = this.tasasCambio[0]?.valor_de_venta;
+        /**@type {Number} */ const tasa_cambio = this.tasasCambio[0]?.valor_de_compra;
+         // @ts-ignore
         return (this.calculoDolares(porcentaje) * tasa_cambio).toFixed(3);
     }
-    /** @return {Number} */ calculoDolares = (porcentaje) => {
+    /** @return {Number} */ 
+    calculoDolares = (porcentaje) => {
         // @ts-ignore
         return Math.round((this.avgValores().toFixed(0) * (porcentaje / 100))).toFixed(3);
     }
@@ -546,6 +549,8 @@ class Transaction_Valoraciones_View extends HTMLElement {
                     this.valoresObject.dolares_2 = valoracion.Detail_Valores?.dolares_2 ?? 0;
                     this.valoresObject.Valoracion_3 = valoracion.Detail_Valores?.Valoracion_3 ?? 0;
                     this.valoresObject.dolares_3 = valoracion.Detail_Valores?.dolares_3 ?? 0;
+                    this.promediarValoresDolares(this.valoresObject);
+                    this.promediarValoresCordobas(this.valoresObject);
                     this.valoresForm.DrawComponent();
                 } else {
                     this.resetValoresForm();
@@ -625,6 +630,8 @@ class Transaction_Valoraciones_View extends HTMLElement {
             plazo: this.valoracionesForm?.FormObject.Plazo ?? 1,
             // @ts-ignore
             taza_cambio: this.tasasCambio[0].valor_de_venta,
+            // @ts-ignore
+            taza_cambio_compra: this.tasasCambio[0].valor_de_compra,
             taza_interes_cargos: this.InteresBase,
             Catalogo_Clientes: this.Cliente.codigo_cliente != undefined ? this.Cliente : this.GenerateClient(),
             gestion_crediticia: this.Cliente.Catalogo_Clasificacion_Interes?.porcentaje ?? 6,

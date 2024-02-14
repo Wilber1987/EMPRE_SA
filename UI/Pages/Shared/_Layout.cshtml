@@ -65,7 +65,7 @@
             <a class="" id="Home" asp-area="" asp-page="/">HOME</a>
             @if (SecurityController.HavePermission(PermissionsEnum.GESTION_PRESTAMOS_Y_EMPEÑOS.ToString(), identify))
             {
-                <a class="title-collapse" id="PrestamosClientesMenu" onclick="changeActive(this)">PRESTAMOS Y EMPEÑOS</a>
+                <a class="title-collapse" id="PrestamosClientesMenu" onclick="changeActive(this)">EMPEÑOS</a>
                 <div class="collapse">
                     @if (SecurityController.HavePermission(PermissionsEnum.GESTION_CLIENTES.ToString(),
                    identify))
@@ -108,13 +108,13 @@
             }
             @if (SecurityController.HavePermission(PermissionsEnum.GESTION_CONTRATOS.ToString(), identify))
             {
-                <a class="title-collapse" id="GestionContratosMenu" onclick="changeActive(this)">GESTIÓN DE CONTRATOS</a>
+                @* <a class="title-collapse" id="GestionContratosMenu" onclick="changeActive(this)">GESTIÓN DE CONTRATOS</a>
                 <div class="collapse">
                     <a class="" id="Transaction_Contratos_InversionistasView" asp-area=""
                         asp-page="/PagesViews/Transaction_Contratos_InversionistasView">PRESTAMOS DE PERSONAS NATURALES</a>
                     <a class="" id="Gestion_Inversionistas" asp-area=""
                         asp-page="/PagesViews/Gestion_Inversionistas">GESTIÓN DE PERSONAS NATURALES</a>
-                </div>
+                </div> *@
             }
             @* @if (SecurityController.HavePermission(PermissionsEnum.GESTION_INGRESOS.ToString(),
             identify))
@@ -127,22 +127,22 @@
             } *@
             @if (SecurityController.HavePermission(PermissionsEnum.GESTION_MOVIMIENTOS.ToString(), identify))
             {
-                <a class="title-collapse" id="GestionMovimientosMenu" onclick="changeActive(this)">GESTIÓN DE
+                @* <a class="title-collapse" id="GestionMovimientosMenu" onclick="changeActive(this)">GESTIÓN DE
                     MOVIMIENTOS</a>
                 <div class="collapse">
                     <a class="" id="Transaction_Ingresos_EgresosView" asp-area=""
                         asp-page="/PagesViews/Transaction_Ingresos_EgresosView">EGRESOS/INGRESOS</a>
-                </div>
+                </div> *@
             }
             @if (SecurityController.HavePermission(PermissionsEnum.GESTION_SUCURSALES.ToString(), identify))
             {
-                <a class="title-collapse" id="SucursalesMenu" onclick="changeActive(this)"
+                @* <a class="title-collapse" id="SucursalesMenu" onclick="changeActive(this)"
                     href="#SucursalesConfig">CONFIGURACIÓN DE
                     SUCURSALES</a>
                 <div class="collapse" id="SucursalesConfig">
                     <a class="" id="Datos_ConfiguracionView" asp-area=""
                         asp-page="/PagesViews/Datos_ConfiguracionView">CONFIGURACIONES</a>
-                </div>
+                </div> *@
             }
         </nav>
     </aside>

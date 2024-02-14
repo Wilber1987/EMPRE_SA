@@ -62,7 +62,7 @@ class Transaction_ContratosView extends HTMLElement {
         this.Intereses = await new Transactional_Configuraciones().getTransactional_Configuraciones_Intereses();
         this.InteresBase = WArrayF.SumValAtt(this.Intereses, "Valor");
         this.entity.Transaction_Contratos.taza_interes_cargos = this.InteresBase;
-        AmoritizationModule.calculoAmortizacion(this.entity);
+        AmoritizationModule.calculoAmortizacion(this.entity);        
         /**@type  {Catalogo_Cambio_Dolar}*/
         this.tasaActual = this.tasasCambio[0];
         // @ts-ignore
@@ -106,6 +106,7 @@ class Transaction_ContratosView extends HTMLElement {
                 this.update();
             }, value: 1, min: 1, max: this.prioridadEnElPlazo()
         });
+        this.setPlazo();
         this.inputObservacion = WRender.Create({
             tagName: 'textarea', placeholder: "observaciones...", className: "input-observacion", onchange: (ev) => {
                 this.entity.Transaction_Contratos.observaciones = ev.target.value;
@@ -325,9 +326,22 @@ class Transaction_ContratosView extends HTMLElement {
         }))
         // @ts-ignore
         this.entity.Transaction_Contratos.taza_cambio = this.tasaActual?.valor_de_venta;
+        // @ts-ignore
+        this.entity.Transaction_Contratos.taza_cambio_compra = this.tasaActual?.valor_de_compra;
+        this.setPlazo();
         this.update();
         this.Manager.NavigateFunction("valoraciones");
     }
+    setPlazo() {
+        if (this.entity.valoraciones) {
+            // @ts-ignore
+            this.inputPlazo.value = this.entity?.valoraciones[0]?.Plazo;
+            // @ts-ignore
+            this.entity.Transaction_Contratos.plazo = this.entity?.valoraciones[0]?.Plazo ?? 1;
+            this.entity.Transaction_Contratos.fecha = new Date();
+        }
+    }
+
     deletePrenda() {
         // @ts-ignore
         this.inputPlazo.max = this.prioridadEnElPlazo();
@@ -342,13 +356,7 @@ class Transaction_ContratosView extends HTMLElement {
        
     }
     update() {
-        if (this.entity.valoraciones) {
-            // @ts-ignore
-            this.inputPlazo.value = this.entity?.valoraciones[0]?.Plazo;
-            // @ts-ignore
-            this.entity.Transaction_Contratos.plazo = this.entity?.valoraciones[0]?.Plazo ?? 1;
-            this.entity.Transaction_Contratos.fecha = new Date();
-        }
+        
         AmoritizationModule.calculoAmortizacion(this.entity);
         if (this.prendasTable != undefined && this.entity.Transaction_Contratos.Detail_Prendas != undefined) {
             this.entity.Transaction_Contratos?.Detail_Prendas.forEach(detalle => {

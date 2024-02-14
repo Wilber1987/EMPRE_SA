@@ -120,6 +120,7 @@ class Transaction_Contratos extends EntityClass {
     Id_User_OLD;
     /**@type {Number} cuota del abono*/
     taza_cambio;
+    taza_cambio_compra;
     dkm;
     gasolinamonto;
     valorcad;

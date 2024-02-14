@@ -151,7 +151,7 @@ public class ContractsTemplates
             <html>
             <head>" + ContractStyle + @"</head>
             <body>" + ContractHeader + @"
-                <p style='text-align: justify; font-size:9.5px; margin-top:20px'>Nosotros: {{datos_apoderado}} {{resumen_datos_apoderado}}, actuando en calidad de apoderado generalísimo
+                <p style='text-align: justify; font-size:9.5px; margin-top:20px'>Nosotros: {{datos_apoderado}}, {{resumen_datos_apoderado}}, actuando en calidad de apoderado generalísimo
                     de la sociedad Anónima denominada: ' EMPEÑOS Y PRESTAMOS S.A ' EMPRE S.A, Sociedad que es de este domicilio,
                     constituida, autorizada y existente de conformidad a las leyes de la República de Nicaragua, en escritura
                     pública
@@ -172,7 +172,7 @@ public class ContractsTemplates
                     recibido de parte del acreedor, un préstamo en calidad de
                     mutuo, por la cantidad de: C$. {{monto}} , equivalente a moneda de los Estados Unidos de América: $
                     {{cuotafija_dolares}}, Según el valor de la
-                    compra del dólar a la fecha de hoy {{fecha_contrato_label}} de: C${{taza_cambio}} Suma de dinero que el deudor, se obliga a destinar,
+                    compra del dólar a la fecha de hoy {{fecha_contrato_label}} de: C${{taza_cambio_compra}} Suma de dinero que el deudor, se obliga a destinar,
                     única y
                     exclusivamente
                     al pago del préstamo otorgado. El deudor acepta estar conforme de recibir mensajes de texto en su teléfono
@@ -378,7 +378,7 @@ public class ContractsTemplates
         <html>
         <head>" + ContractStyle + @"</head>
         <body>" + ContractHeader + @"
-            <p style='text-align: justify; font-size:9.5px; margin-top:20px'>Nosotros: {{datos_apoderado}} {{resumen_datos_apoderado}} actuando en calidad de apoderado generalísimo
+            <p style='text-align: justify; font-size:9.5px; margin-top:20px'>Nosotros: {{datos_apoderado}}, {{resumen_datos_apoderado}} actuando en calidad de apoderado generalísimo
                 de la sociedad Anónima denominada: ' EMPEÑOS Y PRESTAMOS S.A ' EMPRE S.A, Sociedad que es de este domicilio,
                 constituida, autorizada y existente de conformidad a las leyes de la República de Nicaragua, en escritura
                 pública
@@ -399,7 +399,7 @@ public class ContractsTemplates
             {{valoracion_empeño_cordobas}}, ({{valoracion_empeño_cordobas_label}}) equivalente a moneda de los Estados Unidos
             de América: $
             {{valoracion_empeño_dolares}}, ({{valoracion_empeño_dolares_label}}), Según el valor de
-            la compra del dólar a la fecha de hoy {{fecha_contrato_label}} de: {{taza_cambio}} C$
+            la compra del dólar a la fecha de hoy {{fecha_contrato_label}} de: {{taza_cambio_compra}} C$
             </p>
             <p style='text-align: justify; font-size:9.5px;'>
                 <u>2. SEGUNDA (DESCRIPCION DE LOS BIENES EMPEÑADOS):</u> En garantía del pago a la cantidad debida, el deudor
@@ -420,7 +420,7 @@ public class ContractsTemplates
                 <u>4. CUARTO (PLAZO Y FORMA DE PAGO):</u>
                 El deudor decide en cuantas cuotas mensuales cancela su empeño, siendo el plazo máximo de 3 meses para artículos electrónicos, 
                 6 meses para artículos no electrónicos y 12 meses para automotores; los pagos se realizarán en cuotas fijas  <span class='sombrear'>MENSUALES</span> de  C$ {{cuotafija}} , 
-                ({{cuotafija_label}}), según el cambio del córdoba a dólar a la fecha de hoy {{fecha_contrato_label}} de: C$ {{taza_cambio}} que serán 
+                ({{cuotafija_label}}), según el cambio del córdoba a dólar a la fecha de hoy {{fecha_contrato_label}} de: C$ {{taza_cambio_compra}} que serán 
                 modificables al tipo de cambio del dólar, en la fecha que el cliente haga efectivo su pago. Los pagos se realizarán en córdobas o el 
                 equivalente a $ {{cuotafija_dolares}}, ($ {{cuotafija_dolares_label}})  Estadounidenses, Según tasa de cambio del Banco Central de Nicaragua,  
                 iniciando la primera cuota mensual el día {{fecha_primera_cuota}} y la última el día {{fecha_ultima_cuota}}. El deudor acepta  
@@ -513,7 +513,7 @@ public class ContractsTemplates
             <p style='text-align: justify; font-size:9.5px;'>
                 <u>13. DECIMA TERCERA (ACEPTACIÓN): </u>Los comparecientes declaran expresamente que aceptan el presente contrato
                 con los términos relacionados, Y leído el presente contrato por las partes lo encontramos conforme, aprobamos,
-                ratificamos y firmamos, en la ciudad de San Marcos a los {{dias}} dias del mes {{mes}} del año {{anio}}.
+                ratificamos y firmamos, en la ciudad de San Marcos a los {{dias}} dias del mes de {{mes}} del año {{anio}}.
             </p>
             <br></br>
               " + ContractTable + $"<br></br>{Footer}" + @" 
@@ -525,7 +525,7 @@ public class ContractsTemplates
         <html>
          <head>" + ContractStyle + @"</head>
         <body>" + ContractHeader + @"      
-        <p style='text-align: justify; font-size:9.5px; margin-top:20px'>Nosotros: {{datos_apoderado}} {{resumen_datos_apoderado}}, actuando en calidad de apoderado generalísimo
+        <p style='text-align: justify; font-size:9.5px; margin-top:20px'>Nosotros: {{datos_apoderado}}, {{resumen_datos_apoderado}}, actuando en calidad de apoderado generalísimo
             de la sociedad Anónima denominada: ' EMPEÑOS Y PRESTAMOS S.A ' EMPRE S.A, Sociedad que es de este domicilio,
             constituida, autorizada y existente de conformidad a las leyes de la República de Nicaragua, en escritura pública
             #51, Constitución de Sociedad Anónima y estatutos,
@@ -546,7 +546,7 @@ public class ContractsTemplates
             {{valoracion_empeño_cordobas}}, ({{valoracion_empeño_cordobas_label}}) equivalente a moneda de los Estados Unidos
             de América: $
             {{valoracion_empeño_dolares}}, ({{valoracion_empeño_dolares_label}}), Según el valor de
-            la compra del dólar a la fecha de hoy {{fecha_contrato_label}} de: {{taza_cambio}} C$
+            la compra del dólar a la fecha de hoy {{fecha_contrato_label}} de: {{taza_cambio_compra}} C$
         </p>
         <p style='text-align: justify; font-size:9.5px;'>
             <u>2. SEGUNDA (DESCRIPCION DE LOS BIENES EMPEÑADOS):</u> En garantía del pago a la cantidad debida, el deudor
@@ -576,7 +576,7 @@ public class ContractsTemplates
             el plazo máximo de 3 meses para artículos electrónicos, 6 meses
             para artículos no electrónicos y 12 meses para automotores; los pagos se realizarán en cuotas fijas <span class='sombrear'>MENSUALES</span> de
             C$ {{cuotafija}}, ({{cuotafija_label}}), según el cambio del córdoba a dólar a la fecha de hoy {{fecha_contrato_label}} de: C$
-            {{taza_cambio}} que serán modificables al tipo de cambio del dólar, en la fecha que el cliente haga efectivo su pago. Los pagos se 
+            {{taza_cambio_compra}} que serán modificables al tipo de cambio del dólar, en la fecha que el cliente haga efectivo su pago. Los pagos se 
             realizarán en córdobas o el equivalente a $ {{cuotafija_dolares}} , ({{cuotafija_dolares_label}}) Estadounidenses, 
             Según tasa de cambio del Banco Central de Nicaragua, iniciando la primera cuota mensual el día {{fecha_primera_cuota}} 
             y la última cuota mensual el día {{fecha_ultima_cuota}}.El deudor acepta realizar sus pagos mensuales en las oficinas del acreedor,
@@ -683,7 +683,7 @@ public class ContractsTemplates
         <p style='text-align: justify; font-size:9.5px;'>
             <u>14. DECIMA CUARTA (ACEPACCIÓN):</u> Los comparecientes declaran expresamente que aceptan el presente contrato
             con los términos relacionados, Y leído el presente contrato por las partes lo encontramos conforme, aprobamos,
-            ratificamos y firmamos, en la ciudad de San Marcos a los {{dias}} dias del mes {{mes}} del año {{anio}}.
+            ratificamos y firmamos, en la ciudad de San Marcos a los {{dias}} dias del mes de {{mes}} del año {{anio}}.
         </p><br></br>
           " + ContractTable + $"<br></br>{Footer}" + @" 
         </body>
