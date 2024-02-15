@@ -106,6 +106,20 @@
                     }
                 </div>
             }
+             @if (SecurityController.HavePermission(PermissionsEnum.GESTION_COMPRAS_Y_VENTAS.ToString(), identify))
+            {
+                <a class="title-collapse" id="GestionCompraVenta" onclick="changeActive(this)">GESTIÓN DE CUENTAS</a>
+                <div class="collapse">
+                    @if (SecurityController.HavePermission(PermissionsEnum.GESTION_CLIENTES.ToString(),//TODO
+                   identify))
+                    {
+                        <a class="" id="GestionCompraView" asp-area="" asp-page="/PagesViews/Gestion_CuentasView">Gestión de
+                            Cuentas</a>
+                        <a class="" id="GestionVentaView" asp-area=""
+                            asp-page="/PagesViews/Movimientos_CuentasView">Movimientos</a>
+                    }
+                </div>
+            }
             @if (SecurityController.HavePermission(PermissionsEnum.GESTION_CONTRATOS.ToString(), identify))
             {
                 @* <a class="title-collapse" id="GestionContratosMenu" onclick="changeActive(this)">GESTIÓN DE CONTRATOS</a>
