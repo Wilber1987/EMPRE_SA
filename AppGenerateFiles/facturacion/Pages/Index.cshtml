@@ -1,0 +1,9 @@
+@page
+@using API.Controllers
+@{
+    if (!SecurityController.Auth())
+    {
+        Response.Redirect("../LoginView");
+        return;
+    }   
+}

@@ -1,0 +1,37 @@
+@page
+@using API.Controllers
+@{
+    if (!SecurityController.Auth())
+    {
+        Response.Redirect("../LoginView");
+        return;
+    }   
+}
+<a class="nav-link text-dark" asp-area="" asp-page="/PagesViews/Transactional_ConfiguracionesView"> Transactional_Configuraciones</a>
+<a class="nav-link text-dark" asp-area="" asp-page="/PagesViews/Transactional_ConfiguracionesView"> Transactional_Configuraciones</a>
+<a class="nav-link text-dark" asp-area="" asp-page="/PagesViews/Transaction_IngresosView"> Transaction_Ingresos</a>
+<a class="nav-link text-dark" asp-area="" asp-page="/PagesViews/Transaction_Ingresos_EgresosView"> Transaction_Ingresos_Egresos</a>
+<a class="nav-link text-dark" asp-area="" asp-page="/PagesViews/Transaction_MovimientoView"> Transaction_Movimiento</a>
+<a class="nav-link text-dark" asp-area="" asp-page="/PagesViews/Transactional_ValoracionView"> Transactional_Valoracion</a>
+<a class="nav-link text-dark" asp-area="" asp-page="/PagesViews/Transaction_ContratosView"> Transaction_Contratos</a>
+<a class="nav-link text-dark" asp-area="" asp-page="/PagesViews/Transaction_Contratos_oldView"> Transaction_Contratos_old</a>
+<a class="nav-link text-dark" asp-area="" asp-page="/PagesViews/Transaction_Contratos_InversionistasView"> Transaction_Contratos_Inversionistas</a>
+<a class="nav-link text-dark" asp-area="" asp-page="/PagesViews/Transaction_EgresosView"> Transaction_Egresos</a>
+<a class="nav-link text-dark" asp-area="" asp-page="/PagesViews/Transaction_FacturasView"> Transaction_Facturas</a>
+<a class="nav-link text-dark" asp-area="" asp-page="/PagesCatalogos/Catalogo_AgentesView"> Catalogo_Agentes</a>
+<a class="nav-link text-dark" asp-area="" asp-page="/PagesCatalogos/Catalogo_Cambio_DolarView"> Catalogo_Cambio_Dolar</a>
+<a class="nav-link text-dark" asp-area="" asp-page="/PagesCatalogos/Catalogo_CategoriaView"> Catalogo_Categoria</a>
+<a class="nav-link text-dark" asp-area="" asp-page="/PagesCatalogos/Catalogo_Clasificacion_ClienteView"> Catalogo_Clasificacion_Cliente</a>
+<a class="nav-link text-dark" asp-area="" asp-page="/PagesCatalogos/Catalogo_Clasificacion_InteresView"> Catalogo_Clasificacion_Interes</a>
+<a class="nav-link text-dark" asp-area="" asp-page="/PagesCatalogos/Catalogo_ClientesView"> Catalogo_Clientes</a>
+<a class="nav-link text-dark" asp-area="" asp-page="/PagesCatalogos/Catalogo_CuentasView"> Catalogo_Cuentas</a>
+<a class="nav-link text-dark" asp-area="" asp-page="/PagesCatalogos/Catalogo_DepartamentoView"> Catalogo_Departamento</a>
+<a class="nav-link text-dark" asp-area="" asp-page="/PagesCatalogos/Catalogo_Estados_ArticulosView"> Catalogo_Estados_Articulos</a>
+<a class="nav-link text-dark" asp-area="" asp-page="/PagesCatalogos/Catalogo_InversoresView"> Catalogo_Inversores</a>
+<a class="nav-link text-dark" asp-area="" asp-page="/PagesCatalogos/Catalogo_MunicipioView"> Catalogo_Municipio</a>
+<a class="nav-link text-dark" asp-area="" asp-page="/PagesCatalogos/Catalogo_NacionalidadView"> Catalogo_Nacionalidad</a>
+<a class="nav-link text-dark" asp-area="" asp-page="/PagesCatalogos/Catalogo_ProfesionesView"> Catalogo_Profesiones</a>
+<a class="nav-link text-dark" asp-area="" asp-page="/PagesCatalogos/Catalogo_SucursalesView"> Catalogo_Sucursales</a>
+<a class="nav-link text-dark" asp-area="" asp-page="/PagesCatalogos/Catalogo_Tipo_AgenteView"> Catalogo_Tipo_Agente</a>
+<a class="nav-link text-dark" asp-area="" asp-page="/PagesCatalogos/Catalogo_Tipo_IdentificacionView"> Catalogo_Tipo_Identificacion</a>
+<a class="nav-link text-dark" asp-area="" asp-page="/PagesCatalogos/Catalogo_Tipo_TransaccionView"> Catalogo_Tipo_Transaccion</a>
