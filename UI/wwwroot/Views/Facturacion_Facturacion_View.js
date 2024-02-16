@@ -8,7 +8,7 @@ import { Catalogo_Cambio_Dolar, Catalogo_Categoria, Catalogo_Clientes, Catalogo_
 import { ModalMessege, WForm } from "../WDevCore/WComponents/WForm.js";
 // @ts-ignore
 import { Transactional_Configuraciones } from "../FrontModel/ADMINISTRATIVE_ACCESSDataBaseModel.js";
-import { Detail_Prendas, Transaction_Contratos, ValoracionesTransaction } from "../FrontModel/Model.js";
+import { Detail_Prendas, Transaction_Facturas,  ValoracionesTransaction } from "../FrontModel/Model.js";
 import { Tbl_Cuotas_ModelComponent } from "../FrontModel/ModelComponents.js";
 import { AmoritizationModule } from "../modules/AmortizacionModule.js";
 import { clientSearcher, ValoracionesSearch } from "../modules/SerchersModules.js";
@@ -83,13 +83,14 @@ class Facturacion_Facturacion_View extends HTMLElement {
     }
 
     NewGestionFacturas() {
-        this.Manager?.NavigateFunction("Historial_ClientesForm", clientSearcher(async (cliente) => {
-            const response = await new Transaction_Contratos({ codigo_cliente: cliente.codigo_cliente }).Get();
-            cliente.Transaction_Contratos = response;
+        this.Manager?.NavigateFunction("Historial_FacturasForm", clientSearcher(async (cliente) => {
+            const response = await new Transaction_Facturas({ codigo_cliente: cliente.codigo_cliente }).Get();
+            cliente.Transaction_Facturas = response;
             this.Manager?.NavigateFunction("Gestion_ClientesDetail" + cliente.codigo_cliente, new WDetailObject({
-                ModelObject: new Catalogo_Clientes({
-                    Transaction_Contratos:
-                        { type: "MASTERDETAIL", ModelObject: () => new Transaction_Contratos_ModelComponent(), Dataset: response }
+                ModelObject: new Transaction_Facturas_ModelComponent({
+                    Transaction_Facturas:
+                        //{ type: "MASTERDETAIL", ModelObject: () => new Transaction_Facturas_ModelComponent(), Dataset: response }
+                        { type: "MASTERDETAIL", ModelObject: () => new Transaction_Facturas_ModelComponent(), Dataset: response }
                 }),
                 ObjectDetail: cliente
             }))
