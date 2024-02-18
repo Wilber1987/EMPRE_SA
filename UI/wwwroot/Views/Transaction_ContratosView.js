@@ -345,7 +345,6 @@ class Transaction_ContratosView extends HTMLElement {
     deletePrenda() {
         // @ts-ignore
         this.inputPlazo.max = this.prioridadEnElPlazo();
-        console.log();
         // @ts-ignore
         this.entity.Transaction_Contratos.Detail_Prendas = this.prendasTable?.Dataset;
         // @ts-ignore

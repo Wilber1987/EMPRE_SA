@@ -76,10 +76,9 @@ export { ValoracionesSearch }
 /**
  * 
  * @param { Function } action 
- * @param { Object } [actionElement] 
  * @returns { HTMLElement }
  */
-const clientSearcher = (action, actionElement) => {
+const clientSearcher = (action) => {
     const model = new Catalogo_Clientes();
     const TableComponent = new WTableComponent({
         ModelObject: model, Dataset: [], Options: {
@@ -90,7 +89,7 @@ const clientSearcher = (action, actionElement) => {
                 action: async (cliente) => {
                     await action(cliente);
                 }
-            }, actionElement]
+            }]
         }
     })    
     return WRender.Create({ className: "main-container", children: [TableComponent] });

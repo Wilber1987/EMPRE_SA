@@ -100,7 +100,7 @@ CREATE TABLE EMPRE_SA.facturacion.Tbl_Factura (
 	Iva float NULL,
 	Tasa_Cambio float NULL,
 	Total float NULL,
-	CONSTRAINT PK__Transacc__6C08ED5375E28D26 PRIMARY KEY (Id_Factura)
+	CONSTRAINT PK_Tbl_Factura_Id_Factura  PRIMARY KEY (Id_Factura)
 );
 
 
