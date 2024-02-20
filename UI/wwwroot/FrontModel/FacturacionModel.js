@@ -185,3 +185,26 @@ class Cat_Almacenes extends EntityClass {
     /**@type {Detalle_Compra} ManyToOne*/ Detalle_Compra;
  }
  export { Tbl_Lotes }
+
+
+ class Detail_Factura_ModelComponent extends EntityClass {
+    constructor(props) {
+        super(props, 'EntityFacturacion');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
+    
+    Id_DetalleFactura = { type: 'text' };
+    Cantidad = { type: 'text' };
+    Precio_Venta = { type: 'text' };
+    Iva = { type: 'text' };
+    Total = { type: 'text' };
+    Id_Lote = { type: 'text' };
+    Descuento = { type: 'text' };
+    Sub_Total = { type: 'text' };
+    //Tbl_Factura; = ????
+    //Cat_Producto; = ????
+
+}
+export { Detail_Factura_ModelComponent }

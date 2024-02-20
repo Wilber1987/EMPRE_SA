@@ -5,19 +5,18 @@ import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/St
 // @ts-ignore
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
 import {  Catalogo_Cambio_Dolar, Catalogo_Clientes,  Detail_Prendas_Vehiculos_ModelComponent, Transaction_Contratos_ModelComponent } from "../FrontModel/DBODataBaseModel.js"
-import {  Detalle_Factura, Tbl_Factura } from "../FrontModel/FacturacionModel.js"
+import {  Detalle_Factura, Tbl_Factura, Detail_Factura_ModelComponent  } from "../FrontModel/FacturacionModel.js"
 // @ts-ignore
 import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
 import { Detail_Prendas, Detail_Prendas_Vehiculos, Transaction_Contratos, ValoracionesTransaction } from "../FrontModel/Model.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 import { ValoracionesSearch, clientSearcher, contratosSearcher } from "../modules/SerchersModules.js";
-import { FacturasSearcher } from "../modules/FacturasSearcher.js.js";
+//import { FacturasSearcher } from "../modules/FacturasSearcher.js.js";
 import { ModalMessege, ModalVericateAction } from "../WDevCore/WComponents/WForm.js";
 import { AmoritizationModule } from "../modules/AmortizacionModule.js";
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { Transactional_Configuraciones } from "../FrontModel/ADMINISTRATIVE_ACCESSDataBaseModel.js";
-import { Tbl_Cuotas_ModelComponent } from "../FrontModel/ModelComponents.js";
 
 /**
  * @typedef {Object} facturaconfig
@@ -63,7 +62,6 @@ class Gestion_FacturacionView extends HTMLElement {
 
     Draw = async () => {
         this.tasasCambio = await new Catalogo_Cambio_Dolar().Get();
-        this.Intereses = await new Transactional_Configuraciones().getTransactional_Configuraciones_Intereses();
         //this.InteresBase = WArrayF.SumValAtt(this.Intereses, "Valor");
         //this.entity.Transaction_Contratos.taza_interes_cargos = this.InteresBase;
         //AmoritizationModule.calculoAmortizacion(this.entity);        
@@ -73,7 +71,7 @@ class Gestion_FacturacionView extends HTMLElement {
         const modelPrendas = new Detalle_Factura({
             Detail_Prendas_Vehiculos: {
                 type: 'Model',
-                ModelObject: () => new Detail_Prendas_Vehiculos_ModelComponent(),
+                ModelObject: () => new Detail_Factura_ModelComponent(),
                 hidden: false
             }
         });
@@ -228,7 +226,7 @@ class Gestion_FacturacionView extends HTMLElement {
 
         this.clientResumen(this.entity.Catalogo_Clientes);
         // @ts-ignore
-        this.inputPlazo.max = this.prioridadEnElPlazo();
+        //this.inputPlazo.max = this.prioridadEnElPlazo();
         
         /*if (this.DetallesTable != undefined) {
             this.DetallesTable.Dataset = this.entity?.Transaction_Contratos?.Tbl_Cuotas ?? [];

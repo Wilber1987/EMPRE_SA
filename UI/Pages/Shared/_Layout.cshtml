@@ -94,6 +94,18 @@
             }
             @if (SecurityController.HavePermission(PermissionsEnum.GESTION_PRESTAMOS_Y_EMPEÑOS.ToString(), identify))
             {
+                <a class="title-collapse" id="GestionRecibosMenu" onclick="changeActive(this)">GESTIÓN DE FACTURAS</a>
+                <div class="collapse">
+                    @if (SecurityController.HavePermission(PermissionsEnum.GESTION_CLIENTES.ToString(),//TODO
+                   identify))
+                    {
+                        <a class="" id="Gestion_Factura" asp-area="" asp-page="/PagesViews/Gestion_FacturasView">Nueva Factura</a>
+                        <a class="" id="Ver_Facturas" asp-area="" asp-page="/PagesViews/Gestion_FacturasView">Ver Facturas</a>
+                    }
+                </div>
+            }
+            @if (SecurityController.HavePermission(PermissionsEnum.GESTION_PRESTAMOS_Y_EMPEÑOS.ToString(), identify))
+            {
                 <a class="title-collapse" id="GestionCuentasMenu" onclick="changeActive(this)">GESTIÓN DE CUENTAS</a>
                 <div class="collapse">
                     @if (SecurityController.HavePermission(PermissionsEnum.GESTION_CLIENTES.ToString(),//TODO

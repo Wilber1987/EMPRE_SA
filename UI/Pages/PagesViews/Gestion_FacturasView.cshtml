@@ -1,0 +1,17 @@
+@page
+@using API.Controllers
+@using CAPA_DATOS.Security
+@{
+     if (!SecurityController.Auth(HttpContext.Session.GetString("seassonKey")))
+    {
+        Response.Redirect("../Security/login");
+        return;
+    }
+    @if (!SecurityController.HavePermission(PermissionsEnum.GESTION_PRESTAMOS_Y_EMPEÑOS.ToString(), HttpContext.Session.GetString("seassonKey")) )//todo
+    {
+       Response.Redirect("../Security/login");
+        return;
+    }    
+}
+<script src='~/Views/Gestion_Factura.js' type='module'></script>
+<div id='MainBody'></div>
