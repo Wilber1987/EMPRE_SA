@@ -104,14 +104,15 @@ namespace CAPA_NEGOCIO.Services
 
 
 			//var montoMora = model.cuotafija * (model?.mora ?? 0.005) * 1;//como el cronjob es diario se va cargando mora cada dia
+			var mora = model.mora / 100;
 
 			renderedHtml = RenderTemplate(renderedHtml, cliente)
 				.Replace("{{municipio}}", cliente.Catalogo_Municipio?.nombre)
 				.Replace("{{departamento}}", cliente.Catalogo_Departamento?.nombre)
 				.Replace("{{tabla_articulos}}", GenerateTableHtml(model.Detail_Prendas, model.tipo.Equals(Contratos_Type.EMPENO_VEHICULO.ToString())))
 				//MORA                
-				.Replace("{{valor_mora}}", "C$ " + Math.Round((decimal)model.cuotafija_dolares * (decimal)model.mora * (decimal)model.taza_cambio, 3).ToString("0.00"))
-				.Replace("{{valor_mora_label}}", NumberUtility.NumeroALetras(model.cuotafija_dolares * model.mora * model.taza_cambio, "córdobas"))
+				.Replace("{{valor_mora}}", "C$ " + Math.Round((decimal)model.cuotafija_dolares * (decimal)mora * (decimal)model.taza_cambio, 3).ToString("0.00"))
+				.Replace("{{valor_mora_label}}", NumberUtility.NumeroALetras(model.cuotafija_dolares * mora * model.taza_cambio, "córdobas"))
 
 				/*INTERESES*/
 				.Replace("{{interes_inicial}}", cliente.Catalogo_Clasificacion_Interes?.porcentaje.ToString() ?? "6")

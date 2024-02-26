@@ -538,9 +538,6 @@ namespace DataBaseModel
 
 		[OneToMany(TableName = "Detalle_Factura_Recibo", KeyColumn = "id_factura", ForeignKeyColumn = "id_factura")]
 		public List<Detalle_Factura_Recibo>? Detalle_Factura_Recibo { get; set; }
-
-		[OneToMany(TableName = "Transaccion_Factura_Detalle", KeyColumn = "id_factura", ForeignKeyColumn = "id_factura")]
-		public List<Transaccion_Factura_Detalle>? Detalle_Factura { get; set; }
 	}
 
 	public class Factura_contrato
@@ -562,19 +559,8 @@ namespace DataBaseModel
 		public int? id_sucursal { get; set; }
 		public int? reestructuracion { get; set; }
 		public double? total_pagado { get; set; }
-
 	}
 
-	public class Transaccion_Factura_Detalle: EntityClass {
-		[PrimaryKey(Identity = true)]
-		public int? id_detalle_factura { get; set; }
-		public int id_factura { get; set; }
-		public int id_producto { get; set; }
-		public string cantidad { get; set; }
-		public string precio_venta { get; set; }
-		public string? iva { get; set; }
-		public string? total { get; set; }
-	}
 
 	public class Catalogo_Producto: EntityClass {
 		[PrimaryKey(Identity = true)]

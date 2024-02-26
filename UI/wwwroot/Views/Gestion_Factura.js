@@ -4,7 +4,7 @@ import { WRender, ComponentsManager, WAjaxTools, WArrayF } from "../WDevCore/WMo
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js"
 // @ts-ignore
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
-import {  Catalogo_Cambio_Dolar, Catalogo_Clientes,  Detail_Prendas_Vehiculos_ModelComponent, Transaction_Contratos_ModelComponent } from "../FrontModel/DBODataBaseModel.js"
+import {  Catalogo_Cambio_Dolar_ModelComponent, Catalogo_Clientes,  Detail_Prendas_Vehiculos_ModelComponent, Transaction_Contratos_ModelComponent } from "../FrontModel/DBODataBaseModel.js"
 import {  Detalle_Factura, Tbl_Factura, Detail_Factura_ModelComponent  } from "../FrontModel/FacturacionModel.js"
 // @ts-ignore
 import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
@@ -61,11 +61,11 @@ class Gestion_FacturacionView extends HTMLElement {
     }
 
     Draw = async () => {
-        this.tasasCambio = await new Catalogo_Cambio_Dolar().Get();
+        this.tasasCambio = await new Catalogo_Cambio_Dolar_ModelComponent().Get();
         //this.InteresBase = WArrayF.SumValAtt(this.Intereses, "Valor");
         //this.entity.Transaction_Contratos.taza_interes_cargos = this.InteresBase;
         //AmoritizationModule.calculoAmortizacion(this.entity);        
-        /**@type  {Catalogo_Cambio_Dolar}*/
+        /**@type  {Catalogo_Cambio_Dolar_ModelComponent}*/
         this.tasaActual = this.tasasCambio[0];       
         
         const modelPrendas = new Detalle_Factura({

@@ -113,8 +113,6 @@ namespace DataBaseModel
     {
         public PageConfig()
         {
-            //SqlADOConexion.IniciarConexion("sa", "zaxscd", ".", "EMPRE_SA");
-            SqlADOConexion.IniciarConexion("sa", "123", ".\\SQLEXPRESS", "EMPRE_SA");
             configuraciones = new Transactional_Configuraciones().Get<Transactional_Configuraciones>();
             TITULO = configuraciones.Find(c => c.Nombre.Equals(ConfiguracionesThemeEnum.TITULO.ToString()))?.Valor ?? TITULO;
             SUB_TITULO = configuraciones.Find(c => c.Nombre.Equals(ConfiguracionesThemeEnum.SUB_TITULO.ToString()))?.Valor ?? SUB_TITULO;

@@ -1,10 +1,10 @@
 //@ts-check
 // @ts-ignore
-import { WRender, ComponentsManager, WAjaxTools, WArrayF } from "../WDevCore/WModules/WComponentsTools.js";
+import { WRender, ComponentsManager, WAjaxTools, WArrayF, html } from "../WDevCore/WModules/WComponentsTools.js";
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js"
 // @ts-ignore
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
-import { Catalogo_Cambio_Dolar, Catalogo_Clientes, Detail_Prendas_ModelComponent, Detail_Prendas_Vehiculos_ModelComponent, Transaction_Contratos_ModelComponent } from "../FrontModel/DBODataBaseModel.js"
+import { Catalogo_Cambio_Dolar_ModelComponent, Catalogo_Clientes, Detail_Prendas_ModelComponent, Detail_Prendas_Vehiculos_ModelComponent, Transaction_Contratos_ModelComponent } from "../FrontModel/DBODataBaseModel.js"
 // @ts-ignore
 import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
 import { Detail_Prendas, Detail_Prendas_Vehiculos, Transaction_Contratos, ValoracionesTransaction } from "../FrontModel/Model.js";
@@ -58,12 +58,12 @@ class Transaction_ContratosView extends HTMLElement {
         this.Draw();
     }
     Draw = async () => {
-        this.tasasCambio = await new Catalogo_Cambio_Dolar().Get();
+        this.tasasCambio = await new Catalogo_Cambio_Dolar_ModelComponent().Get();
         this.Intereses = await new Transactional_Configuraciones().getTransactional_Configuraciones_Intereses();
         this.InteresBase = WArrayF.SumValAtt(this.Intereses, "Valor");
         this.entity.Transaction_Contratos.taza_interes_cargos = this.InteresBase;
         AmoritizationModule.calculoAmortizacion(this.entity);        
-        /**@type  {Catalogo_Cambio_Dolar}*/
+        /**@type  {Catalogo_Cambio_Dolar_ModelComponent}*/
         this.tasaActual = this.tasasCambio[0];
         // @ts-ignore
         const isVehiculo = this.entity.Transaction_Contratos?.Detail_Prendas?.find(p => p.Catalogo_Categoria.tipo == "Vehículos");
@@ -222,7 +222,7 @@ class Transaction_ContratosView extends HTMLElement {
             return;
         }
         //.console.log(entity.Transaction_Contratos);
-        this.amortizacionResumen.append(WRender.CreateStringNode(`<div class="detail-container"> 
+        this.amortizacionResumen.append(html`<div class="detail-container"> 
             <div>
                 <label class="value-container">
                     CARGOS A PAGAR: 
@@ -279,7 +279,7 @@ class Transaction_ContratosView extends HTMLElement {
                      <span>${entity.Transaction_Contratos.total_pagar_dolares?.toFixed(3)}</span>
                 </label>
             </div>
-        </div>`));
+        </div>`);
         this.Manager.NavigateFunction("valoraciones");
     }
     clientResumen(/**@type {Catalogo_Clientes} */ selectCliente) {
@@ -299,13 +299,19 @@ class Transaction_ContratosView extends HTMLElement {
     // @ts-ignore
     selectValoracion = (valoracion) => {
         // @ts-ignore
-        const existVehiculo = this.entity.Detail_Prendas?.find(p => p.Catalogo_Categoria.id_categoria == 2);
+        const existInList = this.entity.Transaction_Contratos.Detail_Prendas?.find(p => p.serie == valoracion.Serie);
+        if (existInList != undefined) {
+            this.shadowRoot?.append(ModalMessege("La valoración ya esta en la lista"));
+            return;
+        }
+        // @ts-ignore
+        const existVehiculo = this.entity.Transaction_Contratos?.Detail_Prendas?.find(p => p.Catalogo_Categoria.id_categoria == 2);
         if (existVehiculo != undefined && valoracion.Catalogo_Categoria.id_categoria != 2) {
             this.shadowRoot?.append(ModalMessege("Anteriormente valoro un vehículo por lo tanto no puede agregar valoraciones de diferente categoría"));
             return;
         }
         // @ts-ignore
-        const notExistVehiculo = this.entity.Detail_Prendas?.find(p => p.Catalogo_Categoria.id_categoria != 2);
+        const notExistVehiculo = this.entity.Transaction_Contratos?.Detail_Prendas?.find(p => p.Catalogo_Categoria.id_categoria != 2);
         if (notExistVehiculo != undefined && valoracion.Catalogo_Categoria.id_categoria == 2) {
             this.shadowRoot?.append(ModalMessege("Anteriormente valoro un artículo distinto de vehículo por lo tanto no puede agregar valoraciones de esta categoría"));
             return;

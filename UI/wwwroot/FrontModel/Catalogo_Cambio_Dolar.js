@@ -1,7 +1,6 @@
 //@ts-check
 import { EntityClass } from "../WDevCore/WModules/EntityClass.js";
-import { WAjaxTools, BasicStates } from "../WDevCore/WModules/WComponentsTools.js";
-import { ModelProperty } from "../WDevCore/WModules/CommonModel.js";
+import { WAjaxTools } from "../WDevCore/WModules/WComponentsTools.js";
 class Catalogo_Cambio_Dolar extends EntityClass {
    constructor(props) {
        super(props, 'EntityDbo');
