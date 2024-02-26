@@ -4,7 +4,7 @@ import { WRender, ComponentsManager, WAjaxTools } from "../WDevCore/WModules/WCo
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js"
 // @ts-ignore
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
-import { Tbl_Factura } from "../FrontModel/FacturacionModel.js"
+import { Cat_Proveedor, Tbl_Factura } from "../FrontModel/FacturacionModel.js"
 // @ts-ignore
 import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
@@ -65,5 +65,28 @@ class FacturasSearch extends HTMLElement {
         );
     }
 }
-customElements.define('w-component', FacturasSearch);
+customElements.define('w-component-facturas-searcher', FacturasSearch);
 export { FacturasSearch }
+
+/**
+ * 
+ * @param { Function } action 
+ * @returns { HTMLElement }
+ */
+const proveedorSearcher = (action) => {
+    const model = new Cat_Proveedor();
+    const TableComponent = new WTableComponent({
+        ModelObject: model, Dataset: [], Options: {
+            Filter: true,
+            FilterDisplay: true,
+            UserActions: [{
+                name: "Selecionar",
+                action: async (proveedor) => {
+                    await action(proveedor);
+                }
+            }]
+        }
+    })    
+    return WRender.Create({ className: "main-proveedores-searcher", children: [TableComponent] });
+}
+export { proveedorSearcher }

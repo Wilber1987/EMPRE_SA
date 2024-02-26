@@ -1,6 +1,6 @@
 //@ts-check
 import { EntityClass } from "../../WDevCore/WModules/EntityClass.js";
-import { WAjaxTools, BasicStates } from "../../WDevCore/WModules/WComponentsTools.js";
+import { WAjaxTools } from "../../WDevCore/WModules/WComponentsTools.js";
 import { ModelProperty } from "../../WDevCore/WModules/CommonModel.js";
 import { Detail_Prendas_ModelComponent }  from './Detail_Prendas_ModelComponent.js'
 class Detail_Prendas_Vehiculos_ModelComponent extends EntityClass {

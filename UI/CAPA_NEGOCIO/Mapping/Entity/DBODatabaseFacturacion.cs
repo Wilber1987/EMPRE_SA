@@ -57,7 +57,7 @@ namespace DataBaseModelFacturacion
     {
         [PrimaryKey(Identity = true)]
         public int? Id_Compra { get; set; }
-        public string? DatosCompra { get; set; }
+        public string? Datos_Compra { get; set; }
         public int? Id_Proveedor { get; set; }
         public DateTime? Fecha { get; set; }
         public Double? Tasa_Cambio { get; set; }

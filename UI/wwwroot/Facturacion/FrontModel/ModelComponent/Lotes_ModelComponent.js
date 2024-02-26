@@ -1,7 +1,7 @@
 //@ts-check
-import { EntityClass } from "../../WDevCore/WModules/EntityClass.js";
-import { WAjaxTools, BasicStates } from "../../WDevCore/WModules/WComponentsTools.js";
-import { ModelProperty } from "../../WDevCore/WModules/CommonModel.js";
+import { EntityClass } from "../../../WDevCore/WModules/EntityClass.js";
+import { WAjaxTools } from "../../../WDevCore/WModules/WComponentsTools.js";
+import { ModelProperty } from "../../../WDevCore/WModules/CommonModel.js";
 class Lotes_ModelComponent extends EntityClass {
    constructor(props) {
        super(props, 'EntityFacturacion');

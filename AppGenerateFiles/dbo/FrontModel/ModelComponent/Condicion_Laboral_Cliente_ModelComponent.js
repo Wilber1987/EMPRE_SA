@@ -1,6 +1,6 @@
 //@ts-check
 import { EntityClass } from "../../WDevCore/WModules/EntityClass.js";
-import { WAjaxTools, BasicStates } from "../../WDevCore/WModules/WComponentsTools.js";
+import { WAjaxTools } from "../../WDevCore/WModules/WComponentsTools.js";
 import { ModelProperty } from "../../WDevCore/WModules/CommonModel.js";
 import { Catalogo_Clientes_ModelComponent }  from './Catalogo_Clientes_ModelComponent.js'
 import { Catalogo_Departamento_ModelComponent }  from './Catalogo_Departamento_ModelComponent.js'

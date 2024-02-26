@@ -1,7 +1,7 @@
 //@ts-check
-import { EntityClass } from "../../WDevCore/WModules/EntityClass.js";
-import { WAjaxTools, BasicStates } from "../../WDevCore/WModules/WComponentsTools.js";
-import { ModelProperty } from "../../WDevCore/WModules/CommonModel.js";
+import { EntityClass } from "../../../WDevCore/WModules/EntityClass.js";
+import { WAjaxTools } from "../../../WDevCore/WModules/WComponentsTools.js";
+import { ModelProperty } from "../../../WDevCore/WModules/CommonModel.js";
 import { Cat_Producto_ModelComponent }  from './Cat_Producto_ModelComponent.js'
 import { Tbl_Compra_ModelComponent }  from './Tbl_Compra_ModelComponent.js'
 import { Tbl_Lotes_ModelComponent }  from './Tbl_Lotes_ModelComponent.js'
@@ -18,7 +18,7 @@ class Detalle_Compra_ModelComponent extends EntityClass {
    /**@type {ModelProperty}*/ Total = { type: 'number' };
    /**@type {ModelProperty}*/ Presentacion = { type: 'text' };
    /**@type {ModelProperty}*/ Cat_Producto = { type: 'WSELECT',  ModelObject: ()=> new Cat_Producto_ModelComponent()};
-   /**@type {ModelProperty}*/ Tbl_Compra = { type: 'WSELECT',  ModelObject: ()=> new Tbl_Compra_ModelComponent()};
-   /**@type {ModelProperty}*/ Tbl_Lotes = { type: 'MasterDetail',  ModelObject: ()=> new Tbl_Lotes_ModelComponent()};
+   ///**@type {ModelProperty}*/ Tbl_Compra = { type: 'WSELECT',  ModelObject: ()=> new Tbl_Compra_ModelComponent()};
+   ///**@type {ModelProperty}*/ Tbl_Lotes = { type: 'MasterDetail',  ModelObject: ()=> new Tbl_Lotes_ModelComponent()};
 }
 export { Detalle_Compra_ModelComponent }

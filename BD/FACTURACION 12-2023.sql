@@ -231,3 +231,10 @@ CREATE TABLE EMPRE_SA.facturacion.Tbl_Lotes (
 	CONSTRAINT FK_Tbl_Lotes_Cat_Almacenes FOREIGN KEY (Id_Almacen) REFERENCES EMPRE_SA.facturacion.Cat_Almacenes(Id_Almacen),
 	CONSTRAINT FK_Tbl_Lotes_Detalle_Compra FOREIGN KEY (Id_Detalle_Compra) REFERENCES EMPRE_SA.facturacion.Detalle_Compra(Id_Detalle_Compra)
 );
+
+
+ALTER TABLE facturacion.Tbl_Factura 
+ADD Id_Proveedor int null;
+
+
+EXEC sp_RENAME 'facturacion.Tbl_Compra.DatosCompra', 'Datos_Compra', 'COLUMN';

@@ -1,7 +1,5 @@
 //@ts-check
 import { EntityClass } from "../../WDevCore/WModules/EntityClass.js";
-import { WAjaxTools, BasicStates } from "../../WDevCore/WModules/WComponentsTools.js";
-import { ModelProperty } from "../../WDevCore/WModules/CommonModel.js";
 import { Cat_Proveedor }  from './Cat_Proveedor.js'
 import { Detalle_Compra }  from './Detalle_Compra.js'
 class Tbl_Compra extends EntityClass {
@@ -12,7 +10,7 @@ class Tbl_Compra extends EntityClass {
        }
    }
    /**@type {Number}*/ Id_Compra;
-   /**@type {String}*/ DatosCompra;
+   /**@type {String}*/ Datos_Compra;
    /**@type {Date}*/ Fecha;
    /**@type {Number}*/ Tasa_Cambio;
    /**@type {String}*/ Moneda;

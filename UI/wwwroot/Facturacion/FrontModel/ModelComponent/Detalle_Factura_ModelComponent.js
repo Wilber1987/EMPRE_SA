@@ -1,7 +1,7 @@
 //@ts-check
-import { EntityClass } from "../../WDevCore/WModules/EntityClass.js";
-import { WAjaxTools, BasicStates } from "../../WDevCore/WModules/WComponentsTools.js";
-import { ModelProperty } from "../../WDevCore/WModules/CommonModel.js";
+import { EntityClass } from "../../../WDevCore/WModules/EntityClass.js";
+import { WAjaxTools } from "../../../WDevCore/WModules/WComponentsTools.js";
+import { ModelProperty } from "../../../WDevCore/WModules/CommonModel.js";
 import { Tbl_Factura_ModelComponent }  from './Tbl_Factura_ModelComponent.js'
 import { Cat_Producto_ModelComponent }  from './Cat_Producto_ModelComponent.js'
 class Detalle_Factura_ModelComponent extends EntityClass {

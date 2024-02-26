@@ -23,6 +23,7 @@ class ValoracionesTransaction extends EntityClass {
         return this.SaveData("Transactional_Contrato/SaveContract", this)
     }
     GetValoracionContrato = async () => {
+        console.log("carajo")
         return await this.SaveData("Transactional_Contrato/GetDataContract", this)
     }
     VerContrato = async () => {
