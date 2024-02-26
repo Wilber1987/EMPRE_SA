@@ -36,5 +36,6 @@ namespace DataBaseModel {
        public Double? paga_dolares { get; set; }
        public bool? solo_abono { get; set; }
        public bool? cancelar { get; set; }
+       public  string moneda { get; set; }
    }
 }

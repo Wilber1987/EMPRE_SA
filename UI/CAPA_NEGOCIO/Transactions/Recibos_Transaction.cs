@@ -43,6 +43,7 @@ namespace Transactions
         public bool? reestructurar { get; set; }
         public double? reestructurar_value { get; set; }
         public double? total_apagar_dolares { get; set; }
+        public string? moneda { get; set; }
 
 
         public object? SaveRecibos(string token)
@@ -77,7 +78,7 @@ namespace Transactions
                     cuota.fecha_pago = DateTime.Now;
                     if (monto >= cuota.total && monto > 0)
                     {
-                        cuota.pago_contado = cuota.total;                        
+                        cuota.pago_contado = cuota.total;
                         monto -= (double)cuota.total;
                     }
                     else
@@ -190,8 +191,8 @@ namespace Transactions
                     Catalogo_Cuentas_Origen = cuentaOrigen,
                     concepto = "Pago de cuota, contrato No: " + this.numero_contrato,
                     descripcion = "Pago de cuota, contrato No: " + this.numero_contrato,
-                    moneda = "DOLARES",
-                    monto = this.paga_dolares,
+                    moneda = this.moneda,
+                    monto = this.moneda?.ToUpper() == "DOLARES" ? this.paga_dolares : this.paga_cordobas,
                     tasa_cambio = this.tasa_cambio,
                     tasa_cambio_compra = this.tasa_cambio_compra,
                     is_transaction = true
@@ -289,14 +290,12 @@ namespace Transactions
                         message = "Cuentas para anulación de factura no configuradas correctamente"
                     };
                 }
-
-
                 ResponseService response = new Movimientos_Cuentas
                 {
                     Catalogo_Cuentas_Destino = cuentaDestino,
                     Catalogo_Cuentas_Origen = cuentaOrigen,
-                    concepto = contrato != null ? "Anulación de cuota, contrato No: " + factura.Factura_contrato.numero_contrato : "Anulación de factura",
-                    descripcion = contrato != null ? "Anulación de cuota, contrato No: " + factura.Factura_contrato.numero_contrato : "Anulación de factura",
+                    concepto = contrato != null ? $"Anulación de cuota No: {factura.no_factura} del contrato No: " + factura.Factura_contrato.numero_contrato : "Anulación de recibo: " + factura.no_factura,
+                    descripcion = contrato != null ? $"Anulación de cuota No: {factura.no_factura} del contrato No: " + factura.Factura_contrato.numero_contrato : "Anulación de recibo: " + factura.no_factura,
                     moneda = "DOLARES",
                     monto = this.paga_dolares,
                     tasa_cambio = this.tasa_cambio,
@@ -315,7 +314,7 @@ namespace Transactions
                 return new ResponseService()
                 {
                     status = 200,
-                    message = "Factura anulada correctamente",
+                    message = "Recibo anulada correctamente",
                     body = factura
                 };
 
@@ -355,7 +354,7 @@ namespace Transactions
 
                 var cuotasPendiente = Get<Tbl_Cuotas>().Count(c => c.id_cuota.HasValue && c.capital_restante > 0);
 
-             
+
 
                 templateContent = templateContent.Replace("{{recibo_num}}", factura.id_factura.ToString())
                 .Replace("{{cambio}}", Math.Round((decimal)factura.tasa_cambio, 2).ToString())

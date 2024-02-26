@@ -4,7 +4,7 @@ import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/St
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js";
 import { ComponentsManager, WArrayF, WRender } from "../WDevCore/WModules/WComponentsTools.js";
 // @ts-ignore
-import { Catalogo_Cambio_Dolar, Catalogo_Categoria, Catalogo_Clientes, Catalogo_Estados_Articulos, Transactional_Valoracion } from "../FrontModel/DBODataBaseModel.js";
+import { Catalogo_Cambio_Dolar_ModelComponent, Catalogo_Categoria, Catalogo_Clientes, Catalogo_Estados_Articulos, Transactional_Valoracion } from "../FrontModel/DBODataBaseModel.js";
 import { ModalMessege, WForm } from "../WDevCore/WComponents/WForm.js";
 // @ts-ignore
 import { Transactional_Configuraciones } from "../FrontModel/ADMINISTRATIVE_ACCESSDataBaseModel.js";
@@ -40,8 +40,8 @@ class Transaction_Valoraciones_View extends HTMLElement {
     }
     Draw = async () => {
         this.valoracionesContainer.innerHTML = "";
-        /** @type {Array<Catalogo_Cambio_Dolar>} */
-        this.tasasCambio = await new Catalogo_Cambio_Dolar().Get();
+        /** @type {Array<Catalogo_Cambio_Dolar_ModelComponent>} */
+        this.tasasCambio = await new Catalogo_Cambio_Dolar_ModelComponent().Get();
         const estadosArticulos = await new Catalogo_Estados_Articulos().Get();
         this.Categorias = await new Catalogo_Categoria().Get();
         this.Intereses = await new Transactional_Configuraciones().getTransactional_Configuraciones_Intereses();

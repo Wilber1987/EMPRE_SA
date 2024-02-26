@@ -236,7 +236,7 @@ class Transaction_Contratos_ModelComponent extends EntityClass {
     fecha_cancelar = { type: "date", hiddenInTable: true };
     monto = { type: "MONEY", hiddenInTable: true, hiddenFilter: true };
     interes = { type: "MONEY", hiddenInTable: true, hiddenFilter: true };
-    mora = { type: "number", hiddenInTable: true, hiddenFilter: true };
+    mora = { type: "PERCENTAGE", hiddenInTable: true, hiddenFilter: true };
     estado = { type: "Select", Dataset: ["ACTIVO", "CANCELADO", "ANULADO"] };
     fecha_vencimiento = { type: "date", hiddenFilter: true };
     codigo_cliente = { type: "number", hiddenInTable: true, hiddenFilter: true };
@@ -260,9 +260,9 @@ class Transaction_Contratos_ModelComponent extends EntityClass {
     valoracion_empeño_cordobas = { type: "MONEY", hiddenInTable: true, hiddenFilter: true };
     valoracion_empeño_dolares = { type: "MONEY", hiddenInTable: true, hiddenFilter: true };
     tasas_interes = { type: "number", hiddenInTable: true, hiddenFilter: true };
-    gestion_crediticia = { type: "number", hiddenInTable: true, hiddenFilter: true };
+    gestion_crediticia = { type: "PERCENTAGE", hiddenInTable: true, hiddenFilter: true };
     cuotafija_dolares = { type: "MONEY", hiddenInTable: true, hiddenFilter: true };
-    fecha = { type: "date", hiddenInTable: true, hiddenFilter: true };
+    fecha = { type: "date", hidden: true, hiddenFilter: true };
     total_pagar_cordobas = { type: "MONEY", hiddenInTable: true, hiddenFilter: true };
     total_pagar_dolares = { type: "MONEY", hiddenInTable: true, hiddenFilter: true };
     //interes_dolares = { type: "MONEY", hiddenInTable: true, hiddenFilter: true };
@@ -444,19 +444,33 @@ class Transaction_Facturas_ModelComponent extends EntityClass {
 export { Transaction_Facturas_ModelComponent }
 
 
-class Catalogo_Cambio_Dolar extends EntityClass {
+// class Catalogo_Cambio_Dolar extends EntityClass {
+//     constructor(props) {
+//         super(props, 'EntityDBO');
+//         for (const prop in props) {
+//             this[prop] = props[prop];
+//         }
+//     }
+//     id_cambio = { type: 'number', primary: true };
+//     fecha = { type: 'date' };
+//     valor_de_compra = { type: 'number', hiddenFilter: true };
+//     valor_de_venta = { type: 'number', hiddenFilter: true };
+// }
+// export { Catalogo_Cambio_Dolar }
+
+class Catalogo_Cambio_Dolar_ModelComponent extends EntityClass {
     constructor(props) {
-        super(props, 'EntityDBO');
+        super(props, 'EntityDbo');
         for (const prop in props) {
             this[prop] = props[prop];
         }
     }
-    id_cambio = { type: 'number', primary: true };
-    fecha = { type: 'date' };
-    valor_de_compra = { type: 'number', hiddenFilter: true };
-    valor_de_venta = { type: 'number', hiddenFilter: true };
-}
-export { Catalogo_Cambio_Dolar }
+    /**@type {ModelProperty}*/ id_cambio = { type: 'number', primary: true };
+    /**@type {ModelProperty}*/ fecha = { type: 'date' };
+    /**@type {ModelProperty}*/ valor_de_compra = { type: 'number' , hiddenFilter: true };
+    /**@type {ModelProperty}*/ valor_de_venta = { type: 'number', hiddenFilter: true };
+ }
+ export { Catalogo_Cambio_Dolar_ModelComponent }
 
 class Catalogo_Cuentas extends EntityClass {
     constructor(props) {
@@ -715,77 +729,7 @@ class Datos_Configuracion extends EntityClass {
 export { Datos_Configuracion }
 
 
-class Recibos extends EntityClass {
-    constructor(props) {
-        super(props, 'Recibos');
-        for (const prop in props) {
-            this[prop] = props[prop];
-        }
-    }
-    numero_contrato = { type: "number", disabled: true, hidden: true };
-    title2 = { type: "title", label: "Datos de recibo:" };
-    fecha = {
-        type: "date", hidden: true
-    };
-    id_recibo = { type: "number", primary: true };
-    consecutivo = { type: "number", hidden: true, require: false };
 
-    interes_demas_cargos_pagar_cordobas = { type: "number", hiddenInTable: true, disabled: true, label: "Interes C$" };
-    abono_capital_cordobas = { type: "number", hiddenInTable: true, disabled: true };
-    cuota_pagar_cordobas = { type: "number", hiddenInTable: true, disabled: true };
-    mora_cordobas = { type: "number", hiddenInTable: true, disabled: true };
-    mora_interes_cordobas = { type: "number", hiddenInTable: true, disabled: true, label: "Interes + Mora C$" };
-    total_cordobas = { type: "number", hiddenInTable: true, disabled: true };
-
-    interes_demas_cargos_pagar_dolares = { type: "number", hiddenInTable: true, disabled: true, label: "Interes $" };
-    abono_capital_dolares = { type: "number", hiddenInTable: true, disabled: true };
-    cuota_pagar_dolares = { type: "number", hiddenInTable: true, disabled: true };
-    mora_dolares = { type: "number", hiddenInTable: true, disabled: true };
-    mora_interes_dolares = { type: "number", hiddenInTable: true, disabled: true, label: "Interes + Mora $" };
-    total_dolares = { type: "number", hiddenInTable: true, disabled: true };
-
-    //total_parciales = { type: "number", hiddenInTable: true, disabled: true };
-
-    fecha_roc = { type: "date", disabled: true, hidden: true };
-
-
-    title3 = { type: "title", label: "Opciones:" };
-    //solo_abono = { type: "checkbox", hiddenInTable: true, require: false };
-
-    reestructurar_monto = { type: "number", disabled: true, defaultValue: 0, require: false };
-    paga_cordobas = { type: "number", hiddenInTable: true };
-    paga_dolares = { type: "number", hiddenInTable: true };
-    temporal = { type: "checkbox", require: false };
-    cancelar = { type: "checkbox", hiddenInTable: true, require: false };
-    reestructurar = {
-        type: "checkbox", hidden: true, require: false,
-        action: (recibo, form) => {
-            if (recibo.reestructurar == true) {
-                this.reestructurar_value.hidden = false;
-                //this.reestructurar_monto.hidden = false;  
-                recibo.reestructurar_monto = 1;
-            } else {
-                this.reestructurar_value.hidden = true;
-                //this.reestructurar_monto.hidden = true; 
-                recibo.reestructurar_monto = 0;
-            }
-            form.DrawComponent();
-        }
-    };
-    reestructurar_value = { type: "number", hidden: true, min: 1, require: false };
-    total_apagar_dolares = {
-        type: "operation", action: (recibo, form) => {
-            const val = parseFloat(recibo.paga_dolares ?? 0)
-                + parseFloat(recibo.mora_dolares ?? 0)
-                + parseFloat(recibo.reestructurar_monto ?? 0)
-            return val.toFixed(3);
-        }
-    };
-    VerRecibo = async () => {
-        return await this.SaveData("PDF/GeneratePdfContract", this)
-    }
-}
-export { Recibos }
 
 
 class Transaccion_Factura extends EntityClass {
