@@ -17,7 +17,7 @@ class Tbl_Compra_ModelComponent extends EntityClass {
    /**@type {ModelProperty}*/ Fecha = { type: 'date' };
    /**@type {ModelProperty}*/ Tasa_Cambio = { type: 'number', hiddenFilter: true, disabled: true};
    /**@type {ModelProperty}*/ Moneda = { type: 'text', hiddenFilter: true};
-   /**@type {ModelProperty}*/ Sub_Total = { type: 'number', hiddenFilter: true, hidden: true };
+   /**@type {ModelProperty}*/ Sub_Total = { type: 'operation', hiddenFilter: true, hidden: true };
    /**@type {ModelProperty}*/ Iva = { type: 'number', hiddenFilter: true, hidden: true};
    /**@type {ModelProperty}*/ Total = { type: 'number', hiddenFilter: true, hidden: true};
    /**@type {ModelProperty}*/ Estado = { type: 'text', Dataset: ["ACTIVO", "INACTIVO"] };
