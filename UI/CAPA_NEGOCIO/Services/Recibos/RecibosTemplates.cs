@@ -1,5 +1,5 @@
 namespace CAPA_NEGOCIO.Services;
-public class DocumentsTemplates
+public class RecibosTemplates
 {
 
     public static string recibo = @"
@@ -51,31 +51,31 @@ public class DocumentsTemplates
             <p class='content-center'>RECIBO OFICIAL DE CAJA</p>
 
             <div class='w-50'  style='margin-top: 30px;'>
-                <p class='w-50'><strong>Recibo Num:</strong>{{recibo_num}}</p>
+                <p class='w-50'><strong>Recibo Num:</strong> {{recibo_num}}</p>
             
-                <p class='w-50'><strong>Cambio de C$ A $:</strong>{{cambio}}</p>
+                <p class='w-50'><strong>Cambio de C$ A $:</strong> {{cambio}}</p>
             </div>
 
-            <p class='w-100'><strong>Fecha:</strong>{{fecha}}</p>
-            <p><strong>Sucursal:</strong>{{sucursal}}</p>
-            <p><strong>Cajero:</strong>{{cajero}}</p>
+            <p class='w-100'><strong>Fecha:</strong> {{fecha}}</p>
+            <p><strong>Sucursal:</strong> {{sucursal}}</p>
+            <p><strong>Cajero:</strong> {{cajero}}</p>
 
             <p style='margin-top: 20px;'><strong>Generales del Contrato</strong></p>
-            <p><strong>Cliente:</strong>{{cliente}}</p>
+            <p><strong>Cliente:</strong> {{cliente}}</p>
 
             <div class='w-50' >
-                <p class='w-50'><strong>Clasificacion:</strong>{{clasificacion}}</p>    
-                <p class='w-50'><strong>Categoria:</strong>{{categoria}}</p>
+                <p class='w-50'><strong>Clasificacion:</strong> {{clasificacion}}</p>    
+                <p class='w-50'><strong>Categoria:</strong> {{categoria}}</p>
             </div>
 
             <div class='w-50 ' >
-                <p class='w-50 '><strong>Cuotas Pactadas:</strong>{{cuotas}}</p>    
-                <p class='w-50 '><strong>Cuotas Pendientes:</strong>{{cuotas_pendientes}}</p>
+                <p class='w-50 '><strong>Cuotas Pactadas:</strong> {{cuotas}}</p>    
+                <p class='w-50 '><strong>Cuotas Pendientes:</strong> {{cuotas_pendientes}}</p>
             </div>
 
             <div class='w-50 ' >
-                <p class='w-50 '><strong>Saldo Anterior:</strong>{{saldo_anterior}}</p>    
-                <p class='w-50 '><strong>Saldo Actual:</strong>{{saldo_actual}}</p>
+                <p class='w-50 '><strong>Saldo Anterior:</strong> C$ {{saldo_anterior}}</p>    
+                <p class='w-50 '><strong>Saldo Actual:</strong> $ {{saldo_actual}}</p>
             </div>
 
 
@@ -84,42 +84,42 @@ public class DocumentsTemplates
             </div>
 
             <div class='w-50 ' >
-                <p class='w-50 '><strong>Total Pagado:</strong>{{total_pagado}}</p>    
-                <p class='w-50 '><strong>Total Pagado:</strong>{{total_pagado_dolares}}</p>
+                <p class='w-50 '><strong>Total Pagado:</strong>C$ {{total_pagado}}</p>    
+                <p class='w-50 '><strong>Total Pagado:</strong>$ {{total_pagado_dolares}}</p>
             </div>
             
             <div class='w-50 ' >
-                <p class='w-50 '><strong>Reestructuracion:</strong>{{reestructuracion}}</p>    
-                <p class='w-50 '><strong>Reestructuracion:</strong>{{reestructuracion_dolares}}</p>
+                <p class='w-50 '><strong>Reestructuracion:</strong> C$ {{reestructuracion}}</p>    
+                <p class='w-50 '><strong>Reestructuracion:</strong> $ {{reestructuracion_dolares}}</p>
             </div>
 
             <div class='w-50 ' >
-                <p class='w-50 '><strong>Perdida Doc.:</strong>{{perdida_doc}}</p>
-                <p class='w-50 '><strong>Perdida Doc.:</strong>{{perdida_doc_dolares}}</p>
+                <p class='w-50 '><strong>Perdida Doc.:</strong> C$ {{perdida_doc}}</p>
+                <p class='w-50 '><strong>Perdida Doc.:</strong> $ {{perdida_doc_dolares}}</p>
             </div>
 
             <div class='w-50 ' >
-                <p class='w-50 '><strong>Mora:</strong>{{mora}}</p>
-                <p class='w-50 '><strong>Mora:</strong>{{mora_dolares}}</p>
+                <p class='w-50 '><strong>Mora:</strong> C$ {{mora}}</p>
+                <p class='w-50 '><strong>Mora:</strong> $ {{mora_dolares}}</p>
             </div>
 
             <div class='w-50 ' >
-                <p class='w-50 '><strong>IDCP:</strong>{{idcp}}</p>
-                <p class='w-50 '><strong>IDCP:</strong>{{idcp_dolares}}</p>
+                <p class='w-50 '><strong>IDCP:</strong> C$ {{idcp}}</p>
+                <p class='w-50 '><strong>IDCP:</strong> $ {{idcp_dolares}}</p>
             </div>
 
             <div class='w-50 ' >
-                <p class='w-50 '><strong>Abono a Capital:</strong>{{abono_capital}}</p>
-                <p class='w-50 '><strong>Abono a Capital:</strong>{{abono_capital_dolares}}</p>
+                <p class='w-50 '><strong>Abono a Capital:</strong> C$ {{abono_capital}}</p>
+                <p class='w-50 '><strong>Abono a Capital:</strong> $ {{abono_capital_dolares}}</p>
             </div>
             
             <div class='w-50 ' >
-                <p class='w-50 '><strong>Saldo Actual:</strong>{{saldo_actual}}</p>
-                <p class='w-50 '><strong>Saldo Actual:</strong>{{saldo_actual_dolares}}</p>
+                <p class='w-50 '><strong>Saldo Actual:</strong> C$ {{saldo_actual}}</p>
+                <p class='w-50 '><strong>Saldo Actual:</strong> $ {{saldo_actual_dolares}}</p>
             </div>        
             
             <br><br>
-            <p><strong>Próximo Pago:</strong> {{proximo_pago}}</p>
+            <p><strong>Próximo Pago:</strong>  {{proximo_pago}}</p>
 
 
             <p class='text-center' style='margin-top: 50px;'>Recibí Conforme</p>

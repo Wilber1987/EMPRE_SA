@@ -30,3 +30,8 @@ INSERT INTO
     )
 VALUES
 (N'EMPEÑO DE ARTICULOS', N'PAGO', 1, 9, 0, 0, 1, 1);
+
+--pendientes
+
+ALTER TABLE EMPRE_SA.facturacion.Transaccion_Factura ADD total_cordobas float NULL;
+ALTER TABLE EMPRE_SA.facturacion.Transaccion_Factura ADD Moneda varchar(100) NULL;

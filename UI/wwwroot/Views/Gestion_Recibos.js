@@ -134,7 +134,22 @@ class Gestion_RecibosView extends HTMLElement {
 
     BuildRecibosModel() {
         return new Recibos_ModelComponent({
-            paga_cordobas: {
+            perdida_de_documento : {
+                type: "checkbox", hiddenInTable: true, require: false, action: (recibo, form) => {
+                    if (recibo.perdida_de_documento == true) {
+                        recibo.perdida_de_documento_monto = 1;
+                        this.pagoMaximoDolares = this.pagoMaximoDolares + 1;
+                        this.pagoMaximoCordobas = this.pagoMaximoCordobas + this.tasasCambio[0].valor_de_venta; 
+                    } else {
+                        recibo.perdida_de_documento_monto = 0;
+                        this.pagoMaximoDolares = this.pagoMaximoDolares - 1;
+                        this.pagoMaximoCordobas = this.pagoMaximoCordobas - this.tasasCambio[0].valor_de_venta;
+                    }
+                    this.reciboForm.FormObject.paga_dolares = this.pagoMaximoDolares?.toFixed(3);
+                    this.reciboForm.FormObject.paga_cordobas = this.pagoMaximoCordobas?.toFixed(3);
+                    form.DrawComponent();
+                }
+            }, paga_cordobas: {
                 type: 'MONEY', max: this.pagoMaximoCordobas, action: (/**@type {Recibos}*/ ObjectF, form, control) => {
                     if (parseFloat(control.value) > parseFloat(control.max)) {
                         //control.value =  parseFloat(control.max).toFixed(3);
@@ -207,10 +222,10 @@ class Gestion_RecibosView extends HTMLElement {
         //const fecha = new Date(Contrato.fecha_cancelar).subtractDays(31);
         let canReestructure = false;
         //console.log(categoria.descripcion != "vehiculos" , categoria.plazo_limite > plazo, fecha <= new Date());
-       // console.log(fecha , new Date().addDays(31), fecha <= new Date().addDays(31), categoria);
+        console.log(fecha , new Date().addDays(32), fecha <= new Date().addDays(32), categoria);
         //TODO REPARAR FECHA
         // @ts-ignore
-        if (categoria.descripcion != "vehiculos" && categoria.plazo_limite > plazo && fecha <= new Date().addDays(31)) {//TODO REPARAR FECHA QUITAR ESOS 31 DIAS
+        if (categoria.descripcion != "vehiculos" && categoria.plazo_limite > plazo && fecha <= new Date().addDays(32)) {//TODO REPARAR FECHA QUITAR ESOS 31 DIAS
             canReestructure = true;
         }
         return {
@@ -472,11 +487,11 @@ class Gestion_RecibosView extends HTMLElement {
             let mora_interes = 0;
             let cuota_total = 0;
             let fecha = new Date();
-            fecha = new Date().addDays(31);//TODO BORRAR LINEA
+            fecha = new Date().addDays(32);//TODO BORRAR LINEA
             let totalRestante = 0;
             let mora_interes_cordobas = 0;
 
-            //const fecha2 = new Date(Contrato.fecha_cancelar).addDays(31);
+            //const fecha2 = new Date(Contrato.fecha_cancelar).addDays(32);
             //var mora = model.mora / 100;
 
             let index = 0
@@ -484,7 +499,7 @@ class Gestion_RecibosView extends HTMLElement {
                 if (cuota.pago_contado < cuota.total || contrato.Tbl_Cuotas.length == 1) {
                     //TODO BORRAR
                     const fechaOriginal = new Date(cuota.fecha);
-                    const fechaActual = new Date().addDays(31);
+                    const fechaActual = new Date().addDays(32);
                     fechaOriginal.setHours(0, 0, 0, 0);
                     fechaActual.setHours(0, 0, 0, 0);
                     const diferencia = fechaActual - fechaOriginal;

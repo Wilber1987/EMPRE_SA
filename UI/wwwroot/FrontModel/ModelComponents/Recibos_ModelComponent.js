@@ -42,10 +42,21 @@ class Recibos_ModelComponent extends EntityClass {
     /**@type {ModelProperty} */ //solo_abono = { type: "checkbox", hiddenInTable: true, require: false };
 
     /**@type {ModelProperty} */ reestructurar_monto = { type: "number", disabled: true, defaultValue: 0, require: false };
+    /**@type {ModelProperty} */ perdida_de_documento_monto = { type: "number", disabled: true, defaultValue: 0, require: false };
     /**@type {ModelProperty} */ paga_cordobas = { type: "number", hiddenInTable: true };
     /**@type {ModelProperty} */ paga_dolares = { type: "number", hiddenInTable: true };
     /**@type {ModelProperty} */ temporal = { type: "checkbox", require: false };
     /**@type {ModelProperty} */ cancelar = { type: "checkbox", hiddenInTable: true, require: false };
+    /**@type {ModelProperty} */ perdida_de_documento = {
+        type: "checkbox", hiddenInTable: true, require: false, action: (recibo, form) => {
+            if (recibo.perdida_de_documento == true) {
+                recibo.perdida_de_documento_monto = 1;
+            } else {
+                recibo.perdida_de_documento_monto = 0;
+            }
+            form.DrawComponent();
+        }
+    };
     /**@type {ModelProperty} */ reestructurar = {
         type: "checkbox", hidden: true, require: false,
         action: (recibo, form) => {
