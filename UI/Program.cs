@@ -3,7 +3,7 @@ using BackgroundJob.Cron.Jobs;
 using CAPA_DATOS.Cron.Jobs;
 using Model;
 
-SqlADOConexion.IniciarConexion("sa", "123", ".", "EMPRE_SA");
+SqlADOConexion.IniciarConexion("sa", "zaxscd", ".", "EMPRE_SA");
 //SqlADOConexion.IniciarConexion("sa", "123", ".\\SQLEXPRESS", "EMPRE_SA");
 //SqlADOConexion.IniciarConexion("empresa", "Wmatus09%", "tcp:empresa-sa.database.windows.net", "EMPRE_SA");
 
