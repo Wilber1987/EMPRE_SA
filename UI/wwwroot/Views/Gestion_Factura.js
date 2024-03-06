@@ -41,17 +41,17 @@ class MainFactura extends HTMLElement {
         this.navigator = new WAppNavigator({ Inicialize: true, Elements: this.ElementsNav })
         this.append(this.CustomStyle, this.OptionContainer, this.navigator, this.TabContainer);
         this.indexContract = 0;
-        this.DrawComponent();        
+        this.DrawComponent();
         this.buildTotalesModel(36.62 /*factura.tasa_cambio*/);
         this.valoresObject = {
             subtotal: 0,
             iva: 0,
         }
-       
+
     }
 
-    
-    buildTotalesModel(tasasCambio) {        
+
+    buildTotalesModel(tasasCambio) {
         this.valoresModel = {
             subtotal: {
                 type: "number", label: "Subtotal - C$:", action: () => {
@@ -67,7 +67,7 @@ class MainFactura extends HTMLElement {
                     //this.multiSelectEstadosArticulos?.SetOperationValues()
                 }
             },
-            
+
             iva: {
                 type: "number", label: "Iva - C$:", action: () => {
                     this.valoresObject.dolares_2 = this.valoresObject.iva / tasasCambio[0].valor_de_venta;
@@ -114,13 +114,18 @@ class MainFactura extends HTMLElement {
             }
         }, {
             name: "Nueva Factura Proveedor", action: () => {
-                this.Manager.NavigateFunction("newFactura", new WForm({ ModelObject: new Tbl_Compra_ModelComponent({Tasa_Cambio: 36}), EntityModel: new Tbl_Compra }))
+                this.CompraModel = new Tbl_Compra_ModelComponent();
+                this.CompraModel.Sub_Total.action = ( EditObject, form, control) => {
+                    console.log(EditObject);
+                    form.DrawComponent();
+                }
+                this.Manager.NavigateFunction("newFactura", new WForm({ ModelObject: this.CompraModel, EntityModel: new Tbl_Compra }))
                 this.indexContract++;
             }
         }
     ]
-    
-    DrawComponent = async () => {        
+
+    DrawComponent = async () => {
         this.valoresForm = new WForm({
             EditObject: this.valoresObject,
             ModelObject: this.valoresModel,
@@ -147,10 +152,10 @@ class MainFactura extends HTMLElement {
             this.valoresForm
         );
 
-        if (this.valoresForm != undefined) {            
+        if (this.valoresForm != undefined) {
             this.valoresForm.DrawComponent();
         }
-        
+
     }
     CustomStyle = css``
 }

@@ -17,7 +17,7 @@ class Detalle_Compra_ModelComponent extends EntityClass {
    /**@type {ModelProperty}*/ Precio_Unitario = { type: 'number' };
    /**@type {ModelProperty}*/ Total = { type: 'number' };
    /**@type {ModelProperty}*/ Presentacion = { type: 'text' };
-   /**@type {ModelProperty}*/ Cat_Producto = { type: 'WSELECT',  ModelObject: ()=> new Cat_Producto_ModelComponent()};
+   /**@type {ModelProperty}*/ Cat_Producto = { type: 'WSELECT',  ModelObject: ()=> new Cat_Producto_ModelComponent(), require: false};
    ///**@type {ModelProperty}*/ Tbl_Compra = { type: 'WSELECT',  ModelObject: ()=> new Tbl_Compra_ModelComponent()};
    ///**@type {ModelProperty}*/ Tbl_Lotes = { type: 'MasterDetail',  ModelObject: ()=> new Tbl_Lotes_ModelComponent()};
 }
