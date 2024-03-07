@@ -24,7 +24,11 @@ class Transactional_ConfiguracionesView extends HTMLElement {
                                 ModelObject: new Transactional_Configuraciones({
                                     Valor: { type: this.ConfigType(element) }
                                 }),
-                                EditObject: element
+                                EditObject: element, ObjectOptions: {
+                                    SaveFunction: () => {
+                                        window.location.reload();
+                                    }
+                                }
                             }))
                         }
                     }

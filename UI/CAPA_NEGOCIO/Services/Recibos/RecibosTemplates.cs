@@ -41,7 +41,8 @@ public class RecibosTemplates
 			</style>
 		</head>
 		<body>
-			<img class='img-container' style='margin:auto' src='{{logo}}' width='50'>
+			<img class='img-container' style='margin:auto' src='{{logo}}' width='100'>
+            <br/>
 			<p class='text-center'>EMPEÑOS Y PRESTAMOS SOCIEDAD ANONIMA.</p>
 			<div class='content-center f-10'>
 				<p>RUC J0310000300895</p>

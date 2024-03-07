@@ -89,7 +89,7 @@ namespace Transactions
 					{
 						cuota.pago_contado = monto;
 						monto = 0;
-						if (monto == 0) break;
+						//if (monto == 0) break;
 					}
 					DetallesFacturaRecibos.Add(
 						new Detalle_Factura_Recibo()
@@ -108,6 +108,11 @@ namespace Transactions
 				var saldoRespaldo = contrato.saldo;
 
 				contrato.saldo = contrato.saldo - this.paga_dolares;
+				if (contrato.saldo <= 0)
+				{
+					contrato.saldo = 0;
+					contrato.estado = Contratos_State.CANCELADO.ToString();
+				}
 				contrato.Update();
 
 
@@ -281,12 +286,30 @@ namespace Transactions
 				var contrato = new Transaction_Contratos() { numero_contrato = factura.Factura_contrato.numero_contrato }.Find<Transaction_Contratos>();
 
 				//si existe contrato se debe anular el recibo y regresarse el saldo
+				var totalfactura = factura.total;
 				if (contrato != null)
 				{
-					var saldo = contrato.saldo;
-					var totalfactura = factura.total;
+					var saldo = contrato.saldo;					
 					contrato.saldo = contrato.saldo + factura.total;
+					contrato.estado = Contratos_State.ACTIVO.ToString();
 					contrato.Update();
+				}
+				var monto = factura.total;
+				foreach (var detalle in factura.Detalle_Factura_Recibo.OrderBy(c => c.id_cuota).ToList())
+				{
+					Tbl_Cuotas cuota = detalle.Tbl_Cuotas;
+					cuota.fecha_pago = DateTime.Now;
+					if (monto >= cuota.total && monto > 0)
+					{
+						cuota.pago_contado = 0;
+						monto -= (double)cuota.pago_contado;
+					}
+					else
+					{
+						cuota.pago_contado = cuota.pago_contado - monto;
+						monto = 0;
+					}					
+					cuota.Update();
 				}
 				var cuentaDestino = new Catalogo_Cuentas()
 				{
@@ -383,20 +406,20 @@ namespace Transactions
 				var abonoAlCapitalParcialList = factura.Detalle_Factura_Recibo?
 					.Where(d => d.Tbl_Cuotas?.pago_contado != d.Tbl_Cuotas?.total)
 					.ToList();
-				double abonoAlCapitalParcial = (abonoAlCapitalParcialList?.Sum(d => d.Tbl_Cuotas?.pago_contado) 
+				double abonoAlCapitalParcial = (abonoAlCapitalParcialList?.Sum(d => d.Tbl_Cuotas?.pago_contado)
 					- abonoAlCapitalParcialList?.Sum(d => d.Tbl_Cuotas?.interes)) ?? 0;
 				double abono_capital = abonoCapitalTotal + abonoAlCapitalParcial;
 				var configuraciones_theme = new Transactional_Configuraciones().GetTheme();
-				
+
 				templateContent = templateContent.Replace("{{recibo_num}}", factura.id_factura.ToString())
-				.Replace("{{logo}}", "data:image/png;base64," +  configuraciones_theme.Find(c => c.Nombre.Equals(ConfiguracionesThemeEnum.LOGO.ToString()))?.Valor)
+				.Replace("{{logo}}", "data:image/png;base64," + configuraciones_theme.Find(c => c.Nombre.Equals(ConfiguracionesThemeEnum.LOGO.ToString()))?.Valor)
 				.Replace("{{cambio}}", Math.Round((decimal)factura.tasa_cambio, 2).ToString())
 				.Replace("{{fecha}}", factura.fecha?.ToString("dd/MM/yyyy"))
 				.Replace("{{sucursal}}", sucursal.Nombre)
 				.Replace("{{cajero}}", dbUser.Nombres)
 				.Replace("{{cliente}}", contrato?.Catalogo_Clientes?.primer_nombre + " " + contrato.Catalogo_Clientes.primer_apellido + " " + contrato.Catalogo_Clientes.segundo_apellidio)
 				.Replace("{{clasificacion}}", cliente?.Catalogo_Clasificacion_Interes?.porcentaje.ToString() ?? "")
-				.Replace("{{categoria}}", cliente?.Catalogo_Clasificacion_Cliente?.Descripcion)
+				.Replace("{{categoria}}",  GetTipoArticulo(contrato.Detail_Prendas))
 				.Replace("{{cuotas}}", contrato.plazo.ToString())
 				.Replace("{{cuotas_pendientes}}", cuotasPendiente.Count.ToString())
 				.Replace("{{saldo_anterior}}", Math.Round((decimal)factura.Factura_contrato?.saldo_anterior, 2).ToString())
@@ -414,7 +437,7 @@ namespace Transactions
 				.Replace("{{abono_capital}}", Math.Round((decimal)abono_capital * (decimal)factura?.tasa_cambio, 2).ToString())
 				.Replace("{{abono_capital_dolares}}", Math.Round((decimal)abono_capital, 2).ToString())
 				.Replace("{{saldo_actual_cordobas}}", Math.Round((decimal)factura.Factura_contrato.saldo_actual * (decimal)factura?.tasa_cambio, 2).ToString())
-				.Replace("{{saldo_actual_dolares}}", Math.Round((decimal)factura.Factura_contrato.saldo_actual , 2).ToString())
+				.Replace("{{saldo_actual_dolares}}", Math.Round((decimal)factura.Factura_contrato.saldo_actual, 2).ToString())
 				.Replace("{{proximo_pago}}", "");
 
 				return new ResponseService()
@@ -433,6 +456,16 @@ namespace Transactions
 					message = "Error, intentelo nuevamente " + ex.Message
 				};
 			}
+		}
+		public string? GetTipoArticulo(List<Detail_Prendas> Detail_Prendas)
+		{
+			var isVehiculo = Detail_Prendas.Find(p => p.Catalogo_Categoria?.descripcion == "vehiculos");
+			if (isVehiculo != null) return isVehiculo?.Catalogo_Categoria?.descripcion;
+
+			var isElectronico = Detail_Prendas.Find(p => p.Catalogo_Categoria?.descripcion == "electronico");
+			if (isElectronico != null) return isElectronico?.Catalogo_Categoria?.descripcion;
+
+			return Detail_Prendas[0].Catalogo_Categoria?.descripcion;
 		}
 
 	}

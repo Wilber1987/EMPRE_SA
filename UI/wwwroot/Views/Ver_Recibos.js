@@ -24,7 +24,8 @@ class Ver_RecibosView extends HTMLElement {
                         name: "Anular", action: (factura) => {
                             this.append(ModalVericateAction(async () => {
                                 const response =
-                                    await WAjaxTools.PostRequest("../api/ApiRecibos/anularRecibo", { id_recibo: factura.id_factura, tasa_cambio: tasa[0].valor_de_compra });
+                                    await WAjaxTools.PostRequest("../api/ApiRecibos/anularRecibo",
+                                     { id_recibo: factura.id_factura, tasa_cambio: tasa[0].valor_de_compra });
 
                                 this.append(ModalMessege(response.message));
 
@@ -34,7 +35,8 @@ class Ver_RecibosView extends HTMLElement {
                     }, {
                         name: "Imprimir", action: async (factura) => {
                             //this.append(ModalVericateAction(async () => {
-                            const response = await WAjaxTools.PostRequest("../api/ApiRecibos/printRecibo", { id_recibo: factura.id_factura, tasa_cambio: tasa[0].valor_de_compra });
+                            const response = await WAjaxTools.PostRequest("../api/ApiRecibos/printRecibo",
+                             { id_recibo: factura.id_factura, tasa_cambio: tasa[0].valor_de_compra });
 
                             //this.append(ModalMessege(response.message));                                
                             const ventimp = window.open(' ', 'popimpr');

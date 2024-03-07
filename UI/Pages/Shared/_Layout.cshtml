@@ -26,27 +26,11 @@
         }
         window.addEventListener("load", () => {
             //active nav
-            if (location.href.includes("Datos_ConfiguracionView")) {
-                Datos_ConfiguracionView.className = "active";
-            } else if (location.href.includes("Transaction_Valoraciones_View")) {
-                Transaction_Valoraciones_View.className = "active";
-            } else if (location.href.includes("Transaction_Contratos_InversionistasView")) {
-                Transaction_Contratos_InversionistasView.className = "active";
-            } else if (location.href.includes("Transaction_ContratosView")) {
-                Transaction_ContratosView.className = "active";
-            } else if (location.href.includes("Transaction_FacturasView")) {
-                Transaction_FacturasView.className = "active";
-            } else if (location.href.includes("Movimientos_CuentasView")) {
-                Movimientos_CuentasView.className = "active";
-            } else if (location.href.includes("Gestion_CuentasView")) {
-                Gestion_CuentasView.className = "active";
-            } else if (location.href.includes("Gestion_Clientes")) {
-                Gestion_Clientes.className = "active";
-            } else if (location.href.includes("Gestion_Inversionistas")) {
-                Gestion_Inversionistas.className = "active";
-            } else {
-                Home.className = "active";
-            }
+            document.querySelectorAll(".menu-item").forEach(item => {
+                if (location.href.includes(item.id)) {                   
+                    item.className = "active";
+                }
+            })
             //logOut
             btnLogOut.onclick = logout;
         })
@@ -62,7 +46,7 @@
             </div>
             <h3>TRANSACCIONES</h3>
 
-            <a class="" id="Home" asp-area="" asp-page="/">HOME</a>
+            <a class="menu-item" id="Home" asp-area="" asp-page="/">HOME</a>
             @if (SecurityController.HavePermission(PermissionsEnum.GESTION_PRESTAMOS_Y_EMPEÑOS.ToString(), identify))
             {
                 <a class="title-collapse" id="PrestamosClientesMenu" onclick="changeActive(this)">EMPEÑOS</a>
@@ -71,12 +55,13 @@
                    identify))
 
                     {
-                        <a class="" id="Gestion_Clientes" asp-area="" asp-page="/PagesViews/Gestion_Clientes">Gestión de
+                        <a class="menu-item" id="Gestion_Clientes" asp-area="" asp-page="/PagesViews/Gestion_Clientes">Gestión
+                            de
                             clientes</a>
                     }
-                    <a class="" id="Transaction_Valoraciones_View" asp-area=""
+                    <a class="menu-item" id="Transaction_Valoraciones_View" asp-area=""
                         asp-page="/PagesViews/Transaction_Valoraciones_View">VALORACIONES</a>
-                    <a class="" id="Transaction_ContratosView" asp-area=""
+                    <a class="menu-item" id="Transaction_ContratosView" asp-area=""
                         asp-page="/PagesViews/Transaction_ContratosView">CONTRATOS</a>
                 </div>
             }
@@ -87,20 +72,23 @@
                     @if (SecurityController.HavePermission(PermissionsEnum.GESTION_CLIENTES.ToString(),//TODO
                    identify))
                     {
-                        <a class="" id="Gestion_Recibos" asp-area="" asp-page="/PagesViews/Gestion_Recibos">Nuevo Recibo</a>
-                        <a class="" id="Ver_Recibos" asp-area="" asp-page="/PagesViews/Ver_Recibos">Ver Recibos</a>
+                        <a class="menu-item" id="Gestion_Recibos" asp-area="" asp-page="/PagesViews/Gestion_Recibos">Nuevo
+                            Recibo</a>
+                        <a class="menu-item" id="Ver_Recibos" asp-area="" asp-page="/PagesViews/Ver_Recibos">Ver Recibos</a>
                     }
                 </div>
             }
             @if (SecurityController.HavePermission(PermissionsEnum.GESTION_PRESTAMOS_Y_EMPEÑOS.ToString(), identify))
             {
-                <a class="title-collapse" id="GestionRecibosMenu" onclick="changeActive(this)">GESTIÓN DE FACTURAS</a>
+                <a class="title-collapse" id="GestionFacturaMenu" onclick="changeActive(this)">GESTIÓN DE FACTURAS</a>
                 <div class="collapse">
                     @if (SecurityController.HavePermission(PermissionsEnum.GESTION_CLIENTES.ToString(),//TODO
                    identify))
                     {
-                        <a class="" id="Gestion_Factura" asp-area="" asp-page="/PagesViews/Gestion_FacturasView">Nueva Factura</a>
-                        <a class="" id="Ver_Facturas" asp-area="" asp-page="/PagesViews/Gestion_FacturasView">Ver Facturas</a>
+                        <a class="menu-item" id="Gestion_Factura" asp-area="" asp-page="/PagesViews/Gestion_FacturasView">Nueva
+                            Factura</a>
+                        <a class="menu-item" id="Ver_Facturas" asp-area="" asp-page="/PagesViews/Gestion_FacturasView">Ver
+                            Facturas</a>
                     }
                 </div>
             }
@@ -111,23 +99,25 @@
                     @if (SecurityController.HavePermission(PermissionsEnum.GESTION_CLIENTES.ToString(),//TODO
                    identify))
                     {
-                        <a class="" id="Gestion_CuentasView" asp-area="" asp-page="/PagesViews/Gestion_CuentasView">Gestión de
+                        <a class="menu-item" id="Gestion_CuentasView" asp-area=""
+                            asp-page="/PagesViews/Gestion_CuentasView">Gestión de
                             Cuentas</a>
-                        <a class="" id="Movimientos_CuentasView" asp-area=""
+                        <a class="menu-item" id="Movimientos_CuentasView" asp-area=""
                             asp-page="/PagesViews/Movimientos_CuentasView">Movimientos</a>
                     }
                 </div>
             }
-             @if (SecurityController.HavePermission(PermissionsEnum.GESTION_COMPRAS_Y_VENTAS.ToString(), identify))
+            @if (SecurityController.HavePermission(PermissionsEnum.GESTION_COMPRAS_Y_VENTAS.ToString(), identify))
             {
                 <a class="title-collapse" id="GestionCompraVenta" onclick="changeActive(this)">GESTIÓN DE CUENTAS</a>
                 <div class="collapse">
                     @if (SecurityController.HavePermission(PermissionsEnum.GESTION_CLIENTES.ToString(),//TODO
                    identify))
                     {
-                        <a class="" id="GestionCompraView" asp-area="" asp-page="/PagesViews/Gestion_CuentasView">Gestión de
+                        <a class="menu-item" id="Gestion_CuentasView" asp-area=""
+                            asp-page="/PagesViews/Gestion_CuentasView">Gestión de
                             Cuentas</a>
-                        <a class="" id="GestionVentaView" asp-area=""
+                        <a class="menu-item" id="Movimientos_CuentasView" asp-area=""
                             asp-page="/PagesViews/Movimientos_CuentasView">Movimientos</a>
                     }
                 </div>
@@ -135,40 +125,40 @@
             @if (SecurityController.HavePermission(PermissionsEnum.GESTION_CONTRATOS.ToString(), identify))
             {
                 @* <a class="title-collapse" id="GestionContratosMenu" onclick="changeActive(this)">GESTIÓN DE CONTRATOS</a>
-                <div class="collapse">
-                    <a class="" id="Transaction_Contratos_InversionistasView" asp-area=""
-                        asp-page="/PagesViews/Transaction_Contratos_InversionistasView">PRESTAMOS DE PERSONAS NATURALES</a>
-                    <a class="" id="Gestion_Inversionistas" asp-area=""
-                        asp-page="/PagesViews/Gestion_Inversionistas">GESTIÓN DE PERSONAS NATURALES</a>
-                </div> *@
+            <div class="collapse">
+            <a class="menu-item" id="Transaction_Contratos_InversionistasView" asp-area=""
+            asp-page="/PagesViews/Transaction_Contratos_InversionistasView">PRESTAMOS DE PERSONAS NATURALES</a>
+            <a class="menu-item" id="Gestion_Inversionistas" asp-area=""
+            asp-page="/PagesViews/Gestion_Inversionistas">GESTIÓN DE PERSONAS NATURALES</a>
+            </div> *@
             }
             @* @if (SecurityController.HavePermission(PermissionsEnum.GESTION_INGRESOS.ToString(),
             identify))
             {
             <a class="title-collapse" id="GestionIngresosMenu" onclick="changeActive(this)">GESTIÓN DE CONTRATOS</a>
             <div class="collapse">
-            <a class="" id="Transaction_FacturasView" asp-area=""
+            <a class="menu-item" id="Transaction_FacturasView" asp-area=""
             asp-page="/PagesViews/Transaction_FacturasView">FACTURAS</a>
             </div>
             } *@
             @if (SecurityController.HavePermission(PermissionsEnum.GESTION_MOVIMIENTOS.ToString(), identify))
             {
                 @* <a class="title-collapse" id="GestionMovimientosMenu" onclick="changeActive(this)">GESTIÓN DE
-                    MOVIMIENTOS</a>
-                <div class="collapse">
-                    <a class="" id="Transaction_Ingresos_EgresosView" asp-area=""
-                        asp-page="/PagesViews/Transaction_Ingresos_EgresosView">EGRESOS/INGRESOS</a>
-                </div> *@
+            MOVIMIENTOS</a>
+            <div class="collapse">
+            <a class="menu-item" id="Transaction_Ingresos_EgresosView" asp-area=""
+            asp-page="/PagesViews/Transaction_Ingresos_EgresosView">EGRESOS/INGRESOS</a>
+            </div> *@
             }
             @if (SecurityController.HavePermission(PermissionsEnum.GESTION_SUCURSALES.ToString(), identify))
             {
                 @* <a class="title-collapse" id="SucursalesMenu" onclick="changeActive(this)"
-                    href="#SucursalesConfig">CONFIGURACIÓN DE
-                    SUCURSALES</a>
-                <div class="collapse" id="SucursalesConfig">
-                    <a class="" id="Datos_ConfiguracionView" asp-area=""
-                        asp-page="/PagesViews/Datos_ConfiguracionView">CONFIGURACIONES</a>
-                </div> *@
+            href="#SucursalesConfig">CONFIGURACIÓN DE
+            SUCURSALES</a>
+            <div class="collapse" id="SucursalesConfig">
+            <a class="menu-item" id="Datos_ConfiguracionView" asp-area=""
+            asp-page="/PagesViews/Datos_ConfiguracionView">CONFIGURACIONES</a>
+            </div> *@
             }
         </nav>
     </aside>

@@ -1,7 +1,7 @@
 import { EntityClass } from "../WDevCore/WModules/EntityClass.js";
 class Recibos extends EntityClass {
     constructor(props) {
-        super(props, 'EntityDbo');   
+        super(props, 'Recibos');   
         for (const prop in props) {
             this[prop] = props[prop];
         };

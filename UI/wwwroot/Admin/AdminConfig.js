@@ -1,19 +1,24 @@
-import { WRender , ComponentsManager} from '../WDevCore/WModules/WComponentsTools.js';
+import { WRender, ComponentsManager } from '../WDevCore/WModules/WComponentsTools.js';
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
 import { DBOCatalogosManagerView } from "./DBOCatalogosManagerView.js";
 import { Transactional_ConfiguracionesView } from './Transactional_ConfiguracionesView.js';
-const DOMManager = new ComponentsManager({ MainContainer: Main });
-window.addEventListener("load", async () => {            
-    Aside.append(WRender.Create({tagName: "h3", innerText: "Mantenimiento"}));
+const DOMManager = new ComponentsManager({ MainContainer: Main, SPAManage: true });
+window.addEventListener("load", async () => {
+    Aside.append(WRender.Create({ tagName: "h3", innerText: "Mantenimiento" }));
     Aside.append(new WAppNavigator({
         DarkMode: false,
-        Direction: "column",
+        Direction: "column", Inicialize: true,
         Elements: [
-            { name: "Catalogos", action: ()=> {
-                 DOMManager.NavigateFunction("DBOCatalogosManagerView", new DBOCatalogosManagerView());
-            } },  { name: "Config", action: ()=> {
-                DOMManager.NavigateFunction("Transactional_Configuraciones", new Transactional_ConfiguracionesView());
-           } }
+            {
+                name: "Config", action: () => {
+                    DOMManager.NavigateFunction("Transactional_Configuraciones", new Transactional_ConfiguracionesView());
+                }
+            },
+            {
+                name: "Catalogos", action: () => {
+                    DOMManager.NavigateFunction("DBOCatalogosManagerView", new DBOCatalogosManagerView());
+                }
+            }
         ]
     }));
 });

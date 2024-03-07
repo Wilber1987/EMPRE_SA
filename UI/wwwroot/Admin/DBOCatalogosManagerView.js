@@ -1,5 +1,5 @@
 //@ts-check
-import { WRender, ComponentsManager, WAjaxTools } from "../WDevCore/WModules/WComponentsTools.js";
+import { WRender, ComponentsManager, WAjaxTools, html } from "../WDevCore/WModules/WComponentsTools.js";
 import { WOrtograficValidation } from "../WDevCore/WModules/WOrtograficValidation.js";
 import { StylesControlsV2, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js"
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
@@ -7,6 +7,7 @@ import { WFilterOptions } from '../WDevCore/WComponents/WFilterControls.js';
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js"
 import { Catalogo_Agentes, Catalogo_Clasificacion_Cliente, Catalogo_Clientes, Catalogo_Tipo_Agente, Catalogo_Tipo_Identificacion, Catalogo_Cambio_Dolar_ModelComponent, Catalogo_Cuentas, Categoria_Cuentas, Catalogo_Departamento, Catalogo_Inversores, Catalogo_Municipio, Catalogo_Nacionalidad, Catalogo_Profesiones, Catalogo_Sucursales, Catalogo_Estados_Articulos, Catalogo_Categoria_ModelComponent, Permisos_Cuentas } from "../FrontModel/DBODataBaseModel.js"
 import { EntityClass } from "../WDevCore/WModules/EntityClass.js";
+import { css } from "../WDevCore/WModules/WStyledRender.js";
 class DBOCatalogosManagerView extends HTMLElement {
     constructor() {
         super();
@@ -16,6 +17,7 @@ class DBOCatalogosManagerView extends HTMLElement {
             StylesControlsV2.cloneNode(true),
             StyleScrolls.cloneNode(true),
             this.MainNav,
+            this.CustomStyle,
             this.TabContainer
         );
     }
@@ -41,9 +43,17 @@ class DBOCatalogosManagerView extends HTMLElement {
             }
         });
         WRender.SetStyle(filterOptions, { marginBottom: "20px", display: "block" })
-        this.TabManager.NavigateFunction(Model.constructor.name, WRender.Create({ className: "catalogo-container", children: [filterOptions, mainComponent] }));
+        this.TabManager.NavigateFunction(Model.constructor.name, WRender.Create({
+            className: "catalogo-container",
+            children: [
+                html`<h2>${WOrtograficValidation.es(Model.constructor.name)}</h2>`,
+                filterOptions,
+                mainComponent]
+        }));
     }
     MainNav = new WAppNavigator({
+        Direction: "column",
+        Inicialize: true,
         //@ts-ignore
         Elements: [
             {
@@ -62,11 +72,11 @@ class DBOCatalogosManagerView extends HTMLElement {
                 name: WOrtograficValidation.es('Categoria_Cuentas'), action: async () => {
                     this.NavigateFunction(new Categoria_Cuentas())
                 }
-            },{
+            }, {
                 name: WOrtograficValidation.es('Permisos_Cuentas'), action: async () => {
                     this.NavigateFunction(new Permisos_Cuentas())
                 }
-            },{
+            }, {
                 name: WOrtograficValidation.es('Catalogo_Tipo_Agente'), action: async () => {
                     this.NavigateFunction(new Catalogo_Tipo_Agente())
                 }
@@ -78,7 +88,7 @@ class DBOCatalogosManagerView extends HTMLElement {
                 name: WOrtograficValidation.es('Catalogo_Nacionalidad'), action: async () => {
                     this.NavigateFunction(new Catalogo_Nacionalidad())
                 }
-            },{
+            }, {
                 name: WOrtograficValidation.es('Catalogo_Departamento'), action: async () => {
                     this.NavigateFunction(new Catalogo_Departamento())
                 }
@@ -109,6 +119,13 @@ class DBOCatalogosManagerView extends HTMLElement {
             },
         ]
     });
+    CustomStyle = css`
+        w-catalogos-manager {
+            display: grid;
+            grid-template-columns: 150px calc(100% - 170px);
+            gap: 20px
+        }
+    `
 }
-customElements.define('w-catalogos_manager', DBOCatalogosManagerView);
+customElements.define('w-catalogos-manager', DBOCatalogosManagerView);
 export { DBOCatalogosManagerView }
