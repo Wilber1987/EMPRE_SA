@@ -35,3 +35,6 @@ VALUES
 
 ALTER TABLE EMPRE_SA.facturacion.Transaccion_Factura ADD total_cordobas float NULL;
 ALTER TABLE EMPRE_SA.facturacion.Transaccion_Factura ADD Moneda varchar(100) NULL;
+INSERT INTO EMPRE_SA.administrative_access.Transactional_Configuraciones
+(Nombre, Descripcion, Valor, Tipo_Configuracion)
+VALUES(N'LOGO', N'Logo de encabezado de página', NULL, N'THEME');

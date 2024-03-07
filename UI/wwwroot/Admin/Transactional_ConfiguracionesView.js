@@ -49,6 +49,8 @@ class Transactional_ConfiguracionesView extends HTMLElement {
     }
     ConfigType(element) {
         if (this.IsImage(element)) {
+            return "IMG";
+        } else if (this.IsDrawImage(element)) {
             return "DRAW";
         } else if (this.IsNumber(element)) {
             return "NUMBER";
@@ -59,8 +61,11 @@ class Transactional_ConfiguracionesView extends HTMLElement {
     IsNumber(element) {
         return element.Tipo_Configuracion == "INTERESES" || element.Tipo_Configuracion == "BENEFICIOS";
     }
-    IsImage(element) {
+    IsDrawImage(element) {
         return element.Nombre == "FIRMA_DIGITAL_APODERADO"
+    }
+    IsImage(element) {
+        return element.Nombre == "LOGO"
     }
 }
 customElements.define('w-transactional_configuraciones', Transactional_ConfiguracionesView);
