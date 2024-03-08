@@ -1,6 +1,6 @@
 //@ts-check
 // @ts-ignore
-import { WRender, ComponentsManager, WAjaxTools, WArrayF, html } from "../WDevCore/WModules/WComponentsTools.js";
+import { WRender, ComponentsManager, WAjaxTools, WArrayF, html, type } from "../WDevCore/WModules/WComponentsTools.js";
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js"
 // @ts-ignore
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
@@ -18,6 +18,7 @@ import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { Transactional_Configuraciones } from "../FrontModel/ADMINISTRATIVE_ACCESSDataBaseModel.js";
 import { Tbl_Compra } from "../Facturacion/FrontModel/Tbl_Compra.js";
 import { Tbl_Compra_ModelComponent } from "../Facturacion/FrontModel/ModelComponent/Tbl_Compra_ModelComponent.js";
+import { Transactional_Valoracion } from "../FrontModel/DBODataBaseModel.js";
 
 /**
  * @typedef {Object} facturaconfig
@@ -26,82 +27,69 @@ import { Tbl_Compra_ModelComponent } from "../Facturacion/FrontModel/ModelCompon
 
 class MainFactura extends HTMLElement {
     constructor(factura) {
-        super();
-        // AmoritizationModule.calculoAmortizacion(factura);     
-        // if (factura.Transaction_Contratos != null) {            
-        //     this.ElementsNav.unshift({
-        //         name: "Contrato valorado", action: () => this.Manager.NavigateFunction("contrato-valorado", new Gestion_FacturacionView({ Entity: contrato }))
-        //     });
-        // }
-        //this.componentsModel = new Transaction_Contratos_ModelComponent();
+        super();        
         this.OptionContainer = WRender.Create({ className: "OptionContainer" });
         this.TabContainer = WRender.Create({ className: "TabContainer", id: 'TabContainer' });
         this.Manager = new ComponentsManager({ MainContainer: this.TabContainer, SPAManage: false });
-        this.valoracionesContainer = WRender.Create({ className: "valoraciones-container" });
+        
         this.navigator = new WAppNavigator({ Inicialize: true, Elements: this.ElementsNav })
         this.append(this.CustomStyle, this.OptionContainer, this.navigator, this.TabContainer);
-        this.indexContract = 0;
-        this.DrawComponent();
-        this.buildTotalesModel(36.62 /*factura.tasa_cambio*/);
+        this.indexFactura = 0;
+        this.Draw();
         this.valoresObject = {
             subtotal: 0,
             iva: 0,
         }
+        
+        //this.ComprasModel = new Tbl_Compra_ModelComponent();//todo constructor
+
+        this.setComprasContainer();
 
     }
 
 
-    buildTotalesModel(tasasCambio) {
-        this.valoresModel = {
-            subtotal: {
-                type: "number", label: "Subtotal - C$:", action: () => {
-                    this.valoresObject.dolares_1 = this.valoresObject.subtotal / tasasCambio[0].valor_de_venta;
-                    /** @type {HTMLInputElement|undefined|null} */
-                    const control = this.valoresForm?.shadowRoot?.querySelector(".dolares_1");
-                    if (control != undefined || control != null) {
-                        control.value = this.valoresObject.dolares_1.toString();
-                    }
-                    //this.promediarValoresDolares(this.valoresObject);
-                    this.promediarValoresCordobas(this.valoresObject);
-                    //this.beneficiosDetailUpdate();
-                    //this.multiSelectEstadosArticulos?.SetOperationValues()
-                }
-            },
 
-            iva: {
-                type: "number", label: "Iva - C$:", action: () => {
-                    this.valoresObject.dolares_2 = this.valoresObject.iva / tasasCambio[0].valor_de_venta;
-                    /** @type {HTMLInputElement|undefined|null} */
-                    const control = this.valoresForm?.shadowRoot?.querySelector(".dolares_2");
-                    if (control != undefined || control != null) {
-                        control.value = this.valoresObject.dolares_2.toString();
-                    }
-                    //this.promediarValoresDolares(this.valoresObject);
-                    this.promediarValoresCordobas(this.valoresObject);
-                    //this.beneficiosDetailUpdate();
-                    //this.multiSelectEstadosArticulos?.SetOperationValues()
-                }
-            },
-            total_cordobas: {
-                type: "text", label: "Total - C$", disabled: true, action: (data) => {
-                    //return this.promediarValoresCordobas(data)
-                }
-            }/*, total_dolares: {
-                type: "text", label: "$:", disabled: true, action: (data) => {
-                    //return this.promediarValoresDolares(data)
-                }
-            }*/
-        };
-    }
-
-    promediarValoresCordobas(data) {
-        data.total_cordobas = ((parseFloat(data.subtotal) + parseFloat(data.iva))).toFixed(3);
-        const control = this.valoresForm?.shadowRoot?.querySelector(".total_cordobas");
-        if (control != undefined || control != null) {
+    setComprasContainer() {
+        this.valoracionesContainer = WRender.Create({ className: "valoraciones-container" });
+        this.totalesDetail = WRender.Create({ tagName: "div", className: "resumen-container" });
+        this.facturaForm = new WForm({
+            ModelObject: this.CompraModel(), //new Tbl_Compra_ModelComponent(),
+            AutoSave: false,
+            //Options: false,
             // @ts-ignore
-            control.value = data.total_cordobas.toString();
-        }
-        return data.total_cordobas;
+            SaveFunction: async (/**@type {Tbl_Compra} */ valoracion) => {
+            }
+        });
+
+
+        this.valoracionesContainer.append(
+            this.facturaForm,
+            this.totalesDetail
+        );
+    }
+
+    totalesDetailUpdate(subtotal,total) {
+        // @ts-ignore
+        this.totalesDetail.innerHTML = "";
+        const detail = this.facturaForm?.FormObject;          
+        // @ts-ignore
+        //this.valoracionesForm.FormObject.precio_venta_empeño_cordobas = (precio_venta_empeño);
+
+        // @ts-ignore
+        this.totalesDetail?.append(html`<div class="detail-container"> 
+        <div>
+            <label class="value-container">
+                Sub Total: 
+                <span>${subtotal} C$</span>
+            </label>
+            <label class="value-container">
+                Total: 
+                <span>${total} C$</span>
+            </label>            
+        </div>       
+    </div>`);
+        /*this.multiSelectEstadosArticulos?.SetOperationValues();
+        this.multiSelectEstadosArticulos?.DrawTable();*/
     }
 
     ElementsNav = [
@@ -113,51 +101,122 @@ class MainFactura extends HTMLElement {
                 }))
             }
         }, {
-            name: "Nueva Factura Proveedor", action: () => {
-                this.CompraModel = new Tbl_Compra_ModelComponent();
-                this.CompraModel.Sub_Total.action = ( EditObject, form, control) => {
-                    console.log(EditObject);
-                    form.DrawComponent();
-                }
-                this.Manager.NavigateFunction("newFactura", new WForm({ ModelObject: this.CompraModel, EntityModel: new Tbl_Compra }))
-                this.indexContract++;
+            name: "Nueva Factura Proveedor", action: () => {                
+                this.Manager.NavigateFunction("newFactura", this.valoracionesContainer);
+                //new WForm({ ModelObject: this.ComprasModel, EntityModel: new Tbl_Compra }))
+                this.indexFactura++;
             }
         }
     ]
 
-    DrawComponent = async () => {
-        this.valoresForm = new WForm({
-            EditObject: this.valoresObject,
-            ModelObject: this.valoresModel,
-            Options: false,
-            DivColumns: "calc(100% - 160px) 150px",
-            // @ts-ignore
-            ProxyAction: (/**@type {WForm} */ factura) => {
-                //this.valoracionesForm?.SetOperationValues();
-            }, CustomStyle: css`
-                .ModalElement {
-                    display: grid;
-                    grid-template-columns: auto 120px;
-                    align-items: center;
-                } .ModalElement label {
-                    display: block;
-                    width: 100%;
-                    margin: 0px;
-                } input {
-                    min-width: 120px;
-                }`
-        });
+    Draw = async() => {
+    }//end draw
+  
 
-        this.append(
-            this.valoresForm
-        );
+    
+    CompraModel() {
+        this.ComprasModel = new Tbl_Compra_ModelComponent();
 
-        if (this.valoresForm != undefined) {
-            this.valoresForm.DrawComponent();
+        this.ComprasModel.Sub_Total.action = (/**@type {Tbl_Compra} */ EditObject, form, control) => {
+                    
+            //console.log(EditObject);
+
+            var subtotal = 0;                    
+            var total = 0;
+            
+            
+            if (EditObject.Detalle_Compra != null || EditObject.Detalle_Compra != undefined) {
+                
+
+                for (let index = 0; index < EditObject.Detalle_Compra.length; index++) {
+                    var element = EditObject.Detalle_Compra[index]
+
+                    subtotal += element["Cantidad"]*element["Precio_Unitario"];
+                    total += element["Cantidad"]*element["Precio_Unitario"];                   
+                    
+                }
+               /* if (form.shadowRoot.querySelector(".Moneda")) {
+                    form.shadowRoot.querySelector(".Moneda").value = EditObject.Detalle_Compra?.length?? 1 ;
+                    EditObject.Moneda =  EditObject.Detalle_Compra?.length?? 1 ;
+                    console.log(EditObject.Moneda);
+                }
+
+                if (form.shadowRoot.querySelector(".Moneda")) {
+                    form.shadowRoot.querySelector(".Moneda").value = EditObject.Detalle_Compra?.length?? 1 ;
+                    EditObject.Moneda =  EditObject.Detalle_Compra?.length?? 1 ;
+                    console.log(EditObject.Moneda);
+                }*/
+            }
+            //return 1
+
+            this.totalesDetailUpdate(subtotal,total);
         }
 
+        return this.ComprasModel;
     }
-    CustomStyle = css``
+    //this.contratosForm.append(optionContainer, this.facturaForm);
+
+    CustomStyle = css`
+    .valoraciones-container{
+        padding: 20px;
+        display: grid;
+        grid-template-columns: 400px calc(100% - 730px) 300px;
+        gap: 20px 30px;
+    }
+    #valoracionesForm, .multiSelectEstadosArticulos,#facturaForm {
+        grid-column: span 2;
+    }
+    .beneficios-detail h4 {
+        margin: 0px 10px 10px 10px;
+    }
+    .beneficios-detail {
+        padding: 15px;
+        border-radius: 10px;
+        border: solid 1px #999;
+        overflow: hidden;
+        max-height:15px;
+        transition: all 0.7s;
+        cursor: pointer;
+    }
+    .beneficios-detail:hover {
+        max-height:1500px;
+    }
+    .column-venta{
+        display: grid;
+        grid-template-columns: 47% 47%;
+        gap: 10px;
+        margin-bottom: 5px;
+        font-size: 12px;
+    }
+    .column-venta label{
+       grid-column: span 2;
+    }
+    .column-venta span{
+       text-align: right;
+       font-weight: bold;
+       border-bottom: solid 1px #d4d4d4;
+    }
+    #valoracionesTable,
+    #cuotasTable,
+    .TabContainerTables,
+    .nav-header,
+    .selected-client{
+        grid-column: span 3;
+    }
+    .nav-header {
+        display: flex;
+        width: 100%;
+        justify-content: space-between;
+        font-size: 14px;
+        font-weight: bold;
+        color: #00238a
+    }        
+    .OptionContainer{
+        display: flex;
+    } w-filter-option {
+        grid-column: span 2;
+    }
+`
 }
 customElements.define('w-main-contract', MainFactura);
 export { MainFactura }
@@ -170,4 +229,4 @@ window.addEventListener('load', async () => {
     //
     MainBody.append(new MainFactura())
     //MainBody.append(new MainFactura(testData))
-})
+});
