@@ -1,7 +1,7 @@
 import { WRender, ComponentsManager, WAjaxTools } from "../WDevCore/WModules/WComponentsTools.js";
 import { StylesControlsV2, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js"
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
-import { Recibos, Transaccion_Factura, Catalogo_Cambio_Dolar_ModelComponent } from "../FrontModel/DBODataBaseModel.js"
+import { Transaccion_Factura, Catalogo_Cambio_Dolar_ModelComponent } from "../FrontModel/DBODataBaseModel.js"
 import { ModalMessege, ModalVericateAction } from "../WDevCore/WComponents/WForm.js";
 class Ver_RecibosView extends HTMLElement {
     constructor(props) {
@@ -24,7 +24,8 @@ class Ver_RecibosView extends HTMLElement {
                         name: "Anular", action: (factura) => {
                             this.append(ModalVericateAction(async () => {
                                 const response =
-                                    await WAjaxTools.PostRequest("../api/ApiRecibos/anularRecibo", { id_recibo: factura.id_factura, tasa_cambio: tasa[0].valor_de_compra });
+                                    await WAjaxTools.PostRequest("../api/ApiRecibos/anularRecibo",
+                                     { id_recibo: factura.id_factura, tasa_cambio: tasa[0].valor_de_compra });
 
                                 this.append(ModalMessege(response.message));
 
@@ -34,7 +35,8 @@ class Ver_RecibosView extends HTMLElement {
                     }, {
                         name: "Imprimir", action: async (factura) => {
                             //this.append(ModalVericateAction(async () => {
-                            const response = await WAjaxTools.PostRequest("../api/ApiRecibos/printRecibo", { id_recibo: factura.id_factura, tasa_cambio: tasa[0].valor_de_compra });
+                            const response = await WAjaxTools.PostRequest("../api/ApiRecibos/printRecibo",
+                             { id_recibo: factura.id_factura, tasa_cambio: tasa[0].valor_de_compra });
 
                             //this.append(ModalMessege(response.message));                                
                             const ventimp = window.open(' ', 'popimpr');

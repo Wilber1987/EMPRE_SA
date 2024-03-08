@@ -72,7 +72,7 @@ namespace CAPA_NEGOCIO.Services
 			}
 			DateTime? fechaPrimeraCuota = model.Tbl_Cuotas?.Select(c => c.fecha).ToList().Min();
 			DateTime? fechaUltimaCuota = model.Tbl_Cuotas?.Select(c => c.fecha).ToList().Max();
-
+			var configuraciones_theme = new Transactional_Configuraciones().GetTheme();
 			var configuraciones_generales = new Transactional_Configuraciones().GetGeneralData();
 
 			var configuraciones = new Transactional_Configuraciones().GetIntereses();
@@ -82,7 +82,9 @@ namespace CAPA_NEGOCIO.Services
 				.Replace("{{datos_apoderado}}", configuraciones_generales.Find(c => c.Nombre.Equals(GeneralDataEnum.APODERADO.ToString()))?.Valor)
 				.Replace("{{resumen_datos_apoderado}}", configuraciones_generales.Find(c => c.Nombre.Equals(GeneralDataEnum.DATOS_APODERADO.ToString()))?.Valor)
 				.Replace("{{firma}}", configuraciones_generales.Find(c => c.Nombre.Equals(GeneralDataEnum.FIRMA_DIGITAL_APODERADO.ToString()))?.Valor)
+				.Replace("{{logo}}", "data:image/png;base64," + configuraciones_theme.Find(c => c.Nombre.Equals(ConfiguracionesThemeEnum.LOGO.ToString()))?.Valor)
 				.Replace("{{fecha_contrato_label}}", model.fecha_contrato?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy \"a las\" h:mm tt"))
+				.Replace("{{fecha_contrato_label_corta}}", model.fecha_contrato?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy"))
 				.Replace("{{fecha_primera_cuota}}", fechaPrimeraCuota?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy"))
 				.Replace("{{fecha_ultima_cuota}}", fechaUltimaCuota?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy"))
 				.Replace("{{cuotafija_label}}", NumberUtility.NumeroALetras(model.cuotafija, "córdobas"))
@@ -235,39 +237,39 @@ namespace CAPA_NEGOCIO.Services
 		{
 			StringBuilder htmlBuilder = new StringBuilder();
 			// Abrir la etiqueta de la tabla con atributos de estilo para bordes y ancho 100%
-			htmlBuilder.Append("<table style=\"font-size:9px;border-collapse: collapse; width: 100%;\">");
+			htmlBuilder.Append("<table style=\"font-size:9px;border-collapse: collapse; width: 100%; max-width: 100%;\">");
 			// Encabezados de la tabla (opcional)
 			htmlBuilder.Append("<tr>");
-			htmlBuilder.Append("<th style=\"font-size:9px; text-align: center; padding: 4px; border: 1px solid black;\">VEHÍCULO</th>");
-			htmlBuilder.Append("<th style=\"font-size:9px; text-align: center; padding: 4px; border: 1px solid black;\">COLOR</th>");
-			htmlBuilder.Append("<th style=\"font-size:9px; text-align: center; padding: 4px; border: 1px solid black;\">CAP/CILINDRO</th>");
-			htmlBuilder.Append("<th style=\"font-size:9px; text-align: center; padding: 4px; border: 1px solid black;\">CANT/CILINDRO</th>");
-			htmlBuilder.Append("<th style=\"font-size:9px; text-align: center; padding: 4px; border: 1px solid black;\">CANT/PASAJEROS</th>");
-			htmlBuilder.Append("<th style=\"font-size:9px; text-align: center; padding: 4px; border: 1px solid black;\">AÑO</th>");
-			htmlBuilder.Append("<th style=\"font-size:9px; text-align: center; padding: 4px; border: 1px solid black;\">MARCA</th>");
-			htmlBuilder.Append("<th style=\"font-size:9px; text-align: center; padding: 4px; border: 1px solid black;\">MODELO</th>");
-			htmlBuilder.Append("<th style=\"font-size:9px; text-align: center; padding: 4px; border: 1px solid black;\">N° MOTOR</th>");
-			htmlBuilder.Append("<th style=\"font-size:9px; text-align: center; padding: 4px; border: 1px solid black;\">CHASIS</th>");
-			htmlBuilder.Append("<th style=\"font-size:9px; text-align: center; padding: 4px; border: 1px solid black;\">PLACA</th>");
-			htmlBuilder.Append("<th style=\"font-size:9px; text-align: center; padding: 4px; border: 1px solid black;\">N° DE CIRCULACIÓN</th>");
+			htmlBuilder.Append("<th style=\"font-size:7px; text-align: center; padding: 4px; border: 1px solid black;\">VEHÍCULO</th>");
+			htmlBuilder.Append("<th style=\"font-size:7px; text-align: center; padding: 4px; border: 1px solid black;\">COLOR</th>");
+			htmlBuilder.Append("<th style=\"font-size:7px; text-align: center; padding: 4px; border: 1px solid black;\">CAP/CILINDRO</th>");
+			htmlBuilder.Append("<th style=\"font-size:7px; text-align: center; padding: 4px; border: 1px solid black;\">CANT/CILINDRO</th>");
+			htmlBuilder.Append("<th style=\"font-size:7px; text-align: center; padding: 4px; border: 1px solid black;\">CANT/PASAJEROS</th>");
+			htmlBuilder.Append("<th style=\"font-size:7px; text-align: center; padding: 4px; border: 1px solid black;\">AÑO</th>");
+			htmlBuilder.Append("<th style=\"font-size:7px; text-align: center; padding: 4px; border: 1px solid black;\">MARCA</th>");
+			htmlBuilder.Append("<th style=\"font-size:7px; text-align: center; padding: 4px; border: 1px solid black;\">MODELO</th>");
+			htmlBuilder.Append("<th style=\"font-size:7px; text-align: center; padding: 4px; border: 1px solid black;\">N° MOTOR</th>");
+			htmlBuilder.Append("<th style=\"font-size:7px; text-align: center; padding: 4px; border: 1px solid black;\">CHASIS</th>");
+			htmlBuilder.Append("<th style=\"font-size:7px; text-align: center; padding: 4px; border: 1px solid black;\">PLACA</th>");
+			htmlBuilder.Append("<th style=\"font-size:7px; text-align: center; padding: 4px; border: 1px solid black;\">N° DE CIRCULACIÓN</th>");
 			// Agregar más encabezados según tus necesidades
 			htmlBuilder.Append("</tr>");
 			// Contenido de la tabla
 			foreach (var dato in listaDatos)
 			{
 				htmlBuilder.Append("<tr>");
-				htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\">{dato.Descripcion}</td>");
-				htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\">{dato.color}</td>");
-				htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\">{dato.Detail_Prendas_Vehiculos?.capacidad_cilindros}</td>");
-				htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\">{dato.Detail_Prendas_Vehiculos?.cantidad_cilindros}</td>");
-				htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\">{dato.Detail_Prendas_Vehiculos?.cantidad_pasajeros}</td>");
-				htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\">{dato.Detail_Prendas_Vehiculos?.year_vehiculo}</td>");
-				htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\">{dato.marca}</td>");
-				htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\">{dato.modelo}</td>");
-				htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\">{dato.Detail_Prendas_Vehiculos?.montor}</td>");
-				htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\">{dato.Detail_Prendas_Vehiculos?.chasis}</td>");
-				htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\">{dato.Detail_Prendas_Vehiculos?.placa}</td>");
-				htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\">{dato.Detail_Prendas_Vehiculos?.circuacion}</td>");
+				htmlBuilder.Append($"<td style=\"font-size:9px; min-width: 8%; word-break: break-all; padding: 4px; border: 1px solid black;\">{dato.Descripcion}</td>");
+				htmlBuilder.Append($"<td style=\"font-size:9px; min-width: 8%; word-break: break-all; padding: 4px; border: 1px solid black;\">{dato.color}</td>");
+				htmlBuilder.Append($"<td style=\"font-size:9px; min-width: 8%; word-break: break-all; padding: 4px; border: 1px solid black;\">{dato.Detail_Prendas_Vehiculos?.capacidad_cilindros}</td>");
+				htmlBuilder.Append($"<td style=\"font-size:9px; min-width: 8%; word-break: break-all; padding: 4px; border: 1px solid black;\">{dato.Detail_Prendas_Vehiculos?.cantidad_cilindros}</td>");
+				htmlBuilder.Append($"<td style=\"font-size:9px; min-width: 8%; word-break: break-all; padding: 4px; border: 1px solid black;\">{dato.Detail_Prendas_Vehiculos?.cantidad_pasajeros}</td>");
+				htmlBuilder.Append($"<td style=\"font-size:9px; min-width: 8%; word-break: break-all; padding: 4px; border: 1px solid black;\">{dato.Detail_Prendas_Vehiculos?.year_vehiculo}</td>");
+				htmlBuilder.Append($"<td style=\"font-size:9px; min-width: 8%; word-break: break-all; padding: 4px; border: 1px solid black;\">{dato.marca}</td>");
+				htmlBuilder.Append($"<td style=\"font-size:9px; min-width: 8%; word-break: break-all; padding: 4px; border: 1px solid black;\">{dato.modelo}</td>");
+				htmlBuilder.Append($"<td style=\"font-size:9px; min-width: 8%; word-break: break-all; padding: 4px; border: 1px solid black;\">{dato.Detail_Prendas_Vehiculos?.montor}</td>");
+				htmlBuilder.Append($"<td style=\"font-size:9px; min-width: 8%; word-break: break-all; padding: 4px; border: 1px solid black;\">{dato.Detail_Prendas_Vehiculos?.chasis}</td>");
+				htmlBuilder.Append($"<td style=\"font-size:9px; min-width: 8%; word-break: break-all; padding: 4px; border: 1px solid black;\">{dato.Detail_Prendas_Vehiculos?.placa}</td>");
+				htmlBuilder.Append($"<td style=\"font-size:9px; min-width: 8%; word-break: break-all; padding: 4px; border: 1px solid black;\">{dato.Detail_Prendas_Vehiculos?.circuacion}</td>");
 				// Agregar más columnas según las propiedades de tu objeto DatosTabla
 				htmlBuilder.Append("</tr>");
 			}
@@ -295,11 +297,11 @@ namespace CAPA_NEGOCIO.Services
 			foreach (var dato in listaDatos)
 			{
 				htmlBuilder.Append("<tr>");
-				htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\">{dato.Descripcion}</td>");
-				htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\">{dato.color}</td>");
-				htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\">{dato.marca}</td>");
-				htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\">{dato.serie}</td>");
-				htmlBuilder.Append($"<td style=\"font-size:9px; padding: 4px; border: 1px solid black;\">{dato.modelo}</td>");
+				htmlBuilder.Append($"<td style=\"font-size:9px;word-break: break-all; padding: 4px; border: 1px solid black;\">{dato.Descripcion}</td>");
+				htmlBuilder.Append($"<td style=\"font-size:9px;word-break: break-all; padding: 4px; border: 1px solid black;\">{dato.color}</td>");
+				htmlBuilder.Append($"<td style=\"font-size:9px;word-break: break-all; padding: 4px; border: 1px solid black;\">{dato.marca}</td>");
+				htmlBuilder.Append($"<td style=\"font-size:9px;word-break: break-all; padding: 4px; border: 1px solid black;\">{dato.serie}</td>");
+				htmlBuilder.Append($"<td style=\"font-size:9px;word-break: break-all; padding: 4px; border: 1px solid black;\">{dato.modelo}</td>");
 				// Agregar más columnas según las propiedades de tu objeto DatosTabla
 				htmlBuilder.Append("</tr>");
 			}

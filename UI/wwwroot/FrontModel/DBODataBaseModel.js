@@ -35,7 +35,7 @@ class Transactional_Valoracion extends EntityClass {
     Modelo = { type: 'text' };
     Catalogo_Categoria = {
         type: 'WSELECT',
-        ModelObject: () => new Catalogo_Categoria(), action: (ObjectF, /**@type {WForm} */ form, InputControl, prop) => {
+        ModelObject: () => new Catalogo_Categoria_ModelComponent(), action: (ObjectF, /**@type {WForm} */ form, InputControl, prop) => {
             // console.log(ObjectF.Catalogo_Categoria.plazo_limite);
             this.Plazo.max = ObjectF.Catalogo_Categoria.plazo_limite;
             if (ObjectF.Plazo > this.Plazo.max) {
@@ -164,7 +164,7 @@ class Catalogo_Clientes extends EntityClass {
 export { Catalogo_Clientes }
 
 
-class Catalogo_Categoria extends EntityClass {
+class Catalogo_Categoria_ModelComponent extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
         for (const prop in props) {
@@ -177,7 +177,7 @@ class Catalogo_Categoria extends EntityClass {
     plazo_limite = { type: 'number' };
     prioridad = { type: 'number', hiddenInTable: true };
 }
-export { Catalogo_Categoria }
+export { Catalogo_Categoria_ModelComponent }
 
 class Condicion_Laboral_Cliente extends EntityClass {
     constructor(props) {
@@ -366,7 +366,7 @@ class Detail_Prendas_ModelComponent extends EntityClass {
     //v_porcentage_etiqueta = { type: 'number' , hiddenInTable: true};
     Catalogo_Categoria = {
         hiddenInTable: true,
-        type: 'WSELECT', ModelObject: () => new Catalogo_Categoria(), action: (ObjectF, form, InputControl, prop) => {
+        type: 'WSELECT', ModelObject: () => new Catalogo_Categoria_ModelComponent(), action: (ObjectF, form, InputControl, prop) => {
 
         }
     };

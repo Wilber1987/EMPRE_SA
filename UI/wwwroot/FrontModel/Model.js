@@ -1,5 +1,5 @@
 import { EntityClass } from "../WDevCore/WModules/EntityClass.js";
-import { Catalogo_Categoria, Catalogo_Clientes } from "./DBODataBaseModel.js";
+import { Catalogo_Clientes } from "./DBODataBaseModel.js";
 
 //@ts-check
 class ValoracionesTransaction extends EntityClass {
@@ -197,13 +197,13 @@ class Detail_Prendas extends EntityClass {
     }
     /**@type {Number} */ numero_prenda;
     /**@type {Number} */ numero_contrato_OLD;
-    /**@type {Number} */ Descripcion;
+    /**@type {String} */ Descripcion;
     /**@type {Number} */ monto_aprobado_cordobas;
     /**@type {Number} */ monto_aprobado_dolares;
-    /**@type {Number} */ Tipo;
-    /**@type {Number} */ marca;
-    /**@type {Number} */ serie;
-    /**@type {Number} */ modelo;
+    /**@type {String} */ Tipo;
+    /**@type {String} */ marca;
+    /**@type {String} */ serie;
+    /**@type {String} */ modelo;
     /**@type {Number} */ iva;
     /**@type {Number} */ margen;
     /**@type {Number} */ estado;
@@ -211,8 +211,8 @@ class Detail_Prendas extends EntityClass {
     /**@type {Number} */ moral;
     /**@type {Number} */ fliquidacion;
     /**@type {Number} */ precio_venta;
-    /**@type {Number} */ en_manos_de;
-    /**@type {Number} */ color;
+    /**@type {String} */ en_manos_de;
+    /**@type {String} */ color;
     // /**@type {Number} */ factura;
     // /**@type {Number} */ tipo_movimiento;
     // /**@type {Number} */ uso;
@@ -223,6 +223,25 @@ class Detail_Prendas extends EntityClass {
     /**@type {Transactional_Valoracion} */ Transactional_Valoracion;
 }
 export { Detail_Prendas }
+
+class Catalogo_Categoria extends EntityClass {
+    constructor(props) {
+        super(props, 'EntityDbo');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
+    /**@type {Number}*/ id_categoria;
+    /**@type {String}*/ tipo;
+    /**@type {String}*/ descripcion;
+    /**@type {Number}*/ plazo_limite;
+    /**@type {Number}*/ prioridad;
+    /**@type {Boolean}*/ isEditable;
+    /**@type {Array<Detail_Prendas>} OneToMany*/ Detail_Prendas;
+    /**@type {Array<Transactional_Valoracion>} OneToMany*/ Transactional_Valoracion;
+ }
+ export { Catalogo_Categoria }
+ 
 class Detail_Prendas_Vehiculos extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');

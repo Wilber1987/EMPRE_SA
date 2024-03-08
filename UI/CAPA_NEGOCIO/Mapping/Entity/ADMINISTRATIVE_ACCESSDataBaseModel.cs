@@ -73,7 +73,8 @@ namespace DataBaseModel
 
     public enum ConfiguracionesThemeEnum
     {
-        TITULO, SUB_TITULO, NOMBRE_EMPRESA, LOGO_PRINCIPAL
+        TITULO, SUB_TITULO, NOMBRE_EMPRESA, LOGO_PRINCIPAL,
+        LOGO
     }
 
     public enum ConfiguracionesInteresesEnum

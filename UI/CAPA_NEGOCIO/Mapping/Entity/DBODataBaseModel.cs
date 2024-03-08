@@ -516,7 +516,7 @@ namespace DataBaseModel
 	}
 
 	public class Transaccion_Factura : EntityClass
-	{
+	{       
 		[PrimaryKey(Identity = true)]
 		public int? id_factura { get; set; }
 		public int? numero_contrato { get; set; }
@@ -532,12 +532,16 @@ namespace DataBaseModel
 		public string? no_factura { get; set; }
 		public double? subtotal { get; set; }
 		public double? iva { get; set; }
+		public double? total_cordobas { get;  set; }
+		public string? Moneda { get;  set; }
+
 
 		[JsonProp]
 		public Factura_contrato Factura_contrato { get; set; }
 
 		[OneToMany(TableName = "Detalle_Factura_Recibo", KeyColumn = "id_factura", ForeignKeyColumn = "id_factura")]
 		public List<Detalle_Factura_Recibo>? Detalle_Factura_Recibo { get; set; }
+		
 	}
 
 	public class Factura_contrato
@@ -557,7 +561,8 @@ namespace DataBaseModel
 		public double? tasa_cambio { get; set; }
 		public int? id_cliente { get; set; }
 		public int? id_sucursal { get; set; }
-		public int? reestructuracion { get; set; }
+		public double? reestructuracion { get; set; }
+		public double? perdida_de_documento { get; set; }
 		public double? total_pagado { get; set; }
 	}
 
@@ -625,6 +630,8 @@ namespace DataBaseModel
 
 		//[ManyToOne(TableName = "Transaccion_Factura", KeyColumn = "id_factura", ForeignKeyColumn = "id_factura")]
 		public Transaccion_Factura? Transaccion_Factura { get; set; }
+		[OneToOne(TableName = "Tbl_Cuotas", KeyColumn = "id_cuota", ForeignKeyColumn = "id_cuota")]
+		public Tbl_Cuotas? Tbl_Cuotas { get; set; }
 
 
 	}

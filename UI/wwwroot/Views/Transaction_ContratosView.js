@@ -198,7 +198,7 @@ class Transaction_ContratosView extends HTMLElement {
                 if (response.status == 200) {
                     this.shadowRoot?.append(ModalVericateAction(() => {
                         location.href = "/PagesViews/Transaction_ContratosViewDetail?numero_contrato=" + response.body.numero_contrato;
-                    }, response.message));
+                    }, response.message, false));
                 } else {
                     this.shadowRoot?.append(ModalMessege(response.message));
                 }
