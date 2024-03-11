@@ -13,7 +13,7 @@ namespace API.Controllers
         [AuthController]
         public List<Detail_Movimiento> getDetail_Movimiento(Detail_Movimiento Inst)
         {
-            return Inst.Get<Detail_Movimiento>();
+            return Inst.Get<Detail_Movimiento>().OrderBy(p => p.id_movimiento).ToList();;
         }        
         [HttpPost]
         [AuthController]
