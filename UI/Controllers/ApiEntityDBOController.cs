@@ -42,7 +42,7 @@ namespace API.Controllers
         [AuthController]
         public List<Catalogo_Clasificacion_Interes> getCatalogo_Clasificacion_Interes(Catalogo_Clasificacion_Interes Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Catalogo_Clasificacion_Interes>();
+            return Inst.Where<Catalogo_Clasificacion_Interes>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
@@ -60,7 +60,7 @@ namespace API.Controllers
         [AuthController]
         public List<Catalogo_Estados_Articulos> getCatalogo_Estados_Articulos(Catalogo_Estados_Articulos Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Catalogo_Estados_Articulos>();
+            return Inst.Where<Catalogo_Estados_Articulos>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
@@ -79,7 +79,7 @@ namespace API.Controllers
         [AuthController]
         public List<Transactional_Valoracion> getTransactional_Valoracion(Transactional_Valoracion Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Transactional_Valoracion>();
+            return Inst.Where<Transactional_Valoracion>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
@@ -98,7 +98,7 @@ namespace API.Controllers
         [AuthController]
         public List<Catalogo_Agentes> getCatalogo_Agentes(Catalogo_Agentes Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Catalogo_Agentes>();
+            return Inst.Where<Catalogo_Agentes>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
@@ -117,7 +117,7 @@ namespace API.Controllers
         [AuthController]
         public List<Catalogo_Clasificacion_Cliente> getCatalogo_Clasificacion_Cliente(Catalogo_Clasificacion_Cliente Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Catalogo_Clasificacion_Cliente>();
+            return Inst.Where<Catalogo_Clasificacion_Cliente>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
@@ -136,7 +136,7 @@ namespace API.Controllers
         [AuthController]
         public List<Catalogo_Clientes> getCatalogo_Clientes(Catalogo_Clientes Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Catalogo_Clientes>();
+            return Inst.Where<Catalogo_Clientes>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
@@ -155,7 +155,7 @@ namespace API.Controllers
         [AuthController]
         public List<Condicion_Laboral_Cliente> getCondicion_Laboral_Cliente(Condicion_Laboral_Cliente Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Condicion_Laboral_Cliente>();
+            return Inst.Where<Condicion_Laboral_Cliente>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
@@ -174,7 +174,7 @@ namespace API.Controllers
         [AuthController]
         public List<Catalogo_Tipo_Agente> getCatalogo_Tipo_Agente(Catalogo_Tipo_Agente Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Catalogo_Tipo_Agente>();
+            return Inst.Where<Catalogo_Tipo_Agente>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
@@ -193,7 +193,7 @@ namespace API.Controllers
         [AuthController]
         public List<Catalogo_Tipo_Identificacion> getCatalogo_Tipo_Identificacion(Catalogo_Tipo_Identificacion Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Catalogo_Tipo_Identificacion>();
+            return Inst.Where<Catalogo_Tipo_Identificacion>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
@@ -212,7 +212,7 @@ namespace API.Controllers
         [AuthController]
         public List<Transaction_Contratos> getTransaction_Contratos(Transaction_Contratos Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Transaction_Contratos>();
+            return Inst.Where<Transaction_Contratos>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
@@ -231,7 +231,7 @@ namespace API.Controllers
         [AuthController]
         public List<Detail_Prendas> getDetail_Prendas(Detail_Prendas Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Detail_Prendas>();
+            return Inst.Where<Detail_Prendas>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
@@ -250,7 +250,7 @@ namespace API.Controllers
         [AuthController]
         public List<Detail_Prendas_Vehiculos> getDetail_Prendas_Vehiculos(Detail_Prendas_Vehiculos Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Detail_Prendas_Vehiculos>();
+            return Inst.Where<Detail_Prendas_Vehiculos>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
@@ -269,7 +269,7 @@ namespace API.Controllers
         [AuthController]
         public List<Catalogo_Cambio_Dolar> getCatalogo_Cambio_Dolar(Catalogo_Cambio_Dolar Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Catalogo_Cambio_Dolar>();
+            return Inst.Where<Catalogo_Cambio_Dolar>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
@@ -288,7 +288,7 @@ namespace API.Controllers
         [AuthController]
         public List<Catalogo_Cuentas> getCatalogo_Cuentas(Catalogo_Cuentas Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Catalogo_Cuentas>();
+            return Inst.Where<Catalogo_Cuentas>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
@@ -307,7 +307,7 @@ namespace API.Controllers
         [AuthController]
         public List<Categoria_Cuentas> getCategoria_Cuentas(Categoria_Cuentas Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Categoria_Cuentas>();
+            return Inst.Where<Categoria_Cuentas>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
@@ -326,7 +326,7 @@ namespace API.Controllers
         [AuthController]
         public List<Permisos_Cuentas> getPermisos_Cuentas(Permisos_Cuentas Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Permisos_Cuentas>();
+            return Inst.Where<Permisos_Cuentas>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
@@ -346,7 +346,7 @@ namespace API.Controllers
         [AuthController]
         public List<Catalogo_Departamento> getCatalogo_Departamento(Catalogo_Departamento Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Catalogo_Departamento>();
+            return Inst.Where<Catalogo_Departamento>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
@@ -365,7 +365,7 @@ namespace API.Controllers
         [AuthController]
         public List<Catalogo_Inversores> getCatalogo_Inversores(Catalogo_Inversores Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Catalogo_Inversores>();
+            return Inst.Where<Catalogo_Inversores>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
@@ -384,7 +384,7 @@ namespace API.Controllers
         [AuthController]
         public List<Catalogo_Municipio> getCatalogo_Municipio(Catalogo_Municipio Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Catalogo_Municipio>();
+            return Inst.Where<Catalogo_Municipio>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
@@ -403,7 +403,7 @@ namespace API.Controllers
         [AuthController]
         public List<Catalogo_Nacionalidad> getCatalogo_Nacionalidad(Catalogo_Nacionalidad Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Catalogo_Nacionalidad>();
+            return Inst.Where<Catalogo_Nacionalidad>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
@@ -422,7 +422,7 @@ namespace API.Controllers
         [AuthController]
         public List<Catalogo_Profesiones> getCatalogo_Profesiones(Catalogo_Profesiones Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Catalogo_Profesiones>();
+            return Inst.Where<Catalogo_Profesiones>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
@@ -441,7 +441,7 @@ namespace API.Controllers
         [AuthController]
         public List<Catalogo_Tipo_Transaccion> getCatalogo_Tipo_Transaccion(Catalogo_Tipo_Transaccion Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Catalogo_Tipo_Transaccion>();
+            return Inst.Where<Catalogo_Tipo_Transaccion>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
@@ -460,7 +460,7 @@ namespace API.Controllers
         [AuthController]
         public List<Transaction_Contratos_Inversionistas> getTransaction_Contratos_Inversionistas(Transaction_Contratos_Inversionistas Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Transaction_Contratos_Inversionistas>();
+            return Inst.Where<Transaction_Contratos_Inversionistas>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
@@ -479,7 +479,7 @@ namespace API.Controllers
         [AuthController]
         public List<Transaction_Egresos> getTransaction_Egresos(Transaction_Egresos Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Transaction_Egresos>();
+            return Inst.Where<Transaction_Egresos>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
@@ -498,7 +498,7 @@ namespace API.Controllers
         [AuthController]
         public List<Transaction_Facturas> getTransaction_Facturas(Transaction_Facturas Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Transaction_Facturas>();
+            return Inst.Where<Transaction_Facturas>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
@@ -517,7 +517,7 @@ namespace API.Controllers
         [AuthController]
         public List<Transaction_Ingresos> getTransaction_Ingresos(Transaction_Ingresos Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Transaction_Ingresos>();
+            return Inst.Where<Transaction_Ingresos>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
@@ -536,7 +536,7 @@ namespace API.Controllers
         [AuthController]
         public List<Transaction_Ingresos_Egresos> getTransaction_Ingresos_Egresos(Transaction_Ingresos_Egresos Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Transaction_Ingresos_Egresos>();
+            return Inst.Where<Transaction_Ingresos_Egresos>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
@@ -555,7 +555,7 @@ namespace API.Controllers
         [AuthController]
         public List<Catalogo_Sucursales> getCatalogo_Sucursales(Catalogo_Sucursales Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Catalogo_Sucursales>();
+            return Inst.Where<Catalogo_Sucursales>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
@@ -574,7 +574,7 @@ namespace API.Controllers
         [AuthController]
         public List<Datos_Configuracion> getDatos_Configuracion(Datos_Configuracion Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Datos_Configuracion>();
+            return Inst.Where<Datos_Configuracion>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
@@ -593,7 +593,7 @@ namespace API.Controllers
         [AuthController]
         public List<Catalogo_Categoria> getCatalogo_Categoria(Catalogo_Categoria Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Catalogo_Categoria>();
+            return Inst.Where<Catalogo_Categoria>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
@@ -612,7 +612,7 @@ namespace API.Controllers
         [AuthController]
         public List<Transaccion_Factura> getTransaccion_Factura(Transaccion_Factura Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Transaccion_Factura>();
+            return Inst.Where<Transaccion_Factura>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
