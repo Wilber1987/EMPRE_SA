@@ -24,7 +24,7 @@ namespace API.Controllers
         // }
 
         [HttpGet]
-        public object SendMail()
+        public object? SendMail()
         {
             return MailServices.SendMailContract(new List<String>() { "wilberj1987@gmail.com", "alderhernandez@gmail.com" }, "noreply@noreply", "Usted es un mela", "example.cshtml",
                     new
@@ -46,13 +46,13 @@ namespace API.Controllers
         }
         [HttpPost]
         [AuthController]
-        public object saveCatalogo_Clasificacion_Interes(Catalogo_Clasificacion_Interes inst)
+        public object? saveCatalogo_Clasificacion_Interes(Catalogo_Clasificacion_Interes inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateCatalogo_Clasificacion_Interes(Catalogo_Clasificacion_Interes inst)
+        public object? updateCatalogo_Clasificacion_Interes(Catalogo_Clasificacion_Interes inst)
         {
             return inst.Update();
         }
@@ -64,13 +64,13 @@ namespace API.Controllers
         }
         [HttpPost]
         [AuthController]
-        public object saveCatalogo_Estados_Articulos(Catalogo_Estados_Articulos inst)
+        public object? saveCatalogo_Estados_Articulos(Catalogo_Estados_Articulos inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateCatalogo_Estados_Articulos(Catalogo_Estados_Articulos inst)
+        public object? updateCatalogo_Estados_Articulos(Catalogo_Estados_Articulos inst)
         {
             return inst.Update();
         }
@@ -83,13 +83,13 @@ namespace API.Controllers
         }
         [HttpPost]
         [AuthController]
-        public object saveTransactional_Valoracion(Transactional_Valoracion inst)
+        public object? saveTransactional_Valoracion(Transactional_Valoracion inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateTransactional_Valoracion(Transactional_Valoracion inst)
+        public object? updateTransactional_Valoracion(Transactional_Valoracion inst)
         {
             return inst.Update();
         }
@@ -102,13 +102,13 @@ namespace API.Controllers
         }
         [HttpPost]
         [AuthController]
-        public object saveCatalogo_Agentes(Catalogo_Agentes inst)
+        public object? saveCatalogo_Agentes(Catalogo_Agentes inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateCatalogo_Agentes(Catalogo_Agentes inst)
+        public object? updateCatalogo_Agentes(Catalogo_Agentes inst)
         {
             return inst.Update();
         }
@@ -121,13 +121,13 @@ namespace API.Controllers
         }
         [HttpPost]
         [AuthController]
-        public object saveCatalogo_Clasificacion_Cliente(Catalogo_Clasificacion_Cliente inst)
+        public object? saveCatalogo_Clasificacion_Cliente(Catalogo_Clasificacion_Cliente inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateCatalogo_Clasificacion_Cliente(Catalogo_Clasificacion_Cliente inst)
+        public object? updateCatalogo_Clasificacion_Cliente(Catalogo_Clasificacion_Cliente inst)
         {
             return inst.Update();
         }
@@ -140,13 +140,13 @@ namespace API.Controllers
         }
         [HttpPost]
         [AuthController]
-        public object saveCatalogo_Clientes(Catalogo_Clientes inst)
+        public object? saveCatalogo_Clientes(Catalogo_Clientes inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateCatalogo_Clientes(Catalogo_Clientes inst)
+        public object? updateCatalogo_Clientes(Catalogo_Clientes inst)
         {
             return inst.Update();
         }
@@ -159,13 +159,13 @@ namespace API.Controllers
         }
         [HttpPost]
         [AuthController]
-        public object saveCondicion_Laboral_Cliente(Condicion_Laboral_Cliente inst)
+        public object? saveCondicion_Laboral_Cliente(Condicion_Laboral_Cliente inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateCondicion_Laboral_Cliente(Condicion_Laboral_Cliente inst)
+        public object? updateCondicion_Laboral_Cliente(Condicion_Laboral_Cliente inst)
         {
             return inst.Update();
         }
@@ -178,13 +178,13 @@ namespace API.Controllers
         }
         [HttpPost]
         [AuthController]
-        public object saveCatalogo_Tipo_Agente(Catalogo_Tipo_Agente inst)
+        public object? saveCatalogo_Tipo_Agente(Catalogo_Tipo_Agente inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateCatalogo_Tipo_Agente(Catalogo_Tipo_Agente inst)
+        public object? updateCatalogo_Tipo_Agente(Catalogo_Tipo_Agente inst)
         {
             return inst.Update();
         }
@@ -197,13 +197,13 @@ namespace API.Controllers
         }
         [HttpPost]
         [AuthController]
-        public object saveCatalogo_Tipo_Identificacion(Catalogo_Tipo_Identificacion inst)
+        public object? saveCatalogo_Tipo_Identificacion(Catalogo_Tipo_Identificacion inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateCatalogo_Tipo_Identificacion(Catalogo_Tipo_Identificacion inst)
+        public object? updateCatalogo_Tipo_Identificacion(Catalogo_Tipo_Identificacion inst)
         {
             return inst.Update();
         }
@@ -216,13 +216,13 @@ namespace API.Controllers
         }
         [HttpPost]
         [AuthController]
-        public object saveTransaction_Contratos(Transaction_Contratos inst)
+        public object? saveTransaction_Contratos(Transaction_Contratos inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateTransaction_Contratos(Transaction_Contratos inst)
+        public object? updateTransaction_Contratos(Transaction_Contratos inst)
         {
             return inst.Update();
         }
@@ -235,13 +235,13 @@ namespace API.Controllers
         }
         [HttpPost]
         [AuthController]
-        public object saveDetail_Prendas(Detail_Prendas inst)
+        public object? saveDetail_Prendas(Detail_Prendas inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateDetail_Prendas(Detail_Prendas inst)
+        public object? updateDetail_Prendas(Detail_Prendas inst)
         {
             return inst.Update();
         }
@@ -254,13 +254,13 @@ namespace API.Controllers
         }
         [HttpPost]
         [AuthController]
-        public object saveDetail_Prendas_Vehiculos(Detail_Prendas_Vehiculos inst)
+        public object? saveDetail_Prendas_Vehiculos(Detail_Prendas_Vehiculos inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateDetail_Prendas_Vehiculos(Detail_Prendas_Vehiculos inst)
+        public object? updateDetail_Prendas_Vehiculos(Detail_Prendas_Vehiculos inst)
         {
             return inst.Update();
         }
@@ -273,13 +273,13 @@ namespace API.Controllers
         }
         [HttpPost]
         [AuthController]
-        public object saveCatalogo_Cambio_Dolar(Catalogo_Cambio_Dolar inst)
+        public object? saveCatalogo_Cambio_Dolar(Catalogo_Cambio_Dolar inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateCatalogo_Cambio_Dolar(Catalogo_Cambio_Dolar inst)
+        public object? updateCatalogo_Cambio_Dolar(Catalogo_Cambio_Dolar inst)
         {
             return inst.Update();
         }
@@ -292,13 +292,13 @@ namespace API.Controllers
         }
         [HttpPost]
         [AuthController]
-        public object saveCatalogo_Cuentas(Catalogo_Cuentas inst)
+        public object? saveCatalogo_Cuentas(Catalogo_Cuentas inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateCatalogo_Cuentas(Catalogo_Cuentas inst)
+        public object? updateCatalogo_Cuentas(Catalogo_Cuentas inst)
         {
             return inst.Update();
         }
@@ -311,13 +311,13 @@ namespace API.Controllers
         }
         [HttpPost]
         [AuthController]
-        public object saveCategoria_Cuentas(Categoria_Cuentas inst)
+        public object? saveCategoria_Cuentas(Categoria_Cuentas inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateCategoria_Cuentas(Categoria_Cuentas inst)
+        public object? updateCategoria_Cuentas(Categoria_Cuentas inst)
         {
             return inst.Update();
         }
@@ -330,13 +330,13 @@ namespace API.Controllers
         }
         [HttpPost]
         [AuthController]
-        public object savePermisos_Cuentas(Permisos_Cuentas inst)
+        public object? savePermisos_Cuentas(Permisos_Cuentas inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updatePermisos_Cuentas(Permisos_Cuentas inst)
+        public object? updatePermisos_Cuentas(Permisos_Cuentas inst)
         {
             return inst.Update();
         }
@@ -350,13 +350,13 @@ namespace API.Controllers
         }
         [HttpPost]
         [AuthController]
-        public object saveCatalogo_Departamento(Catalogo_Departamento inst)
+        public object? saveCatalogo_Departamento(Catalogo_Departamento inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateCatalogo_Departamento(Catalogo_Departamento inst)
+        public object? updateCatalogo_Departamento(Catalogo_Departamento inst)
         {
             return inst.Update();
         }
@@ -369,13 +369,13 @@ namespace API.Controllers
         }
         [HttpPost]
         [AuthController]
-        public object saveCatalogo_Inversores(Catalogo_Inversores inst)
+        public object? saveCatalogo_Inversores(Catalogo_Inversores inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateCatalogo_Inversores(Catalogo_Inversores inst)
+        public object? updateCatalogo_Inversores(Catalogo_Inversores inst)
         {
             return inst.Update();
         }
@@ -388,13 +388,13 @@ namespace API.Controllers
         }
         [HttpPost]
         [AuthController]
-        public object saveCatalogo_Municipio(Catalogo_Municipio inst)
+        public object? saveCatalogo_Municipio(Catalogo_Municipio inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateCatalogo_Municipio(Catalogo_Municipio inst)
+        public object? updateCatalogo_Municipio(Catalogo_Municipio inst)
         {
             return inst.Update();
         }
@@ -407,13 +407,13 @@ namespace API.Controllers
         }
         [HttpPost]
         [AuthController]
-        public object saveCatalogo_Nacionalidad(Catalogo_Nacionalidad inst)
+        public object? saveCatalogo_Nacionalidad(Catalogo_Nacionalidad inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateCatalogo_Nacionalidad(Catalogo_Nacionalidad inst)
+        public object? updateCatalogo_Nacionalidad(Catalogo_Nacionalidad inst)
         {
             return inst.Update();
         }
@@ -426,13 +426,13 @@ namespace API.Controllers
         }
         [HttpPost]
         [AuthController]
-        public object saveCatalogo_Profesiones(Catalogo_Profesiones inst)
+        public object? saveCatalogo_Profesiones(Catalogo_Profesiones inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateCatalogo_Profesiones(Catalogo_Profesiones inst)
+        public object? updateCatalogo_Profesiones(Catalogo_Profesiones inst)
         {
             return inst.Update();
         }
@@ -445,13 +445,13 @@ namespace API.Controllers
         }
         [HttpPost]
         [AuthController]
-        public object saveCatalogo_Tipo_Transaccion(Catalogo_Tipo_Transaccion inst)
+        public object? saveCatalogo_Tipo_Transaccion(Catalogo_Tipo_Transaccion inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateCatalogo_Tipo_Transaccion(Catalogo_Tipo_Transaccion inst)
+        public object? updateCatalogo_Tipo_Transaccion(Catalogo_Tipo_Transaccion inst)
         {
             return inst.Update();
         }
@@ -464,13 +464,13 @@ namespace API.Controllers
         }
         [HttpPost]
         [AuthController]
-        public object saveTransaction_Contratos_Inversionistas(Transaction_Contratos_Inversionistas inst)
+        public object? saveTransaction_Contratos_Inversionistas(Transaction_Contratos_Inversionistas inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateTransaction_Contratos_Inversionistas(Transaction_Contratos_Inversionistas inst)
+        public object? updateTransaction_Contratos_Inversionistas(Transaction_Contratos_Inversionistas inst)
         {
             return inst.Update();
         }
@@ -483,13 +483,13 @@ namespace API.Controllers
         }
         [HttpPost]
         [AuthController]
-        public object saveTransaction_Egresos(Transaction_Egresos inst)
+        public object? saveTransaction_Egresos(Transaction_Egresos inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateTransaction_Egresos(Transaction_Egresos inst)
+        public object? updateTransaction_Egresos(Transaction_Egresos inst)
         {
             return inst.Update();
         }
@@ -502,13 +502,13 @@ namespace API.Controllers
         }
         [HttpPost]
         [AuthController]
-        public object saveTransaction_Facturas(Transaction_Facturas inst)
+        public object? saveTransaction_Facturas(Transaction_Facturas inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateTransaction_Facturas(Transaction_Facturas inst)
+        public object? updateTransaction_Facturas(Transaction_Facturas inst)
         {
             return inst.Update();
         }
@@ -521,13 +521,13 @@ namespace API.Controllers
         }
         [HttpPost]
         [AuthController]
-        public object saveTransaction_Ingresos(Transaction_Ingresos inst)
+        public object? saveTransaction_Ingresos(Transaction_Ingresos inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateTransaction_Ingresos(Transaction_Ingresos inst)
+        public object? updateTransaction_Ingresos(Transaction_Ingresos inst)
         {
             return inst.Update();
         }
@@ -540,13 +540,13 @@ namespace API.Controllers
         }
         [HttpPost]
         [AuthController]
-        public object saveTransaction_Ingresos_Egresos(Transaction_Ingresos_Egresos inst)
+        public object? saveTransaction_Ingresos_Egresos(Transaction_Ingresos_Egresos inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateTransaction_Ingresos_Egresos(Transaction_Ingresos_Egresos inst)
+        public object? updateTransaction_Ingresos_Egresos(Transaction_Ingresos_Egresos inst)
         {
             return inst.Update();
         }
@@ -559,13 +559,13 @@ namespace API.Controllers
         }
         [HttpPost]
         [AuthController]
-        public object saveCatalogo_Sucursales(Catalogo_Sucursales inst)
+        public object? saveCatalogo_Sucursales(Catalogo_Sucursales inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateCatalogo_Sucursales(Catalogo_Sucursales inst)
+        public object? updateCatalogo_Sucursales(Catalogo_Sucursales inst)
         {
             return inst.Update();
         }
@@ -578,13 +578,13 @@ namespace API.Controllers
         }
         [HttpPost]
         [AuthController]
-        public object saveDatos_Configuracion(Datos_Configuracion inst)
+        public object? saveDatos_Configuracion(Datos_Configuracion inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateDatos_Configuracion(Datos_Configuracion inst)
+        public object? updateDatos_Configuracion(Datos_Configuracion inst)
         {
             return inst.Update();
         }
@@ -597,13 +597,13 @@ namespace API.Controllers
         }
         [HttpPost]
         [AuthController]
-        public object saveCatalogo_Categoria(Catalogo_Categoria inst)
+        public object? saveCatalogo_Categoria(Catalogo_Categoria inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateCatalogo_Categoria(Catalogo_Categoria inst)
+        public object? updateCatalogo_Categoria(Catalogo_Categoria inst)
         {
             return inst.Update();
         }
@@ -616,13 +616,13 @@ namespace API.Controllers
         }
         [HttpPost]
         [AuthController]
-        public object saveTransaccion_Factura(Transaccion_Factura inst)
+        public object? saveTransaccion_Factura(Transaccion_Factura inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateTransaccion_Factura(Transaccion_Factura inst)
+        public object? updateTransaccion_Factura(Transaccion_Factura inst)
         {
             return inst.Update();
         }
