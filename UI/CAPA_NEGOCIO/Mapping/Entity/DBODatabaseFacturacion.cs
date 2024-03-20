@@ -93,6 +93,11 @@ namespace DataBaseModelFacturacion
 
                 BeginGlobalTransaction();
 
+                double subtotal = 0;
+                double ivaTotal = 0;
+                double total = 0;
+
+
                 foreach (var item in this.Detalle_Compra)
                 {
                     if (item.Cantidad <= 0)
@@ -101,9 +106,17 @@ namespace DataBaseModelFacturacion
                         return new ResponseService()
                         {
                             status = 400,
-                            message = "La cantidad de los productos ("+item.Cat_Producto.Descripcion+") debe ser mayor que cero"
+                            message = "La cantidad de los productos (" + item.Cat_Producto.Descripcion + ") debe ser mayor que cero"
                         };
                     }
+
+                    double subtotalItem = (double)(item.Cantidad * item.Precio_Unitario);
+                    //double ivaItem = subtotalItem * (item.Iva / 100);
+                    double totalItem = subtotalItem;
+
+                    subtotal += subtotalItem;
+                    //ivaTotal += ivaItem;
+                    total += totalItem;
 
                     detalleCompra.Add(
                         new Detalle_Compra()
@@ -139,9 +152,9 @@ namespace DataBaseModelFacturacion
                     Fecha = DateTime.Now,
                     Tasa_Cambio = this.Tasa_Cambio,
                     Moneda = this.Moneda,
-                    Sub_Total = this.Sub_Total,
+                    Sub_Total = subtotal,
                     Iva = this.Iva,
-                    Total = this.Total,
+                    Total = total,
                     Estado = this.Estado,
                     Detalle_Compra = detalleCompra
                 };
