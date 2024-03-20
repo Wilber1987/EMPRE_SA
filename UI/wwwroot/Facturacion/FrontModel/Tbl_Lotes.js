@@ -17,6 +17,7 @@ class Tbl_Lotes extends EntityClass {
    /**@type {Number}*/ Precio_Compra;
    /**@type {Number}*/ Cantidad_Inicial;
    /**@type {Number}*/ Cantidad_Existente;
+   /**@type {String}*/ Lote;
    /**@type {Date}*/ Fecha_Ingreso;
    /**@type {Cat_Almacenes} ManyToOne*/ Cat_Almacenes;
    /**@type {Detalle_Compra} ManyToOne*/ Detalle_Compra;

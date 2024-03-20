@@ -1,3 +1,4 @@
+using API.Controllers;
 using CAPA_DATOS;
 using CAPA_DATOS.Security;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -70,7 +71,149 @@ namespace DataBaseModelFacturacion
         public Cat_Proveedor? Cat_Proveedor { get; set; }
         [OneToMany(TableName = "Detalle_Compra", KeyColumn = "Id_Compra", ForeignKeyColumn = "Id_Compra")]
         public List<Detalle_Compra>? Detalle_Compra { get; set; }
+
+
+
+        public object? SaveCompra(string token)
+        {
+            try
+            {
+                var user = AuthNetCore.User(token);
+                var dbUser = new API.Extended.Security_Users { Id_User = user.UserId }.Find<API.Extended.Security_Users>();
+
+                if (this.Detalle_Compra.Count() == 0)
+                {
+                    return new ResponseService()
+                    {
+                        status = 400,
+                        message = "Ingrese al menos un artículo de compra"
+                    };
+                }
+                var detalleCompra = new List<Detalle_Compra>();
+
+                BeginGlobalTransaction();
+
+                foreach (var item in this.Detalle_Compra)
+                {
+                    if (item.Cantidad <= 0)
+                    {
+                        RollBackGlobalTransaction();
+                        return new ResponseService()
+                        {
+                            status = 400,
+                            message = "La cantidad de los productos ("+item.Cat_Producto.Descripcion+") debe ser mayor que cero"
+                        };
+                    }
+
+                    detalleCompra.Add(
+                        new Detalle_Compra()
+                        {
+
+                            Id_Producto = item.Cat_Producto.Id_Producto,
+                            Cantidad = item.Cantidad,
+                            Precio_Unitario = item.Precio_Unitario,
+                            Total = item.Total,
+                            Presentacion = item.Presentacion,
+                            lotes = new List<Tbl_Lotes>
+                                    {
+                                        new Tbl_Lotes()
+                                        {
+                                            Id_Producto = item.Cat_Producto.Id_Producto,
+                                            //Precio_Venta = item.Precio_Unitario, TODO ??
+                                            Precio_Compra = item.Precio_Unitario,
+                                            //Cantidad_Inicial = item.Cantidad_Inicial, TODO ??
+                                            Cantidad_Existente = item.Cantidad,
+                                            Fecha_Ingreso = DateTime.Now,
+                                            //Id_Almacen = 1,
+                                            Id_Almacen = getAlmacen(),//TODO
+                                            Lote = generarLote()
+                                        }
+                                    }
+                        }
+                    );
+                }
+
+                var compra = new Tbl_Compra()
+                {
+                    Datos_Compra = this.Datos_Compra,
+                    Id_Proveedor = this.Id_Proveedor,
+                    Fecha = DateTime.Now,
+                    Tasa_Cambio = this.Tasa_Cambio,
+                    Moneda = this.Moneda,
+                    Sub_Total = this.Sub_Total,
+                    Iva = this.Iva,
+                    Total = this.Total,
+                    Estado = this.Estado,
+                    Detalle_Compra = detalleCompra
+                };
+
+
+                compra.Save();
+
+                CommitGlobalTransaction();
+                return new ResponseService()
+                {
+                    status = 200,
+                    message = "Compra registrada correctamente"
+                };
+            }
+            catch (Exception ex)
+            {
+                RollBackGlobalTransaction();
+                return new ResponseService()
+                {
+                    status = 200,
+                    message = "Ocurrio un error intente nuevamente",
+                    body = ex.Message
+                };
+            }
+
+        }
+
+        public int getAlmacen()
+        {
+            try
+            {
+                var primerAlmacen = new Cat_Almacenes().Get<Cat_Almacenes>().FirstOrDefault();
+
+                if (primerAlmacen != null)
+                {
+                    return primerAlmacen.Id_Almacen ?? 0;
+                }
+                else
+                {
+                    var nuevoAlmacen = new Cat_Almacenes()
+                    {
+                        Descripcion = "Nuevo Almacén",
+                        Estado = "Activo"
+                    };
+                    nuevoAlmacen.Save();
+                    return nuevoAlmacen.Id_Almacen ?? 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error al obtener el almacén: " + ex.Message);
+                return 0;
+            }
+        }
+
+
+        public string generarLote()
+        {
+            string fechaLote = DateTime.Now.ToString("yyyyMMddHHmmss");
+            string caracteresPermitidos = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            Random random = new Random();
+            string parteAleatoria = new string(Enumerable.Repeat(caracteresPermitidos, 3)
+                                            .Select(s => s[random.Next(s.Length)]).ToArray());
+
+            string codigoLote = fechaLote + parteAleatoria;
+            return codigoLote;
+        }
+
+
     }
+
 
     public class Detalle_Compra : EntityClass
     {
@@ -87,7 +230,7 @@ namespace DataBaseModelFacturacion
         [ManyToOne(TableName = "Tbl_Compra", KeyColumn = "Id_Compra", ForeignKeyColumn = "Id_Compra")]
         public Tbl_Compra? Tbl_Compra { get; set; }
         [OneToMany(TableName = "Tbl_Lotes", KeyColumn = "Id_Detalle_Compra", ForeignKeyColumn = "Id_Detalle_Compra")]
-        public List<Tbl_Lotes>? Tbl_Lotes { get; set; }
+        public List<Tbl_Lotes>? lotes { get; set; }
     }
 
     public class Tbl_Lotes : EntityClass
@@ -101,6 +244,7 @@ namespace DataBaseModelFacturacion
         public int? Cantidad_Existente { get; set; }
         public DateTime? Fecha_Ingreso { get; set; }
         public int? Id_Almacen { get; set; }
+        public string? Lote { get; set; }
         public int? Id_Detalle_Compra { get; set; }
         [ManyToOne(TableName = "Cat_Almacenes", KeyColumn = "Id_Almacen", ForeignKeyColumn = "Id_Almacen")]
         public Cat_Almacenes? Cat_Almacenes { get; set; }

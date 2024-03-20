@@ -178,7 +178,8 @@ namespace API.Controllers
         [AuthController]
         public object saveTbl_Compra(Tbl_Compra inst)
         {
-            return inst.Save();
+            //return inst.Save();
+            return inst.SaveCompra(HttpContext.Session.GetString("seassonKey"));
         }
         [HttpPost]
         [AuthController]

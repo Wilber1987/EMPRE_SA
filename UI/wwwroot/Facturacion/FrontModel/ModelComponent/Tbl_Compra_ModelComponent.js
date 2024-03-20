@@ -13,15 +13,15 @@ class Tbl_Compra_ModelComponent extends EntityClass {
        }
    }
    /**@type {ModelProperty}*/ Id_Compra = { type: 'number', primary: true, hiddenFilter: true };
-   /**@type {ModelProperty}*/ Datos_Compra = { type: 'text', hiddenFilter: true, hiddenInTable: true };
+   /**@type {ModelProperty}*/ Datos_Compra = { type: 'text', hiddenFilter: true, hiddenInTable: true, require: false };
    /**@type {ModelProperty}*/ Fecha = { type: 'date' };
-   /**@type {ModelProperty}*/ Tasa_Cambio = { type: 'number', hiddenFilter: true, disabled: true};
-   /**@type {ModelProperty}*/ Moneda = { type: 'text', hiddenFilter: true};
+   /**@type {ModelProperty}*/ Tasa_Cambio = { type: 'number', hiddenFilter: true, disabled: true, require: false};   
    /**@type {ModelProperty}*/ Sub_Total = { type: 'operation', hiddenFilter: true, hidden: true };
    /**@type {ModelProperty}*/ Iva = { type: 'number', hiddenFilter: true, hidden: true};
    /**@type {ModelProperty}*/ Total = { type: 'number', hiddenFilter: true, hidden: true};
-   /**@type {ModelProperty}*/ Estado = { type: 'text', Dataset: ["ACTIVO", "INACTIVO"] };
+   /**@type {ModelProperty}*/ Estado = { type: 'select', Dataset: ["ACTIVO", "INACTIVO"] , hidden: true};
    /**@type {ModelProperty}*/ Cat_Proveedor = { type: 'WSELECT',  ModelObject: ()=> new Cat_Proveedor_ModelComponent()};
+   /**@type {ModelProperty}*/ Moneda = { type: "radio", Dataset: ["CORDOBAS", "DOLARES"]};
    /**@type {ModelProperty}*/ Detalle_Compra = { type: 'MasterDetail',  ModelObject: ()=> new Detalle_Compra_ModelComponent()};
 }
 export { Tbl_Compra_ModelComponent }

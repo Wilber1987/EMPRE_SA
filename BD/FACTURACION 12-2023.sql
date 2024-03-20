@@ -238,3 +238,7 @@ ADD Id_Proveedor int null;
 
 
 EXEC sp_RENAME 'facturacion.Tbl_Compra.DatosCompra', 'Datos_Compra', 'COLUMN';
+
+
+ALTER TABLE Facturacion.Tbl_Lotes
+ADD Lote NVARCHAR(255);

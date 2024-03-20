@@ -17,6 +17,7 @@ class Tbl_Lotes_ModelComponent extends EntityClass {
    /**@type {ModelProperty}*/ Precio_Compra = { type: 'number' };
    /**@type {ModelProperty}*/ Cantidad_Inicial = { type: 'number' };
    /**@type {ModelProperty}*/ Cantidad_Existente = { type: 'number' };
+   /**@type {ModelProperty}*/ Lote = { type: 'text' };
    /**@type {ModelProperty}*/ Fecha_Ingreso = { type: 'date' };
    /**@type {ModelProperty}*/ Cat_Almacenes = { type: 'WSELECT',  ModelObject: ()=> new Cat_Almacenes_ModelComponent()};
    /**@type {ModelProperty}*/ Detalle_Compra = { type: 'WSELECT',  ModelObject: ()=> new Detalle_Compra_ModelComponent()};

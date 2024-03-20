@@ -18,7 +18,7 @@ import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { Transactional_Configuraciones } from "../FrontModel/ADMINISTRATIVE_ACCESSDataBaseModel.js";
 import { Tbl_Compra } from "../Facturacion/FrontModel/Tbl_Compra.js";
 import { Tbl_Compra_ModelComponent } from "../Facturacion/FrontModel/ModelComponent/Tbl_Compra_ModelComponent.js";
-import { Transactional_Valoracion } from "../FrontModel/DBODataBaseModel.js";
+import { Catalogo_Cambio_Dolar_ModelComponent, Transactional_Valoracion } from "../FrontModel/DBODataBaseModel.js";
 
 /**
  * @typedef {Object} facturaconfig
@@ -27,11 +27,11 @@ import { Transactional_Valoracion } from "../FrontModel/DBODataBaseModel.js";
 
 class MainFactura extends HTMLElement {
     constructor(factura) {
-        super();        
+        super();
         this.OptionContainer = WRender.Create({ className: "OptionContainer" });
         this.TabContainer = WRender.Create({ className: "TabContainer", id: 'TabContainer' });
         this.Manager = new ComponentsManager({ MainContainer: this.TabContainer, SPAManage: false });
-        
+
         this.navigator = new WAppNavigator({ Inicialize: true, Elements: this.ElementsNav })
         this.append(this.CustomStyle, this.OptionContainer, this.navigator, this.TabContainer);
         this.indexFactura = 0;
@@ -40,7 +40,7 @@ class MainFactura extends HTMLElement {
             subtotal: 0,
             iva: 0,
         }
-        
+
         //this.ComprasModel = new Tbl_Compra_ModelComponent();//todo constructor
 
         this.setComprasContainer();
@@ -49,15 +49,26 @@ class MainFactura extends HTMLElement {
 
 
 
-    setComprasContainer() {
+    async setComprasContainer() {
+        const tasa = await new Catalogo_Cambio_Dolar_ModelComponent().Get();
         this.valoracionesContainer = WRender.Create({ className: "valoraciones-container" });
         this.totalesDetail = WRender.Create({ tagName: "div", className: "resumen-container" });
         this.facturaForm = new WForm({
-            ModelObject: this.CompraModel(), //new Tbl_Compra_ModelComponent(),
+            ModelObject: this.CompraModel(tasa), //new Tbl_Compra_ModelComponent(),
             AutoSave: false,
             //Options: false,
             // @ts-ignore
             SaveFunction: async (/**@type {Tbl_Compra} */ valoracion) => {
+
+                console.log(valoracion);
+                if (!this.facturaForm?.Validate()) {
+                    this.append(ModalMessege("Agregue datos para poder continuar"));
+                    return;
+                }
+                const response = await new Tbl_Compra(this.facturaForm?.FormObject).Save();
+
+                this.append(ModalMessege(response.message));
+                return;
             }
         });
 
@@ -68,10 +79,10 @@ class MainFactura extends HTMLElement {
         );
     }
 
-    totalesDetailUpdate(subtotal,total) {
+    totalesDetailUpdate(subtotal, total) {
         // @ts-ignore
         this.totalesDetail.innerHTML = "";
-        const detail = this.facturaForm?.FormObject;          
+        const detail = this.facturaForm?.FormObject;
         // @ts-ignore
         //this.valoracionesForm.FormObject.precio_venta_empeño_cordobas = (precio_venta_empeño);
 
@@ -101,7 +112,7 @@ class MainFactura extends HTMLElement {
                 }))
             }
         }, {
-            name: "Nueva Factura Proveedor", action: () => {                
+            name: "Nueva Factura Proveedor", action: () => {
                 this.Manager.NavigateFunction("newFactura", this.valoracionesContainer);
                 //new WForm({ ModelObject: this.ComprasModel, EntityModel: new Tbl_Compra }))
                 this.indexFactura++;
@@ -109,47 +120,39 @@ class MainFactura extends HTMLElement {
         }
     ]
 
-    Draw = async() => {
+    Draw = async () => {
     }//end draw
-  
 
-    
-    CompraModel() {
+
+
+    CompraModel(tasa) {
         this.ComprasModel = new Tbl_Compra_ModelComponent();
+        //this.ComprasModel.Tasa_Cambio = tasa[0].valor_de_compra.toFixed(3);
+        this.ComprasModel.Tasa_Cambio.defaultValue = tasa[0].valor_de_compra.toFixed(3);
 
         this.ComprasModel.Sub_Total.action = (/**@type {Tbl_Compra} */ EditObject, form, control) => {
-                    
             //console.log(EditObject);
-
-            var subtotal = 0;                    
+            var subtotal = 0;
             var total = 0;
-            
-            
+
             if (EditObject.Detalle_Compra != null || EditObject.Detalle_Compra != undefined) {
-                
+
 
                 for (let index = 0; index < EditObject.Detalle_Compra.length; index++) {
                     var element = EditObject.Detalle_Compra[index]
 
-                    subtotal += element["Cantidad"]*element["Precio_Unitario"];
-                    total += element["Cantidad"]*element["Precio_Unitario"];                   
-                    
-                }
-               /* if (form.shadowRoot.querySelector(".Moneda")) {
-                    form.shadowRoot.querySelector(".Moneda").value = EditObject.Detalle_Compra?.length?? 1 ;
-                    EditObject.Moneda =  EditObject.Detalle_Compra?.length?? 1 ;
-                    console.log(EditObject.Moneda);
-                }
+                    subtotal += element["Cantidad"] * element["Precio_Unitario"];
+                    total += element["Cantidad"] * element["Precio_Unitario"];
 
-                if (form.shadowRoot.querySelector(".Moneda")) {
-                    form.shadowRoot.querySelector(".Moneda").value = EditObject.Detalle_Compra?.length?? 1 ;
-                    EditObject.Moneda =  EditObject.Detalle_Compra?.length?? 1 ;
-                    console.log(EditObject.Moneda);
-                }*/
+                }
+                /* if (form.shadowRoot.querySelector(".Moneda")) {
+                     form.shadowRoot.querySelector(".Moneda").value = EditObject.Detalle_Compra?.length?? 1 ;
+                     EditObject.Moneda =  EditObject.Detalle_Compra?.length?? 1 ;
+                     console.log(EditObject.Moneda);
+                 }*/
             }
-            //return 1
 
-            this.totalesDetailUpdate(subtotal,total);
+            this.totalesDetailUpdate(subtotal, total);
         }
 
         return this.ComprasModel;
