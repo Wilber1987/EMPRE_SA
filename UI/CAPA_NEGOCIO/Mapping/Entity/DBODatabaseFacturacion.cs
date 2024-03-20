@@ -119,13 +119,12 @@ namespace DataBaseModelFacturacion
                                         new Tbl_Lotes()
                                         {
                                             Id_Producto = item.Cat_Producto.Id_Producto,
-                                            //Precio_Venta = item.Precio_Unitario, TODO ??
+                                            Precio_Venta = 0, //TODO
                                             Precio_Compra = item.Precio_Unitario,
-                                            //Cantidad_Inicial = item.Cantidad_Inicial, TODO ??
+                                            Cantidad_Inicial = item.Cantidad,
                                             Cantidad_Existente = item.Cantidad,
                                             Fecha_Ingreso = DateTime.Now,
-                                            //Id_Almacen = 1,
-                                            Id_Almacen = getAlmacen(),//TODO
+                                            Id_Almacen = getAlmacen(),
                                             Lote = generarLote()
                                         }
                                     }

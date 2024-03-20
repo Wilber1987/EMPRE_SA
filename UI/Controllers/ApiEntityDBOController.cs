@@ -24,7 +24,7 @@ namespace API.Controllers
         // }
 
         [HttpGet]
-        public object SendMail()
+        public object? SendMail()
         {
             return MailServices.SendMailContract(new List<String>() { "wilberj1987@gmail.com", "alderhernandez@gmail.com" }, "noreply@noreply", "Usted es un mela", "example.cshtml",
                     new
@@ -42,17 +42,17 @@ namespace API.Controllers
         [AuthController]
         public List<Catalogo_Clasificacion_Interes> getCatalogo_Clasificacion_Interes(Catalogo_Clasificacion_Interes Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Catalogo_Clasificacion_Interes>();
+            return Inst.Where<Catalogo_Clasificacion_Interes>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
-        public object saveCatalogo_Clasificacion_Interes(Catalogo_Clasificacion_Interes inst)
+        public object? saveCatalogo_Clasificacion_Interes(Catalogo_Clasificacion_Interes inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateCatalogo_Clasificacion_Interes(Catalogo_Clasificacion_Interes inst)
+        public object? updateCatalogo_Clasificacion_Interes(Catalogo_Clasificacion_Interes inst)
         {
             return inst.Update();
         }
@@ -60,17 +60,17 @@ namespace API.Controllers
         [AuthController]
         public List<Catalogo_Estados_Articulos> getCatalogo_Estados_Articulos(Catalogo_Estados_Articulos Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Catalogo_Estados_Articulos>();
+            return Inst.Where<Catalogo_Estados_Articulos>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
-        public object saveCatalogo_Estados_Articulos(Catalogo_Estados_Articulos inst)
+        public object? saveCatalogo_Estados_Articulos(Catalogo_Estados_Articulos inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateCatalogo_Estados_Articulos(Catalogo_Estados_Articulos inst)
+        public object? updateCatalogo_Estados_Articulos(Catalogo_Estados_Articulos inst)
         {
             return inst.Update();
         }
@@ -79,17 +79,17 @@ namespace API.Controllers
         [AuthController]
         public List<Transactional_Valoracion> getTransactional_Valoracion(Transactional_Valoracion Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Transactional_Valoracion>();
+            return Inst.Where<Transactional_Valoracion>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
-        public object saveTransactional_Valoracion(Transactional_Valoracion inst)
+        public object? saveTransactional_Valoracion(Transactional_Valoracion inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateTransactional_Valoracion(Transactional_Valoracion inst)
+        public object? updateTransactional_Valoracion(Transactional_Valoracion inst)
         {
             return inst.Update();
         }
@@ -98,17 +98,17 @@ namespace API.Controllers
         [AuthController]
         public List<Catalogo_Agentes> getCatalogo_Agentes(Catalogo_Agentes Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Catalogo_Agentes>();
+            return Inst.Where<Catalogo_Agentes>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
-        public object saveCatalogo_Agentes(Catalogo_Agentes inst)
+        public object? saveCatalogo_Agentes(Catalogo_Agentes inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateCatalogo_Agentes(Catalogo_Agentes inst)
+        public object? updateCatalogo_Agentes(Catalogo_Agentes inst)
         {
             return inst.Update();
         }
@@ -117,17 +117,17 @@ namespace API.Controllers
         [AuthController]
         public List<Catalogo_Clasificacion_Cliente> getCatalogo_Clasificacion_Cliente(Catalogo_Clasificacion_Cliente Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Catalogo_Clasificacion_Cliente>();
+            return Inst.Where<Catalogo_Clasificacion_Cliente>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
-        public object saveCatalogo_Clasificacion_Cliente(Catalogo_Clasificacion_Cliente inst)
+        public object? saveCatalogo_Clasificacion_Cliente(Catalogo_Clasificacion_Cliente inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateCatalogo_Clasificacion_Cliente(Catalogo_Clasificacion_Cliente inst)
+        public object? updateCatalogo_Clasificacion_Cliente(Catalogo_Clasificacion_Cliente inst)
         {
             return inst.Update();
         }
@@ -136,17 +136,17 @@ namespace API.Controllers
         [AuthController]
         public List<Catalogo_Clientes> getCatalogo_Clientes(Catalogo_Clientes Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Catalogo_Clientes>();
+            return Inst.Where<Catalogo_Clientes>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
-        public object saveCatalogo_Clientes(Catalogo_Clientes inst)
+        public object? saveCatalogo_Clientes(Catalogo_Clientes inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateCatalogo_Clientes(Catalogo_Clientes inst)
+        public object? updateCatalogo_Clientes(Catalogo_Clientes inst)
         {
             return inst.Update();
         }
@@ -155,17 +155,17 @@ namespace API.Controllers
         [AuthController]
         public List<Condicion_Laboral_Cliente> getCondicion_Laboral_Cliente(Condicion_Laboral_Cliente Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Condicion_Laboral_Cliente>();
+            return Inst.Where<Condicion_Laboral_Cliente>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
-        public object saveCondicion_Laboral_Cliente(Condicion_Laboral_Cliente inst)
+        public object? saveCondicion_Laboral_Cliente(Condicion_Laboral_Cliente inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateCondicion_Laboral_Cliente(Condicion_Laboral_Cliente inst)
+        public object? updateCondicion_Laboral_Cliente(Condicion_Laboral_Cliente inst)
         {
             return inst.Update();
         }
@@ -174,17 +174,17 @@ namespace API.Controllers
         [AuthController]
         public List<Catalogo_Tipo_Agente> getCatalogo_Tipo_Agente(Catalogo_Tipo_Agente Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Catalogo_Tipo_Agente>();
+            return Inst.Where<Catalogo_Tipo_Agente>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
-        public object saveCatalogo_Tipo_Agente(Catalogo_Tipo_Agente inst)
+        public object? saveCatalogo_Tipo_Agente(Catalogo_Tipo_Agente inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateCatalogo_Tipo_Agente(Catalogo_Tipo_Agente inst)
+        public object? updateCatalogo_Tipo_Agente(Catalogo_Tipo_Agente inst)
         {
             return inst.Update();
         }
@@ -193,17 +193,17 @@ namespace API.Controllers
         [AuthController]
         public List<Catalogo_Tipo_Identificacion> getCatalogo_Tipo_Identificacion(Catalogo_Tipo_Identificacion Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Catalogo_Tipo_Identificacion>();
+            return Inst.Where<Catalogo_Tipo_Identificacion>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
-        public object saveCatalogo_Tipo_Identificacion(Catalogo_Tipo_Identificacion inst)
+        public object? saveCatalogo_Tipo_Identificacion(Catalogo_Tipo_Identificacion inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateCatalogo_Tipo_Identificacion(Catalogo_Tipo_Identificacion inst)
+        public object? updateCatalogo_Tipo_Identificacion(Catalogo_Tipo_Identificacion inst)
         {
             return inst.Update();
         }
@@ -212,17 +212,17 @@ namespace API.Controllers
         [AuthController]
         public List<Transaction_Contratos> getTransaction_Contratos(Transaction_Contratos Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Transaction_Contratos>();
+            return Inst.Where<Transaction_Contratos>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
-        public object saveTransaction_Contratos(Transaction_Contratos inst)
+        public object? saveTransaction_Contratos(Transaction_Contratos inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateTransaction_Contratos(Transaction_Contratos inst)
+        public object? updateTransaction_Contratos(Transaction_Contratos inst)
         {
             return inst.Update();
         }
@@ -231,17 +231,17 @@ namespace API.Controllers
         [AuthController]
         public List<Detail_Prendas> getDetail_Prendas(Detail_Prendas Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Detail_Prendas>();
+            return Inst.Where<Detail_Prendas>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
-        public object saveDetail_Prendas(Detail_Prendas inst)
+        public object? saveDetail_Prendas(Detail_Prendas inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateDetail_Prendas(Detail_Prendas inst)
+        public object? updateDetail_Prendas(Detail_Prendas inst)
         {
             return inst.Update();
         }
@@ -250,17 +250,17 @@ namespace API.Controllers
         [AuthController]
         public List<Detail_Prendas_Vehiculos> getDetail_Prendas_Vehiculos(Detail_Prendas_Vehiculos Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Detail_Prendas_Vehiculos>();
+            return Inst.Where<Detail_Prendas_Vehiculos>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
-        public object saveDetail_Prendas_Vehiculos(Detail_Prendas_Vehiculos inst)
+        public object? saveDetail_Prendas_Vehiculos(Detail_Prendas_Vehiculos inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateDetail_Prendas_Vehiculos(Detail_Prendas_Vehiculos inst)
+        public object? updateDetail_Prendas_Vehiculos(Detail_Prendas_Vehiculos inst)
         {
             return inst.Update();
         }
@@ -269,17 +269,17 @@ namespace API.Controllers
         [AuthController]
         public List<Catalogo_Cambio_Dolar> getCatalogo_Cambio_Dolar(Catalogo_Cambio_Dolar Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Catalogo_Cambio_Dolar>();
+            return Inst.Where<Catalogo_Cambio_Dolar>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
-        public object saveCatalogo_Cambio_Dolar(Catalogo_Cambio_Dolar inst)
+        public object? saveCatalogo_Cambio_Dolar(Catalogo_Cambio_Dolar inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateCatalogo_Cambio_Dolar(Catalogo_Cambio_Dolar inst)
+        public object? updateCatalogo_Cambio_Dolar(Catalogo_Cambio_Dolar inst)
         {
             return inst.Update();
         }
@@ -288,17 +288,17 @@ namespace API.Controllers
         [AuthController]
         public List<Catalogo_Cuentas> getCatalogo_Cuentas(Catalogo_Cuentas Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Catalogo_Cuentas>();
+            return Inst.Where<Catalogo_Cuentas>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
-        public object saveCatalogo_Cuentas(Catalogo_Cuentas inst)
+        public object? saveCatalogo_Cuentas(Catalogo_Cuentas inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateCatalogo_Cuentas(Catalogo_Cuentas inst)
+        public object? updateCatalogo_Cuentas(Catalogo_Cuentas inst)
         {
             return inst.Update();
         }
@@ -307,17 +307,17 @@ namespace API.Controllers
         [AuthController]
         public List<Categoria_Cuentas> getCategoria_Cuentas(Categoria_Cuentas Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Categoria_Cuentas>();
+            return Inst.Where<Categoria_Cuentas>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
-        public object saveCategoria_Cuentas(Categoria_Cuentas inst)
+        public object? saveCategoria_Cuentas(Categoria_Cuentas inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateCategoria_Cuentas(Categoria_Cuentas inst)
+        public object? updateCategoria_Cuentas(Categoria_Cuentas inst)
         {
             return inst.Update();
         }
@@ -326,17 +326,17 @@ namespace API.Controllers
         [AuthController]
         public List<Permisos_Cuentas> getPermisos_Cuentas(Permisos_Cuentas Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Permisos_Cuentas>();
+            return Inst.Where<Permisos_Cuentas>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
-        public object savePermisos_Cuentas(Permisos_Cuentas inst)
+        public object? savePermisos_Cuentas(Permisos_Cuentas inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updatePermisos_Cuentas(Permisos_Cuentas inst)
+        public object? updatePermisos_Cuentas(Permisos_Cuentas inst)
         {
             return inst.Update();
         }
@@ -346,17 +346,17 @@ namespace API.Controllers
         [AuthController]
         public List<Catalogo_Departamento> getCatalogo_Departamento(Catalogo_Departamento Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Catalogo_Departamento>();
+            return Inst.Where<Catalogo_Departamento>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
-        public object saveCatalogo_Departamento(Catalogo_Departamento inst)
+        public object? saveCatalogo_Departamento(Catalogo_Departamento inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateCatalogo_Departamento(Catalogo_Departamento inst)
+        public object? updateCatalogo_Departamento(Catalogo_Departamento inst)
         {
             return inst.Update();
         }
@@ -365,17 +365,17 @@ namespace API.Controllers
         [AuthController]
         public List<Catalogo_Inversores> getCatalogo_Inversores(Catalogo_Inversores Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Catalogo_Inversores>();
+            return Inst.Where<Catalogo_Inversores>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
-        public object saveCatalogo_Inversores(Catalogo_Inversores inst)
+        public object? saveCatalogo_Inversores(Catalogo_Inversores inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateCatalogo_Inversores(Catalogo_Inversores inst)
+        public object? updateCatalogo_Inversores(Catalogo_Inversores inst)
         {
             return inst.Update();
         }
@@ -384,17 +384,17 @@ namespace API.Controllers
         [AuthController]
         public List<Catalogo_Municipio> getCatalogo_Municipio(Catalogo_Municipio Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Catalogo_Municipio>();
+            return Inst.Where<Catalogo_Municipio>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
-        public object saveCatalogo_Municipio(Catalogo_Municipio inst)
+        public object? saveCatalogo_Municipio(Catalogo_Municipio inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateCatalogo_Municipio(Catalogo_Municipio inst)
+        public object? updateCatalogo_Municipio(Catalogo_Municipio inst)
         {
             return inst.Update();
         }
@@ -403,17 +403,17 @@ namespace API.Controllers
         [AuthController]
         public List<Catalogo_Nacionalidad> getCatalogo_Nacionalidad(Catalogo_Nacionalidad Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Catalogo_Nacionalidad>();
+            return Inst.Where<Catalogo_Nacionalidad>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
-        public object saveCatalogo_Nacionalidad(Catalogo_Nacionalidad inst)
+        public object? saveCatalogo_Nacionalidad(Catalogo_Nacionalidad inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateCatalogo_Nacionalidad(Catalogo_Nacionalidad inst)
+        public object? updateCatalogo_Nacionalidad(Catalogo_Nacionalidad inst)
         {
             return inst.Update();
         }
@@ -422,17 +422,17 @@ namespace API.Controllers
         [AuthController]
         public List<Catalogo_Profesiones> getCatalogo_Profesiones(Catalogo_Profesiones Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Catalogo_Profesiones>();
+            return Inst.Where<Catalogo_Profesiones>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
-        public object saveCatalogo_Profesiones(Catalogo_Profesiones inst)
+        public object? saveCatalogo_Profesiones(Catalogo_Profesiones inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateCatalogo_Profesiones(Catalogo_Profesiones inst)
+        public object? updateCatalogo_Profesiones(Catalogo_Profesiones inst)
         {
             return inst.Update();
         }
@@ -441,17 +441,17 @@ namespace API.Controllers
         [AuthController]
         public List<Catalogo_Tipo_Transaccion> getCatalogo_Tipo_Transaccion(Catalogo_Tipo_Transaccion Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Catalogo_Tipo_Transaccion>();
+            return Inst.Where<Catalogo_Tipo_Transaccion>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
-        public object saveCatalogo_Tipo_Transaccion(Catalogo_Tipo_Transaccion inst)
+        public object? saveCatalogo_Tipo_Transaccion(Catalogo_Tipo_Transaccion inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateCatalogo_Tipo_Transaccion(Catalogo_Tipo_Transaccion inst)
+        public object? updateCatalogo_Tipo_Transaccion(Catalogo_Tipo_Transaccion inst)
         {
             return inst.Update();
         }
@@ -460,17 +460,17 @@ namespace API.Controllers
         [AuthController]
         public List<Transaction_Contratos_Inversionistas> getTransaction_Contratos_Inversionistas(Transaction_Contratos_Inversionistas Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Transaction_Contratos_Inversionistas>();
+            return Inst.Where<Transaction_Contratos_Inversionistas>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
-        public object saveTransaction_Contratos_Inversionistas(Transaction_Contratos_Inversionistas inst)
+        public object? saveTransaction_Contratos_Inversionistas(Transaction_Contratos_Inversionistas inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateTransaction_Contratos_Inversionistas(Transaction_Contratos_Inversionistas inst)
+        public object? updateTransaction_Contratos_Inversionistas(Transaction_Contratos_Inversionistas inst)
         {
             return inst.Update();
         }
@@ -479,17 +479,17 @@ namespace API.Controllers
         [AuthController]
         public List<Transaction_Egresos> getTransaction_Egresos(Transaction_Egresos Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Transaction_Egresos>();
+            return Inst.Where<Transaction_Egresos>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
-        public object saveTransaction_Egresos(Transaction_Egresos inst)
+        public object? saveTransaction_Egresos(Transaction_Egresos inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateTransaction_Egresos(Transaction_Egresos inst)
+        public object? updateTransaction_Egresos(Transaction_Egresos inst)
         {
             return inst.Update();
         }
@@ -498,17 +498,17 @@ namespace API.Controllers
         [AuthController]
         public List<Transaction_Facturas> getTransaction_Facturas(Transaction_Facturas Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Transaction_Facturas>();
+            return Inst.Where<Transaction_Facturas>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
-        public object saveTransaction_Facturas(Transaction_Facturas inst)
+        public object? saveTransaction_Facturas(Transaction_Facturas inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateTransaction_Facturas(Transaction_Facturas inst)
+        public object? updateTransaction_Facturas(Transaction_Facturas inst)
         {
             return inst.Update();
         }
@@ -517,17 +517,17 @@ namespace API.Controllers
         [AuthController]
         public List<Transaction_Ingresos> getTransaction_Ingresos(Transaction_Ingresos Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Transaction_Ingresos>();
+            return Inst.Where<Transaction_Ingresos>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
-        public object saveTransaction_Ingresos(Transaction_Ingresos inst)
+        public object? saveTransaction_Ingresos(Transaction_Ingresos inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateTransaction_Ingresos(Transaction_Ingresos inst)
+        public object? updateTransaction_Ingresos(Transaction_Ingresos inst)
         {
             return inst.Update();
         }
@@ -536,17 +536,17 @@ namespace API.Controllers
         [AuthController]
         public List<Transaction_Ingresos_Egresos> getTransaction_Ingresos_Egresos(Transaction_Ingresos_Egresos Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Transaction_Ingresos_Egresos>();
+            return Inst.Where<Transaction_Ingresos_Egresos>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
-        public object saveTransaction_Ingresos_Egresos(Transaction_Ingresos_Egresos inst)
+        public object? saveTransaction_Ingresos_Egresos(Transaction_Ingresos_Egresos inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateTransaction_Ingresos_Egresos(Transaction_Ingresos_Egresos inst)
+        public object? updateTransaction_Ingresos_Egresos(Transaction_Ingresos_Egresos inst)
         {
             return inst.Update();
         }
@@ -555,17 +555,17 @@ namespace API.Controllers
         [AuthController]
         public List<Catalogo_Sucursales> getCatalogo_Sucursales(Catalogo_Sucursales Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Catalogo_Sucursales>();
+            return Inst.Where<Catalogo_Sucursales>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
-        public object saveCatalogo_Sucursales(Catalogo_Sucursales inst)
+        public object? saveCatalogo_Sucursales(Catalogo_Sucursales inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateCatalogo_Sucursales(Catalogo_Sucursales inst)
+        public object? updateCatalogo_Sucursales(Catalogo_Sucursales inst)
         {
             return inst.Update();
         }
@@ -574,17 +574,17 @@ namespace API.Controllers
         [AuthController]
         public List<Datos_Configuracion> getDatos_Configuracion(Datos_Configuracion Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Datos_Configuracion>();
+            return Inst.Where<Datos_Configuracion>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
-        public object saveDatos_Configuracion(Datos_Configuracion inst)
+        public object? saveDatos_Configuracion(Datos_Configuracion inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateDatos_Configuracion(Datos_Configuracion inst)
+        public object? updateDatos_Configuracion(Datos_Configuracion inst)
         {
             return inst.Update();
         }
@@ -593,17 +593,17 @@ namespace API.Controllers
         [AuthController]
         public List<Catalogo_Categoria> getCatalogo_Categoria(Catalogo_Categoria Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Catalogo_Categoria>();
+            return Inst.Where<Catalogo_Categoria>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
-        public object saveCatalogo_Categoria(Catalogo_Categoria inst)
+        public object? saveCatalogo_Categoria(Catalogo_Categoria inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateCatalogo_Categoria(Catalogo_Categoria inst)
+        public object? updateCatalogo_Categoria(Catalogo_Categoria inst)
         {
             return inst.Update();
         }
@@ -612,17 +612,17 @@ namespace API.Controllers
         [AuthController]
         public List<Transaccion_Factura> getTransaccion_Factura(Transaccion_Factura Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Get<Transaccion_Factura>();
+            return Inst.Where<Transaccion_Factura>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
-        public object saveTransaccion_Factura(Transaccion_Factura inst)
+        public object? saveTransaccion_Factura(Transaccion_Factura inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object updateTransaccion_Factura(Transaccion_Factura inst)
+        public object? updateTransaccion_Factura(Transaccion_Factura inst)
         {
             return inst.Update();
         }
