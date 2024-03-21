@@ -171,7 +171,7 @@ class Transaction_ContratosView extends HTMLElement {
         this.OptionContainer.append(WRender.Create({
             tagName: 'button', className: 'Block-Tertiary', innerText: 'Buscar valoraciones',
             onclick: () => this.Manager.NavigateFunction("Searcher",
-                new ValoracionesSearch(this.selectValoracion))
+                new ValoracionesSearch(this.selectValoracion, undefined,  true))
         }))
         this.OptionContainer.append(WRender.Create({
             tagName: 'button', className: 'Block-Fifth', innerText: 'Guardar contrato',
