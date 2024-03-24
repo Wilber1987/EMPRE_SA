@@ -272,7 +272,7 @@ namespace Transactions
 						message = "Recibo no encontrado"
 					};
 				}
-				if (factura.estado != EstadoEnum.ACTIVO.ToString())//todo enum
+				if (factura.estado != EstadoEnum.ACTIVO.ToString())
 				{
 					return new ResponseService()
 					{
@@ -356,7 +356,7 @@ namespace Transactions
 				return new ResponseService()
 				{
 					status = 200,
-					message = "Recibo anulada correctamente",
+					message = "Recibo anulado correctamente",
 					body = factura
 				};
 

@@ -17,11 +17,18 @@ class Detalle_Compra_ModelComponent extends EntityClass {
    /**@type {ModelProperty}*/ Id_Detalle_Compra = { type: 'number', primary: true };
    /**@type {ModelProperty}*/ Cantidad = { type: 'number' };
    /**@type {ModelProperty}*/ Precio_Unitario = { type: 'number' };
-   /**@type {ModelProperty}*/ Total = { type: "OPERATION",  label: "CUOTA A PAGAR CORDOBAS", action: (/**@type {Detalle_Compra} */ cuota)=>{
+   /**@type {ModelProperty}*/ SubTotal = { type: "OPERATION",  label: "CUOTA A PAGAR CORDOBAS", action: (/**@type {Detalle_Compra} */ cuota)=>{
         return (cuota.Cantidad * cuota.Precio_Unitario).toFixed(3);
-    } };// { type: 'number' };
+    }};
+   
+    /**@type {ModelProperty}*/ Aplica_Iva = { type: 'CHECKBOX', require: false, hiddenInTable: true };
+    /**@type {ModelProperty}*/ Iva = { type: "OPERATION", disabled: true, label: "IVA A PAGAR CORDOBAS",  action: (/**@type {Detalle_Compra} */ cuota)=>{       
+    }};
+    /**@type {ModelProperty}*/ Total = { type: "OPERATION",  label: "CUOTA A PAGAR CORDOBAS", action: (/**@type {Detalle_Compra} */ cuota)=>{
+        //return (cuota.Cantidad * cuota.Precio_Unitario)+cuota.Iva;
+    }};
    /**@type {ModelProperty}*/ Presentacion = { type: 'select', Dataset: ["KILATE", "UND", "LBS", "KILO", "UND", "DOCENA"] };
-   /**@type {ModelProperty}*/ Cat_Producto = { type: 'WSELECT',  ModelObject: ()=> new Cat_Producto_ModelComponent(), require: false};
+   /**@type {ModelProperty}*/ Cat_Producto = { type: 'WSELECT',  ModelObject: ()=> new Cat_Producto_ModelComponent()};
    ///**@type {ModelProperty}*/ Tbl_Compra = { type: 'WSELECT',  ModelObject: ()=> new Tbl_Compra_ModelComponent()};
    ///**@type {ModelProperty}*/ Tbl_Lotes = { type: 'MasterDetail',  ModelObject: ()=> new Tbl_Lotes_ModelComponent()};
 }

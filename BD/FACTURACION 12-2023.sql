@@ -242,3 +242,18 @@ EXEC sp_RENAME 'facturacion.Tbl_Compra.DatosCompra', 'Datos_Compra', 'COLUMN';
 
 ALTER TABLE Facturacion.Tbl_Lotes
 ADD Lote NVARCHAR(255);
+
+ALTER TABLE facturacion.Detalle_Compra
+ADD SubTotal float;
+
+ALTER TABLE facturacion.Detalle_Compra
+ADD Iva float;
+
+ALTER TABLE facturacion.Detalle_Compra
+ALTER COLUMN Cantidad FLOAT; 
+
+ALTER TABLE facturacion.Tbl_Lotes
+ALTER COLUMN Cantidad_Inicial FLOAT; 
+
+ALTER TABLE facturacion.Tbl_Lotes
+ALTER COLUMN Cantidad_Existente FLOAT; 

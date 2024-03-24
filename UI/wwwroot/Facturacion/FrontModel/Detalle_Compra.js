@@ -14,6 +14,8 @@ class Detalle_Compra extends EntityClass {
    /**@type {Number}*/ Id_Detalle_Compra;
    /**@type {Number}*/ Cantidad;
    /**@type {Number}*/ Precio_Unitario;
+   /**@type {Number}*/ SubTotal;
+   /**@type {Number}*/ Iva;
    /**@type {Number}*/ Total;
    /**@type {String}*/ Presentacion;
    /**@type {Cat_Producto} ManyToOne*/ Cat_Producto;

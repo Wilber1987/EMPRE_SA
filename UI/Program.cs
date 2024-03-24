@@ -3,13 +3,8 @@ using BackgroundJob.Cron.Jobs;
 using CAPA_DATOS.Cron.Jobs;
 using Model;
 
-<<<<<<< HEAD
 //SqlADOConexion.IniciarConexion("sa", "zaxscd", ".", "EMPRE_SA");
 SqlADOConexion.IniciarConexion("sa", "123", ".\\SQLEXPRESS", "EMPRE_SA");
-=======
-SqlADOConexion.IniciarConexion("sa", "zaxscd", ".", "EMPRE_SA");
-//SqlADOConexion.IniciarConexion("sa", "123", ".\\SQLEXPRESS", "EMPRE_SA");
->>>>>>> 350ff5122c9f9dadc777cca29c39dcc0706b7124
 //SqlADOConexion.IniciarConexion("empresa", "Wmatus09%", "tcp:empresa-sa.database.windows.net", "EMPRE_SA");
 
  //var test = new test{ Parameters = new List<object> {1 , 2}}.Get<test>(true);

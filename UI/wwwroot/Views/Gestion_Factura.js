@@ -19,6 +19,7 @@ import { Transactional_Configuraciones } from "../FrontModel/ADMINISTRATIVE_ACCE
 import { Tbl_Compra } from "../Facturacion/FrontModel/Tbl_Compra.js";
 import { Tbl_Compra_ModelComponent } from "../Facturacion/FrontModel/ModelComponent/Tbl_Compra_ModelComponent.js";
 import { Catalogo_Cambio_Dolar_ModelComponent, Transactional_Valoracion } from "../FrontModel/DBODataBaseModel.js";
+import { Detalle_Compra } from "../Facturacion/FrontModel/Detalle_Compra.js";
 
 /**
  * @typedef {Object} facturaconfig
@@ -40,8 +41,7 @@ class MainFactura extends HTMLElement {
             subtotal: 0,
             iva: 0,
         }
-
-        //this.ComprasModel = new Tbl_Compra_ModelComponent();//todo constructor
+        this.ivaPercent = this.ivaPercent ?? 0.15;//todo recibir del constructor
 
         this.setComprasContainer();
 
@@ -53,8 +53,9 @@ class MainFactura extends HTMLElement {
         const tasa = await new Catalogo_Cambio_Dolar_ModelComponent().Get();
         this.valoracionesContainer = WRender.Create({ className: "valoraciones-container" });
         this.totalesDetail = WRender.Create({ tagName: "div", className: "resumen-container" });
+        this.BuildCompraModel(tasa)
         this.facturaForm = new WForm({
-            ModelObject: this.CompraModel(tasa), //new Tbl_Compra_ModelComponent(),
+            ModelObject: this.ComprasModel, //new Tbl_Compra_ModelComponent(),
             AutoSave: false,
             //Options: false,
             // @ts-ignore
@@ -79,7 +80,7 @@ class MainFactura extends HTMLElement {
         );
     }
 
-    totalesDetailUpdate(subtotal, total) {
+    totalesDetailUpdate(subtotal, iva, total) {
         // @ts-ignore
         this.totalesDetail.innerHTML = "";
         const detail = this.facturaForm?.FormObject;
@@ -92,6 +93,10 @@ class MainFactura extends HTMLElement {
             <label class="value-container">
                 Sub Total: 
                 <span>${subtotal} C$</span>
+            </label>
+            <label class="value-container">
+                Iva : 
+                <span>${iva} C$</span>
             </label>
             <label class="value-container">
                 Total: 
@@ -108,7 +113,21 @@ class MainFactura extends HTMLElement {
             name: "Facturas Proveedor", action: () => {
                 this.Manager.NavigateFunction("facturas", new WTableComponent({
                     ModelObject: new Tbl_Compra_ModelComponent, EntityModel: new Tbl_Compra,
-                    Options: { Search: false, Filter: true, Add: false, Edit: false }
+                    Options: {
+                        Search: false, Filter: true, Add: false, Edit: false,
+                        UserActions: [{
+                            name: "Anular",
+                            action: async (/**@type {Tbl_Compra}*/compra) => {
+                                this.append(ModalVericateAction(async () => {
+                                    const response = await compra.Anular();
+                                    // @ts-ignore
+                                    this.append(ModalMessege(response.message));
+
+                                    //modal.close();
+                                }, "¿Esta seguro que desea anular esta compra?"))
+                            }
+                        }]
+                    }
                 }))
             }
         }, {
@@ -123,36 +142,30 @@ class MainFactura extends HTMLElement {
     Draw = async () => {
     }//end draw
 
-
-
-    CompraModel(tasa) {
+    BuildCompraModel(tasa) {
         this.ComprasModel = new Tbl_Compra_ModelComponent();
         //this.ComprasModel.Tasa_Cambio = tasa[0].valor_de_compra.toFixed(3);
         this.ComprasModel.Tasa_Cambio.defaultValue = tasa[0].valor_de_compra.toFixed(3);
+        this.ComprasModel.Detalle_Compra.ModelObject = this.ComprasModel.Detalle_Compra.ModelObject();
+        this.ComprasModel.Detalle_Compra.ModelObject.Iva.action = (/**@type {Detalle_Compra} */ cuota) => {            
+            return  cuota.Aplica_Iva ? ((cuota.Cantidad * cuota.Precio_Unitario) * this.ivaPercent).toFixed(3) : 0;
+        };
+
+        this.ComprasModel.Detalle_Compra.ModelObject.Total.action = (/**@type {Detalle_Compra} */ cuota) => {         
+            return  (parseFloat(cuota.Iva) + parseFloat(cuota.SubTotal)).toFixed(3);
+        };
 
         this.ComprasModel.Sub_Total.action = (/**@type {Tbl_Compra} */ EditObject, form, control) => {
             //console.log(EditObject);
-            var subtotal = 0;
-            var total = 0;
-
-            if (EditObject.Detalle_Compra != null || EditObject.Detalle_Compra != undefined) {
-
-
-                for (let index = 0; index < EditObject.Detalle_Compra.length; index++) {
-                    var element = EditObject.Detalle_Compra[index]
-
-                    subtotal += element["Cantidad"] * element["Precio_Unitario"];
-                    total += element["Cantidad"] * element["Precio_Unitario"];
-
-                }
-                /* if (form.shadowRoot.querySelector(".Moneda")) {
-                     form.shadowRoot.querySelector(".Moneda").value = EditObject.Detalle_Compra?.length?? 1 ;
-                     EditObject.Moneda =  EditObject.Detalle_Compra?.length?? 1 ;
-                     console.log(EditObject.Moneda);
-                 }*/
+            let subtotal;
+            let total;
+            let iva;
+            if (EditObject.Detalle_Compra != undefined) {
+                subtotal = WArrayF.SumValAtt(EditObject.Detalle_Compra, "SubTotal");                
+                iva = WArrayF.SumValAtt(EditObject.Detalle_Compra, "Iva");
+                total = WArrayF.SumValAtt(EditObject.Detalle_Compra, "Total");
             }
-
-            this.totalesDetailUpdate(subtotal, total);
+            this.totalesDetailUpdate(subtotal ?? 0, iva ?? 0, total ?? 0);
         }
 
         return this.ComprasModel;

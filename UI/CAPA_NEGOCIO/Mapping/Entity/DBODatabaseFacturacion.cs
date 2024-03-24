@@ -89,20 +89,16 @@ namespace DataBaseModelFacturacion
                         message = "Ingrese al menos un artículo de compra"
                     };
                 }
+                
                 var detalleCompra = new List<Detalle_Compra>();
-
-                BeginGlobalTransaction();
 
                 double subtotal = 0;
                 double ivaTotal = 0;
                 double total = 0;
-
-
                 foreach (var item in this.Detalle_Compra)
                 {
                     if (item.Cantidad <= 0)
                     {
-                        RollBackGlobalTransaction();
                         return new ResponseService()
                         {
                             status = 400,
@@ -111,11 +107,11 @@ namespace DataBaseModelFacturacion
                     }
 
                     double subtotalItem = (double)(item.Cantidad * item.Precio_Unitario);
-                    //double ivaItem = subtotalItem * (item.Iva / 100);
+                    double ivaItem = (double)item.Iva;
                     double totalItem = subtotalItem;
 
                     subtotal += subtotalItem;
-                    //ivaTotal += ivaItem;
+                    ivaTotal += ivaItem;
                     total += totalItem;
 
                     detalleCompra.Add(
@@ -125,6 +121,8 @@ namespace DataBaseModelFacturacion
                             Id_Producto = item.Cat_Producto.Id_Producto,
                             Cantidad = item.Cantidad,
                             Precio_Unitario = item.Precio_Unitario,
+                            Iva = item.Iva,
+                            SubTotal = item.SubTotal,
                             Total = item.Total,
                             Presentacion = item.Presentacion,
                             lotes = new List<Tbl_Lotes>
@@ -144,25 +142,14 @@ namespace DataBaseModelFacturacion
                         }
                     );
                 }
-
-                var compra = new Tbl_Compra()
-                {
-                    Datos_Compra = this.Datos_Compra,
-                    Id_Proveedor = this.Id_Proveedor,
-                    Fecha = DateTime.Now,
-                    Tasa_Cambio = this.Tasa_Cambio,
-                    Moneda = this.Moneda,
-                    Sub_Total = subtotal,
-                    Iva = this.Iva,
-                    Total = total,
-                    Estado = this.Estado,
-                    Detalle_Compra = detalleCompra
-                };
-
-
-                compra.Save();
-
-                CommitGlobalTransaction();
+                Fecha = DateTime.Now;
+                Total = total;
+                Estado = EstadoEnum.ACTIVO.ToString();
+                Sub_Total = subtotal;
+                Iva = ivaTotal;
+                Total = total;
+                Detalle_Compra = detalleCompra;
+                Save();
                 return new ResponseService()
                 {
                     status = 200,
@@ -171,7 +158,6 @@ namespace DataBaseModelFacturacion
             }
             catch (Exception ex)
             {
-                RollBackGlobalTransaction();
                 return new ResponseService()
                 {
                     status = 200,
@@ -223,7 +209,69 @@ namespace DataBaseModelFacturacion
             return codigoLote;
         }
 
+        public object? AnularCompra(string token)
+        {
+            try
+            {
+                var user = AuthNetCore.User(token);
+                var dbUser = new API.Extended.Security_Users { Id_User = user.UserId }.Find<API.Extended.Security_Users>();
+                var compra = new Tbl_Compra() { Id_Compra = this.Id_Compra }.Find<Tbl_Compra>();
 
+                if (compra == null)
+                {
+                    return new ResponseService()
+                    {
+                        status = 400,
+                        message = "Compra no encontrado"
+                    };
+                }
+                if (compra.Estado != EstadoEnum.ACTIVO.ToString())
+                {
+                    return new ResponseService()
+                    {
+                        status = 400,
+                        message = "La Compra no se encuentra activa"
+                    };
+                }
+                compra.Estado = EstadoEnum.ANULADO.ToString();
+                compra.Update();
+                BeginGlobalTransaction();
+
+                decimal sumaDetalle = (decimal)compra.Detalle_Compra.Sum(c => c.Cantidad.Value);
+                decimal sumaCantidadLotes = 0;
+                foreach (var detalleCompra in compra.Detalle_Compra)
+                {
+                    var lote = new Tbl_Lotes() { Id_Detalle_Compra = detalleCompra.Id_Detalle_Compra }.Find<Tbl_Lotes>();
+                    sumaCantidadLotes += (decimal)lote.Cantidad_Existente;
+                }
+
+                if (sumaDetalle == sumaCantidadLotes)
+                {
+                    compra.Estado = EstadoEnum.ANULADO.ToString();
+                    compra.Update();
+                }
+
+
+                CommitGlobalTransaction();
+
+                return new ResponseService()
+                {
+                    status = 200,
+                    message = "Compra anulada correctamente",
+                    body = compra
+                };
+
+            }
+            catch (System.Exception ex)
+            {
+                RollBackGlobalTransaction();
+                return new ResponseService()
+                {
+                    message = "Error:" + ex.ToString(),
+                    status = 400
+                };
+            }
+        }
     }
 
 
@@ -233,8 +281,10 @@ namespace DataBaseModelFacturacion
         public int? Id_Detalle_Compra { get; set; }
         public int? Id_Compra { get; set; }
         public int? Id_Producto { get; set; }
-        public int? Cantidad { get; set; }
+        public Double? Cantidad { get; set; }
         public Double? Precio_Unitario { get; set; }
+        public Double? SubTotal { get; set; }
+        public Double? Iva { get; set; }
         public Double? Total { get; set; }
         public string? Presentacion { get; set; }
         [ManyToOne(TableName = "Cat_Producto", KeyColumn = "Id_Producto", ForeignKeyColumn = "Id_Producto")]
@@ -252,8 +302,8 @@ namespace DataBaseModelFacturacion
         public int? Id_Producto { get; set; }
         public Double? Precio_Venta { get; set; }
         public Double? Precio_Compra { get; set; }
-        public int? Cantidad_Inicial { get; set; }
-        public int? Cantidad_Existente { get; set; }
+        public Double? Cantidad_Inicial { get; set; }
+        public Double? Cantidad_Existente { get; set; }
         public DateTime? Fecha_Ingreso { get; set; }
         public int? Id_Almacen { get; set; }
         public string? Lote { get; set; }

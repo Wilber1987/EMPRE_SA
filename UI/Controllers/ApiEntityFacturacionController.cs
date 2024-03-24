@@ -187,6 +187,12 @@ namespace API.Controllers
         {
             return inst.Update();
         }
+        [HttpPost]
+        [AuthController]
+        public object anularCompra(Tbl_Compra inst)
+        {            
+            return inst.AnularCompra(HttpContext.Session.GetString("seassonKey"));
+        }
         //Cat_Almacenes
         [HttpPost]
         [AuthController]
