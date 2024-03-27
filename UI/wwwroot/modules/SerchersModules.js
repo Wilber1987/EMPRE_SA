@@ -11,17 +11,24 @@ import { Tbl_Cuotas, Transaction_Contratos, ValoracionesTransaction } from "../F
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 import { Tbl_Cuotas_ModelComponent } from "../FrontModel/ModelComponents.js";
 class ValoracionesSearch extends HTMLElement {
-    constructor(/** @type {Function} */ action,/** @type {Function} */ secondAction) {
+    constructor(/** @type {Function} */ action,/** @type {Function|undefined} */ secondAction,/** @type {Boolean} */ onlyValids = false) {
         super();
         this.TabContainer = WRender.Create({ className: "TabContainer", id: 'TabContainer' });
         this.Manager = new ComponentsManager({ MainContainer: this.TabContainer, SPAManage: false });
         this.action = action;
         this.secondAction = secondAction;
+        this.onlyValids = onlyValids;
         this.DrawComponent();
     }
     DrawComponent = async () => {
         const model = new Transactional_Valoracion({ requiere_valoracion: { type: "TEXT", hiddenFilter: true } });
-        const dataset = await model.Get();
+        if (this.onlyValids) {
+            model.FilterData.push({PropName : "Fecha",
+                FilterType : ">",
+                // @ts-ignore
+                Values: [new Date().subtractDays(40)]});
+        }
+        let dataset = await model.Get();        
 
         this.SearchContainer = WRender.Create({
             className: "search-container"
@@ -38,10 +45,6 @@ class ValoracionesSearch extends HTMLElement {
                     {
                         name: "Seleccionar", action: (/**@type {Transactional_Valoracion}*/ selected) => {
                             this.action(selected);
-                        }
-                    },{
-                        name: "Facturar", action: (/**@type {Transactional_Valoracion}*/ selected) => {
-                            this.secondAction(selected);
                         }
                     }
                 ]
