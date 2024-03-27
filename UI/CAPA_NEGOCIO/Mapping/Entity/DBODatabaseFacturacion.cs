@@ -245,10 +245,18 @@ namespace DataBaseModelFacturacion
                     sumaCantidadLotes += (decimal)lote.Cantidad_Existente;
                 }
 
+                
+
                 if (sumaDetalle == sumaCantidadLotes)
                 {
                     compra.Estado = EstadoEnum.ANULADO.ToString();
                     compra.Update();
+                }
+                foreach (var item in compra.Detalle_Compra)
+                {
+                    var lote = new Tbl_Lotes() { Id_Detalle_Compra = item.Id_Detalle_Compra }.Find<Tbl_Lotes>();
+                    lote.Cantidad_Existente = 0;
+                    lote.Update();
                 }
 
 
