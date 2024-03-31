@@ -264,22 +264,22 @@ namespace API.Controllers
         {
             return inst.Update();
         }
-        //Catalogo_Cambio_Dolar
+        //Catalogo_Cambio_Divisa
         [HttpPost]
         [AuthController]
-        public List<Catalogo_Cambio_Dolar> getCatalogo_Cambio_Dolar(Catalogo_Cambio_Dolar Inst, [FromQuery] SearchData? pageData)
+        public List<Catalogo_Cambio_Divisa> getCatalogo_Cambio_Divisa(Catalogo_Cambio_Divisa Inst, [FromQuery] SearchData? pageData)
         {
-            return Inst.Where<Catalogo_Cambio_Dolar>(FilterData.Limit(30));
+            return Inst.Where<Catalogo_Cambio_Divisa>(FilterData.Limit(30));
         }
         [HttpPost]
         [AuthController]
-        public object? saveCatalogo_Cambio_Dolar(Catalogo_Cambio_Dolar inst)
+        public object? saveCatalogo_Cambio_Divisa(Catalogo_Cambio_Divisa inst)
         {
             return inst.Save();
         }
         [HttpPost]
         [AuthController]
-        public object? updateCatalogo_Cambio_Dolar(Catalogo_Cambio_Dolar inst)
+        public object? updateCatalogo_Cambio_Divisa(Catalogo_Cambio_Divisa inst)
         {
             return inst.Update();
         }

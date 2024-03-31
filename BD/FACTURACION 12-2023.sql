@@ -257,3 +257,9 @@ ALTER COLUMN Cantidad_Inicial FLOAT;
 
 ALTER TABLE facturacion.Tbl_Lotes
 ALTER COLUMN Cantidad_Existente FLOAT; 
+
+ALTER TABLE facturacion.Cat_Proveedor
+ADD Identificacion NVARCHAR(255);
+
+ALTER TABLE facturacion.Tbl_Lotes
+ADD Datos_Producto NVARCHAR(MAX);

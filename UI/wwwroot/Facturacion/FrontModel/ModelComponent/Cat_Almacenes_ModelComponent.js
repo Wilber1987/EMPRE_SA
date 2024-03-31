@@ -1,6 +1,7 @@
 //@ts-check
 import { EntityClass } from "../../../WDevCore/WModules/EntityClass.js";
 import { WAjaxTools } from "../../../WDevCore/WModules/WComponentsTools.js";
+// @ts-ignore
 import { ModelProperty } from "../../../WDevCore/WModules/CommonModel.js";
 import { Tbl_Lotes_ModelComponent }  from './Tbl_Lotes_ModelComponent.js'
 class Cat_Almacenes_ModelComponent extends EntityClass {

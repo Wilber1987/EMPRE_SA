@@ -150,13 +150,13 @@ class Transaction_Contratos extends EntityClass {
 
     //nuevas
     /**@type {Number} */
-    valoracion_compra_cordobas;
+    Valoracion_compra_cordobas;
     /**@type {Number} */
-    valoracion_compra_dolares;
+    Valoracion_compra_dolares;
     /**@type {Number} */
-    valoracion_empeño_cordobas;
+    Valoracion_empeño_cordobas;
     /**@type {Number} */
-    valoracion_empeño_dolares;  
+    Valoracion_empeño_dolares;  
     /**@type {Number} */
     taza_interes_cargos;
 

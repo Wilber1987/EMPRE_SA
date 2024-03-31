@@ -78,21 +78,16 @@ customElements.define('w-component', ValoracionesSearch);
 export { ValoracionesSearch }
 /**
  * 
- * @param { Function } action 
+ * @param { Array } actions 
  * @returns { HTMLElement }
  */
-const clientSearcher = (action) => {
+const clientSearcher = (actions) => {
     const model = new Catalogo_Clientes();
     const TableComponent = new WTableComponent({
         ModelObject: model, Dataset: [], Options: {
             Filter: true,
             FilterDisplay: true,
-            UserActions: [{
-                name: "Selecionar",
-                action: async (cliente) => {
-                    await action(cliente);
-                }
-            }]
+            UserActions: actions
         }
     })    
     return WRender.Create({ className: "main-container", children: [TableComponent] });

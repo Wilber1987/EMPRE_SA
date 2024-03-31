@@ -25,20 +25,20 @@ class AmoritizationModule {
                 modelo: valoracion.Modelo,
                 marca: valoracion.Marca,
                 serie: valoracion.Serie,
-                monto_aprobado_cordobas: valoracion.valoracion_empeño_cordobas,
-                monto_aprobado_dolares: valoracion.valoracion_empeño_dolares,
+                monto_aprobado_cordobas: valoracion.Valoracion_empeño_cordobas,
+                monto_aprobado_dolares: valoracion.Valoracion_empeño_dolares,
                 color: "#000",
                 en_manos_de: tipo_contrato == "EMPEÑO" ? "ACREEDOR" : "DEUDOR",
-                precio_venta: valoracion.precio_venta_empeño_dolares,
+                precio_venta: valoracion.Precio_venta_empeño_dolares,
                 Catalogo_Categoria: valoracion.Catalogo_Categoria,
                 Transactional_Valoracion: valoracion
             }));
         }
 
-        contrato.Transaction_Contratos.valoracion_compra_cordobas = AmoritizationModule.round(WArrayF.SumValAtt(contrato.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion), "valoracion_compra_cordobas"));
-        contrato.Transaction_Contratos.valoracion_compra_dolares = AmoritizationModule.round(WArrayF.SumValAtt(contrato.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion), "valoracion_compra_dolares"));
-        contrato.Transaction_Contratos.valoracion_empeño_cordobas = AmoritizationModule.round(WArrayF.SumValAtt(contrato.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion), "valoracion_empeño_cordobas"));
-        contrato.Transaction_Contratos.valoracion_empeño_dolares = AmoritizationModule.round(WArrayF.SumValAtt(contrato.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion), "valoracion_empeño_dolares"));
+        contrato.Transaction_Contratos.Valoracion_compra_cordobas = AmoritizationModule.round(WArrayF.SumValAtt(contrato.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion), "Valoracion_compra_cordobas"));
+        contrato.Transaction_Contratos.Valoracion_compra_dolares = AmoritizationModule.round(WArrayF.SumValAtt(contrato.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion), "Valoracion_compra_dolares"));
+        contrato.Transaction_Contratos.Valoracion_empeño_cordobas = AmoritizationModule.round(WArrayF.SumValAtt(contrato.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion), "Valoracion_empeño_cordobas"));
+        contrato.Transaction_Contratos.Valoracion_empeño_dolares = AmoritizationModule.round(WArrayF.SumValAtt(contrato.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion), "Valoracion_empeño_dolares"));
         //contrato.Transaction_Contratos.taza_interes_cargos = contrato.Transaction_Contratos.taza_interes_cargos ?? 0.09
         contrato.Transaction_Contratos.tasas_interes =
             (parseFloat(contrato.Transaction_Contratos?.Catalogo_Clientes?.Catalogo_Clasificacion_Interes?.porcentaje)
@@ -63,7 +63,7 @@ class AmoritizationModule {
     }
 
     static getPago = (contrato) => {
-        const monto = contrato.Transaction_Contratos.valoracion_empeño_dolares;
+        const monto = contrato.Transaction_Contratos.Valoracion_empeño_dolares;
         //console.log(monto);
         const cuotas = contrato.Transaction_Contratos.plazo;
         const tasa = contrato.Transaction_Contratos.tasas_interes;
@@ -87,7 +87,7 @@ class AmoritizationModule {
         contrato.Transaction_Contratos.cuotafija_dolares = this.getPago(contrato);
         contrato.Transaction_Contratos.cuotafija = contrato.Transaction_Contratos.cuotafija_dolares * contrato.Transaction_Contratos.taza_cambio;
         // @ts-ignore
-        let capital = (parseFloat(contrato.Transaction_Contratos.valoracion_empeño_dolares));
+        let capital = (parseFloat(contrato.Transaction_Contratos.Valoracion_empeño_dolares));
         for (let index = 0; index < contrato.Transaction_Contratos.plazo; index++) {
             // @ts-ignore
             const abono_capital = (parseFloat(contrato.Transaction_Contratos.cuotafija_dolares)

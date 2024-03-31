@@ -1,18 +1,17 @@
 //@ts-check
 import { EntityClass } from "../../WDevCore/WModules/EntityClass.js";
 import { WAjaxTools } from "../../WDevCore/WModules/WComponentsTools.js";
-import { ModelProperty } from "../../WDevCore/WModules/CommonModel.js";
-import { Cat_Marca }  from './Cat_Marca.js'
-import { Cat_Categorias }  from './Cat_Categorias.js'
-import { Detalle_Compra }  from './Detalle_Compra.js'
-import { Detalle_Factura }  from './Detalle_Factura.js'
+import { Cat_Marca } from './Cat_Marca.js'
+import { Cat_Categorias } from './Cat_Categorias.js'
+import { Detalle_Compra } from './Detalle_Compra.js'
+import { Detalle_Factura } from './Detalle_Factura.js'
 class Cat_Producto extends EntityClass {
-   constructor(props) {
-       super(props, 'EntityFacturacion');
-       for (const prop in props) {
-           this[prop] = props[prop];
-       }
-   }
+    constructor(props) {
+        super(props, 'EntityFacturacion');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
    /**@type {Number}*/ Id_Producto;
    /**@type {String}*/ Descripcion;
    /**@type {Cat_Marca} ManyToOne*/ Cat_Marca;

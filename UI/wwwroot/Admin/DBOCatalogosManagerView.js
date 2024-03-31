@@ -5,9 +5,10 @@ import { StylesControlsV2, StyleScrolls } from "../WDevCore/StyleModules/WStyleC
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
 import { WFilterOptions } from '../WDevCore/WComponents/WFilterControls.js';
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js"
-import { Catalogo_Agentes, Catalogo_Clasificacion_Cliente, Catalogo_Clientes, Catalogo_Tipo_Agente, Catalogo_Tipo_Identificacion, Catalogo_Cambio_Dolar_ModelComponent, Catalogo_Cuentas, Categoria_Cuentas, Catalogo_Departamento, Catalogo_Inversores, Catalogo_Municipio, Catalogo_Nacionalidad, Catalogo_Profesiones, Catalogo_Sucursales, Catalogo_Estados_Articulos, Catalogo_Categoria_ModelComponent, Permisos_Cuentas } from "../FrontModel/DBODataBaseModel.js"
+import { Catalogo_Agentes, Catalogo_Clasificacion_Cliente, Catalogo_Clientes, Catalogo_Tipo_Agente, Catalogo_Cambio_Divisa_ModelComponent, Catalogo_Cuentas, Categoria_Cuentas, Catalogo_Departamento, Catalogo_Inversores, Catalogo_Municipio, Catalogo_Nacionalidad, Catalogo_Profesiones, Catalogo_Sucursales, Catalogo_Estados_Articulos, Catalogo_Categoria_ModelComponent, Permisos_Cuentas } from "../FrontModel/DBODataBaseModel.js"
 import { EntityClass } from "../WDevCore/WModules/EntityClass.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
+import { Catalogo_Tipo_Identificacion } from "../ClientModule/FrontModel/Catalogo_Clientes.js";
 class DBOCatalogosManagerView extends HTMLElement {
     constructor() {
         super();
@@ -57,8 +58,8 @@ class DBOCatalogosManagerView extends HTMLElement {
         //@ts-ignore
         Elements: [
             {
-                name: WOrtograficValidation.es('Catalogo_Cambio_Dolar'), action: async () => {
-                    this.NavigateFunction(new Catalogo_Cambio_Dolar_ModelComponent())
+                name: WOrtograficValidation.es('Catalogo_Cambio_Divisa'), action: async () => {
+                    this.NavigateFunction(new Catalogo_Cambio_Divisa_ModelComponent())
                 }
             }, {
                 name: WOrtograficValidation.es('Catalogo_Sucursales'), action: async () => {

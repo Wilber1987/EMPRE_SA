@@ -133,25 +133,25 @@ namespace API.Controllers {
        public object updateRecibos(Recibos inst) {
            return inst.Update();
        }
-       //Catalogo_Cambio_Dolar
+       //Catalogo_Cambio_Divisa
        [HttpPost]
        [AuthController]
-       public List<Catalogo_Cambio_Dolar> getCatalogo_Cambio_Dolar(Catalogo_Cambio_Dolar Inst) {
-           return Inst.Get<Catalogo_Cambio_Dolar>();
+       public List<Catalogo_Cambio_Divisa> getCatalogo_Cambio_Divisa(Catalogo_Cambio_Divisa Inst) {
+           return Inst.Get<Catalogo_Cambio_Divisa>();
        }
        [HttpPost]
        [AuthController]
-       public Catalogo_Cambio_Dolar findCatalogo_Cambio_Dolar(Catalogo_Cambio_Dolar Inst) {
-           return Inst.Find<Catalogo_Cambio_Dolar>();
+       public Catalogo_Cambio_Divisa findCatalogo_Cambio_Divisa(Catalogo_Cambio_Divisa Inst) {
+           return Inst.Find<Catalogo_Cambio_Divisa>();
        }
        [HttpPost]
        [AuthController]
-       public object saveCatalogo_Cambio_Dolar(Catalogo_Cambio_Dolar inst) {
+       public object saveCatalogo_Cambio_Divisa(Catalogo_Cambio_Divisa inst) {
            return inst.Save();
        }
        [HttpPost]
        [AuthController]
-       public object updateCatalogo_Cambio_Dolar(Catalogo_Cambio_Dolar inst) {
+       public object updateCatalogo_Cambio_Divisa(Catalogo_Cambio_Divisa inst) {
            return inst.Update();
        }
        //Catalogo_Categoria

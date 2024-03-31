@@ -1,9 +1,7 @@
 //@ts-check
 import { EntityClass } from "../../WDevCore/WModules/EntityClass.js";
-import { WAjaxTools } from "../../WDevCore/WModules/WComponentsTools.js";
-import { ModelProperty } from "../../WDevCore/WModules/CommonModel.js";
-import { Tbl_Factura }  from './Tbl_Factura.js'
-import { Cat_Producto }  from './Cat_Producto.js'
+import { Cat_Producto } from './Cat_Producto.js';
+import { Tbl_Factura } from './Tbl_Factura.js';
 class Detalle_Factura extends EntityClass {
    constructor(props) {
        super(props, 'EntityFacturacion');
@@ -22,4 +20,5 @@ class Detalle_Factura extends EntityClass {
    /**@type {Tbl_Factura} ManyToOne*/ Tbl_Factura;
    /**@type {Cat_Producto} ManyToOne*/ Cat_Producto;
 }
-export { Detalle_Factura }
+export { Detalle_Factura };
+

@@ -1,15 +1,11 @@
 //@ts-check
-import { WRender, ComponentsManager, WAjaxTools } from "../WDevCore/WModules/WComponentsTools.js";
-import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js"
-import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
-import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
-import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
-import { ModalMessege, WForm } from "../WDevCore/WComponents/WForm.js";
-import { Catalogo_Cambio_Dolar_ModelComponent, Catalogo_Cuentas } from "../FrontModel/DBODataBaseModel.js";
-import { WOrtograficValidation } from "../WDevCore/WModules/WOrtograficValidation.js";
-import { css } from "../WDevCore/WModules/WStyledRender.js";
-import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
+import { Catalogo_Cambio_Divisa_ModelComponent, Catalogo_Cuentas } from "../FrontModel/DBODataBaseModel.js";
 import { Movimientos_Cuentas } from "../FrontModel/MovimientosCuentas.js";
+import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js";
+import { ModalMessege } from "../WDevCore/WComponents/WForm.js";
+import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
+import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js";
+import { ComponentsManager, WRender } from "../WDevCore/WModules/WComponentsTools.js";
 class Gestion_movimientos_CuentasView extends HTMLElement {
     constructor(props) {
         super();
@@ -19,13 +15,13 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
         const model = new Movimientos_Cuentas();
         const dataset = await model.Get();
 
-        const tasa = await new Catalogo_Cambio_Dolar_ModelComponent().Get();
-        model.tasa_cambio.defaultValue = tasa[0].valor_de_compra;
-        model.tasa_cambio_compra.defaultValue = tasa[0].valor_de_venta;
+        const tasa = await new Catalogo_Cambio_Divisa_ModelComponent().Get();
+        model.tasa_cambio.defaultValue = tasa[0].Valor_de_compra;
+        model.tasa_cambio_compra.defaultValue = tasa[0].Valor_de_venta;
 
         this.Cuentas = await new Catalogo_Cuentas().Get();
 
-        //model.tasa_cambio = await new Catalogo_Cambio_Dolar_ModelComponent().Get();
+        //model.tasa_cambio = await new Catalogo_Cambio_Divisa_ModelComponent().Get();
 
         this.OptionContainer = WRender.Create({ className: "OptionContainer" });
         this.TabContainer = WRender.Create({ className: "TabContainer", id: 'TabContainer' });

@@ -1,3 +1,4 @@
+import { Catalogo_Tipo_Identificacion } from "../ClientModule/FrontModel/Catalogo_Clientes.js";
 import { WForm } from "../WDevCore/WComponents/WForm.js";
 import { EntityClass } from "../WDevCore/WModules/EntityClass.js";
 import { WAjaxTools } from "../WDevCore/WModules/WComponentsTools.js";
@@ -48,16 +49,16 @@ class Transactional_Valoracion extends EntityClass {
     Tasa_interes = { type: 'number', hiddenInTable: true, enabled: false, Dataset: [], hiddenFilter: true };
     Fecha = { type: 'date', hiddenInTable: true, hiddenFilter: true };
     Tasa_de_cambio = { type: 'number', hiddenInTable: true, hiddenFilter: true };
-    valoracion_compra_cordobas = { type: 'number', hiddenFilter: true };
-    valoracion_compra_dolares = { type: 'number', hiddenFilter: true };
-    valoracion_empeño_cordobas = { type: 'number', hiddenFilter: true };
-    valoracion_empeño_dolares = { type: 'number', hiddenFilter: true };
+    Valoracion_compra_cordobas = { type: 'number', hiddenFilter: true };
+    Valoracion_compra_dolares = { type: 'number', hiddenFilter: true };
+    Valoracion_empeño_cordobas = { type: 'number', hiddenFilter: true };
+    Valoracion_empeño_dolares = { type: 'number', hiddenFilter: true };
     Catalogo_Estados_Articulos = { type: 'WSELECT', hiddenInTable: true, ModelObject: () => new Catalogo_Estados_Articulos(), hiddenFilter: true };
     //TASAS DE INTERES
-    valoracion_empeño_dolares = { type: 'operation' };
+    Valoracion_empeño_dolares = { type: 'operation' };
 
-    precio_venta_empeño_cordobas = { type: 'number', hidden: true };
-    precio_venta_empeño_dolares = { type: 'number', hidden: true };
+    Precio_venta_empeño_cordobas = { type: 'number', hidden: true };
+    Precio_venta_empeño_dolares = { type: 'number', hidden: true };
     Detail_Valores = { type: 'MASTERDETAIL', hidden: true }
     GuardarValoraciones = async (valoraciones) => {
         return await this.SaveData("Transactional_Valoracion/GuardarValoraciones", { valoraciones: valoraciones })
@@ -210,18 +211,7 @@ class Catalogo_Tipo_Agente extends EntityClass {
     Estado = { type: 'select', Dataset: ["ACTIVO", "INACTIVO"] };
 }
 export { Catalogo_Tipo_Agente }
-class Catalogo_Tipo_Identificacion extends EntityClass {
-    constructor(props) {
-        super(props, 'EntityDBO');
-        for (const prop in props) {
-            this[prop] = props[prop];
-        }
-    }
-    id_tipo_identificacion = { type: 'number', primary: true };
-    Descripcion = { type: 'text' };
-    Estado = { type: 'select', Dataset: ["ACTIVO", "INACTIVO"] };
-}
-export { Catalogo_Tipo_Identificacion }
+
 
 class Transaction_Contratos_ModelComponent extends EntityClass {
     constructor(props) {
@@ -255,10 +245,10 @@ class Transaction_Contratos_ModelComponent extends EntityClass {
     cuotafija = { type: "MONEY", hiddenInTable: true, hiddenFilter: true };
     tasa_hoy = { type: "number", hiddenInTable: true, hiddenFilter: true };
     motivo_anulacion = { type: "text", hiddenInTable: true, hiddenFilter: true };
-    valoracion_compra_dolares = { type: "MONEY", hiddenInTable: true, hiddenFilter: true };
-    valoracion_compra_cordobas = { type: "MONEY", hiddenInTable: true, hiddenFilter: true };
-    valoracion_empeño_cordobas = { type: "MONEY", hiddenInTable: true, hiddenFilter: true };
-    valoracion_empeño_dolares = { type: "MONEY", hiddenInTable: true, hiddenFilter: true };
+    Valoracion_compra_dolares = { type: "MONEY", hiddenInTable: true, hiddenFilter: true };
+    Valoracion_compra_cordobas = { type: "MONEY", hiddenInTable: true, hiddenFilter: true };
+    Valoracion_empeño_cordobas = { type: "MONEY", hiddenInTable: true, hiddenFilter: true };
+    Valoracion_empeño_dolares = { type: "MONEY", hiddenInTable: true, hiddenFilter: true };
     tasas_interes = { type: "number", hiddenInTable: true, hiddenFilter: true };
     gestion_crediticia = { type: "PERCENTAGE", hiddenInTable: true, hiddenFilter: true };
     cuotafija_dolares = { type: "MONEY", hiddenInTable: true, hiddenFilter: true };
@@ -444,7 +434,7 @@ class Transaction_Facturas_ModelComponent extends EntityClass {
 export { Transaction_Facturas_ModelComponent }
 
 
-// class Catalogo_Cambio_Dolar extends EntityClass {
+// class Catalogo_Cambio_Divisa extends EntityClass {
 //     constructor(props) {
 //         super(props, 'EntityDBO');
 //         for (const prop in props) {
@@ -456,21 +446,21 @@ export { Transaction_Facturas_ModelComponent }
 //     valor_de_compra = { type: 'number', hiddenFilter: true };
 //     valor_de_venta = { type: 'number', hiddenFilter: true };
 // }
-// export { Catalogo_Cambio_Dolar }
+// export { Catalogo_Cambio_Divisa }
 
-class Catalogo_Cambio_Dolar_ModelComponent extends EntityClass {
+class Catalogo_Cambio_Divisa_ModelComponent extends EntityClass {
     constructor(props) {
         super(props, 'EntityDbo');
         for (const prop in props) {
             this[prop] = props[prop];
         }
     }
-    /**@type {ModelProperty}*/ id_cambio = { type: 'number', primary: true };
-    /**@type {ModelProperty}*/ fecha = { type: 'date' };
-    /**@type {ModelProperty}*/ valor_de_compra = { type: 'number' , hiddenFilter: true };
-    /**@type {ModelProperty}*/ valor_de_venta = { type: 'number', hiddenFilter: true };
+    /**@type {ModelProperty}*/ Id_cambio = { type: 'number', primary: true };
+    /**@type {ModelProperty}*/ Fecha = { type: 'date' };
+    /**@type {ModelProperty}*/ Valor_de_compra = { type: 'number' , hiddenFilter: true };
+    /**@type {ModelProperty}*/ Valor_de_venta = { type: 'number', hiddenFilter: true };
  }
- export { Catalogo_Cambio_Dolar_ModelComponent }
+ export { Catalogo_Cambio_Divisa_ModelComponent }
 
 class Catalogo_Cuentas extends EntityClass {
     constructor(props) {

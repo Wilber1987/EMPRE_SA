@@ -5,13 +5,15 @@ import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
 import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { ModalMessege, WForm } from "../WDevCore/WComponents/WForm.js";
-import { Catalogo_Clientes, Condicion_Laboral_Cliente, Transaction_Contratos_ModelComponent } from "../FrontModel/DBODataBaseModel.js";
+import { Condicion_Laboral_Cliente, Transaction_Contratos_ModelComponent } from "../FrontModel/DBODataBaseModel.js";
 import { WOrtograficValidation } from "../WDevCore/WModules/WOrtograficValidation.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
 import { clientSearcher } from "../modules/SerchersModules.js";
 import { Transaction_Contratos } from "../FrontModel/Model.js";
 import { WDetailObject } from "../WDevCore/WComponents/WDetailObject.js";
+import { ClientComponentView } from "./ClientComponentView.js";
+import { Catalogo_Clientes } from "../ClientModule/FrontModel/Catalogo_Clientes.js";
 class Gestion_ClientesView extends HTMLElement {
     constructor(props) {
         super();
@@ -19,7 +21,7 @@ class Gestion_ClientesView extends HTMLElement {
     }
     Draw = async () => {
         const model = new Catalogo_Clientes();
-        this.Gestion_ClientesForm = new Gestion_ClientesForm();
+        this.Gestion_ClientesForm = new ClientComponentView();
         //const dataset = await model.Get();
 
         this.OptionContainer = WRender.Create({ className: "OptionContainer" });
@@ -35,33 +37,6 @@ class Gestion_ClientesView extends HTMLElement {
             tagName: 'button', className: 'Block-Primary', innerText: 'Ingresar Cliente',
             onclick: () => this.NewTransaction()
         }))
-        // this.OptionContainer.append(WRender.Create({
-        //     tagName: 'button', className: 'Block-Tertiary', innerText: 'Editar cliente',
-        //     onclick: async () => {
-        //         if (this.TableComponent != undefined) {
-        //             const datasetUpdated = await model.Get();
-        //             // @ts-ignore
-        //             this.TableComponent.Dataset = datasetUpdated;
-        //             this.TableComponent?.DrawTable();
-
-        //         } else {
-        //             const data = await model.Get();
-        //             this.TableComponent = new WTableComponent({
-        //                 ModelObject: model, Dataset: data, Options: {
-        //                     Filter: true,
-        //                     FilterDisplay: true,
-        //                     UserActions: [
-                               
-        //                     ]
-        //                 }
-        //             })
-        //             this.MainComponent = WRender.Create({ className: "main-container", children: [this.TableComponent] })
-        //         }
-        //         this.Manager?.NavigateFunction("tabla", this.MainComponent);
-        //     }
-        // }))
-
-        //this.NewTransaction();
         this.NewGestionClientes()
         this.append(
             StylesControlsV2.cloneNode(true),
@@ -74,20 +49,23 @@ class Gestion_ClientesView extends HTMLElement {
 
     }
 
-    NewTransaction(Model) {       
+    NewTransaction(Model) {
         this.Manager?.NavigateFunction("Gestion_ClientesForm", this.Gestion_ClientesForm)
     }
     NewGestionClientes() {
-        this.Manager?.NavigateFunction("Historial_ClientesForm", clientSearcher(async (cliente) => {
-            const response = await new Transaction_Contratos({ codigo_cliente: cliente.codigo_cliente }).Get();
-            cliente.Transaction_Contratos = response;
-            this.Manager?.NavigateFunction("Gestion_ClientesDetail" + cliente.codigo_cliente, new WDetailObject({
-                ModelObject: new Catalogo_Clientes({
-                    Transaction_Contratos:
-                        { type: "MASTERDETAIL", ModelObject: () => new Transaction_Contratos_ModelComponent(), Dataset: response }
-                }),
-                ObjectDetail: cliente
-            }))
+        this.Manager?.NavigateFunction("Historial_ClientesForm", clientSearcher([{
+            name: "Selecionar",
+            action: async (cliente) => {
+                const response = await new Transaction_Contratos({ codigo_cliente: cliente.codigo_cliente }).Get();
+                cliente.Transaction_Contratos = response;
+                this.Manager?.NavigateFunction("Gestion_ClientesDetail" + cliente.codigo_cliente, new WDetailObject({
+                    ModelObject: new Catalogo_Clientes({
+                        Transaction_Contratos:
+                            { type: "MASTERDETAIL", ModelObject: () => new Transaction_Contratos_ModelComponent(), Dataset: response }
+                    }),
+                    ObjectDetail: cliente
+                }))
+            }
         }, {
             name: "Editar", action: (cliente) => {
                 if (this.Gestion_ClientesForm != null) {
@@ -97,7 +75,7 @@ class Gestion_ClientesView extends HTMLElement {
                 }
 
             }
-        }))
+        }]))
     }
 
 }
@@ -106,127 +84,3 @@ customElements.define('w-gestion_clientes', Gestion_ClientesView);
 window.addEventListener('load', async () => { MainBody.append(new Gestion_ClientesView()) })
 
 
-class Gestion_ClientesForm extends HTMLElement {
-    constructor(cliente) {
-        super();
-        this.cliente = cliente ?? {};
-        this.Draw();
-    }
-
-    ModelCliente = new Catalogo_Clientes({ grupo1: { type: 'title' } });
-    ModelDatosLaborales = new Condicion_Laboral_Cliente();
-
-    Draw = async () => {
-        this.cliente.Condicion_Laboral_Cliente = this.cliente.Condicion_Laboral_Cliente ?? [];
-        if (this.cliente.Condicion_Laboral_Cliente.length == 0) {
-            this.cliente.Condicion_Laboral_Cliente.push({});
-        }
-
-        this.innerHTML = "";
-
-        this.FormularioCliente = new WForm({
-            ModelObject: this.ModelCliente, EditObject: this.cliente, Options: false, DivColumns: "32% 32% 32%"
-        });
-        this.FormularioDatos = new WForm({
-            ModelObject: this.ModelDatosLaborales, EditObject: this.cliente.Condicion_Laboral_Cliente[0], Options: false
-        });
-
-
-        this.OptionContainer = new WAppNavigator({
-            Elements: [
-                {
-                    name: 'Datos Cliente', action: () => {
-                        this.ClienteFormulario()
-                    }
-                }, {
-                    name: 'Datos Laborales', action: () => {
-                        this.DatosLaborales()
-                    }
-                }
-            ]
-        }); //WRender.Create({ className: "OptionContainer" });
-        this.OptionContainerBottom = WRender.Create({ className: "OptionContainer OptionBottom" });
-        this.TabContainer = WRender.Create({ className: "TabNewContainer", id: 'TabNewContainer' });
-
-        this.Manager = new ComponentsManager({ MainContainer: this.TabContainer, SPAManage: false });
-
-        this.OptionContainerBottom.append(WRender.Create({
-            tagName: 'button', className: 'Block-Success', innerText: 'Guardar',
-            onclick: async () => {
-                if (!this.FormularioCliente?.Validate()) {
-                    this.Manager?.NavigateFunction("formularioCliente", this.FormularioCliente)
-                    this.append(ModalMessege("Necesita llenar todos los datos del cliente primeramente"));
-                    return;
-                }
-                // if (!this.FormularioDatos?.Validate()) {
-                //     this.Manager?.NavigateFunction("formularioDatosLaborales", this.FormularioDatos)
-                //     this.append(ModalMessege("Necesita llenar todos los datos laborales del cliente primeramente"));
-                //     return;
-                // }
-
-                if (this.cliente.codigo_cliente == null || this.cliente.codigo_cliente == undefined) {
-                    /**@type {Catalogo_Clientes} */
-                    const result = await new Catalogo_Clientes(this.cliente).Save();
-
-                    if (result?.codigo_cliente != null) {
-                        this.cliente.codigo_cliente = result?.codigo_cliente;
-                        this.append(ModalMessege("Datos guardados correctamente"));
-                        this.updateForms();
-                    } else {
-                        this.append(ModalMessege("Error al guardar intentelo nuevamente"));
-                    }
-                } else {
-                    const result = await new Catalogo_Clientes(this.cliente).Update();
-                    this.append(ModalMessege(WOrtograficValidation.es(result.message)));
-                }
-            }
-        }))
-        this.OptionContainerBottom.append(WRender.Create({
-            tagName: 'button', className: 'Block-Basic', innerText: 'Limpiar',
-            onclick: () => {
-                this.updateForms()
-            }
-        }));
-        this.ClienteFormulario()
-
-        this.append(
-            StylesControlsV2.cloneNode(true),
-            StyleScrolls.cloneNode(true),
-            StylesControlsV3.cloneNode(true),
-            this.CustomStyle,
-            this.OptionContainer,
-            this.TabContainer,
-            this.OptionContainerBottom
-        );
-    }
-    updateForms() {
-        this.cliente = {};
-        this.cliente.Condicion_Laboral_Cliente = [{}];
-        // @ts-ignore
-        this.FormularioCliente.FormObject = this.cliente;
-        // @ts-ignore
-        this.FormularioDatos.FormObject = this.cliente.Condicion_Laboral_Cliente[0];
-        this.FormularioCliente?.DrawComponent();
-        this.FormularioDatos?.DrawComponent();
-    }
-
-    /***formulario para creacion y edicion de cliente  */
-    ClienteFormulario() {
-        this.Manager?.NavigateFunction("formularioCliente", this.FormularioCliente)
-    }
-
-    /***formulario para creacion y edicion de datos laborales  */
-    DatosLaborales() {
-        this.Manager?.NavigateFunction("formularioDatosLaborales", this.FormularioDatos)
-    }
-
-    CustomStyle = css`
-        w-form {
-            margin: 20px;
-            border: 1px solid #cacaca;
-            border-radius: 20px;
-            padding: 20px;
-        }
-    `
-}
-customElements.define('w-catalogo_clientes', Gestion_ClientesForm);

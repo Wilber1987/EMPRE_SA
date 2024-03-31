@@ -32,10 +32,10 @@ class Transaction_Contratos_ModelComponent extends EntityClass {
    /**@type {ModelProperty}*/ cuotafija = { type: 'number' };
    /**@type {ModelProperty}*/ tasa_hoy = { type: 'number' };
    /**@type {ModelProperty}*/ motivo_anulacion = { type: 'text' };
-   /**@type {ModelProperty}*/ valoracion_compra_dolares = { type: 'number' };
-   /**@type {ModelProperty}*/ valoracion_compra_cordobas = { type: 'number' };
-   /**@type {ModelProperty}*/ valoracion_empeño_cordobas = { type: 'number' };
-   /**@type {ModelProperty}*/ valoracion_empeño_dolares = { type: 'number' };
+   /**@type {ModelProperty}*/ Valoracion_compra_dolares = { type: 'number' };
+   /**@type {ModelProperty}*/ Valoracion_compra_cordobas = { type: 'number' };
+   /**@type {ModelProperty}*/ Valoracion_empeño_cordobas = { type: 'number' };
+   /**@type {ModelProperty}*/ Valoracion_empeño_dolares = { type: 'number' };
    /**@type {ModelProperty}*/ tasas_interes = { type: 'number' };
    /**@type {ModelProperty}*/ gestion_crediticia = { type: 'number' };
    /**@type {ModelProperty}*/ cuotafija_dolares = { type: 'number' };

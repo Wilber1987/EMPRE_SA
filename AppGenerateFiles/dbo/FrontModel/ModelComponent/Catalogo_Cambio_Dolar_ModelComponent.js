@@ -2,7 +2,7 @@
 import { EntityClass } from "../../WDevCore/WModules/EntityClass.js";
 import { WAjaxTools } from "../../WDevCore/WModules/WComponentsTools.js";
 import { ModelProperty } from "../../WDevCore/WModules/CommonModel.js";
-class Catalogo_Cambio_Dolar_ModelComponent extends EntityClass {
+class Catalogo_Cambio_Divisa_ModelComponent extends EntityClass {
    constructor(props) {
        super(props, 'EntityDbo');
        for (const prop in props) {
@@ -14,4 +14,4 @@ class Catalogo_Cambio_Dolar_ModelComponent extends EntityClass {
    /**@type {ModelProperty}*/ valor_de_compra = { type: 'number' };
    /**@type {ModelProperty}*/ valor_de_venta = { type: 'number' };
 }
-export { Catalogo_Cambio_Dolar_ModelComponent }
+export { Catalogo_Cambio_Divisa_ModelComponent }

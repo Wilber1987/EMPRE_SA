@@ -1,6 +1,7 @@
 //@ts-check
 import { EntityClass } from "../../../WDevCore/WModules/EntityClass.js";
 import { WAjaxTools } from "../../../WDevCore/WModules/WComponentsTools.js";
+// @ts-ignore
 import { ModelProperty } from "../../../WDevCore/WModules/CommonModel.js";
 import { Cat_Marca_ModelComponent }  from './Cat_Marca_ModelComponent.js'
 import { Cat_Categorias_ModelComponent }  from './Cat_Categorias_ModelComponent.js'

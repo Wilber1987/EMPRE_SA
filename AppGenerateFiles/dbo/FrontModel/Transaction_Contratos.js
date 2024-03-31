@@ -32,10 +32,10 @@ class Transaction_Contratos extends EntityClass {
    /**@type {Number}*/ cuotafija;
    /**@type {Number}*/ tasa_hoy;
    /**@type {String}*/ motivo_anulacion;
-   /**@type {Number}*/ valoracion_compra_dolares;
-   /**@type {Number}*/ valoracion_compra_cordobas;
-   /**@type {Number}*/ valoracion_empeño_cordobas;
-   /**@type {Number}*/ valoracion_empeño_dolares;
+   /**@type {Number}*/ Valoracion_compra_dolares;
+   /**@type {Number}*/ Valoracion_compra_cordobas;
+   /**@type {Number}*/ Valoracion_empeño_cordobas;
+   /**@type {Number}*/ Valoracion_empeño_dolares;
    /**@type {Number}*/ tasas_interes;
    /**@type {Number}*/ gestion_crediticia;
    /**@type {Number}*/ cuotafija_dolares;

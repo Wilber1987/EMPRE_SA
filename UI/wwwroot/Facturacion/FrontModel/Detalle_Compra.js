@@ -9,7 +9,9 @@ class Detalle_Compra extends EntityClass {
        super(props, 'EntityFacturacion');
        for (const prop in props) {
            this[prop] = props[prop];
-       }
+       };
+       this.Aplica_Iva = undefined;
+       this.Precio_Venta = undefined;
    }
    /**@type {Number}*/ Id_Detalle_Compra;
    /**@type {Number}*/ Cantidad;
@@ -17,7 +19,8 @@ class Detalle_Compra extends EntityClass {
    /**@type {Number}*/ SubTotal;
    /**@type {Number}*/ Iva;
    /**@type {Number}*/ Total;
-   /**@type {String}*/ Presentacion;
+   /**@type {String}*/ Presentacion;   
+   /**@type {Object}*/  Datos_Producto_Lote;
    /**@type {Cat_Producto} ManyToOne*/ Cat_Producto;
    /**@type {Tbl_Compra} ManyToOne*/ Tbl_Compra;
    /**@type {Array<Tbl_Lotes>} OneToMany*/ Tbl_Lotes;

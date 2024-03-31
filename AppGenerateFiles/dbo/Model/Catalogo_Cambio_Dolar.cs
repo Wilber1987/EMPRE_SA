@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 namespace DataBaseModel {
-   public class Catalogo_Cambio_Dolar : EntityClass {
+   public class Catalogo_Cambio_Divisa : EntityClass {
        [PrimaryKey(Identity = true)]
        public int? id_cambio { get; set; }
        public DateTime? fecha { get; set; }

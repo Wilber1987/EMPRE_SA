@@ -1,7 +1,6 @@
 //@ts-check
 import { EntityClass } from "../../WDevCore/WModules/EntityClass.js";
 import { WAjaxTools } from "../../WDevCore/WModules/WComponentsTools.js";
-import { ModelProperty } from "../../WDevCore/WModules/CommonModel.js";
 import { Tbl_Compra }  from './Tbl_Compra.js'
 class Cat_Proveedor extends EntityClass {
    constructor(props) {
@@ -13,7 +12,8 @@ class Cat_Proveedor extends EntityClass {
    /**@type {Number}*/ Id_Proveedor;
    /**@type {String}*/ Nombre;
    /**@type {String}*/ Estado;
-   /**@type {String}*/ Datos_Proveedor;
+   /**@type {Object}*/ Datos_Proveedor;
+   /**@type {String}*/ Identificacion;
    /**@type {Array<Tbl_Compra>} OneToMany*/ Tbl_Compra;
 }
 export { Cat_Proveedor }

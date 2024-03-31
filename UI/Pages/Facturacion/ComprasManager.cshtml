@@ -1,0 +1,17 @@
+@page
+@using API.Controllers
+@using CAPA_DATOS.Security
+@{
+     if (!SecurityController.Auth(HttpContext.Session.GetString("seassonKey")))
+    {
+        Response.Redirect("../Security/login");
+        return;
+    }
+    @if (!SecurityController.HavePermission(PermissionsEnum.GESTION_COMPRAS_Y_VENTAS.ToString(), HttpContext.Session.GetString("seassonKey")) )//todo
+    {
+       Response.Redirect("../Security/login");
+        return;
+    }    
+}
+<script src='~/Facturacion/Views/ComprasManagerView.js' type='module'></script>
+<div id='MainBody'></div>

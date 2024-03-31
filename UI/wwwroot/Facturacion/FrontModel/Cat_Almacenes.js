@@ -1,7 +1,6 @@
 //@ts-check
 import { EntityClass } from "../../WDevCore/WModules/EntityClass.js";
-import { WAjaxTools } from "../../WDevCore/WModules/WComponentsTools.js";
-import { Tbl_Lotes }  from './Tbl_Lotes.js'
+import { Tbl_Lotes } from './Tbl_Lotes.js';
 class Cat_Almacenes extends EntityClass {
    constructor(props) {
        super(props, 'EntityFacturacion');
@@ -14,4 +13,5 @@ class Cat_Almacenes extends EntityClass {
    /**@type {String}*/ Estado;
    /**@type {Array<Tbl_Lotes>} OneToMany*/ Tbl_Lotes;
 }
-export { Cat_Almacenes }
+export { Cat_Almacenes };
+

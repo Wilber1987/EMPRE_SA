@@ -4,16 +4,17 @@ import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/St
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js";
 import { ComponentsManager, WArrayF, WRender } from "../WDevCore/WModules/WComponentsTools.js";
 // @ts-ignore
-import { Catalogo_Cambio_Dolar_ModelComponent, Catalogo_Categoria, Catalogo_Clientes, Catalogo_Estados_Articulos, Transactional_Valoracion } from "../FrontModel/DBODataBaseModel.js";
+import { Catalogo_Cambio_Divisa_ModelComponent, Catalogo_Categoria, Catalogo_Clientes, Catalogo_Estados_Articulos, Transactional_Valoracion, Transaction_Facturas_ModelComponent } from "../FrontModel/DBODataBaseModel.js";
 import { ModalMessege, WForm } from "../WDevCore/WComponents/WForm.js";
 // @ts-ignore
 import { Transactional_Configuraciones } from "../FrontModel/ADMINISTRATIVE_ACCESSDataBaseModel.js";
-import { Detail_Prendas, Transaction_Facturas,  ValoracionesTransaction } from "../FrontModel/Model.js";
+import { Detail_Prendas, Transaction_Facturas, ValoracionesTransaction } from "../FrontModel/Model.js";
 import { Tbl_Cuotas_ModelComponent } from "../FrontModel/ModelComponents.js";
 import { AmoritizationModule } from "../modules/AmortizacionModule.js";
 import { clientSearcher, ValoracionesSearch } from "../modules/SerchersModules.js";
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
+import { WDetailObject } from "../WDevCore/WComponents/WDetailObject.js";
 class Facturacion_Facturacion_View extends HTMLElement {
     constructor(props) {
         super();
@@ -32,7 +33,7 @@ class Facturacion_Facturacion_View extends HTMLElement {
             tagName: 'button', className: 'Block-Secundary', innerText: 'Historial de Facturas',
             onclick: () => this.NewGestionFacturas()
         }))
-       
+
         this.OptionContainer.append(WRender.Create({
             tagName: 'button', className: 'Block-Tertiary', innerText: 'Imprimir Factura',
             onclick: async () => {
@@ -83,17 +84,22 @@ class Facturacion_Facturacion_View extends HTMLElement {
     }
 
     NewGestionFacturas() {
-        this.Manager?.NavigateFunction("Historial_FacturasForm", clientSearcher(async (cliente) => {
-            const response = await new Transaction_Facturas({ codigo_cliente: cliente.codigo_cliente }).Get();
-            cliente.Transaction_Facturas = response;
-            this.Manager?.NavigateFunction("Gestion_ClientesDetail" + cliente.codigo_cliente, new WDetailObject({
-                ModelObject: new Transaction_Facturas_ModelComponent({
-                    Transaction_Facturas:
-                        //{ type: "MASTERDETAIL", ModelObject: () => new Transaction_Facturas_ModelComponent(), Dataset: response }
-                        { type: "MASTERDETAIL", ModelObject: () => new Transaction_Facturas_ModelComponent(), Dataset: response }
-                }),
-                ObjectDetail: cliente
-            }))
-        }))
+        this.Manager?.NavigateFunction("Historial_FacturasForm", clientSearcher([
+            {
+                name: "Seleccionar",
+                action: async (cliente) => {
+                    const response = await new Transaction_Facturas({ codigo_cliente: cliente.codigo_cliente }).Get();
+                    cliente.Transaction_Facturas = response;
+                    this.Manager?.NavigateFunction("Gestion_ClientesDetail" + cliente.codigo_cliente, new WDetailObject({
+                        ModelObject: new Transaction_Facturas_ModelComponent({
+                            Transaction_Facturas:
+                                //{ type: "MASTERDETAIL", ModelObject: () => new Transaction_Facturas_ModelComponent(), Dataset: response }
+                                { type: "MASTERDETAIL", ModelObject: () => new Transaction_Facturas_ModelComponent(), Dataset: response }
+                        }),
+                        ObjectDetail: cliente
+                    }))
+                }
+            }
+        ]))
     }
 }

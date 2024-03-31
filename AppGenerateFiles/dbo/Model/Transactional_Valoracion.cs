@@ -16,14 +16,14 @@ namespace DataBaseModel {
        public DateTime? Fecha { get; set; }
        public Double? Tasa_de_cambio { get; set; }
        public int? id_estado { get; set; }
-       public Double? valoracion_compra_cordobas { get; set; }
-       public Double? valoracion_compra_dolares { get; set; }
-       public Double? valoracion_empeño_cordobas { get; set; }
-       public Double? valoracion_empeño_dolares { get; set; }
+       public Double? Valoracion_compra_cordobas { get; set; }
+       public Double? Valoracion_compra_dolares { get; set; }
+       public Double? Valoracion_empeño_cordobas { get; set; }
+       public Double? Valoracion_empeño_dolares { get; set; }
        public string? Serie { get; set; }
        public int? id_categoria { get; set; }
-       public Double? precio_venta_empeño_dolares { get; set; }
-       public Double? precio_venta_empeño_cordobas { get; set; }
+       public Double? Precio_venta_empeño_dolares { get; set; }
+       public Double? Precio_venta_empeño_cordobas { get; set; }
        [ManyToOne(TableName = "Catalogo_Categoria", KeyColumn = "id_categoria", ForeignKeyColumn = "id_categoria")]
        public Catalogo_Categoria? Catalogo_Categoria { get; set; }
        [ManyToOne(TableName = "Catalogo_Estados_Articulos", KeyColumn = "id_estado_articulo", ForeignKeyColumn = "id_estado")]

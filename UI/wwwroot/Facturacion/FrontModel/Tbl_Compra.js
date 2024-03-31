@@ -10,7 +10,7 @@ class Tbl_Compra extends EntityClass {
         }
     }
    /**@type {Number}*/ Id_Compra;
-   /**@type {String}*/ Datos_Compra;
+   /**@type {Object}*/ Datos_Compra;
    /**@type {Date}*/ Fecha;
    /**@type {Number}*/ Tasa_Cambio;
    /**@type {String}*/ Moneda;

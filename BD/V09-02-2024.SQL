@@ -38,3 +38,7 @@ ALTER TABLE EMPRE_SA.facturacion.Transaccion_Factura ADD Moneda varchar(100) NUL
 INSERT INTO EMPRE_SA.administrative_access.Transactional_Configuraciones
 (Nombre, Descripcion, Valor, Tipo_Configuracion)
 VALUES(N'LOGO', N'Logo de encabezado de página', NULL, N'THEME');
+
+EXEC EMPRE_SA.sys.sp_rename N'EMPRE_SA.dbo.Catalogo_Cambio_Dolar', N'Catalogo_Cambio_Divisa', 'OBJECT';
+ALTER TABLE EMPRE_SA.dbo.Catalogo_Cambio_Divisa ADD Moneda varchar(250) NULL;
+UPDATE Catalogo_Cambio_Divisa set Moneda = 'DOLAR'

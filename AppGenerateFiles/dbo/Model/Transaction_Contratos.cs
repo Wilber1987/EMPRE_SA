@@ -28,10 +28,10 @@ namespace DataBaseModel {
        public Double? cuotafija { get; set; }
        public Double? tasa_hoy { get; set; }
        public string? motivo_anulacion { get; set; }
-       public Double? valoracion_compra_dolares { get; set; }
-       public Double? valoracion_compra_cordobas { get; set; }
-       public Double? valoracion_empeño_cordobas { get; set; }
-       public Double? valoracion_empeño_dolares { get; set; }
+       public Double? Valoracion_compra_dolares { get; set; }
+       public Double? Valoracion_compra_cordobas { get; set; }
+       public Double? Valoracion_empeño_cordobas { get; set; }
+       public Double? Valoracion_empeño_dolares { get; set; }
        public Double? tasas_interes { get; set; }
        public Double? gestion_crediticia { get; set; }
        public Double? cuotafija_dolares { get; set; }

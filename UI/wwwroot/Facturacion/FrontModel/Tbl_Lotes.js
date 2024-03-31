@@ -1,9 +1,7 @@
 //@ts-check
 import { EntityClass } from "../../WDevCore/WModules/EntityClass.js";
-import { WAjaxTools } from "../../WDevCore/WModules/WComponentsTools.js";
-import { ModelProperty } from "../../WDevCore/WModules/CommonModel.js";
-import { Cat_Almacenes }  from './Cat_Almacenes.js'
-import { Detalle_Compra }  from './Detalle_Compra.js'
+import { Cat_Almacenes } from './Cat_Almacenes.js';
+import { Detalle_Compra } from './Detalle_Compra.js';
 class Tbl_Lotes extends EntityClass {
    constructor(props) {
        super(props, 'EntityFacturacion');
@@ -22,4 +20,5 @@ class Tbl_Lotes extends EntityClass {
    /**@type {Cat_Almacenes} ManyToOne*/ Cat_Almacenes;
    /**@type {Detalle_Compra} ManyToOne*/ Detalle_Compra;
 }
-export { Tbl_Lotes }
+export { Tbl_Lotes };
+
