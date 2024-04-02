@@ -8,8 +8,8 @@ namespace DataBaseModel
 {
     public class Catalogo_Cambio_Divisa : CatalogDataBaseModel.Catalogo_Cambio_Divisa
     {
-        public new string? Moneda { get { return "DOLAR"; }  set {}}
-        
+        public new string? Moneda { get { return "DOLAR"; } set { } }
+
     }
     public class Catalogo_Departamento : CatalogDataBaseModel.Catalogo_Departamento
     {
@@ -20,6 +20,13 @@ namespace DataBaseModel
     public class Catalogo_Municipio : CatalogDataBaseModel.Catalogo_Municipio
     {
     }
-
-
+    public class Catalogo_Sucursales : CatalogDataBaseModel.Catalogo_Sucursales
+    {
+    }
+    public class Datos_Configuracion : CatalogDataBaseModel.Datos_Configuracion
+    {
+    }
+    public class Security_Users : CatalogDataBaseModel.Security_Users
+    {
+    }
 }

@@ -263,3 +263,25 @@ ADD Identificacion NVARCHAR(255);
 
 ALTER TABLE facturacion.Tbl_Lotes
 ADD Datos_Producto NVARCHAR(MAX);
+
+
+ALTER TABLE facturacion.Tbl_Lotes
+add  Id_Sucursal int; 
+
+ALTER TABLE facturacion.Tbl_Lotes
+add  Id_User int;
+
+ALTER TABLE facturacion.Tbl_Factura
+add  Id_Sucursal int;
+
+ALTER TABLE facturacion.Tbl_Factura
+add  Id_User int;
+
+ALTER TABLE facturacion.Cat_Almacenes
+add  Id_Sucursal int;
+
+ALTER TABLE facturacion.Tbl_Compra
+add  Id_Sucursal int; 
+
+ALTER TABLE facturacion.Tbl_Compra
+add  Id_User int; 

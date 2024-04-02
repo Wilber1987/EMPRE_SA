@@ -38,9 +38,9 @@ class LotesManagerView extends HTMLElement {
                 this.Manager.NavigateFunction("Lotes", new WTableComponent({
                     ModelObject: new Tbl_Lotes_ModelComponent,
                     EntityModel: new Tbl_Lotes,
-                    TypeMoney: "Dollar",
+                    TypeMoney: "Dollar",                  
                     Options: {
-                        Search: false, Filter: true, Add: false, Edit: false,
+                        Search: false, Filter: true, Add: false, Edit: false, FilterDisplay: true,
                         UserActions: [{
                             name: "Anular",
                             action: async (/**@type {Tbl_Lotes}*/Lote) => {

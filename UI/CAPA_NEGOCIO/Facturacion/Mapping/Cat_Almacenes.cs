@@ -11,6 +11,7 @@ namespace DataBaseModel {
         public int? Id_Almacen { get; set; }
         public string? Descripcion { get; set; }
         public string? Estado { get; set; }
+        public int? Id_Sucursal { get; set; }
         [OneToMany(TableName = "Tbl_Lotes", KeyColumn = "Id_Almacen", ForeignKeyColumn = "Id_Almacen")]
         public List<Tbl_Lotes>? Tbl_Lotes { get; set; }
     }

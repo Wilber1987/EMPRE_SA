@@ -11,6 +11,8 @@ namespace DataBaseModel
     {
         [PrimaryKey(Identity = true)]
         public int? Id_Compra { get; set; }
+        public int? Id_User { get; set; }
+        public int? Id_Sucursal { get; set; }
         [JsonProp]
         public Object? Datos_Compra { get; set; }
         public int? Id_Proveedor { get; set; }
@@ -25,15 +27,11 @@ namespace DataBaseModel
         public Cat_Proveedor? Cat_Proveedor { get; set; }
         [OneToMany(TableName = "Detalle_Compra", KeyColumn = "Id_Compra", ForeignKeyColumn = "Id_Compra")]
         public List<Detalle_Compra>? Detalle_Compra { get; set; }
-
-
-
         public object? SaveCompra(string token)
         {
             try
             {
                 var user = AuthNetCore.User(token);
-
                 if (this.Detalle_Compra.Count() == 0)
                 {
                     return new ResponseService()
@@ -45,6 +43,9 @@ namespace DataBaseModel
                 double? subtotal = 0;
                 double? ivaTotal = 0;
                 double? total = 0;
+                var User = AuthNetCore.User(token);
+                var dbUser = new Security_Users { Id_User = User.UserId }.Find<Security_Users>();
+
                 Cat_Proveedor? proveedor = new Cat_Proveedor { Identificacion = Cat_Proveedor?.Identificacion }.Find<Cat_Proveedor>();
                 if (proveedor != null)
                 {
@@ -90,10 +91,12 @@ namespace DataBaseModel
                                 Precio_Compra = detalle?.Precio_Unitario,
                                 Cantidad_Inicial = detalle?.Cantidad,
                                 Cantidad_Existente = detalle?.Cantidad,
+                                Id_Sucursal = dbUser?.Id_Sucursal,
+                                Id_User =  dbUser?.Id_User,
                                 Fecha_Ingreso = DateTime.Now,
                                 Datos_Producto = detalle?.Datos_Producto_Lote,
-                                Id_Almacen = getAlmacen(),
-                                Lote = generarLote()
+                                Id_Almacen = GetAlmacen(dbUser?.Id_Sucursal ?? 0),
+                                Lote = GenerarLote()
                             }
                         };
                 };
@@ -122,11 +125,14 @@ namespace DataBaseModel
 
         }
 
-        public int getAlmacen()
+        public int GetAlmacen(int Id_Sucursal)
         {
             try
             {
-                var primerAlmacen = new Cat_Almacenes().Get<Cat_Almacenes>().FirstOrDefault();
+                var primerAlmacen = new Cat_Almacenes()
+                {
+                    Descripcion = "Almacén Sucursal: " + Id_Sucursal
+                }.Get<Cat_Almacenes>().FirstOrDefault();
 
                 if (primerAlmacen != null)
                 {
@@ -136,7 +142,7 @@ namespace DataBaseModel
                 {
                     var nuevoAlmacen = new Cat_Almacenes()
                     {
-                        Descripcion = "Nuevo Almacén",
+                        Descripcion = "Almacén Sucursal: " + Id_Sucursal,
                         Estado = "Activo"
                     };
                     nuevoAlmacen.Save();
@@ -149,14 +155,13 @@ namespace DataBaseModel
                 return 0;
             }
         }
-        public string generarLote()
+        public string GenerarLote()
         {
             string fechaLote = DateTime.Now.ToString("yyyyMMddHHmmss");
             string caracteresPermitidos = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             Random random = new Random();
             string parteAleatoria = new string(Enumerable.Repeat(caracteresPermitidos, 3)
                                             .Select(s => s[random.Next(s.Length)]).ToArray());
-
             string codigoLote = fechaLote + parteAleatoria;
             return codigoLote;
         }

@@ -16,6 +16,7 @@ namespace DataBaseModel {
         public string? Direccion_Envio { get; set; }
         public int? Id_Cliente { get; set; }
         public int? Id_Sucursal { get; set; }
+        public int? Id_User { get; set; }
         public DateTime? Fecha { get; set; }
         public DateTime? Fecha_Vencimiento { get; set; }
         public string? Observaciones { get; set; }

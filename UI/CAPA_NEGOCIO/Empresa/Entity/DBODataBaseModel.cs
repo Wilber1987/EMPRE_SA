@@ -368,17 +368,7 @@ namespace DataBaseModel
 		public Catalogo_Cuentas? Catalogo_Cuentas { get; set; }
 		[ManyToOne(TableName = "Catalogo_Tipo_Transaccion", KeyColumn = "id_tipo_transaccion", ForeignKeyColumn = "id_tipo_transaccion")]
 		public Catalogo_Tipo_Transaccion? Catalogo_Tipo_Transaccion { get; set; }
-	}
-
-	public class Datos_Configuracion : EntityClass
-	{
-		[PrimaryKey(Identity = false)]
-		public int? Id_Sucursal { get; set; }
-		public string? Encabezado { get; set; }
-		public bool? AutoDebito { get; set; }
-		[OneToOne(TableName = "Catalogo_Sucursales", KeyColumn = "Id_Sucursal", ForeignKeyColumn = "Id_Sucursal")]
-		public Catalogo_Sucursales? Catalogo_Sucursales { get; set; }
-	}
+	}	
 
 	public class Transaction_Movimiento : EntityClass
 	{
@@ -442,7 +432,6 @@ namespace DataBaseModel
 		public double? iva { get; set; }
 		public double? total_cordobas { get;  set; }
 		public string? Moneda { get;  set; }
-
 
 		[JsonProp]
 		public Factura_contrato Factura_contrato { get; set; }

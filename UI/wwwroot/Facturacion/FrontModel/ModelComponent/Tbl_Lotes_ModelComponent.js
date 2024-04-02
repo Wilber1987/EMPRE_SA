@@ -1,6 +1,5 @@
 //@ts-check
 import { EntityClass } from "../../../WDevCore/WModules/EntityClass.js";
-import { WAjaxTools } from "../../../WDevCore/WModules/WComponentsTools.js";
 // @ts-ignore
 import { ModelProperty } from "../../../WDevCore/WModules/CommonModel.js";
 import { Cat_Almacenes_ModelComponent } from './Cat_Almacenes_ModelComponent.js'
@@ -13,16 +12,17 @@ class Tbl_Lotes_ModelComponent extends EntityClass {
             this[prop] = props[prop];
         }
     }
-    /**@type {ModelProperty}*/ Id_Lote = { type: 'number', primary: true };
+    /**@type {ModelProperty}*/ Id_Lote = { type: 'number', primary: true, hiddenFilter: true };
     /**@type {ModelProperty}*/ Lote = { type: 'text' };
-    /**@type {ModelProperty}*/ Id_Producto = { type: 'number', hiddenInTable: true};
+    /**@type {ModelProperty}*/ Id_Producto = { type: 'number', hiddenInTable: true, hiddenFilter: true };
+    /**@type {ModelProperty}*/ Id_Almacen = { type: 'number', hiddenInTable: true, hiddenFilter: true };
     /**@type {ModelProperty}*/ Cat_Producto = { type: 'WSELECT', ModelObject: () => new Cat_Producto_ModelComponent() };
     /**@type {ModelProperty}*/ Cat_Almacenes = { type: 'WSELECT', ModelObject: () => new Cat_Almacenes_ModelComponent() };
-    /**@type {ModelProperty}*/ Precio_Venta = { type: 'Money' };
-    /**@type {ModelProperty}*/ Precio_Compra = { type: 'Money' };
-    /**@type {ModelProperty}*/ Cantidad_Inicial = { type: 'number' };
-    /**@type {ModelProperty}*/ Cantidad_Existente = { type: 'number'};    
-    /**@type {ModelProperty}*/ Fecha_Ingreso = { type: 'date', hiddenInTable: true  };    
-    /**@type {ModelProperty}*/ Detalle_Compra = { type: 'WSELECT', ModelObject: () => new Detalle_Compra_ModelComponent(), hiddenInTable: true };
+    /**@type {ModelProperty}*/ Precio_Venta = { type: 'Money', hiddenFilter: true };
+    /**@type {ModelProperty}*/ Precio_Compra = { type: 'Money', hiddenFilter: true };
+    /**@type {ModelProperty}*/ Cantidad_Inicial = { type: 'number', hiddenInTable: true, hiddenFilter: true };
+    /**@type {ModelProperty}*/ Cantidad_Existente = { type: 'number', hiddenFilter: true };
+    /**@type {ModelProperty}*/ Fecha_Ingreso = { type: 'date', hiddenInTable: true, hiddenFilter: true };
+    /**@type {ModelProperty}*/ Detalle_Compra = { type: 'WSELECT', ModelObject: () => new Detalle_Compra_ModelComponent(), hiddenInTable: true, hiddenFilter: true };
 }
 export { Tbl_Lotes_ModelComponent }

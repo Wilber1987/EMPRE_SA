@@ -15,6 +15,8 @@ namespace DataBaseModel
         public Double? Precio_Compra { get; set; }
         public Double? Cantidad_Inicial { get; set; }
         public Double? Cantidad_Existente { get; set; }
+        public int? Id_Sucursal { get; set; }
+        public int? Id_User { get; set; }
         public DateTime? Fecha_Ingreso { get; set; }
         public int? Id_Almacen { get; set; }
         public string? Lote { get; set; }
