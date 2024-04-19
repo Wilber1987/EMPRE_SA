@@ -86,7 +86,7 @@ class Gestion_RecibosView extends HTMLElement {
                 if (response.status == 200) {
                     //location.href = "/PagesViews/Ver_Recibos";
                     this.append(ModalVericateAction(() => {
-                        location.href = "/PagesViews/Ver_Recibos";
+                        location.href = "/PagesViews/Ver_Recibos?id_Recibo=" + response.body.id_factura;
                         //location.href = "/PagesViews/Print_Recibo?id_Recibo=" + response.body.id_recibo;
                     }, response.message, false));
                 } else if (response.status == 400) {

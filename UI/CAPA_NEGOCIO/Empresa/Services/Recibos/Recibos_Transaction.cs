@@ -77,8 +77,12 @@ namespace Transactions
 				//SE VALIDA SI AL MONTO SE LE VA A DEBITAR LA REESTRUCTURACION Y LA PERDIDA DE DOCUMENTOS                
 				monto = CalcularGastosAdicionales(contrato, monto, DetallesFacturaRecibos);
 
-				foreach (var cuota in contrato.Tbl_Cuotas.OrderBy(c => c.id_cuota).ToList())
+				foreach (var cuota in contrato.Tbl_Cuotas.Where(c =>   c.pago_contado == null || c.pago_contado < c.total).ToList().OrderBy(c => c.id_cuota).ToList())
 				{
+					if (monto <= 0)
+					{
+						continue;
+					}
 					cuota.fecha_pago = DateTime.Now;
 					if (monto >= cuota.total && monto > 0)
 					{

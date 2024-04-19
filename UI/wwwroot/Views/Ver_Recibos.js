@@ -8,8 +8,6 @@ class Ver_RecibosView extends HTMLElement {
         super();
         this.Draw();
     }
-
-
     Draw = async () => {
         const tasa = await new Catalogo_Cambio_Divisa_ModelComponent().Get();
         this.TabContainer = WRender.createElement({ type: 'div', props: { class: 'TabContainer', id: 'TabContainer' } })
@@ -25,7 +23,7 @@ class Ver_RecibosView extends HTMLElement {
                             this.append(ModalVericateAction(async () => {
                                 const response =
                                     await WAjaxTools.PostRequest("../api/ApiRecibos/anularRecibo",
-                                     { id_recibo: factura.id_factura, tasa_cambio: tasa[0].Valor_de_compra });
+                                        { id_recibo: factura.id_factura, tasa_cambio: tasa[0].Valor_de_compra });
 
                                 this.append(ModalMessege(response.message));
 
@@ -35,17 +33,8 @@ class Ver_RecibosView extends HTMLElement {
                     }, {
                         name: "Imprimir", action: async (factura) => {
                             //this.append(ModalVericateAction(async () => {
-                            const response = await WAjaxTools.PostRequest("../api/ApiRecibos/printRecibo",
-                             { id_recibo: factura.id_factura, tasa_cambio: tasa[0].Valor_de_compra });
-
-                            //this.append(ModalMessege(response.message));                                
-                            const ventimp = window.open(' ', 'popimpr');
-                            ventimp?.document.write(response.message);
-                            ventimp?.focus();
-                            setTimeout(() => {
-                                ventimp?.print();
-                                ventimp?.close();
-                            }, 100)
+                            const id_factura = factura.id_factura
+                            await this.printRecibo(id_factura, tasa);
                             // }, "¿Esta seguro que desea imprimir este recibo?"))
                         }
                     }
@@ -58,8 +47,26 @@ class Ver_RecibosView extends HTMLElement {
             StyleScrolls.cloneNode(true),
             this.TabContainer
         );
+        const id_Recibo = new URLSearchParams(window.location.search).get('id_Recibo'); 
+        console.log(id_Recibo);
+        if (id_Recibo != null) {
+            await this.printRecibo(id_Recibo, tasa);
+        }    
+        
     }
 
+
+    async printRecibo(id_factura, tasa) {
+        const response = await WAjaxTools.PostRequest("../api/ApiRecibos/printRecibo",
+            { id_recibo: id_factura, tasa_cambio: tasa[0].Valor_de_compra });     
+        const ventimp = window.open(' ', 'popimpr');
+        ventimp?.document.write(response.message);
+        ventimp?.focus();
+        setTimeout(() => {
+            ventimp?.print();
+            ventimp?.close();
+        }, 100);
+    }
 }
 customElements.define('w-datos_configuracion', Ver_RecibosView);
 window.addEventListener('load', async () => { MainBody.append(new Ver_RecibosView()) })
