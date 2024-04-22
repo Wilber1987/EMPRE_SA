@@ -1,6 +1,6 @@
 [submodule "UI/wwwroot/WDevCore"]
 	path = UI/wwwroot/WDevCore
-	url = https://github.com/Wilber1987/WDevCore
+	url = ../WDevCore
 [submodule "CAPA_DATOS"]
 	path = CAPA_DATOS
-	url = https://github.com/Wilber1987/CAPA_DATOS.git
+	url = ../CAPA_DATOS.git
