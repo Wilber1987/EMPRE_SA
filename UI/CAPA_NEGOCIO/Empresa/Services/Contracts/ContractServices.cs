@@ -41,8 +41,6 @@ namespace Model
                 BeginGlobalTransaction();
                 var User = AuthNetCore.User(seasonKey);
                 var dbUser = new Security_Users { Id_User = User.UserId }.Find<Security_Users>();
-
-
                 var configuraciones = new Transactional_Configuraciones().GetConfig(ConfiguracionesInteresesEnum.MORA_CONTRATOS_EMP.ToString());
                 Transaction_Contratos.fecha_contrato = DateTime.Now;
                 Transaction_Contratos.fecha_cancelar = Transaction_Contratos.Tbl_Cuotas.Select(c => c.fecha).ToList().Max();
@@ -69,6 +67,11 @@ namespace Model
                 Transaction_Contratos.mora = Convert.ToDouble(configuraciones.Valor);
                 Transaction_Contratos.estado = Contratos_State.ACTIVO.ToString();
                 Transaction_Contratos.Id_User = dbUser?.Id_User;
+                Transaction_Contratos.Tbl_Cuotas?.ForEach(c =>
+                {
+                    c.pago_contado = 0;
+                    c.Estado = "PENDIENTE";
+                });
 
                 Transaction_Contratos.Save();
 
@@ -163,6 +166,7 @@ namespace Model
         /**@type {Number} Tbl_cuotas del abono*/
         public double? tasa_cambio { get; set; }
         public int? numero_contrato { get; set; }
+        public string? Estado { get; set; }
 
         [ManyToOne(TableName = "Transaction_Contratos", KeyColumn = "numero_contrato", ForeignKeyColumn = "numero_contrato")]
         public Transaction_Contratos? Transaction_Contratos { get; set; }

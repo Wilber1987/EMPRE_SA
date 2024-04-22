@@ -134,6 +134,7 @@ const contratosSearcher = (action) => {
         Display: true,
         FilterFunction: (DFilt) => {
             TableComponent.Dataset = DFilt;
+            console.log(DFilt);
             TableComponent?.DrawTable();
             // @ts-ignore
             //action(DFilt, FilterOptions);

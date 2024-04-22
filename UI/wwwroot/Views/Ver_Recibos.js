@@ -13,10 +13,11 @@ class Ver_RecibosView extends HTMLElement {
         this.TabContainer = WRender.createElement({ type: 'div', props: { class: 'TabContainer', id: 'TabContainer' } })
         this.MainComponent = new WTableComponent({
             EntityModel: new Transaccion_Factura({ Factura_contrato: {} }),
-            ModelObject: new Transaccion_Factura(), Dataset: [],
+            ModelObject: new Transaccion_Factura(), 
+            Dataset: [],
             Options: {
-                Show: true,
-                Search: true,
+                Filter: true,
+                FilterDisplay: true,
                 UserActions: [
                     {
                         name: "Anular", action: (factura) => {
