@@ -589,6 +589,8 @@ class Transaction_Valoraciones_View extends HTMLElement {
             for (const prop in this.valoracionesForm?.FormObject) {
                 if (prop == "Detail_Valores") continue;
                 if (prop == "Tasa_interes") continue;
+                // @ts-ignore
+                if (prop == "id_valoracion" && new Date().subtractDays(40) < new Date(valoracion.Fecha)) continue;
                 this.valoracionesForm.FormObject[prop] = valoracion[prop]
             }
             this.valoracionesForm.Config.ModelObject?.Catalogo_Categoria?.action(this.valoracionesForm.FormObject, this.valoracionesForm);

@@ -48,3 +48,5 @@ ALTER TABLE EMPRE_SA.dbo.Tbl_Cuotas ADD Estado nvarchar(100) NULL;
 
 UPDATE EMPRE_SA.dbo.Tbl_Cuotas
 SET Estado=N'PENDIENTE'
+
+ALTER TABLE EMPRE_SA.dbo.Detalle_Factura_Recibo ADD EstadoAnterior nvarchar(MAX) NULL;

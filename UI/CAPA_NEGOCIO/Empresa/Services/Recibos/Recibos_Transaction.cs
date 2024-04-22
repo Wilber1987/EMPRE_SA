@@ -77,55 +77,84 @@ namespace Transactions
 				//SE VALIDA SI AL MONTO SE LE VA A DEBITAR LA REESTRUCTURACION Y LA PERDIDA DE DOCUMENTOS                
 				monto = CalcularGastosAdicionales(contrato, monto, DetallesFacturaRecibos);
 
-				foreach (var cuota in contrato.Tbl_Cuotas.Where(c =>   c.pago_contado == null || c.pago_contado < c.total).ToList().OrderBy(c => c.id_cuota).ToList())
-				{
-					if (monto <= 0)
-					{
-						continue;
-					}
-					cuota.fecha_pago = DateTime.Now;
-					if (monto >= cuota.total && monto > 0)
-					{
-						cuota.pago_contado = cuota.total;
-						monto -= (double)cuota.total;
-					}
-					else
-					{
-						cuota.pago_contado = monto;
-						monto = 0;
-						//if (monto == 0) break;
-					}
-					DetallesFacturaRecibos.Add(
-						new Detalle_Factura_Recibo()
-						{
-							id_cuota = cuota.id_cuota,
-							total_cuota = cuota.total,
-							monto_pagado = cuota.abono_capital,
-							capital_restante = cuota.capital_restante,
-							concepto = this.numero_contrato + cuota.abono_capital < cuota.total
-							? "Pago parcial de cuota" : "Pago de completo de cuota, contrato No: " + this.numero_contrato,
-							tasa_cambio = this.tasa_cambio
-						}
-					);
-					cuota.Update();
-				}
-				var saldoRespaldo = contrato.saldo;
-
-				contrato.saldo = contrato.saldo - this.paga_dolares;
+				var cuotasPendientes = contrato.Tbl_Cuotas.Where(c => c.Estado?.ToUpper() == "PENDIENTE").ToList();
+				Tbl_Cuotas CuotaActual = cuotasPendientes.Last();
+				double? mora = cuotasPendientes?.Select(c => c.mora).ToList().Sum();
+				double? saldo_pendiente = contrato.saldo;
+				double? interesCorriente = CuotaActual?.interes;
+				double? perdida_de_documento_monto = this.perdida_de_documento == true ? 1 : 0;
+				double? reestructuracion_monto = reestructurar_value ?? 0;
+				double? total_capital_restante = mora
+					+ saldo_pendiente
+					+ interesCorriente
+					+ perdida_de_documento_monto
+					+ reestructuracion_monto;
+				double? abonoCapital = monto - interesCorriente;
+				double? saldoRespaldo = contrato.saldo;
+				contrato.saldo = contrato.saldo - abonoCapital;
 				if (contrato.saldo <= 0)
 				{
 					contrato.saldo = 0;
 					contrato.estado = Contratos_State.CANCELADO.ToString();
 				}
+
+				if (this.cancelar == true && monto == total_capital_restante)
+				{
+					monto = CancelarCuotaActual(monto, CuotaActual, DetallesFacturaRecibos);
+					contrato.saldo = 0;
+					contrato.estado = Contratos_State.CANCELADO.ToString();
+					cuotasPendientes?.ForEach(cuota =>
+					{
+						if (cuota.id_cuota == CuotaActual.id_cuota) return;
+						Tbl_Cuotas estadoAnterior = CloneCuota(cuota);
+						cuota.pago_contado = cuota.abono_capital;
+						AgregarCuotaDetalle(cuota, DetallesFacturaRecibos, estadoAnterior,
+						"Pago de completo de cuota, en la cancelación de contrato No: " + this.numero_contrato);
+						cuota.Estado = Contratos_State.CANCELADO.ToString();
+					});
+				}
+				else
+				{
+					monto = CancelarCuotaActual(monto, CuotaActual, DetallesFacturaRecibos);
+					if (monto > 0)
+					{
+						//UpdateCuotas(contrato);
+						cuotasPendientes?.ForEach(cuota =>
+						{
+							if (cuota.id_cuota == CuotaActual.id_cuota) return;
+							if (monto <= 0) return;
+							Tbl_Cuotas estadoAnterior = CloneCuota(cuota);
+							cuota.fecha_pago = DateTime.Now;
+							if (monto >= cuota.abono_capital && monto > 0)
+							{
+								cuota.pago_contado = cuota.abono_capital;
+								cuota.abono_capital = 0;
+								cuota.total = 0;
+								monto -= cuota.abono_capital.GetValueOrDefault();
+								cuota.Estado = Contratos_State.CANCELADO.ToString();
+								cuota.interes = 0;
+							}
+							else
+							{
+								cuota.pago_contado = monto;
+								cuota.abono_capital += -monto;
+								monto = 0;
+								cuota.interes = cuota.abono_capital * contrato.tasas_interes;
+								cuota.total = cuota.interes + cuota.abono_capital;
+							}
+							AgregarCuotaDetalle(cuota, DetallesFacturaRecibos, estadoAnterior,
+								"Abono al capital del contrato No: " + this.numero_contrato);
+							cuota.Update();
+						});
+					}
+				}
 				contrato.Update();
-
-
 				//fecha de proximo pago
-				var fechaProximoPago = contrato.Tbl_Cuotas.Find(x => x.total < x.pago_contado || x.pago_contado == null);
-
-				int ultimoConsecutivo = new Recibos().Get<Recibos>().Max(r => (int?)r.consecutivo) ?? 0;
-
-				var cuotasPendiente = Get<Tbl_Cuotas>().Where(x => x.total > x.abono_capital).ToList();
+				var cuotasPendiente = new Tbl_Cuotas
+				{
+					numero_contrato = contrato.numero_contrato,
+					Estado = "PENDIENTE"
+				}.Get<Tbl_Cuotas>();
 
 				//guardado de factura
 				var factura = new Transaccion_Factura()
@@ -150,7 +179,7 @@ namespace Transactions
 						saldo_actual = contrato.saldo,
 						mora = this.mora_dolares,
 						interes_demas_cargos_pagar = this.interes_demas_cargos_pagar_dolares,
-						proximo_pago_pactado = fechaProximoPago != null ? fechaProximoPago.fecha : null,
+						proximo_pago_pactado = cuotasPendiente.Count > 0 ? cuotasPendiente[0].fecha : null,
 						total_parciales = this.total_parciales,//todo preguntar a EMPRESA 
 						tipo = null,
 						tipo_cuenta = null,
@@ -185,7 +214,6 @@ namespace Transactions
 						message = "Cuentas no configuradas correctamente"
 					};
 				}
-
 				ResponseService response = new Movimientos_Cuentas
 				{
 					Catalogo_Cuentas_Destino = cuentaDestino,
@@ -225,13 +253,65 @@ namespace Transactions
 
 		}
 
-		private double CalcularGastosAdicionales(Transaction_Contratos? contrato, double monto, List<Detalle_Factura_Recibo> DetallesFacturaRecibos)
+		private void AgregarCuotaDetalle(Tbl_Cuotas cuota,
+		List<Detalle_Factura_Recibo> DetallesFacturaRecibos,
+		Tbl_Cuotas estadoAnterior,
+		string mensaje)
+		{
+			DetallesFacturaRecibos.Add(new Detalle_Factura_Recibo()
+			{
+				id_cuota = cuota.id_cuota,
+				total_cuota = cuota.pago_contado,
+				monto_pagado = cuota.pago_contado,
+				capital_restante = cuota.capital_restante,
+				concepto = mensaje,
+				tasa_cambio = this.tasa_cambio,
+				EstadoAnterior = estadoAnterior
+			});
+		}
+
+		private double CancelarCuotaActual(double monto, Tbl_Cuotas CuotaActual, List<Detalle_Factura_Recibo> detallesFacturaRecibos)
+		{
+			Tbl_Cuotas estadoAnterior = CloneCuota(CuotaActual);
+			CuotaActual.fecha_pago = DateTime.Now;
+			if (monto >= CuotaActual.total && monto > 0)
+			{
+				CuotaActual.pago_contado = CuotaActual.total;
+				monto -= (double)CuotaActual.total;
+				CuotaActual.Estado = Contratos_State.CANCELADO.ToString();
+			}
+			else
+			{
+				CuotaActual.pago_contado = monto;
+				monto = 0;
+			}
+
+			AgregarCuotaDetalle(CuotaActual, detallesFacturaRecibos, estadoAnterior,
+			"Pago de cuota del contrato No: " + this.numero_contrato);
+			CuotaActual.Update();
+			return monto;
+		}
+
+		private Tbl_Cuotas CloneCuota(Tbl_Cuotas CuotaActual)
+		{
+			return new()
+			{
+				fecha_pago = CuotaActual.fecha_pago,
+				pago_contado = CuotaActual.pago_contado,
+				Estado = CuotaActual.Estado,
+				total = CuotaActual.total,
+				interes = CuotaActual.interes,
+				abono_capital = CuotaActual.abono_capital
+			};
+		}
+
+		private double CalcularGastosAdicionales(Transaction_Contratos? contrato, double monto, List<Detalle_Factura_Recibo>? DetallesFacturaRecibos)
 		{
 			if (this.reestructurar == true)
 			{
 				monto = monto - 1;
 				contrato.Reestructurar(this.reestructurar_value);
-				DetallesFacturaRecibos.Add(
+				DetallesFacturaRecibos?.Add(
 					new Detalle_Factura_Recibo()
 					{
 						total_cuota = 1,
@@ -245,7 +325,7 @@ namespace Transactions
 			if (this.perdida_de_documento == true)
 			{
 				monto = monto - 1;
-				DetallesFacturaRecibos.Add(
+				DetallesFacturaRecibos?.Add(
 					new Detalle_Factura_Recibo()
 					{
 						total_cuota = 1,
@@ -256,7 +336,6 @@ namespace Transactions
 					}
 				);
 			}
-
 			return monto;
 		}
 
@@ -285,35 +364,34 @@ namespace Transactions
 					};
 				}
 				factura.estado = EstadoEnum.ANULADO.ToString();
-				factura.Update();
 				BeginGlobalTransaction();
+				factura.Update();
 				var contrato = new Transaction_Contratos() { numero_contrato = factura.Factura_contrato.numero_contrato }.Find<Transaction_Contratos>();
 
 				//si existe contrato se debe anular el recibo y regresarse el saldo
-				var totalfactura = factura.total;
+				double monto = factura.total.GetValueOrDefault();
+				monto = CalcularGastosAdicionales(contrato, monto, null);
+
 				if (contrato != null)
 				{
-					var saldo = contrato.saldo;					
-					contrato.saldo = contrato.saldo + factura.total;
+					var saldo = contrato.saldo;
+					contrato.saldo += monto;
 					contrato.estado = Contratos_State.ACTIVO.ToString();
 					contrato.Update();
 				}
-				var monto = factura.total;
 				foreach (var detalle in factura.Detalle_Factura_Recibo.OrderBy(c => c.id_cuota).ToList())
 				{
-					Tbl_Cuotas cuota = detalle.Tbl_Cuotas;
-					cuota.fecha_pago = DateTime.Now;
-					if (monto >= cuota.total && monto > 0)
+					Tbl_Cuotas cuota = detalle?.Tbl_Cuotas;
+					if (cuota != null)
 					{
-						cuota.pago_contado = 0;
-						monto -= (double)cuota.pago_contado;
+						cuota.fecha_pago = detalle?.EstadoAnterior?.fecha_pago;
+						cuota.pago_contado = detalle?.EstadoAnterior?.pago_contado;
+						cuota.Estado = detalle?.EstadoAnterior?.Estado;
+						cuota.total = detalle?.EstadoAnterior?.total;
+						cuota.interes = detalle?.EstadoAnterior?.interes;
+						cuota.abono_capital = detalle?.EstadoAnterior?.abono_capital;
+						cuota.Update();
 					}
-					else
-					{
-						cuota.pago_contado = cuota.pago_contado - monto;
-						monto = 0;
-					}					
-					cuota.Update();
 				}
 				var cuentaDestino = new Catalogo_Cuentas()
 				{
@@ -376,6 +454,69 @@ namespace Transactions
 			}
 		}
 
+		public void CrearCuotas(Transaction_Contratos contrato)
+		{
+			contrato.cuotafija_dolares = GetPago(contrato);
+			contrato.cuotafija = contrato.cuotafija_dolares * contrato.taza_cambio;
+			double? capital = contrato.Valoracion_empeño_dolares;
+			for (int index = 0; index < contrato.plazo; index++)
+			{
+				double? abono_capital = contrato.cuotafija_dolares
+					- (capital * contrato.tasas_interes);
+				Tbl_Cuotas cuota = new Tbl_Cuotas
+				{
+					fecha = contrato.fecha.GetValueOrDefault().AddMonths(index + 1),
+					total = contrato.cuotafija_dolares,
+					interes = capital * contrato.tasas_interes,
+					abono_capital = abono_capital,
+					capital_restante = index == contrato.plazo - 1 ? 0 : (capital - abono_capital),
+					tasa_cambio = contrato.taza_cambio
+				};
+				capital = capital - abono_capital;
+				contrato.Tbl_Cuotas.Add(cuota);
+			}
+		}
+		public void UpdateCuotas(Transaction_Contratos contrato)//TODO NETODO DE REESTRUCTURACION DE CUOTAS
+		{
+			var cuotasPendientes = contrato.Tbl_Cuotas.Where(c => c.Estado?.ToUpper() == "PENDIENTE").ToList();
+			contrato.cuotafija_dolares = UpdatePago(contrato, cuotasPendientes.Count, this.tasa_cambio);
+			contrato.cuotafija = contrato.cuotafija_dolares * contrato.taza_cambio;
+			double? capital = contrato.Valoracion_empeño_dolares;
+
+			int index = 0;
+			cuotasPendientes.OrderBy(c => c.id_cuota).ToList().ForEach(cuota =>
+			{
+				double? abono_capital = contrato.cuotafija_dolares
+					- (capital * contrato.tasas_interes);
+				cuota.fecha = contrato.fecha.GetValueOrDefault().AddMonths(index + 1);
+				cuota.total = contrato.cuotafija_dolares;
+				cuota.interes = capital * contrato.tasas_interes;
+				cuota.abono_capital = abono_capital;
+				cuota.capital_restante = index == contrato.plazo - 1 ? 0 : (capital - abono_capital);
+				cuota.tasa_cambio = contrato.taza_cambio;
+				capital = capital - abono_capital;
+				cuota.Update();
+				index++;
+			});
+		}
+		public double? GetPago(Transaction_Contratos contrato)
+		{
+			double? monto = contrato.Valoracion_empeño_dolares;
+			int? cuotas = contrato.plazo;
+			double? tasa = contrato.tasas_interes;
+			double? payment = tasa * Math.Pow((double)(1 + tasa), (double)cuotas) * monto
+			/ (Math.Pow((double)(1 + tasa), (double)cuotas) - 1);
+			return payment;
+		}
+		public double? UpdatePago(Transaction_Contratos contrato, int plazo, double? tasaActual)
+		{
+			double? monto = contrato.saldo;
+			int? cuotas = plazo;
+			double? tasa = contrato.tasas_interes;
+			double? payment = tasa * Math.Pow((double)(1 + tasa), (double)cuotas) * monto
+			/ (Math.Pow((double)(1 + tasa), (double)cuotas) - 1);
+			return payment;
+		}
 		public object? PrintRecibo(string token)
 		{
 			try
@@ -423,7 +564,7 @@ namespace Transactions
 				.Replace("{{cajero}}", dbUser.Nombres)
 				.Replace("{{cliente}}", contrato?.Catalogo_Clientes?.primer_nombre + " " + contrato.Catalogo_Clientes.primer_apellido + " " + contrato.Catalogo_Clientes.segundo_apellidio)
 				.Replace("{{clasificacion}}", cliente?.Catalogo_Clasificacion_Interes?.porcentaje.ToString() ?? "")
-				.Replace("{{categoria}}",  GetTipoArticulo(contrato.Detail_Prendas))
+				.Replace("{{categoria}}", GetTipoArticulo(contrato.Detail_Prendas))
 				.Replace("{{cuotas}}", contrato.plazo.ToString())
 				.Replace("{{cuotas_pendientes}}", cuotasPendiente.Count.ToString())
 				.Replace("{{saldo_anterior}}", Math.Round((decimal)factura.Factura_contrato?.saldo_anterior, 2).ToString())

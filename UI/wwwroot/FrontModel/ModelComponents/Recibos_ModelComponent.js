@@ -41,7 +41,7 @@ class Recibos_ModelComponent extends EntityClass {
 
 
     /**@type {ModelProperty} */ title3 = { type: "title", label: "Opciones:" };
-    /**@type {ModelProperty} */ //solo_abono = { type: "checkbox", hiddenInTable: true, require: false };
+  
 
     
     /**@type {ModelProperty} */ paga_cordobas = { type: "number", hiddenInTable: true };
@@ -58,6 +58,8 @@ class Recibos_ModelComponent extends EntityClass {
             form.DrawComponent();
         }
     };
+    /**@type {ModelProperty} */ solo_abono = { type: "checkbox", hiddenInTable: true, require: false };
+
     /**@type {ModelProperty} */ reestructurar = {
         type: "checkbox", hidden: true, require: false,
         action: (recibo, form) => {

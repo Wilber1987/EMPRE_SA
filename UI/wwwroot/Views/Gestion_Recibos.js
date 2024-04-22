@@ -105,6 +105,7 @@ class Gestion_RecibosView extends HTMLElement {
             this.contratoDetail,
             this.TabContainerTables
         );
+        // @ts-ignore
         this.calculoRecibo(selectContrato, this.tasasCambio);
     }
 
@@ -193,13 +194,17 @@ class Gestion_RecibosView extends HTMLElement {
             }, paga_cordobas: {
                 type: 'MONEY', max: this.pagoMaximoCordobas, default: this.pagoActualCordobas,
                 min: this.pagoMinimoCordobas, action: (/**@type {Recibos}*/ ObjectF, form, control) => {
-                    if (parseFloat(control.value) > parseFloat(control.max)) {
+                    if (parseFloat(control.value) == parseFloat(control.max)) {
                         //control.value =  parseFloat(control.max).toFixed(3);
-                        ObjectF.paga_cordobas = parseFloat(control.max);
+                        ObjectF.solo_abono = false;
+                        ObjectF.cancelar = true;
+                        //ObjectF.paga_cordobas = parseFloat(control.max);
                     }
-                    if (parseFloat(control.value) < parseFloat(control.min)) {
+                    if (parseFloat(control.value) == parseFloat(control.min)) {
                         //control.value = parseFloat(control.max).toFixed(3);
-                        ObjectF.paga_dolares = parseFloat(control.min);
+                        ObjectF.solo_abono = true;
+                        ObjectF.cancelar = false;
+                        //ObjectF.paga_dolares = parseFloat(control.min);
                     }
                     if (ObjectF.paga_dolares != (ObjectF.paga_cordobas / ObjectF.tasa_cambio)) {
                         ObjectF.paga_dolares = (ObjectF.paga_cordobas / ObjectF.tasa_cambio);
@@ -215,18 +220,20 @@ class Gestion_RecibosView extends HTMLElement {
             }, paga_dolares: {
                 type: 'MONEY', max: this.pagoMaximoDolares, default: this.pagoActual,
                 min: this.pagoMinimoDolares, action: (/**@type {Recibos}*/ ObjectF, form, control) => {
-                    if (parseFloat(control.value) > parseFloat(control.max)) {
+                    if (parseFloat(control.value) == parseFloat(control.max)) {
+                        //control.value =  parseFloat(control.max).toFixed(3);
+                        ObjectF.solo_abono = false;
+                        ObjectF.cancelar = true;
+                        //ObjectF.paga_cordobas = parseFloat(control.max);
+                    }
+                    if (parseFloat(control.value) == parseFloat(control.min)) {
                         //control.value = parseFloat(control.max).toFixed(3);
-                        ObjectF.paga_dolares = parseFloat(control.max);
-                    }                    
-                    if (parseFloat(control.value) < parseFloat(control.min)) {
-                        //control.value = parseFloat(control.max).toFixed(3);
-                        ObjectF.paga_dolares = parseFloat(control.min);
+                        ObjectF.solo_abono = true;
+                        ObjectF.cancelar = false;
+                        //ObjectF.paga_dolares = parseFloat(control.min);
                     }
                     if (ObjectF.paga_cordobas != (ObjectF.paga_dolares * ObjectF.tasa_cambio)) {
-
                         ObjectF.paga_cordobas = (ObjectF.paga_dolares * ObjectF.tasa_cambio);
-
                         ObjectF.cambio_dolares = ObjectF.monto_dolares - ObjectF.paga_dolares;
                         ObjectF.cambio_cordobas = ObjectF.monto_cordobas - ObjectF.paga_cordobas;
                         if (ObjectF.paga_dolares < this.Contrato.saldo) {
@@ -412,6 +419,8 @@ class Gestion_RecibosView extends HTMLElement {
                     margin: 0px;
                 } `
         });
+        
+        // @ts-ignore
         this.calculoRecibo(this.Contrato, this.tasasCambio, proyeccionData);
 
         this.proyeccion.append(this.selectContratosDetail(this.Contrato), proyeccionData, this.proyeccionDetail);
@@ -556,7 +565,7 @@ class Gestion_RecibosView extends HTMLElement {
             formObject["fecha_roc"] = new Date();
             formObject["paga_cordobas"] = (primeraCuotaConCapitalMayorACero * tasasCambio[0].Valor_de_venta).toFixed(3);
             formObject["paga_dolares"] = primeraCuotaConCapitalMayorACero;
-            formObject["solo_abono"] = true;
+            formObject["solo_abono"] = false;
             formObject["cancelar"] = false;
             formObject["total_apagar_dolares"] = primeraCuotaConCapitalMayorACero;
         }

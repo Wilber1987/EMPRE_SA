@@ -524,6 +524,8 @@ namespace DataBaseModel
 		public double? tasa_cambio { get; set; }
 
 		public int? id_factura { get; set; }
+		[JsonProp]
+		public Tbl_Cuotas? EstadoAnterior { get; set; }
 
 		//[ManyToOne(TableName = "Transaccion_Factura", KeyColumn = "id_factura", ForeignKeyColumn = "id_factura")]
 		public Transaccion_Factura? Transaccion_Factura { get; set; }
