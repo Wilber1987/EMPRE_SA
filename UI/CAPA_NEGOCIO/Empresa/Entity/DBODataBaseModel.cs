@@ -434,7 +434,7 @@ namespace DataBaseModel
 		public string? Moneda { get;  set; }
 
 		[JsonProp]
-		public Factura_contrato Factura_contrato { get; set; }
+		public Factura_contrato? Factura_contrato { get; set; }
 
 		[OneToMany(TableName = "Detalle_Factura_Recibo", KeyColumn = "id_factura", ForeignKeyColumn = "id_factura")]
 		public List<Detalle_Factura_Recibo>? Detalle_Factura_Recibo { get; set; }

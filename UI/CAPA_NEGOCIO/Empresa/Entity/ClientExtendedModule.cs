@@ -9,7 +9,10 @@ namespace DataBaseModel
     public class Catalogo_Clientes : ClientDataBaseModel.Catalogo_Clientes
     {
        
-        public string? hora { get; set; }        
+        public string? hora { get; set; }  
+        public string? Descripcion { get {
+            return $"{primer_nombre} {segundo_nombre} {primer_apellido} {segundo_apellidio}";
+        }}      
         public int? tipoc { get; set; }      
         public string? valor_cliente { get; set; }     
         public string? solo_acreedor { get; set; }

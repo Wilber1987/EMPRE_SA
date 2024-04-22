@@ -1,5 +1,6 @@
 import { Catalogo_Tipo_Identificacion } from "../ClientModule/FrontModel/Catalogo_Clientes.js";
 import { WForm } from "../WDevCore/WComponents/WForm.js";
+import { ModelProperty } from "../WDevCore/WModules/CommonModel.js";
 import { EntityClass } from "../WDevCore/WModules/EntityClass.js";
 import { WAjaxTools } from "../WDevCore/WModules/WComponentsTools.js";
 import { Detail_Prendas_Vehiculos, Tbl_Cuotas } from "./Model.js";
@@ -220,10 +221,10 @@ class Transaction_Contratos_ModelComponent extends EntityClass {
             this[prop] = props[prop];
         }
     }
-    Catalogo_Clientes = { type: 'WSELECT', ModelObject: () => new Catalogo_Clientes(), hiddenFilter: true };
+    Catalogo_Clientes = { type: 'WSELECT', ModelObject: () => new Catalogo_Clientes() };
     numero_contrato = { type: "number", primary: true };
-    fecha_contrato = { type: "date" };
-    fecha_cancelar = { type: "date", hiddenInTable: true };
+    fecha_contrato = { type: "date", hiddenFilter: true };
+    fecha_cancelar = { type: "date", hiddenInTable: true, hiddenFilter: true };
     monto = { type: "MONEY", hiddenInTable: true, hiddenFilter: true };
     interes = { type: "MONEY", hiddenInTable: true, hiddenFilter: true };
     mora = { type: "PERCENTAGE", hiddenInTable: true, hiddenFilter: true };
@@ -729,14 +730,16 @@ class Transaccion_Factura extends EntityClass {
             this[prop] = props[prop];
         }
     }
+    /**@type {ModelProperty}*/
+    Catalogo_Clientes = { type: 'WSELECT', ModelObject: () => new Catalogo_Clientes(), ForeignKeyColumn: "id_cliente", hiddenInTable: true};
     id_factura = { type: "number", primary: true };
-    tipo = { type: "text" };
-    concepto = { type: "text" };
+    tipo = { type: "text" , hidden: true};
+    concepto = { type: "text", hiddenFilter: true };
     tasa_cambio = { type: "string" };
     total = { type: "string" };
-    id_cliente = { type: "number" };
-    id_sucursal = { type: "number" };
-    fecha = { type: "date" };
+    id_cliente = { type: "number", hidden: true };
+    id_sucursal = { type: "number", hidden: true };
+    fecha = { type: "date" };   
     Factura_contrato = { type: 'model', label: "Datos del contrato al momento del pago", ModelObject: () => new Factura_contrato(), hiddenFilter: true };
     Detalle_Factura_Recibo = { type: 'MasterDetail', label: "Cuotas Pagadas", ModelObject: () => new Detalle_Factura_Recibo(), hiddenFilter: true };
 

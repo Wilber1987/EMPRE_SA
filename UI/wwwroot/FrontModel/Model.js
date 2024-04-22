@@ -66,6 +66,8 @@ class Tbl_Cuotas extends EntityClass {
     descuento;
     /**@type {Number} Tbl_cuotas del abono*/
     tasa_cambio;
+    /**@type {String} Tbl_cuotas del abono*/
+    Estado;
 
 }
 export { Tbl_Cuotas }
