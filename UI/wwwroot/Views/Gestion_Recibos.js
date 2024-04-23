@@ -26,6 +26,13 @@ class Gestion_RecibosView extends HTMLElement {
         this.proyeccionDetail = WRender.Create({ className: "info-proyeccion-contrato" });
         /**@type {Array<Catalogo_Cambio_Divisa>} */
         this.tasasCambio = []
+        this.ContractData = {
+            canReestructure: false,
+            canSoloAbono: true,
+            soloInteresMora: true,
+            min: 0,
+            max: 0
+        }
         this.Draw();
     }
     Draw = async () => {
@@ -51,6 +58,7 @@ class Gestion_RecibosView extends HTMLElement {
         this.SelectedContrato = selectContrato;
         // console.log( this.Contrato); 
         this.DefineMaxAndMin(selectContrato);
+        this.ContractData = this.BuildContractData(this.Contrato);
         this.reciboModel = this.BuildRecibosModel();
         this.reciboModel.cancelar.action = (ObjectF) => {
             this.DefineMaxAndMin(selectContrato);
@@ -61,11 +69,11 @@ class Gestion_RecibosView extends HTMLElement {
                 this.reciboForm.DrawComponent()
             }
         };
-        const reestructure = this.ReestructurateData(this.Contrato);
-        //console.log(reestructure);
-        if (reestructure.canReestructure) {
+      
+        //console.log(ContractData);
+        if (this.ContractData.canReestructure) {
             this.reciboModel.reestructurar.hidden = false;
-            this.reciboModel.reestructurar_value.max = reestructure.max;
+            this.reciboModel.reestructurar_value.max = this.ContractData.max;
         }
         this.reciboForm = new WForm({
             ModelObject: this.reciboModel,
@@ -145,22 +153,22 @@ class Gestion_RecibosView extends HTMLElement {
         const reestructuracion = this.reciboForm?.FormObject?.reestructurar_monto ?? 0;
         const total_capital_restante = mora + saldo_pendiente + interesCuota + perdida_de_documento + reestructuracion;
         this.pagoMaximoDolares = total_capital_restante;
-        this.pagoMaximoCordobas = this.pagoMaximoDolares * this.tasasCambio[0].Valor_de_venta;       
+        this.pagoMaximoCordobas = this.pagoMaximoDolares * this.tasasCambio[0].Valor_de_venta;
 
         if (reestructuracion != 0) {
             this.pagoMinimoDolares = CuotaActual.interes;
-            this.pagoActual = CuotaActual.interes + mora + reestructuracion + perdida_de_documento;           
+            this.pagoActual = CuotaActual.interes + mora + reestructuracion + perdida_de_documento;
         } else {
             this.pagoMinimoDolares = CuotaActual.abono_capital;
             this.pagoActual = CuotaActual.total + mora;
         }
         this.pagoMinimoCordobas = this.pagoMinimoDolares * this.tasasCambio[0].Valor_de_venta
         this.pagoActualCordobas = this.pagoActual * this.tasasCambio[0].Valor_de_venta;
-       
+
     }
 
     BuildRecibosModel() {
-        console.log( this.pagoMinimoDolares);
+        console.log(this.ContractData);
         return new Recibos_ModelComponent({
             perdida_de_documento: {
                 type: "checkbox", hiddenInTable: true, require: false, action: (recibo, form) => {
@@ -173,9 +181,16 @@ class Gestion_RecibosView extends HTMLElement {
                     this.reciboForm.FormObject.paga_dolares = this.pagoMaximoDolares?.toFixed(3);
                     this.reciboForm.FormObject.paga_cordobas = this.pagoMaximoCordobas?.toFixed(3);
                     form.DrawComponent();
+
+                }
+            }, solo_abono: {
+                type: "checkbox", require: false, hidden: !this.ContractData.canSoloAbono,
+                 action: (recibo, form) => {
+                    this.DefineMaxAndMin(this.SelectedContrato);
+                    form.DrawComponent();
                 }
             }, reestructurar: {
-                type: "checkbox", hidden: true, require: false,
+                type: "checkbox", hidden: !this.ContractData.canReestructure, require: false,
                 action: (recibo, form) => {
                     if (recibo.reestructurar == true) {
                         form.ModelObject.reestructurar_value.hidden = false;
@@ -189,6 +204,19 @@ class Gestion_RecibosView extends HTMLElement {
                     this.DefineMaxAndMin(this.SelectedContrato);
                     this.reciboForm.FormObject.paga_dolares = this.pagoMaximoDolares?.toFixed(3);
                     this.reciboForm.FormObject.paga_cordobas = this.pagoMaximoCordobas?.toFixed(3);
+                    form.DrawComponent();
+                }
+            }, /**@type {ModelProperty} */ solo_interes_mora: {
+                type: "checkbox", require: false, hidden: !this.ContractData.soloInteresMora, action: (recibo, form) => {
+                    this.DefineMaxAndMin(this.SelectedContrato);
+                    if (recibo.solo_interes_mora == true) {
+                        form.ModelObject.paga_dolares.disabled = true;
+                        this.reciboForm.FormObject.paga_dolares = this.pagoMaximoDolares?.toFixed(3);
+                        this.reciboForm.FormObject.paga_cordobas = this.pagoMaximoCordobas?.toFixed(3);
+                    } else {
+                        form.ModelObject.paga_dolares.disabled = false;
+                    }
+
                     form.DrawComponent();
                 }
             }, paga_cordobas: {
@@ -257,11 +285,11 @@ class Gestion_RecibosView extends HTMLElement {
                     this.reciboForm?.DrawComponent();
                 }
             }, cambio_dolares: {
-                type: 'MONEY', disabled: true, defaultValue: 0, action: (/**@type {Recibos}*/ ObjectF, form) => {
+                type: 'MONEY', disabled: true, require: false, defaultValue: 0, action: (/**@type {Recibos}*/ ObjectF, form) => {
                     return ObjectF.cambio_dolares = ObjectF.monto_dolares - ObjectF.paga_dolares;
                 }
             }, cambio_cordobas: {
-                type: 'MONEY', disabled: true, defaultValue: 0, action: (/**@type {Recibos}*/ ObjectF, form) => {
+                type: 'MONEY', disabled: true, require: false, defaultValue: 0, action: (/**@type {Recibos}*/ ObjectF, form) => {
                     return ObjectF.cambio_cordobas = ObjectF.monto_cordobas - ObjectF.paga_cordobas;
                 }
             }
@@ -271,26 +299,31 @@ class Gestion_RecibosView extends HTMLElement {
     /**
      * @param {Transaction_Contratos} Contrato
      */
-    ReestructurateData(Contrato) {
+    BuildContractData(Contrato) {
         //console.log(Contrato);
         const categoria = Contrato.Detail_Prendas[0].Catalogo_Categoria
         const plazo = Contrato.plazo;
         const fecha = new Date(Contrato.fecha_cancelar);
-        // @ts-ignore
-        //const fecha = new Date(Contrato.fecha_cancelar).subtractDays(31);
         let canReestructure = false;
-        //console.log(categoria.descripcion != "vehiculos" , categoria.plazo_limite > plazo, fecha <= new Date());
-        //console.log(fecha, new Date().addDays(32), fecha <= new Date().addDays(32), categoria);
-        //TODO REPARAR FECHA
+        //TODO BOORAR CICLO DE MORA FORZADA 
+        Contrato.Tbl_Cuotas?.forEach(cuota => {
+            cuota.mora = this.forceMora(cuota, Contrato);
+        });
+
+        //TODO REPARAR FECHA        
         // @ts-ignore
         if (categoria.descripcion != "vehiculos" && categoria.plazo_limite > plazo && fecha <= new Date().addDays(32)) {//TODO REPARAR FECHA QUITAR ESOS 31 DIAS
             canReestructure = true;
         }
+        console.log(Contrato.Tbl_Cuotas);
+        const existeMora = Contrato.Tbl_Cuotas?.filter(c => c.mora != null && c.mora > 0).length > 0;
         return {
             canReestructure: canReestructure,
             min: 1,
             // @ts-ignore
-            max: categoria.plazo_limite - plazo
+            max: categoria.plazo_limite - plazo,
+            canSoloAbono: !existeMora,
+            soloInteresMora: !canReestructure
         }
     }
     /**
@@ -328,7 +361,12 @@ class Gestion_RecibosView extends HTMLElement {
                 this.Manager.NavigateFunction("buscar-contrato", this.contratosSearcher)
             }
         }))
-
+        this.OptionContainer.append(WRender.Create({
+            tagName: 'button', className: 'Block-Secundary', innerText: 'Ver Recibos',
+            onclick: () => {
+                window.location.href = "/PagesViews/Ver_Recibos";
+            }
+        }))
         this.OptionContainer.append(WRender.Create({
             tagName: 'button', className: 'Block-Primary', innerText: 'Recibo',
             onclick: () => {
@@ -419,7 +457,7 @@ class Gestion_RecibosView extends HTMLElement {
                     margin: 0px;
                 } `
         });
-        
+
         // @ts-ignore
         this.calculoRecibo(this.Contrato, this.tasasCambio, proyeccionData);
 
@@ -485,33 +523,15 @@ class Gestion_RecibosView extends HTMLElement {
             let index = 0
             for (const cuota of contrato.Tbl_Cuotas) {
                 if (cuota.pago_contado < cuota.total || contrato.Tbl_Cuotas.length == 1) {
-                    //TODO BORRAR
-                    const fechaOriginal = new Date(cuota.fecha);
-                    const fechaActual = new Date().addDays(32);
-                    fechaOriginal.setHours(0, 0, 0, 0);
-                    fechaActual.setHours(0, 0, 0, 0);
-                    const diferencia = fechaActual - fechaOriginal;
-                    const diasDeDiferencia = (diferencia / (1000 * 60 * 60 * 24)) >= 0 ? (diferencia / (1000 * 60 * 60 * 24)) : 0;
-                    //console.log(diasDeDiferencia, (diferencia / (1000 * 60 * 60 * 24)) < 0);
-                    var montoMora = cuota.total * ((contrato?.mora / 100) ?? 0.005) * diasDeDiferencia;
-                    console.log(diasDeDiferencia);
-                    //TODO FINBORRAR
-
                     fecha = cuota.fecha;
                     primeraCuotaConCapitalMayorACero = cuota.total;
                     interes_cargos = cuota.interes;
+                    // @ts-ignore
                     interes_demas_cargos_pagar_cordobas = cuota.interes * tasasCambio[0].Valor_de_venta;
                     abono_capital_cordobas = cuota.abono_capital;
                     mora_interes = cuota.mora == null ? 0 : cuota.mora; // no permite el cero, preguntar a wilber sobre problema
+                    // @ts-ignore
                     mora_interes_cordobas = mora_interes * tasasCambio[0].Valor_de_venta
-
-
-                    //TODO BORRAR
-                    mora_interes = montoMora; // no permite el cero, preguntar a wilber sobre problema
-                    mora_interes_cordobas = mora_interes * tasasCambio[0].Valor_de_venta
-                    //TODO FINBORRAR
-
-
                     cuota_total = cuota.total;
                     this.cuota = cuota;
                     this.cuota
@@ -538,6 +558,7 @@ class Gestion_RecibosView extends HTMLElement {
 
 
             formObject["monto"] = contrato["monto"].toFixed(3);
+            // @ts-ignore
             formObject["saldo_actual_cordobas"] = (contrato["saldo"] * tasasCambio[0].Valor_de_venta).toFixed(3);
             formObject["saldo_actual_dolares"] = contrato["saldo"].toFixed(3);
             formObject["interes_cargos"] = interes_cargos.toFixed(3);
@@ -545,9 +566,11 @@ class Gestion_RecibosView extends HTMLElement {
             formObject["interes_demas_cargos_pagar_cordobas"] = interes_demas_cargos_pagar_cordobas.toFixed(3);
             formObject["interes_demas_cargos_pagar_dolares"] = interes_cargos.toFixed(3);
 
+            // @ts-ignore
             formObject["abono_capital_cordobas"] = (abono_capital_cordobas * tasasCambio[0].Valor_de_venta).toFixed(3);
             formObject["abono_capital_dolares"] = abono_capital_cordobas.toFixed(3);;
 
+            // @ts-ignore
             formObject["cuota_pagar_cordobas"] = (primeraCuotaConCapitalMayorACero * tasasCambio[0].Valor_de_venta).toFixed(3);
             formObject["cuota_pagar_dolares"] = primeraCuotaConCapitalMayorACero;
 
@@ -557,12 +580,14 @@ class Gestion_RecibosView extends HTMLElement {
             formObject["mora_interes_cordobas"] = (mora_interes_cordobas + interes_demas_cargos_pagar_cordobas).toFixed(3);
             formObject["mora_interes_dolares"] = (mora_interes + interes_cargos).toFixed(3);
 
+            // @ts-ignore
             formObject["total_cordobas"] = (cuota_total * tasasCambio[0].Valor_de_venta + mora_interes_cordobas).toFixed(3);
             formObject["total_dolares"] = (cuota_total + mora_interes).toFixed(3);
 
 
             formObject["total_parciales"] = 1;//TODO todo preguntar
             formObject["fecha_roc"] = new Date();
+            // @ts-ignore
             formObject["paga_cordobas"] = (primeraCuotaConCapitalMayorACero * tasasCambio[0].Valor_de_venta).toFixed(3);
             formObject["paga_dolares"] = primeraCuotaConCapitalMayorACero;
             formObject["solo_abono"] = false;
@@ -661,14 +686,29 @@ class Gestion_RecibosView extends HTMLElement {
         }
     `
 
+    forceMora(cuota, contrato) {
+        const fechaOriginal = new Date(cuota.fecha);
+        // @ts-ignore
+        const fechaActual = new Date().addDays(32);
+        fechaOriginal.setHours(0, 0, 0, 0);
+        fechaActual.setHours(0, 0, 0, 0);
+        // @ts-ignore
+        const diferencia = fechaActual - fechaOriginal;
+        const diasDeDiferencia = (diferencia / (1000 * 60 * 60 * 24)) >= 0 ? (diferencia / (1000 * 60 * 60 * 24)) : 0;
+        //console.log(diasDeDiferencia, (diferencia / (1000 * 60 * 60 * 24)) < 0);
+        const montoMora = cuota.total * ((contrato?.mora / 100) ?? 0.005) * diasDeDiferencia;
+        console.log(diasDeDiferencia);
+        return montoMora;
+    }
+
     selectContratosDetail(selectContrato) {
         return html`<div>
     <div class="column-venta">
         <div class="DataContainer">
             <span>Nombre:</span>
             <label>${selectContrato.Catalogo_Clientes.primer_nombre + ' ' +
-                selectContrato.Catalogo_Clientes.segundo_nombre + ' ' + selectContrato.Catalogo_Clientes.primer_apellido
-                + ' ' + selectContrato.Catalogo_Clientes.segundo_apellidio}</label>
+            selectContrato.Catalogo_Clientes.segundo_nombre + ' ' + selectContrato.Catalogo_Clientes.primer_apellido
+            + ' ' + selectContrato.Catalogo_Clientes.segundo_apellidio}</label>
         </div>
         <div class="DataContainer">
             <span>Dirección:</span>
@@ -685,17 +725,17 @@ class Gestion_RecibosView extends HTMLElement {
         <div class="DataContainer">
             <span>Fecha de contrato:</span>
             <label>${ // @ts-ignore
-                selectContrato.fecha?.toDateFormatEs() ?? "-"}</label>
+            selectContrato.fecha?.toDateFormatEs() ?? "-"}</label>
         </div>
         <div class="DataContainer">
             <span>F/Último pago:</span>
             <label>${ // @ts-ignore
-                this.ultimaCuota?.fecha_pago?.toDateFormatEs() ?? "-"}</label>
+            this.ultimaCuota?.fecha_pago?.toDateFormatEs() ?? "-"}</label>
         </div>
         <div class="DataContainer">
             <span>F/Próximo pago:</span>
             <label>${ // @ts-ignore
-                this.proximaCuota?.fecha?.toDateFormatEs() ?? "-"}</label>
+            this.proximaCuota?.fecha?.toDateFormatEs() ?? "-"}</label>
         </div>
         <div class="DataContainer">
             <span>Fecha de cancelación:</span>
@@ -704,7 +744,7 @@ class Gestion_RecibosView extends HTMLElement {
         <div class="DataContainer">
             <span>Saldo actual C$:</span>
             <label>${ // @ts-ignore
-                (selectContrato.saldo * this.tasasCambio[0].Valor_de_venta).toFixed(3)}</label>
+            (selectContrato.saldo * this.tasasCambio[0].Valor_de_venta).toFixed(3)}</label>
         </div>
         <div class="DataContainer">
             <span>Saldo actual $:</span>
@@ -722,13 +762,13 @@ class Gestion_RecibosView extends HTMLElement {
         <div class="DataContainer">
             <span>Tasa de cambio venta:</span>
             <label>${ // @ts-ignore
-                this.tasasCambio[0].Valor_de_venta}</label>
+            this.tasasCambio[0].Valor_de_venta}</label>
         </div>
 
         <div class="DataContainer">
             <span>Tasa de cambio compra:</span>
             <label>${ // @ts-ignore
-                this.tasasCambio[0].Valor_de_compra}</label>
+            this.tasasCambio[0].Valor_de_compra}</label>
         </div>
         <div class="DataContainer">
             <span>Tipo de articulo:</span>

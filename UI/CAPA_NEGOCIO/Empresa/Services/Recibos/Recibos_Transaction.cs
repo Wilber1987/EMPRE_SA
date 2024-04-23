@@ -39,6 +39,7 @@ namespace Transactions
 		public double? paga_cordobas { get; set; }
 		public double? paga_dolares { get; set; }
 		public bool? solo_abono { get; set; }
+		public bool? solo_interes_mora { get; set; }
 		public bool? cancelar { get; set; }
 		public bool? reestructurar { get; set; }
 		public double? reestructurar_value { get; set; }
@@ -89,9 +90,9 @@ namespace Transactions
 					+ interesCorriente
 					+ perdida_de_documento_monto
 					+ reestructuracion_monto;
-				double? abonoCapital = monto - interesCorriente;
+				double? abonoCapital = monto - mora - interesCorriente;
 				double? saldoRespaldo = contrato.saldo;
-				contrato.saldo = contrato.saldo - abonoCapital;
+				contrato.saldo -= abonoCapital;
 				if (contrato.saldo <= 0)
 				{
 					contrato.saldo = 0;
@@ -106,47 +107,25 @@ namespace Transactions
 					cuotasPendientes?.ForEach(cuota =>
 					{
 						if (cuota.id_cuota == CuotaActual.id_cuota) return;
-						TblCuotas estadoAnterior = CloneCuota(cuota);
+						EstadoAnteriorCuota estadoAnterior = CloneCuota(cuota);
 						cuota.pago_contado = cuota.abono_capital;
 						AgregarCuotaDetalle(cuota, DetallesFacturaRecibos, estadoAnterior,
 						"Pago de completo de cuota, en la cancelación de contrato No: " + this.numero_contrato);
 						cuota.Estado = Contratos_State.CANCELADO.ToString();
 					});
 				}
-				else
+				else if (solo_interes_mora == true)//PAGA SOLO INTERES + MORA
+				{
+					monto = SoloInteresMora(contrato, monto, DetallesFacturaRecibos, cuotasPendientes, CuotaActual);
+				}
+				else if (solo_abono == true) //PAGA ABONO AL CAPITAL
+				{
+					monto = AbonoCapital(contrato, monto, DetallesFacturaRecibos, cuotasPendientes, null);
+				}
+				else //PAGA MAS DE LO NORMAL (CUOTA CON INTERESES + MORA) + ABONO AL CAPITAL
 				{
 					monto = CancelarCuotaActual(monto, CuotaActual, DetallesFacturaRecibos);
-					if (monto > 0)
-					{
-						//UpdateCuotas(contrato);
-						cuotasPendientes?.ForEach(cuota =>
-						{
-							if (cuota.id_cuota == CuotaActual.id_cuota) return;
-							if (monto <= 0) return;
-							TblCuotas estadoAnterior = CloneCuota(cuota);
-							cuota.fecha_pago = DateTime.Now;
-							if (monto >= cuota.abono_capital && monto > 0)
-							{
-								cuota.pago_contado = cuota.abono_capital;
-								cuota.abono_capital = 0;
-								cuota.total = 0;
-								monto -= cuota.abono_capital.GetValueOrDefault();
-								cuota.Estado = Contratos_State.CANCELADO.ToString();
-								cuota.interes = 0;
-							}
-							else
-							{
-								cuota.pago_contado = monto;
-								cuota.abono_capital += -monto;
-								monto = 0;
-								cuota.interes = cuota.abono_capital * contrato.tasas_interes;
-								cuota.total = cuota.interes + cuota.abono_capital;
-							}
-							AgregarCuotaDetalle(cuota, DetallesFacturaRecibos, estadoAnterior,
-								"Abono al capital del contrato No: " + this.numero_contrato);
-							cuota.Update();
-						});
-					}
+					monto = AbonoCapital(contrato, monto, DetallesFacturaRecibos, cuotasPendientes, CuotaActual);
 				}
 				contrato.Update();
 				//fecha de proximo pago
@@ -154,7 +133,7 @@ namespace Transactions
 				{
 					numero_contrato = contrato.numero_contrato,
 					Estado = "PENDIENTE"
-				}.Get<Tbl_Cuotas>();
+				}.Get<Tbl_Cuotas>()?.OrderBy(C => C.id_cuota).ToList();
 
 				//guardado de factura
 				var factura = new Transaccion_Factura()
@@ -193,6 +172,7 @@ namespace Transactions
 					Detalle_Factura_Recibo = DetallesFacturaRecibos
 				};
 				factura.Save();
+				//categoria 1 y 6
 				var cuentaDestino = new Catalogo_Cuentas()
 				{
 					id_categoria = 1,
@@ -220,7 +200,7 @@ namespace Transactions
 					Catalogo_Cuentas_Origen = cuentaOrigen,
 					concepto = "Pago de cuota, contrato No: " + this.numero_contrato,
 					descripcion = "Pago de cuota, contrato No: " + this.numero_contrato,
-					moneda = this.moneda,
+					moneda = this.moneda?.ToUpper(),
 					monto = this.moneda?.ToUpper() == "DOLARES" ? this.paga_dolares : this.paga_cordobas,
 					tasa_cambio = this.tasa_cambio,
 					tasa_cambio_compra = this.tasa_cambio_compra,
@@ -253,9 +233,94 @@ namespace Transactions
 
 		}
 
+		private double SoloInteresMora(Transaction_Contratos contrato, double monto,
+		List<Detalle_Factura_Recibo> DetallesFacturaRecibos,
+		List<Tbl_Cuotas>? cuotasPendientes,
+		Tbl_Cuotas? CuotaActual)
+		{
+			EstadoAnteriorCuota estadoAnteriorCuotaActual = CloneCuota(CuotaActual);
+			CuotaActual.fecha_pago = DateTime.Now;
+			CuotaActual.pago_contado = monto;
+			monto = 0;
+			CuotaActual.Estado = Contratos_State.CANCELADO.ToString();
+
+			AgregarCuotaDetalle(CuotaActual, DetallesFacturaRecibos, estadoAnteriorCuotaActual,
+			$"Pago de interes + mora de cuota correspondiente a la cuota {CuotaActual?.fecha?.ToString("dd-MM-yyyy")} del contrato No: " + this.numero_contrato);
+			CuotaActual?.Update();
+
+			Tbl_Cuotas? CuotaFinal = cuotasPendientes.First();//DADO QUE LAS CUOTAS VIENEN EN ORDEN DESC SE TOMA LA PRIMERA
+			EstadoAnteriorCuota estadoAnteriorCuotaFinal = CloneCuota(CuotaActual);
+			CuotaFinal.abono_capital += CuotaActual?.abono_capital;
+			CuotaFinal.interes = CuotaFinal.abono_capital * contrato.tasas_interes;
+			CuotaFinal.total = CuotaFinal.interes + CuotaFinal.abono_capital;			
+
+			Tbl_Cuotas? CuotaAnterior = CuotaActual;
+			cuotasPendientes?.OrderBy(c => c.id_cuota).ToList()?.ForEach(cuota =>
+			{
+				if (cuota.id_cuota == CuotaActual?.id_cuota) return;
+				if (cuota.id_cuota == CuotaFinal?.id_cuota) return;
+				EstadoAnteriorCuota estadoAnterior = CloneCuota(cuota);
+				cuota.abono_capital = CuotaAnterior?.abono_capital;
+				cuota.interes = CuotaAnterior?.interes;
+				cuota.pago_contado = 0;
+				AgregarCuotaDetalle(cuota, DetallesFacturaRecibos, estadoAnterior,
+					$"Actualización de datos de pago de la cuota {CuotaActual?.fecha?.ToString("dd-MM-yyyy")} del contrato No: "
+					+ this.numero_contrato);				
+				cuota.Update();
+			});
+			//AGREGO EL DETALLE DE LA MODIFICACION
+			AgregarCuotaDetalle(CuotaFinal, DetallesFacturaRecibos, estadoAnteriorCuotaFinal,
+					$"Actualización de datos de pago de la cuota {CuotaFinal?.fecha?.ToString("dd-MM-yyyy")} del contrato No: "
+					+ this.numero_contrato);
+
+			CuotaFinal?.Update();
+			return monto;
+		}
+
+		private double AbonoCapital(Transaction_Contratos? contrato,
+		double monto,
+		List<Detalle_Factura_Recibo> DetallesFacturaRecibos,
+		List<Tbl_Cuotas>? cuotasPendientes,
+		Tbl_Cuotas? CuotaActual)
+		{
+			if (monto > 0)
+			{
+				//UpdateCuotas(contrato);
+				cuotasPendientes?.ForEach(cuota =>
+				{
+					if (cuota.id_cuota == CuotaActual?.id_cuota) return;
+					if (monto <= 0) return;
+					EstadoAnteriorCuota estadoAnterior = CloneCuota(cuota);
+					cuota.fecha_pago = DateTime.Now;
+					if (monto >= cuota.abono_capital && monto > 0)
+					{
+						cuota.pago_contado = cuota.abono_capital;
+						cuota.abono_capital = 0;
+						cuota.total = 0;
+						monto -= cuota.abono_capital.GetValueOrDefault();
+						cuota.Estado = Contratos_State.CANCELADO.ToString();
+						cuota.interes = 0;
+					}
+					else
+					{
+						cuota.pago_contado = monto;
+						cuota.abono_capital += -monto;
+						monto = 0;
+						cuota.interes = cuota.abono_capital * contrato.tasas_interes;
+						cuota.total = cuota.interes + cuota.abono_capital;
+					}
+					AgregarCuotaDetalle(cuota, DetallesFacturaRecibos, estadoAnterior,
+						"Abono al capital del contrato No: " + this.numero_contrato);
+					cuota.Update();
+				});
+			}
+
+			return monto;
+		}
+
 		private void AgregarCuotaDetalle(Tbl_Cuotas cuota,
 		List<Detalle_Factura_Recibo> DetallesFacturaRecibos,
-		TblCuotas estadoAnterior,
+		EstadoAnteriorCuota estadoAnterior,
 		string mensaje)
 		{
 			DetallesFacturaRecibos.Add(new Detalle_Factura_Recibo()
@@ -272,7 +337,7 @@ namespace Transactions
 
 		private double CancelarCuotaActual(double monto, Tbl_Cuotas CuotaActual, List<Detalle_Factura_Recibo> detallesFacturaRecibos)
 		{
-			TblCuotas estadoAnterior = CloneCuota(CuotaActual);
+			EstadoAnteriorCuota estadoAnterior = CloneCuota(CuotaActual);
 			CuotaActual.fecha_pago = DateTime.Now;
 			if (monto >= CuotaActual.total && monto > 0)
 			{
@@ -292,9 +357,9 @@ namespace Transactions
 			return monto;
 		}
 
-		private TblCuotas CloneCuota(Tbl_Cuotas CuotaActual)
+		private EstadoAnteriorCuota CloneCuota(Tbl_Cuotas CuotaActual)
 		{
-			return new TblCuotas()
+			return new EstadoAnteriorCuota()
 			{
 				fecha_pago = CuotaActual.fecha_pago,
 				pago_contado = CuotaActual.pago_contado,

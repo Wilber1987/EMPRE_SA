@@ -20,6 +20,10 @@ class Catalogo_Estados_Articulos extends EntityClass {
 }
 export { Catalogo_Estados_Articulos }
 class Transactional_Valoracion extends EntityClass {
+    requireReValoracion(dias = 40) {
+        console.log("dias: ",new Date().subtractDays(dias) > new Date(this.Fecha));
+        return new Date().subtractDays(dias) > new Date(this.Fecha);
+    }
     /**
      * 
      * @param {Transactional_Valoracion | Object} props 
@@ -258,7 +262,7 @@ class Transaction_Contratos_ModelComponent extends EntityClass {
     total_pagar_dolares = { type: "MONEY", hiddenInTable: true, hiddenFilter: true };
     //interes_dolares = { type: "MONEY", hiddenInTable: true, hiddenFilter: true };
     Id_User = { type: "number", hidden: true, hiddenFilter: true };
-    reestructurado = { type: "number" , hiddenFilter: true };
+    reestructurado = { type: "number", hiddenFilter: true };
     Catalogo_Agentes = { type: 'WSELECT', ModelObject: () => new Catalogo_Agentes(), hiddenInTable: true, hiddenFilter: true };
     Detail_Prendas = { type: 'MasterDetail', ModelObject: () => new Detail_Prendas_ModelComponent(), hiddenFilter: true };
     Tbl_Cuotas = { type: 'MasterDetail', ModelObject: () => new Tbl_Cuotas_ModelComponent(), hiddenFilter: true };
@@ -342,7 +346,7 @@ class Detail_Prendas_ModelComponent extends EntityClass {
     serie = { type: 'text' };
     modelo = { type: 'text' };
     monto_aprobado_cordobas = { type: 'number', label: "Monto aprob. cordobas", disabled: true };
-    monto_aprobado_dolares = { type: 'number', label: "Monto aprob. dolares", disabled: true  };
+    monto_aprobado_dolares = { type: 'number', label: "Monto aprob. dolares", disabled: true };
     iva = { type: 'text', hidden: true };
     //margen = { type: 'text', hiddenInTable: true };
     estado = { type: 'select', Dataset: ["ACTIVO", "INACTIVO"], hiddenInTable: true };
@@ -458,10 +462,10 @@ class Catalogo_Cambio_Divisa_ModelComponent extends EntityClass {
     }
     /**@type {ModelProperty}*/ Id_cambio = { type: 'number', primary: true };
     /**@type {ModelProperty}*/ Fecha = { type: 'date' };
-    /**@type {ModelProperty}*/ Valor_de_compra = { type: 'number' , hiddenFilter: true };
+    /**@type {ModelProperty}*/ Valor_de_compra = { type: 'number', hiddenFilter: true };
     /**@type {ModelProperty}*/ Valor_de_venta = { type: 'number', hiddenFilter: true };
- }
- export { Catalogo_Cambio_Divisa_ModelComponent }
+}
+export { Catalogo_Cambio_Divisa_ModelComponent }
 
 class Catalogo_Cuentas extends EntityClass {
     constructor(props) {
@@ -731,15 +735,16 @@ class Transaccion_Factura extends EntityClass {
         }
     }
     /**@type {ModelProperty}*/
-    Catalogo_Clientes = { type: 'WSELECT', ModelObject: () => new Catalogo_Clientes(), ForeignKeyColumn: "id_cliente", hiddenInTable: true};
+    Catalogo_Clientes = { type: 'WSELECT', ModelObject: () => new Catalogo_Clientes(), ForeignKeyColumn: "id_cliente", hiddenInTable: true };
     id_factura = { type: "number", primary: true };
-    tipo = { type: "text" , hidden: true};
+    tipo = { type: "text", hidden: true };
     concepto = { type: "text", hiddenFilter: true };
     tasa_cambio = { type: "string" };
     total = { type: "string" };
+    estado = { type: "select", Dataset: ["ANULADO", "ACTIVO"] };
     id_cliente = { type: "number", hidden: true };
     id_sucursal = { type: "number", hidden: true };
-    fecha = { type: "date" };   
+    fecha = { type: "date" };
     Factura_contrato = { type: 'model', label: "Datos del contrato al momento del pago", ModelObject: () => new Factura_contrato(), hidden: true };
     Detalle_Factura_Recibo = { type: 'MasterDetail', label: "Cuotas Pagadas", ModelObject: () => new Detalle_Factura_Recibo(), hiddenFilter: true };
 

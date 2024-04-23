@@ -35,9 +35,9 @@ class ValoracionesSearch extends HTMLElement {
         })
         this.MainComponent = new WTableComponent({
             ModelObject: model,
-            Dataset: dataset.map(x => {
+            Dataset: dataset.map(/**@param {Transactional_Valoracion} x*/ x => {
                 // @ts-ignore
-                x.requiere_valoracion = (new Date().subtractDays(40) < new Date(x.Fecha)) ? "NO" : "SI";
+                x.requiere_valoracion = x.requireReValoracion() ? "SI" : "NO";
                 return x;
             }),
             Options: {

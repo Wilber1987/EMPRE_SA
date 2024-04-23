@@ -588,15 +588,14 @@ class Transaction_Valoraciones_View extends HTMLElement {
         if (this.valoracionesForm != undefined) {
             for (const prop in this.valoracionesForm?.FormObject) {
                 if (prop == "Detail_Valores") continue;
-                if (prop == "Tasa_interes") continue;
-                // @ts-ignore
-                if (prop == "id_valoracion" && new Date().subtractDays(40) < new Date(valoracion.Fecha)) continue;
+                if (prop == "Tasa_interes") continue;                
+                if (prop == "id_valoracion" && valoracion.requireReValoracion()) continue;
                 this.valoracionesForm.FormObject[prop] = valoracion[prop]
             }
             this.valoracionesForm.Config.ModelObject?.Catalogo_Categoria?.action(this.valoracionesForm.FormObject, this.valoracionesForm);
             if (this.valoresForm != undefined) {
                 // @ts-ignore
-                if (new Date().subtractDays(40) < new Date(valoracion.Fecha)) {
+                if (!valoracion.requireReValoracion()) {
                     this.valoresObject.Valoracion_1 = valoracion.Detail_Valores?.Valoracion_1 ?? 0;
                     this.valoresObject.dolares_1 = valoracion.Detail_Valores?.dolares_1 ?? 0;
                     this.valoresObject.Valoracion_2 = valoracion.Detail_Valores?.Valoracion_2 ?? 0;

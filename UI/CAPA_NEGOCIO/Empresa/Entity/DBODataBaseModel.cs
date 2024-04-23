@@ -60,6 +60,7 @@ namespace DataBaseModel
 				{
 					if (valoracion?.id_valoracion == null)
 					{
+						valoracion.Fecha = DateTime.Now;
 						valoracion?.Save();
 					}
 				}
@@ -524,7 +525,7 @@ namespace DataBaseModel
 		public double? tasa_cambio { get; set; }
 		public int? id_factura { get; set; }
 		[JsonProp]
-		public TblCuotas? EstadoAnterior { get; set; }
+		public EstadoAnteriorCuota? EstadoAnterior { get; set; }
 
 		//[ManyToOne(TableName = "Transaccion_Factura", KeyColumn = "id_factura", ForeignKeyColumn = "id_factura")]
 		public Transaccion_Factura? Transaccion_Factura { get; set; }
@@ -532,7 +533,7 @@ namespace DataBaseModel
 		public Tbl_Cuotas? Tbl_Cuotas { get; set; }
 	}
 
-    public class TblCuotas
+    public class EstadoAnteriorCuota
     {
         public DateTime? fecha_pago { get;  set; }
         public double? pago_contado { get;  set; }

@@ -75,7 +75,20 @@ namespace DataBaseModel
         public string? Estado { get; set; }
     }
 
-    
+    public enum Categoria_CuentasEnum
+    {
+        CAJA_1,
+        CAJA_2,
+        CAJA_CHICA,
+        CAJA_GENERAL,
+        BANCO,
+        FACTURAS_CONTRATOS,
+        FACTURAS_VENTAS,
+        OBLIGACIONES,
+        EMPEÑOS,
+        PRESTAMOS
+    }
+
     public class Catalogo_Cuentas : EntityClass
     {
         [PrimaryKey(Identity = true)]
@@ -87,6 +100,13 @@ namespace DataBaseModel
         public bool? permite_cordobas { get; set; }
         public bool? permite_dolares { get; set; }
         public int? id_sucursal { get; set; }
+        public string? Categoria
+        {
+            get
+            {
+                return this.Categoria_Cuentas?.descripcion;
+            }
+        }
         [ManyToOne(TableName = "Catalogo_Sucursales", KeyColumn = "Id_Sucursal", ForeignKeyColumn = "id_sucursal")]
         public Catalogo_Sucursales? Catalogo_Sucursales { get; set; }
         public int? id_categoria { get; set; }
@@ -129,7 +149,7 @@ namespace DataBaseModel
         public bool? isEditable { get; set; }
     }
 
-    
+
     public class Catalogo_Inversores : EntityClass
     {
         [PrimaryKey(Identity = true)]
@@ -148,7 +168,7 @@ namespace DataBaseModel
         // [OneToMany(TableName = "Transaction_Contratos_Inversionistas", KeyColumn = "id_inversor", ForeignKeyColumn = "id_inversor")]
         // public List<Transaction_Contratos_Inversionistas>? Transaction_Contratos_Inversionistas { get; set; }
     }
-  
+
     public class Catalogo_Profesiones : EntityClass
     {
         [PrimaryKey(Identity = true)]

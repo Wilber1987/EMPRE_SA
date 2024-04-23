@@ -60,6 +60,10 @@ class Recibos_ModelComponent extends EntityClass {
     };
     /**@type {ModelProperty} */ solo_abono = { type: "checkbox", hiddenInTable: true, require: false };
 
+    /**@type {ModelProperty} */ solo_interes_mora = {
+        type: "checkbox",  require: false,
+        action: (recibo, form) => {}
+    };
     /**@type {ModelProperty} */ reestructurar = {
         type: "checkbox", hidden: true, require: false,
         action: (recibo, form) => {

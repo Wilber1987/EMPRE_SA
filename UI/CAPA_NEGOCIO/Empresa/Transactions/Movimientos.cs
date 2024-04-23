@@ -163,7 +163,7 @@ namespace Transactions
                         message = "La cuenta de origen debe ser distinta a la cuenta de destino"
                     };
                 }
-                if (this.Catalogo_Cuentas_Destino?.permite_dolares == false && this.moneda == "DOLARES")
+                if (this.Catalogo_Cuentas_Destino?.permite_dolares == false && this.moneda?.ToUpper() == "DOLARES")
                 {
                     return new ResponseService()
                     {
@@ -171,7 +171,7 @@ namespace Transactions
                         message = "La cuenta de destino no permite dolares"
                     };
                 }
-                if (this.Catalogo_Cuentas_Destino?.permite_cordobas == false && this.moneda == "CORDOBAS")
+                if (this.Catalogo_Cuentas_Destino?.permite_cordobas == false && this.moneda?.ToUpper() == "CORDOBAS")
                 {
                     return new ResponseService()
                     {
@@ -193,14 +193,14 @@ namespace Transactions
                     Detail_Movimiento = new List<Detail_Movimiento>(){
                             new Detail_Movimiento(){
                                 id_cuenta = this.Catalogo_Cuentas_Origen?.id_cuentas,
-                                debito = this.moneda == "CORDOBAS" ? this.monto : 0,
-                                debito_dolares = this.moneda == "DOLARES" ? this.monto : 0,
+                                debito = this.moneda?.ToUpper() == "CORDOBAS" ? this.monto : 0,
+                                debito_dolares = this.moneda?.ToUpper() == "DOLARES" ? this.monto : 0,
                                 credito = 0,
                                 credito_dolares = 0,
                                 monto_inicial = cuentaOrigen?.saldo,
                                 monto_inicial_dolares = cuentaOrigen?.saldo_dolares,
-                                monto_final = cuentaOrigen?.saldo - (this.moneda == "CORDOBAS" ? this.monto : 0),
-                                monto_final_dolares = cuentaOrigen?.saldo_dolares - (this.moneda == "DOLARES" ? this.monto : 0),
+                                monto_final = cuentaOrigen?.saldo - (this.moneda?.ToUpper() == "CORDOBAS" ? this.monto : 0),
+                                monto_final_dolares = cuentaOrigen?.saldo_dolares - (this.moneda?.ToUpper() == "DOLARES" ? this.monto : 0),
                                 tasa_cambio = this.tasa_cambio,
                                 tasa_cambio_compra = this.tasa_cambio_compra,
                                 moneda = Catalogo_Cuentas_Destino?.permite_cordobas == true ? "CORDOBAS" : "DOLARES"
@@ -208,22 +208,22 @@ namespace Transactions
                                 id_cuenta = this.Catalogo_Cuentas_Destino?.id_cuentas,
                                 debito = 0,
                                 debito_dolares = 0,
-                                credito =  this.moneda == "CORDOBAS" ? this.monto : 0,
-                                credito_dolares = this.moneda == "DOLARES" ? this.monto : 0,
+                                credito =  this.moneda?.ToUpper() == "CORDOBAS" ? this.monto : 0,
+                                credito_dolares = this.moneda?.ToUpper() == "DOLARES" ? this.monto : 0,
                                 monto_inicial = cuentaDestino?.saldo,
                                 monto_inicial_dolares = cuentaDestino?.saldo_dolares,
-                                monto_final = cuentaDestino?.saldo + (this.moneda == "CORDOBAS" ? this.monto : 0),
-                                monto_final_dolares = cuentaDestino?.saldo_dolares + (this.moneda == "DOLARES" ? this.monto : 0),
+                                monto_final = cuentaDestino?.saldo + (this.moneda?.ToUpper() == "CORDOBAS" ? this.monto : 0),
+                                monto_final_dolares = cuentaDestino?.saldo_dolares + (this.moneda?.ToUpper() == "DOLARES" ? this.monto : 0),
                                 tasa_cambio = this.tasa_cambio,
                                 tasa_cambio_compra = this.tasa_cambio_compra,
                                 moneda = Catalogo_Cuentas_Destino?.permite_cordobas == true ? "CORDOBAS" : "DOLARES"
                             }
                         }
                 };
-                cuentaOrigen.saldo = cuentaOrigen.saldo - (this.moneda == "CORDOBAS" ? this.monto : 0);
-                cuentaOrigen.saldo_dolares = cuentaOrigen.saldo_dolares - (this.moneda == "DOLARES" ? this.monto : 0);
-                cuentaDestino.saldo = cuentaDestino.saldo + (this.moneda == "CORDOBAS" ? this.monto : 0);
-                cuentaDestino.saldo_dolares = cuentaDestino.saldo_dolares + (this.moneda == "DOLARES" ? this.monto : 0);
+                cuentaOrigen.saldo = cuentaOrigen.saldo - (this.moneda?.ToUpper() == "CORDOBAS" ? this.monto : 0);
+                cuentaOrigen.saldo_dolares = cuentaOrigen.saldo_dolares - (this.moneda?.ToUpper() == "DOLARES" ? this.monto : 0);
+                cuentaDestino.saldo = cuentaDestino.saldo + (this.moneda?.ToUpper() == "CORDOBAS" ? this.monto : 0);
+                cuentaDestino.saldo_dolares = cuentaDestino.saldo_dolares + (this.moneda?.ToUpper() == "DOLARES" ? this.monto : 0);
 
                 cuentaDestino.Update();
                 cuentaOrigen.Update();
