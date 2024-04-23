@@ -740,7 +740,7 @@ class Transaccion_Factura extends EntityClass {
     id_cliente = { type: "number", hidden: true };
     id_sucursal = { type: "number", hidden: true };
     fecha = { type: "date" };   
-    Factura_contrato = { type: 'model', label: "Datos del contrato al momento del pago", ModelObject: () => new Factura_contrato(), hiddenFilter: true };
+    Factura_contrato = { type: 'model', label: "Datos del contrato al momento del pago", ModelObject: () => new Factura_contrato(), hidden: true };
     Detalle_Factura_Recibo = { type: 'MasterDetail', label: "Cuotas Pagadas", ModelObject: () => new Detalle_Factura_Recibo(), hiddenFilter: true };
 
 }

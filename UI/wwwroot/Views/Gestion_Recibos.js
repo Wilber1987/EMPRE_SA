@@ -428,12 +428,12 @@ class Gestion_RecibosView extends HTMLElement {
     selectContrato = (/**@type {Transaction_Contratos} */ selectContrato) => {
         //console.log(selectContrato);
 
-        let cuotasFiltradas = selectContrato.Tbl_Cuotas.filter(cuota => cuota.pago_contado == null || cuota.total > cuota.pago_contado);
+        let cuotasFiltradas = selectContrato.Tbl_Cuotas.filter(cuota => cuota.Estado == "PENDIENTE");
 
         //console.log(selectContrato.Tbl_Cuotas);
         //console.log(cuotasFiltradas);
-        if (cuotasFiltradas.length == 0) {
-            this.append(ModalMessege("Este contrato ya se encuentra cancelado"))
+        if (selectContrato.estado != "ACTIVO") {
+            this.append(ModalMessege("Este contrato se encuentra " + selectContrato.estado))
             return;
         }
 

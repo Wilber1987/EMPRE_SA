@@ -106,7 +106,7 @@ namespace Transactions
 					cuotasPendientes?.ForEach(cuota =>
 					{
 						if (cuota.id_cuota == CuotaActual.id_cuota) return;
-						Tbl_Cuotas estadoAnterior = CloneCuota(cuota);
+						TblCuotas estadoAnterior = CloneCuota(cuota);
 						cuota.pago_contado = cuota.abono_capital;
 						AgregarCuotaDetalle(cuota, DetallesFacturaRecibos, estadoAnterior,
 						"Pago de completo de cuota, en la cancelación de contrato No: " + this.numero_contrato);
@@ -123,7 +123,7 @@ namespace Transactions
 						{
 							if (cuota.id_cuota == CuotaActual.id_cuota) return;
 							if (monto <= 0) return;
-							Tbl_Cuotas estadoAnterior = CloneCuota(cuota);
+							TblCuotas estadoAnterior = CloneCuota(cuota);
 							cuota.fecha_pago = DateTime.Now;
 							if (monto >= cuota.abono_capital && monto > 0)
 							{
@@ -255,7 +255,7 @@ namespace Transactions
 
 		private void AgregarCuotaDetalle(Tbl_Cuotas cuota,
 		List<Detalle_Factura_Recibo> DetallesFacturaRecibos,
-		Tbl_Cuotas estadoAnterior,
+		TblCuotas estadoAnterior,
 		string mensaje)
 		{
 			DetallesFacturaRecibos.Add(new Detalle_Factura_Recibo()
@@ -272,7 +272,7 @@ namespace Transactions
 
 		private double CancelarCuotaActual(double monto, Tbl_Cuotas CuotaActual, List<Detalle_Factura_Recibo> detallesFacturaRecibos)
 		{
-			Tbl_Cuotas estadoAnterior = CloneCuota(CuotaActual);
+			TblCuotas estadoAnterior = CloneCuota(CuotaActual);
 			CuotaActual.fecha_pago = DateTime.Now;
 			if (monto >= CuotaActual.total && monto > 0)
 			{
@@ -292,9 +292,9 @@ namespace Transactions
 			return monto;
 		}
 
-		private Tbl_Cuotas CloneCuota(Tbl_Cuotas CuotaActual)
+		private TblCuotas CloneCuota(Tbl_Cuotas CuotaActual)
 		{
-			return new()
+			return new TblCuotas()
 			{
 				fecha_pago = CuotaActual.fecha_pago,
 				pago_contado = CuotaActual.pago_contado,

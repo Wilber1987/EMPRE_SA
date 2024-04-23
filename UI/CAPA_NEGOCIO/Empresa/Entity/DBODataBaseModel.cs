@@ -522,16 +522,23 @@ namespace DataBaseModel
 		public double? capital_restante { get; set; }
 		public string? concepto { get; set; }
 		public double? tasa_cambio { get; set; }
-
 		public int? id_factura { get; set; }
 		[JsonProp]
-		public Tbl_Cuotas? EstadoAnterior { get; set; }
+		public TblCuotas? EstadoAnterior { get; set; }
 
 		//[ManyToOne(TableName = "Transaccion_Factura", KeyColumn = "id_factura", ForeignKeyColumn = "id_factura")]
 		public Transaccion_Factura? Transaccion_Factura { get; set; }
 		[OneToOne(TableName = "Tbl_Cuotas", KeyColumn = "id_cuota", ForeignKeyColumn = "id_cuota")]
 		public Tbl_Cuotas? Tbl_Cuotas { get; set; }
-
-
 	}
+
+    public class TblCuotas
+    {
+        public DateTime? fecha_pago { get;  set; }
+        public double? pago_contado { get;  set; }
+        public string? Estado { get;  set; }
+        public double? total { get;  set; }
+        public double? interes { get;  set; }
+        public double? abono_capital { get;  set; }
+    }
 }
