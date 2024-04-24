@@ -297,7 +297,7 @@ namespace Transactions
 						cuota.pago_contado = cuota.abono_capital;
 						cuota.abono_capital = 0;
 						cuota.total = 0;
-						monto -= cuota.abono_capital.GetValueOrDefault();
+						monto -= cuota.pago_contado.GetValueOrDefault();
 						cuota.Estado = Contratos_State.CANCELADO.ToString();
 						cuota.interes = 0;
 					}

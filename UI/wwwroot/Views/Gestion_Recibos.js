@@ -60,16 +60,7 @@ class Gestion_RecibosView extends HTMLElement {
         this.DefineMaxAndMin(selectContrato);
         this.ContractData = this.BuildContractData(this.Contrato);
         this.reciboModel = this.BuildRecibosModel();
-        this.reciboModel.cancelar.action = (ObjectF) => {
-            this.DefineMaxAndMin(selectContrato);
-            if (this.reciboForm != null) {
-                this.reciboForm.FormObject.paga_dolares = this.pagoMaximoDolares?.toFixed(3);
-                // @ts-ignore
-                this.reciboForm.FormObject.paga_cordobas = this.pagoMaximoCordobas?.toFixed(3);
-                this.reciboForm.DrawComponent()
-            }
-        };
-      
+
         //console.log(ContractData);
         if (this.ContractData.canReestructure) {
             this.reciboModel.reestructurar.hidden = false;
@@ -117,34 +108,9 @@ class Gestion_RecibosView extends HTMLElement {
         this.calculoRecibo(selectContrato, this.tasasCambio);
     }
 
-    CustomFormStyle() {
-        return css`
-                .divForm{
-                    display: grid;
-                    grid-template-columns: repeat(4, calc(24% - 15px));
-                    grid-template-rows: repeat(3, auto);
-                    grid-auto-flow: column;
-                } .ModalElement:nth-child(n + 1):nth-child(-n + 8) {
-                    grid-column: 1/2 !important;
-                } .ModalElement:nth-child(n + 9):nth-child(-n + 15) {                    
-                    grid-column: 2/3 !important;
-                } .ModalElement:nth-child(n + 16):nth-child(-n + 23) {
-                    grid-column: 3/4 !important;
-                }.ModalElement:nth-child(n + 24):nth-child(-n + 32) {
-                    grid-column: 4/5 !important;
-                }  .ModalElement.titleContainer:nth-child(1) {
-                    grid-column: 1/3 !important;
-                } .ModalElement.titleContainer:nth-child(16){
-                    grid-column: 3/5 !important;
-                } .ModalElement label {
-                    display: block;
-                    width: 100%;
-                    margin: 0px;
-                } `;
-    }
 
     DefineMaxAndMin(selectContrato) {
-        const cuotasPendientes = this.Contrato.Tbl_Cuotas.filter(c => c.Estado?.toUpperCase() == "PENDIENTE");
+        const cuotasPendientes = this.Contrato.Tbl_Cuotas.sort((a, b) => a.id_cuota - b.id_cuota).filter(c => c.Estado?.toUpperCase() == "PENDIENTE");
         const CuotaActual = cuotasPendientes[0];
         const mora = WArrayF.SumValAtt(cuotasPendientes, "mora");
         const saldo_pendiente = selectContrato.saldo;
@@ -152,23 +118,34 @@ class Gestion_RecibosView extends HTMLElement {
         const perdida_de_documento = this.reciboForm?.FormObject?.perdida_de_documento_monto ?? 0;
         const reestructuracion = this.reciboForm?.FormObject?.reestructurar_monto ?? 0;
         const total_capital_restante = mora + saldo_pendiente + interesCuota + perdida_de_documento + reestructuracion;
-        this.pagoMaximoDolares = total_capital_restante;
-        this.pagoMaximoCordobas = this.pagoMaximoDolares * this.tasasCambio[0].Valor_de_venta;
-
-        if (reestructuracion != 0) {
-            this.pagoMinimoDolares = CuotaActual.interes;
-            this.pagoActual = CuotaActual.interes + mora + reestructuracion + perdida_de_documento;
+        if (this.reciboForm?.FormObject?.cancelar == true) {
+            this.pagoMinimoDolares = total_capital_restante;
+            this.pagoMaximoDolares = total_capital_restante;
+            this.pagoActual = total_capital_restante;
+        } else if (this.reciboForm?.FormObject?.reestructurar == true) {
+            this.pagoMinimoDolares = interesCuota + mora + reestructuracion + perdida_de_documento;
+            this.pagoMaximoDolares = total_capital_restante;
+            this.pagoActual = interesCuota + mora + reestructuracion + perdida_de_documento;
+        } else if (this.reciboForm?.FormObject?.solo_interes_mora == true) {
+            this.pagoMinimoDolares = interesCuota + mora + perdida_de_documento;
+            this.pagoMaximoDolares = interesCuota + mora + perdida_de_documento;
+            this.pagoActual = this.pagoMinimoDolares;
+        } else if (this.reciboForm?.FormObject?.solo_abono == true) {
+            this.pagoMinimoDolares = 1 + perdida_de_documento;
+            this.pagoMaximoDolares = total_capital_restante;
+            this.pagoActual = this.pagoMinimoDolares;
         } else {
-            this.pagoMinimoDolares = CuotaActual.abono_capital;
-            this.pagoActual = CuotaActual.total + mora;
+            this.pagoMinimoDolares = CuotaActual.interes;
+            this.pagoMaximoDolares = total_capital_restante;
+            this.pagoActual = CuotaActual.total + mora + reestructuracion + perdida_de_documento;
         }
-        this.pagoMinimoCordobas = this.pagoMinimoDolares * this.tasasCambio[0].Valor_de_venta
+        this.pagoMinimoCordobas = this.pagoMinimoDolares * this.tasasCambio[0].Valor_de_venta;
+        this.pagoMaximoCordobas = this.pagoMaximoDolares * this.tasasCambio[0].Valor_de_venta;
         this.pagoActualCordobas = this.pagoActual * this.tasasCambio[0].Valor_de_venta;
-
     }
 
     BuildRecibosModel() {
-        console.log(this.ContractData);
+        //console.log(this.ContractData);
         return new Recibos_ModelComponent({
             perdida_de_documento: {
                 type: "checkbox", hiddenInTable: true, require: false, action: (recibo, form) => {
@@ -177,17 +154,24 @@ class Gestion_RecibosView extends HTMLElement {
                     } else {
                         recibo.perdida_de_documento_monto = 0;
                     }
-                    this.DefineMaxAndMin(this.SelectedContrato);
-                    this.reciboForm.FormObject.paga_dolares = this.pagoMaximoDolares?.toFixed(3);
-                    this.reciboForm.FormObject.paga_cordobas = this.pagoMaximoCordobas?.toFixed(3);
-                    form.DrawComponent();
+                    this.DefineMaxAndMinInForm(form);
 
+                }
+            }, cancelar: {
+                type: "checkbox", hiddenInTable: true, require: false, action: (recibo, form) => {
+                    if (recibo.cancelar == true) {
+                        form.ModelObject.paga_dolares.disabled = true;
+                        form.ModelObject.paga_cordobas.disabled = true;
+                    } else {
+                        form.ModelObject.paga_dolares.disabled = false;
+                        form.ModelObject.paga_cordobas.disabled = false;
+                    }
+                    this.DefineMaxAndMinInForm(form);
                 }
             }, solo_abono: {
                 type: "checkbox", require: false, hidden: !this.ContractData.canSoloAbono,
-                 action: (recibo, form) => {
-                    this.DefineMaxAndMin(this.SelectedContrato);
-                    form.DrawComponent();
+                action: (recibo, form) => {
+                    this.DefineMaxAndMinInForm(form);
                 }
             }, reestructurar: {
                 type: "checkbox", hidden: !this.ContractData.canReestructure, require: false,
@@ -201,23 +185,20 @@ class Gestion_RecibosView extends HTMLElement {
                         //this.reestructurar_monto.hidden = true; 
                         recibo.reestructurar_monto = 0;
                     }
-                    this.DefineMaxAndMin(this.SelectedContrato);
-                    this.reciboForm.FormObject.paga_dolares = this.pagoMaximoDolares?.toFixed(3);
-                    this.reciboForm.FormObject.paga_cordobas = this.pagoMaximoCordobas?.toFixed(3);
-                    form.DrawComponent();
+                    this.DefineMaxAndMinInForm(form);
                 }
             }, /**@type {ModelProperty} */ solo_interes_mora: {
-                type: "checkbox", require: false, hidden: !this.ContractData.soloInteresMora, action: (recibo, form) => {
-                    this.DefineMaxAndMin(this.SelectedContrato);
+                type: "checkbox", require: false, hidden: !this.ContractData.soloInteresMora,
+                action: (recibo, form) => {
+                    recibo.cancelar = false;
                     if (recibo.solo_interes_mora == true) {
                         form.ModelObject.paga_dolares.disabled = true;
-                        this.reciboForm.FormObject.paga_dolares = this.pagoMaximoDolares?.toFixed(3);
-                        this.reciboForm.FormObject.paga_cordobas = this.pagoMaximoCordobas?.toFixed(3);
+                        form.ModelObject.paga_cordobas.disabled = true;
                     } else {
                         form.ModelObject.paga_dolares.disabled = false;
+                        form.ModelObject.paga_cordobas.disabled = false;
                     }
-
-                    form.DrawComponent();
+                    this.DefineMaxAndMinInForm(form);
                 }
             }, paga_cordobas: {
                 type: 'MONEY', max: this.pagoMaximoCordobas, default: this.pagoActualCordobas,
@@ -296,6 +277,15 @@ class Gestion_RecibosView extends HTMLElement {
         });
     }
 
+    DefineMaxAndMinInForm(form) {
+        this.DefineMaxAndMin(this.SelectedContrato);
+        this.reciboForm.FormObject.paga_dolares = this.pagoActual?.toFixed(3);
+        this.reciboForm.FormObject.paga_cordobas = this.pagoActualCordobas?.toFixed(3);
+        this.reciboForm.FormObject.monto_dolares = this.pagoActual?.toFixed(3);
+        this.reciboForm.FormObject.monto_cordobas = this.pagoActualCordobas?.toFixed(3);
+        form.DrawComponent();
+    }
+
     /**
      * @param {Transaction_Contratos} Contrato
      */
@@ -307,7 +297,7 @@ class Gestion_RecibosView extends HTMLElement {
         let canReestructure = false;
         //TODO BOORAR CICLO DE MORA FORZADA 
         Contrato.Tbl_Cuotas?.forEach(cuota => {
-            cuota.mora = this.forceMora(cuota, Contrato);
+            //cuota.mora = this.forceMora(cuota, Contrato);
         });
 
         //TODO REPARAR FECHA        
@@ -315,7 +305,7 @@ class Gestion_RecibosView extends HTMLElement {
         if (categoria.descripcion != "vehiculos" && categoria.plazo_limite > plazo && fecha <= new Date().addDays(32)) {//TODO REPARAR FECHA QUITAR ESOS 31 DIAS
             canReestructure = true;
         }
-        console.log(Contrato.Tbl_Cuotas);
+        //console.log(Contrato.Tbl_Cuotas);
         const existeMora = Contrato.Tbl_Cuotas?.filter(c => c.mora != null && c.mora > 0).length > 0;
         return {
             canReestructure: canReestructure,
@@ -391,8 +381,10 @@ class Gestion_RecibosView extends HTMLElement {
 
     }
     setProyeccion() {
+        //TODO CREAR CONFIGURACION DE MORA
         const reciboModel = new Recibos_ModelComponent({});
         reciboModel.fecha.hidden = false;
+
         reciboModel.fecha.action = (recibo, form, InputControl) => {
             //console.log(InputControl.value, this.Contrato?.mora);
             //console.log(recibo.fecha_original);
@@ -407,20 +399,29 @@ class Gestion_RecibosView extends HTMLElement {
             recibo.mora_cordobas = (recibo.tasa_cambio * recibo.mora_dolares).toFixed(3);;
 
             this.proyeccionDetail.innerHTML = "";
-            this.proyeccionDetail.appendChild(html`<div class="proyeccion-container-detail">
-    <label class="value-container">
-        DIAS DE MORA:
-        <span>${diasMora}</span>
-    </label>
-    <label class="value-container">
-        MORA C$:
-        <span>${recibo.mora_cordobas}</span>
-    </label>
-    <label class="value-container">
-        MORA $:
-        <span>${recibo.mora_dolares}</span>
-    </label>
-</div>`)
+            if (diasMora > 20) {
+                this.proyeccionDetail.appendChild(html`<div class="proyeccion-container-detail">
+                <label class="value-container">
+                    NO ES POSIBLE PROYECTAR A MAS DE 20 DÍAS
+                </label>
+            </div>`)
+            } else {
+                this.proyeccionDetail.appendChild(html`<div class="proyeccion-container-detail">
+                <label class="value-container">
+                    DIAS DE MORA:
+                    <span>${diasMora}</span>
+                </label>
+                <label class="value-container">
+                    MORA C$:
+                    <span>${recibo.mora_cordobas}</span>
+                </label>
+                <label class="value-container">
+                    MORA $:
+                    <span>${recibo.mora_dolares}</span>
+                </label>
+            </div>`)
+            }
+
 
         }
         reciboModel.temporal.hidden = true;
@@ -596,10 +597,6 @@ class Gestion_RecibosView extends HTMLElement {
         }
 
     }
-
-
-
-
     CustomStyle = css`
         .valoraciones-container{
             padding: 20px;
@@ -779,6 +776,31 @@ class Gestion_RecibosView extends HTMLElement {
         <h4 style="text-align:center;">DATOS DEL RECIBO OFICIAL DE CAJA</h4>
     </div>
 </div>`;
+    }
+    CustomFormStyle() {
+        return css`
+                .divForm{
+                    display: grid;
+                    grid-template-columns: repeat(4, calc(24% - 15px));
+                    grid-template-rows: repeat(3, auto);
+                    grid-auto-flow: column;
+                } .ModalElement:nth-child(n + 1):nth-child(-n + 8) {
+                    grid-column: 1/2 !important;
+                } .ModalElement:nth-child(n + 9):nth-child(-n + 15) {                    
+                    grid-column: 2/3 !important;
+                } .ModalElement:nth-child(n + 16):nth-child(-n + 23) {
+                    grid-column: 3/4 !important;
+                }.ModalElement:nth-child(n + 24):nth-child(-n + 32) {
+                    grid-column: 4/5 !important;
+                }  .ModalElement.titleContainer:nth-child(1) {
+                    grid-column: 1/3 !important;
+                } .ModalElement.titleContainer:nth-child(16){
+                    grid-column: 3/5 !important;
+                } .ModalElement label {
+                    display: block;
+                    width: 100%;
+                    margin: 0px;
+                } `;
     }
 }
 
