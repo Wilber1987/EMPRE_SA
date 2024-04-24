@@ -25,7 +25,7 @@ class Ver_RecibosView extends HTMLElement {
                             const modal = ModalVericateAction(async () => {
                                 const response =
                                     await WAjaxTools.PostRequest("../api/ApiRecibos/anularRecibo",
-                                        { id_recibo: factura.id_factura, tasa_cambio: tasa[0].Valor_de_compra });
+                                        { id_recibo: factura.id_factura, tasa_cambio: tasa[0].Valor_de_venta, tasa_cambio_compra: tasa[0].Valor_de_compra });
 
                                 this.append(ModalMessege(response.message));
 

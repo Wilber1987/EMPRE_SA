@@ -24,7 +24,7 @@ class Recibos_ModelComponent extends EntityClass {
     /**@type {ModelProperty} */ cuota_pagar_cordobas = { type: "number", hiddenInTable: true, disabled: true };
     /**@type {ModelProperty} */ mora_cordobas = { type: "number", hiddenInTable: true, disabled: true };
     /**@type {ModelProperty} */ mora_interes_cordobas = { type: "number", hiddenInTable: true, disabled: true, label: "Interes + Mora C$" };
-    /**@type {ModelProperty} */ total_cordobas = { type: "number", hiddenInTable: true, disabled: true };    
+    /**@type {ModelProperty} */ total_cordobas = { type: "number", hiddenInTable: true, disabled: true };
     /**@type {ModelProperty} */ perdida_de_documento_monto = { type: "number", disabled: true, defaultValue: 0, require: false };
 
     /**@type {ModelProperty} */ interes_demas_cargos_pagar_dolares = { type: "number", hiddenInTable: true, disabled: true, label: "Interes $" };
@@ -41,9 +41,9 @@ class Recibos_ModelComponent extends EntityClass {
 
 
     /**@type {ModelProperty} */ title3 = { type: "title", label: "Opciones:" };
-  
 
-    
+
+
     /**@type {ModelProperty} */ paga_cordobas = { type: "number", hiddenInTable: true };
     /**@type {ModelProperty} */ paga_dolares = { type: "number", hiddenInTable: true };
     /**@type {ModelProperty} */ temporal = { type: "checkbox", require: false };
@@ -61,8 +61,8 @@ class Recibos_ModelComponent extends EntityClass {
     /**@type {ModelProperty} */ solo_abono = { type: "checkbox", hiddenInTable: true, require: false };
 
     /**@type {ModelProperty} */ solo_interes_mora = {
-        type: "checkbox",  require: false,
-        action: (recibo, form) => {}
+        type: "checkbox", require: false,
+        action: (recibo, form) => { }
     };
     /**@type {ModelProperty} */ reestructurar = {
         type: "checkbox", hidden: true, require: false,
@@ -87,11 +87,11 @@ class Recibos_ModelComponent extends EntityClass {
             return val.toFixed(3);
         }
     };
-    
-   /**@type {ModelProperty} */ moneda = { type: "radio", Dataset: ["Cordobas", "Dolares"] };
+
+    /**@type {ModelProperty} */ moneda = { type: "radio", Dataset: ["DOLARES","CORDOBAS"] };
     /**@type {ModelProperty} */ reestructurar_value = { type: "number", label: "meses a reestructurar", placeholder: "número de meses ejm. 1", hidden: true, min: 1, require: false };
-    
-    
+
+
     VerRecibo = async () => {
         return await this.SaveData("PDF/GeneratePdfContract", this)
     }

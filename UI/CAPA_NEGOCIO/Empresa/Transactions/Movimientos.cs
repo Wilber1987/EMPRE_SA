@@ -185,9 +185,9 @@ namespace Transactions
                     concepto = this.concepto,
                     id_usuario_crea = user.UserId,
                     tipo = "pendiente",
-                    moneda = Catalogo_Cuentas_Destino?.permite_cordobas == true ? "C$" : "$",
+                    moneda = this.moneda?.ToUpper(),
                     tasa_cambio = this.tasa_cambio,
-                    tasa_cambio_compra = this.tasa_cambio_compra,
+                    //tasa_cambio_compra = this.tasa_cambio_compra,
                     correo_enviado = false,
                     is_transaction = this.is_transaction,
                     Detail_Movimiento = new List<Detail_Movimiento>(){

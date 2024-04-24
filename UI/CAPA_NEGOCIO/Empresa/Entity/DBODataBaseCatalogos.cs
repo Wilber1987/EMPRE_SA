@@ -86,7 +86,9 @@ namespace DataBaseModel
         FACTURAS_VENTAS,
         OBLIGACIONES,
         EMPEÑOS,
-        PRESTAMOS
+        PRESTAMOS,
+        DESEMBOLSO_CONTRATOS,
+        INGRESOS_EMPENOS
     }
 
     public class Catalogo_Cuentas : EntityClass
@@ -112,6 +114,83 @@ namespace DataBaseModel
         public int? id_categoria { get; set; }
         [ManyToOne(TableName = "Categoria_Cuentas", KeyColumn = "id_categoria", ForeignKeyColumn = "id_categoria")]
         public Categoria_Cuentas? Categoria_Cuentas { get; set; }
+        //externa, propia, pago
+
+        internal static Catalogo_Cuentas? GetCuentaEgresoContratos(Security_Users dbUser)
+        {
+            int? idCategoria = GetId_categoria(Categoria_CuentasEnum.CAJA_GENERAL);
+            Catalogo_Cuentas? cuenta = new Catalogo_Cuentas
+            {
+                id_sucursal = dbUser.Id_Sucursal
+            }.Find<Catalogo_Cuentas>(FilterData.Equal("id_categoria", idCategoria));
+            cuenta = CrearCuentaSiNoExiste(dbUser, idCategoria, cuenta, Categoria_CuentasEnum.CAJA_GENERAL, "PROPIA");
+            return cuenta;
+        }
+        internal static Catalogo_Cuentas? GetCuentaRegistoContratos(Security_Users dbUser)
+        {
+            int? idCategoria = GetId_categoria(Categoria_CuentasEnum.DESEMBOLSO_CONTRATOS);
+            Catalogo_Cuentas? cuenta = new Catalogo_Cuentas
+            {
+                id_sucursal = dbUser.Id_Sucursal
+            }.Find<Catalogo_Cuentas>(FilterData.Equal("id_categoria", idCategoria));
+            cuenta = CrearCuentaSiNoExiste(dbUser, idCategoria, cuenta, Categoria_CuentasEnum.DESEMBOLSO_CONTRATOS, "EXTERNA");
+            return cuenta;
+        }
+
+        internal static Catalogo_Cuentas? GetCuentaEgresoRecibos(Security_Users dbUser)
+        {
+            int? idCategoria = GetId_categoria(Categoria_CuentasEnum.INGRESOS_EMPENOS);
+            Catalogo_Cuentas? cuenta = new Catalogo_Cuentas
+            {
+                id_sucursal = dbUser.Id_Sucursal,
+            }.Find<Catalogo_Cuentas>(FilterData.Equal("id_categoria", idCategoria));
+            cuenta = CrearCuentaSiNoExiste(dbUser, idCategoria, cuenta, Categoria_CuentasEnum.INGRESOS_EMPENOS, "EXTERNA");
+            return cuenta;
+        }
+        internal static Catalogo_Cuentas? GetCuentaIngresoRecibos(Security_Users dbUser)
+        {
+            int? idCategoria = GetId_categoria(Categoria_CuentasEnum.CAJA_1);
+            Catalogo_Cuentas? cuenta = new Catalogo_Cuentas
+            {
+                id_sucursal = dbUser.Id_Sucursal
+            }.Find<Catalogo_Cuentas>(FilterData.Equal("id_categoria", idCategoria));
+            cuenta = CrearCuentaSiNoExiste(dbUser, idCategoria, cuenta, Categoria_CuentasEnum.CAJA_1, "PROPIA");
+            return cuenta;
+        }
+
+        private static Catalogo_Cuentas? CrearCuentaSiNoExiste(Security_Users dbUser, int? idCategoria,
+         Catalogo_Cuentas? cuenta,
+          Categoria_CuentasEnum categoria_CuentasEnum, string tipo_cuenta)
+        {
+            if (idCategoria == null)
+            {
+                Categoria_Cuentas categoria_Cuentas = new Categoria_Cuentas
+                {
+                    descripcion = categoria_CuentasEnum.ToString()
+                };
+                idCategoria = categoria_Cuentas.id_categoria;
+            }
+            if (cuenta == null)
+            {
+                cuenta = (Catalogo_Cuentas?)new Catalogo_Cuentas
+                {
+                    id_sucursal = dbUser.Id_Sucursal,
+                    permite_dolares = true,
+                    permite_cordobas = true,
+                    saldo = 0,
+                    saldo_dolares = 0,
+                    id_categoria = idCategoria,
+                    nombre = categoria_CuentasEnum.ToString(),
+                    tipo_cuenta = tipo_cuenta
+                }.Save();
+            }
+            return cuenta;
+        }
+
+        private static int? GetId_categoria(Categoria_CuentasEnum categoria_CuentasEnum)
+        {
+            return new Categoria_Cuentas { descripcion = categoria_CuentasEnum.ToString() }.Find<Categoria_Cuentas>()?.id_categoria;
+        }
     }
     public class Categoria_Cuentas : EntityClass
     {

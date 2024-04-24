@@ -145,7 +145,7 @@ class Gestion_RecibosView extends HTMLElement {
     }
 
     BuildRecibosModel() {
-        //console.log(this.ContractData);
+        console.log(this.ContractData);
         return new Recibos_ModelComponent({
             perdida_de_documento: {
                 type: "checkbox", hiddenInTable: true, require: false, action: (recibo, form) => {
@@ -296,8 +296,8 @@ class Gestion_RecibosView extends HTMLElement {
         const fecha = new Date(Contrato.fecha_cancelar);
         let canReestructure = false;
         //TODO BOORAR CICLO DE MORA FORZADA 
-        Contrato.Tbl_Cuotas?.forEach(cuota => {
-            //cuota.mora = this.forceMora(cuota, Contrato);
+        Contrato.Tbl_Cuotas?.filter(cuota => cuota.Estado == "PENDIENTE")?.forEach(cuota => {
+            cuota.mora = this.forceMora(cuota, Contrato);
         });
 
         //TODO REPARAR FECHA        
@@ -341,9 +341,6 @@ class Gestion_RecibosView extends HTMLElement {
     valoracionResumen(Valoracion_compra_cordobas, Valoracion_compra_dolares, Valoracion_empeño_cordobas, Valoracion_empeño_dolares) {
         return `Compra C$: ${Valoracion_compra_cordobas} - Compra $: ${Valoracion_compra_dolares} - Empeño C$: ${Valoracion_empeño_cordobas} - Empeño $: ${Valoracion_empeño_dolares}`;
     }
-
-
-
     SetOption() {
         this.OptionContainer.append(WRender.Create({
             tagName: 'button', className: 'Block-Secundary', innerText: 'Buscar Contrato',
@@ -384,7 +381,6 @@ class Gestion_RecibosView extends HTMLElement {
         //TODO CREAR CONFIGURACION DE MORA
         const reciboModel = new Recibos_ModelComponent({});
         reciboModel.fecha.hidden = false;
-
         reciboModel.fecha.action = (recibo, form, InputControl) => {
             //console.log(InputControl.value, this.Contrato?.mora);
             //console.log(recibo.fecha_original);
@@ -401,25 +397,22 @@ class Gestion_RecibosView extends HTMLElement {
             this.proyeccionDetail.innerHTML = "";
             if (diasMora > 20) {
                 this.proyeccionDetail.appendChild(html`<div class="proyeccion-container-detail">
-                <label class="value-container">
-                    NO ES POSIBLE PROYECTAR A MAS DE 20 DÍAS
-                </label>
-            </div>`)
+    <label class="value-container">NO ES POSIBLE PROYECTAR A MAS DE 20 DÍAS</label></div>`)
             } else {
                 this.proyeccionDetail.appendChild(html`<div class="proyeccion-container-detail">
-                <label class="value-container">
-                    DIAS DE MORA:
-                    <span>${diasMora}</span>
-                </label>
-                <label class="value-container">
-                    MORA C$:
-                    <span>${recibo.mora_cordobas}</span>
-                </label>
-                <label class="value-container">
-                    MORA $:
-                    <span>${recibo.mora_dolares}</span>
-                </label>
-            </div>`)
+    <label class="value-container">
+        DIAS DE MORA:
+        <span>${diasMora}</span>
+    </label>
+    <label class="value-container">
+        MORA C$:
+        <span>${recibo.mora_cordobas}</span>
+    </label>
+    <label class="value-container">
+        MORA $:
+        <span>${recibo.mora_dolares}</span>
+    </label>
+</div>`)
             }
 
 
@@ -466,16 +459,13 @@ class Gestion_RecibosView extends HTMLElement {
     }
     selectContrato = (/**@type {Transaction_Contratos} */ selectContrato) => {
         //console.log(selectContrato);
-
-        let cuotasFiltradas = selectContrato.Tbl_Cuotas.filter(cuota => cuota.Estado == "PENDIENTE");
-
+        //let cuotasFiltradas = selectContrato.Tbl_Cuotas.filter(cuota => cuota.Estado == "PENDIENTE");
         //console.log(selectContrato.Tbl_Cuotas);
         //console.log(cuotasFiltradas);
         if (selectContrato.estado != "ACTIVO") {
             this.append(ModalMessege("Este contrato se encuentra " + selectContrato.estado))
             return;
         }
-
         this.Contrato = selectContrato;
         if (this.reciboForm != undefined) {
             //this.reciboForm.FormObject.Tasa_interes = this.getTasaInteres();
@@ -514,44 +504,31 @@ class Gestion_RecibosView extends HTMLElement {
             let mora_interes = 0;
             let cuota_total = 0;
             let fecha = new Date();
-            fecha = new Date().addDays(32);//TODO BORRAR LINEA
-            let totalRestante = 0;
             let mora_interes_cordobas = 0;
 
-            //const fecha2 = new Date(Contrato.fecha_cancelar).addDays(32);
-            //var mora = model.mora / 100;
-
             let index = 0
-            for (const cuota of contrato.Tbl_Cuotas) {
-                if (cuota.pago_contado < cuota.total || contrato.Tbl_Cuotas.length == 1) {
-                    fecha = cuota.fecha;
-                    primeraCuotaConCapitalMayorACero = cuota.total;
-                    interes_cargos = cuota.interes;
-                    // @ts-ignore
-                    interes_demas_cargos_pagar_cordobas = cuota.interes * tasasCambio[0].Valor_de_venta;
-                    abono_capital_cordobas = cuota.abono_capital;
-                    mora_interes = cuota.mora == null ? 0 : cuota.mora; // no permite el cero, preguntar a wilber sobre problema
-                    // @ts-ignore
-                    mora_interes_cordobas = mora_interes * tasasCambio[0].Valor_de_venta
-                    cuota_total = cuota.total;
-                    this.cuota = cuota;
-                    this.cuota
-                    this.proximaCuota = contrato.Tbl_Cuotas[index]
-                    this.ultimaCuota = contrato.Tbl_Cuotas[index - 1]
-                    break;
-                }
-                index++;
+            const cuota = contrato.Tbl_Cuotas.find(c => c.Estado == "PENDIENTE");
+            console.log(contrato.Tbl_Cuotas, cuota);
+            if (cuota != null) {
+                fecha = cuota.fecha;
+                primeraCuotaConCapitalMayorACero = cuota.total;
+                interes_cargos = cuota.interes;
+                // @ts-ignore
+                interes_demas_cargos_pagar_cordobas = cuota.interes * tasasCambio[0].Valor_de_venta;
+                abono_capital_cordobas = cuota.abono_capital;
+                mora_interes = cuota.mora == null ? 0 : cuota.mora; // no permite el cero, preguntar a wilber sobre problema
+                // @ts-ignore
+                mora_interes_cordobas = mora_interes * tasasCambio[0].Valor_de_venta
+                cuota_total = cuota.total;
+                this.cuota = cuota;
+                this.cuota
+                this.proximaCuota = cuota
+                this.ultimaCuota = contrato.Tbl_Cuotas[index - 1]
+                //break;
             }
-            // for (const cuota of contrato.Tbl_Cuotas) {
-            //     if ((cuota.total - (cuota.pago_contado || 0)) > 0) {
-            //         totalRestante += cuota.total - (cuota.pago_contado || 0);
-            //         interes_cargos += cuota.interes || 0;
-            //     }
-            // }
             formObject["fecha_original"] = fecha;
             formObject["fecha"] = fecha;
             formObject["numero_contrato"] = contrato["numero_contrato"];
-            //this.reciboForm.FormObject["saldo_actual"] = contrato["saldo_actual"];
 
 
             formObject["tasa_cambio"] = tasasCambio[0].Valor_de_venta;
@@ -591,6 +568,8 @@ class Gestion_RecibosView extends HTMLElement {
             // @ts-ignore
             formObject["paga_cordobas"] = (primeraCuotaConCapitalMayorACero * tasasCambio[0].Valor_de_venta).toFixed(3);
             formObject["paga_dolares"] = primeraCuotaConCapitalMayorACero;
+            formObject["monto_cordobas"] = formObject["paga_cordobas"]
+            formObject["monto_dolares"] = formObject["paga_dolares"]
             formObject["solo_abono"] = false;
             formObject["cancelar"] = false;
             formObject["total_apagar_dolares"] = primeraCuotaConCapitalMayorACero;

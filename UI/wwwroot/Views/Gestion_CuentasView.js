@@ -47,21 +47,21 @@ class Gestion_CuentasView extends HTMLElement {
         const dataset = await model.Get();
 
         this.OptionContainer.append(WRender.Create({
-            tagName: 'button', className: 'Block-Primary', innerText: 'Movimiento Internos',
+            tagName: 'button', className: 'Block-Primary', innerText: 'ver Movimiento Internos',
             onclick: () => {
                 // @ts-ignore
                 this.Manager.NavigateFunction("PROPIAS", new GestionCuentaComponent({ Dataset: dataset.filter(c => c.tipo_cuenta == "PROPIA") }));
             }
         }))
         this.OptionContainer.append(WRender.Create({
-            tagName: 'button', className: 'Block-Basic', innerText: 'Ingresos',
+            tagName: 'button', className: 'Block-Basic', innerText: 'ver Ingresos',
             onclick: () => {
                 // @ts-ignore
                 this.Manager.NavigateFunction("INGRESOS", new GestionCuentaComponent({ Dataset: dataset.filter(c => c.tipo_cuenta == "EXTERNA") }));
             }
         }))
         this.OptionContainer.append(WRender.Create({
-            tagName: 'button', className: 'Block-Secundary', innerText: 'Pagos',
+            tagName: 'button', className: 'Block-Secundary', innerText: 'ver Pagos',
             onclick: () => {
                 // @ts-ignore
                 this.Manager.NavigateFunction("PAGOS", new GestionCuentaComponent({ Dataset: dataset.filter(c => c.tipo_cuenta == "PAGO") }));
