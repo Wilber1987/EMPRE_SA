@@ -4,8 +4,8 @@ using CAPA_DATOS.Cron.Jobs;
 using Model;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
-SqlADOConexion.IniciarConexion("sa", "zaxscd", ".", "EMPRE_SA");
-//SqlADOConexion.IniciarConexion("sa", "123", ".\\SQLEXPRESS", "EMPRE_SA");
+//SqlADOConexion.IniciarConexion("sa", "zaxscd", ".", "EMPRE_SA");
+SqlADOConexion.IniciarConexion("sa", "123", ".\\SQLEXPRESS", "EMPRE_SA");
 //SqlADOConexion.IniciarConexion("empresa", "Wmatus09%", "tcp:empresa-sa.database.windows.net", "EMPRE_SA");
 
 //var test = new test{ Parameters = new List<object> {1 , 2}}.Get<test>(true);
