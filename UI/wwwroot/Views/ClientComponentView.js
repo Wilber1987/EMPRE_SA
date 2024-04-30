@@ -5,14 +5,13 @@ import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
 import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { ModalMessege, WForm } from "../WDevCore/WComponents/WForm.js";
-import {  Condicion_Laboral_Cliente, Transaction_Contratos_ModelComponent } from "../FrontModel/DBODataBaseModel.js";
+import { Catalogo_Clientes, Condicion_Laboral_Cliente, Transaction_Contratos_ModelComponent } from "../FrontModel/DBODataBaseModel.js";
 import { WOrtograficValidation } from "../WDevCore/WModules/WOrtograficValidation.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
 import { clientSearcher } from "../modules/SerchersModules.js";
 import { Transaction_Contratos } from "../FrontModel/Model.js";
 import { WDetailObject } from "../WDevCore/WComponents/WDetailObject.js";
-import { Catalogo_Clientes } from "../ClientModule/FrontModel/Catalogo_Clientes.js";
 class ClientComponentView extends HTMLElement {
     constructor(cliente) {
         super();
@@ -72,13 +71,15 @@ class ClientComponentView extends HTMLElement {
                 // }
 
                 if (this.cliente.codigo_cliente == null || this.cliente.codigo_cliente == undefined) {
-                    /**@type {Catalogo_Clientes} */
+                    ///**@type {Catalogo_Clientes} */
                     const result = await new Catalogo_Clientes(this.cliente).Save();
 
                     if (result?.codigo_cliente != null) {
                         this.cliente.codigo_cliente = result?.codigo_cliente;
                         this.append(ModalMessege("Datos guardados correctamente"));
                         this.updateForms();
+                    } else if (result?.status == 403) {
+                        this.append(ModalMessege(result?.message));
                     } else {
                         this.append(ModalMessege("Error al guardar intentelo nuevamente"));
                     }

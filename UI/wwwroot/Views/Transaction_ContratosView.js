@@ -97,10 +97,12 @@ class Transaction_ContratosView extends HTMLElement {
 
             }
         });
+        const fechaCancelacion = WRender.Create({ tagName:'label',  innerText: this.fechaCancelacion()})
         this.inputPlazo = WRender.Create({
             tagName: 'input', type: 'number', className: "input-plazo", onchange: (ev) => {
                 this.entity.Transaction_Contratos.plazo = ev.target.value;
                 this.update();
+                fechaCancelacion.innerText = this.fechaCancelacion()
             }, value: 1, min: 1, max: this.prioridadEnElPlazo()
         });
         this.setPlazo();
@@ -109,12 +111,13 @@ class Transaction_ContratosView extends HTMLElement {
                 this.entity.Transaction_Contratos.observaciones = ev.target.value;
             }
         });
+        
         const optionContainer = WRender.Create({
             className: "OptionContainer form",
             children: [
                 "Plazo:", this.inputPlazo,
                 "Fecha de cancelación:",
-                this.fechaCancelacion(), this.inputObservacion,
+                fechaCancelacion, this.inputObservacion,
             ]
         });
         this.contratosForm.append(optionContainer, this.prendasTable, this.CuotasTable);

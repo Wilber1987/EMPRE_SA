@@ -50,7 +50,8 @@ class Transaction_Valoraciones_View extends HTMLElement {
         this.valoracionesContainer.innerHTML = "";
         /** @type {Array<Catalogo_Cambio_Divisa_ModelComponent>} */
         this.tasasCambio = await new Catalogo_Cambio_Divisa_ModelComponent().Get();
-        const estadosArticulos = await new Catalogo_Estados_Articulos().Get();
+        let estadosArticulos = await new Catalogo_Estados_Articulos().Get();
+        estadosArticulos = estadosArticulos.sort(((a, b) => a.id_estado_articulo - b.id_estado_articulo));
         this.Categorias = await new Catalogo_Categoria_ModelComponent().Get();
         this.Intereses = await new Transactional_Configuraciones().getTransactional_Configuraciones_Intereses();
         this.Beneficios = await new Transactional_Configuraciones().getTransactional_Configuraciones_Beneficios();

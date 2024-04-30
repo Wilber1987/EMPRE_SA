@@ -9,16 +9,16 @@ class Tbl_Cuotas_ModelComponent {
     /**@type {ModelProperty} */
     fecha = { type: "date",  label: "FECHA" };   
     /**@type {ModelProperty} */
-    interes = { type: "number", label: "IDCP"  };    
+    interes = { type: "number", label: "IDCP $"  };    
     /**@type {ModelProperty} */
-    abono_capital = { type: "number", label: "ABONO AL CAPITAL" };
+    abono_capital = { type: "number", label: "ABONO AL CAPITAL $" };
     /**@type {ModelProperty} */
-    total = { type: "number",  label: "CUOTA A PAGAR" };
+    total = { type: "number",  label: "CUOTA A PAGAR $" };
     /**@type {ModelProperty} */
     total_cordobas = { type: "OPERATION",  label: "CUOTA A PAGAR CORDOBAS", action: (/**@type {Tbl_Cuotas} */ cuota)=>{
         return (cuota.total * cuota.tasa_cambio).toFixed(3);
     } };
     /**@type {ModelProperty} */
-    capital_restante = { type: "number", label: "MONTO RESTANTE" };
+    capital_restante = { type: "number", label: "MONTO RESTANTE $" };
 }
 export { Tbl_Cuotas_ModelComponent }

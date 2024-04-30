@@ -142,7 +142,7 @@ namespace API.Controllers
         [AuthController]
         public object? saveCatalogo_Clientes(Catalogo_Clientes inst)
         {
-            return inst.Save();
+            return inst.SaveClient();
         }
         [HttpPost]
         [AuthController]

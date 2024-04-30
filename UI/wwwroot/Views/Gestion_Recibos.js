@@ -23,7 +23,10 @@ class Gestion_RecibosView extends HTMLElement {
         this.Contrato = new Transaction_Contratos()
         this.valoracionesDataset = [];
         this.selectedClientDetail = WRender.Create({ tagName: "label", className: "selected-client" });
-        this.proyeccionDetail = WRender.Create({ className: "info-proyeccion-contrato" });
+        this.proyeccionDetail = WRender.Create({
+            className: "info-proyeccion-contrato",
+            children: [{ tagName: 'label', innerText: "SELECCIONE FECHA", className: "proyeccion-container-detail" }]
+        });
         /**@type {Array<Catalogo_Cambio_Divisa>} */
         this.tasasCambio = []
         this.ContractData = {
@@ -455,7 +458,7 @@ class Gestion_RecibosView extends HTMLElement {
         // @ts-ignore
         this.calculoRecibo(this.Contrato, this.tasasCambio, proyeccionData);
 
-        this.proyeccion.append(this.selectContratosDetail(this.Contrato), proyeccionData, this.proyeccionDetail);
+        this.proyeccion.append(this.selectContratosDetail(this.Contrato), this.proyeccionDetail, proyeccionData);
     }
     selectContrato = (/**@type {Transaction_Contratos} */ selectContrato) => {
         //console.log(selectContrato);
@@ -649,16 +652,18 @@ class Gestion_RecibosView extends HTMLElement {
         .proyeccion-container-detail {
             padding: 20px;
             display: flex;
-            justify-content: right;
+            justify-content: left;
+            color: red;
         }
         .proyeccion-container-detail .value-container {
             font-weight: bold;
             font-size: 16px;
             margin-left: 10px;
+            color: red;
         }
         .proyeccion-container-detail .value-container span {
             font-weight: bold;
-            color: #012344;
+            color: red;
         }
     `
 
