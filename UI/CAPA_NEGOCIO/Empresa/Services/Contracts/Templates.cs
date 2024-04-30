@@ -285,7 +285,8 @@ public class ContractsTemplates
 					</u> El deudor podrá realizar el pago de su cuota anticipada a su fecha de pago, con el fin de
 					evitarse mora; En caso que el Deudor no pague en la fecha de cada cuota mensual,
 					automáticamente quedará constituido en mora y por el sólo hecho de incumplimiento, y desde esa fecha hasta el pago
-					efectivo de su cuota, reconocerá al acreedor un factor mora {{mora}}% de aplicado a la cuota fija,
+					efectivo de su cuota, reconocerá al acreedor un factor mora {{mora}}
+					%% de aplicado a la cuota fija,
 					equivalente a {{valor_mora}}, ({{valor_mora_label}}%) por cada día transcurrido en mora hasta el pago efectivo de su cuota.
 				</p>
 				<p style='text-align: justify; font-size:9.5px;'><u>6. SEXTA (VENCIMIENTO ANTICIPADO):</u> No obstante al plazo
@@ -375,7 +376,7 @@ public class ContractsTemplates
 
 			</html>
 	";
-   public static string ContractEmpenoVehiculo = @"
+	public static string ContractEmpenoVehiculo = @"
 	<!DOCTYPE html>
 		<html>
 		<head>" + ContractStyle + @"</head>
@@ -410,6 +411,9 @@ public class ContractsTemplates
 			<div style='font-size: 10px;'>
 				{{tabla_articulos}}
 			</div>
+			<p style='text-align: left; font-weight:bold;margin-top:10px;font-size:10px;'>Observaciones:</p>
+			<p style='font-size:10px;'>{{observaciones}}</p>}
+
 			<p style='text-align: justify; font-size:9.5px;'>
 				<u>3. TERCERA (INSPECCIÓN DEL VEHÍCULO):</u> El deudor cede los derechos para que el acreedor realice una inspección al estado físico del
 				 VEHÍCULO, lo cual quedará evidenciado en los formatos de verificación del acreedor, así como en fotografías tomadas en diferentes ángulos.
@@ -430,7 +434,7 @@ public class ContractsTemplates
 				<u>5. QUINTA (PLAZO Y FORMA DE PAGO):</u>
 				El deudor decide en cuantas cuotas mensuales cancela su empeño, siendo el plazo máximo de 3 meses para artículos electrónicos, 
 				6 meses para artículos no electrónicos y 12 meses para automotores; los pagos se realizarán en cuotas fijas  <span class='sombrear'>MENSUALES</span> de  C$ {{cuotafija}} , 
-				({{cuotafija_label}}), según el cambio del córdoba a dólar a la fecha de hoy {{fecha_contrato_label_corta}} de: C$ {{taza_cambio_compra}} que serán 
+				({{cuotafija_label}}), según el cambio del córdoba a dólar a la fecha de hoy {{fecha_contrato_label_corta}} de: C$ {{taza_cambio}} que serán 
 				modificables al tipo de cambio del dólar, en la fecha que el cliente haga efectivo su pago. Los pagos se realizarán en córdobas o el 
 				equivalente a $ {{cuotafija_dolares}}, ($ {{cuotafija_dolares_label}})  Estadounidenses, Según tasa de cambio del Banco Central de Nicaragua,  
 				iniciando la primera cuota mensual el día {{fecha_primera_cuota}} y la última el día {{fecha_ultima_cuota}}. El deudor acepta  
@@ -474,7 +478,7 @@ public class ContractsTemplates
 				<u>6. OCTAVA (MORA):</u> El deudor podrá realizar el pago de su cuota anticipada a su fecha de pago, con el fin de
 				evitarse mora; En caso que el Deudor no pague en la fecha de cada cuota mensual,
 				automáticamente quedará constituido en mora y por el sólo hecho de incumplimiento, y desde esa fecha hasta el pago
-				efectivo de su cuota, reconocerá al acreedor un factor mora {{mora}} de aplicado a la cuota fija,
+				efectivo de su cuota, reconocerá al acreedor un factor mora {{mora}} % de aplicado a la cuota fija,
 				equivalente a {{valor_mora}}, ({{valor_mora_label}}) por cada día transcurrido en mora hasta el pago efectivo de su cuota o cancelación.
 			</p>
 			<p style='text-align: justify; font-size:9.5px;'>
@@ -596,7 +600,7 @@ public class ContractsTemplates
 			el plazo máximo de 3 meses para artículos electrónicos, 6 meses
 			para artículos no electrónicos y 12 meses para automotores; los pagos se realizarán en cuotas fijas <span class='sombrear'>MENSUALES</span> de
 			C$ {{cuotafija}}, ({{cuotafija_label}}), según el cambio del córdoba a dólar a la fecha de hoy {{fecha_contrato_label_corta}} de: C$
-			{{taza_cambio_compra}} que serán modificables al tipo de cambio del dólar, en la fecha que el cliente haga efectivo su pago. Los pagos se 
+			{{taza_cambio}} que serán modificables al tipo de cambio del dólar, en la fecha que el cliente haga efectivo su pago. Los pagos se 
 			realizarán en córdobas o el equivalente a $ {{cuotafija_dolares}} , ({{cuotafija_dolares_label}}) Estadounidenses, 
 			Según tasa de cambio del Banco Central de Nicaragua, iniciando la primera cuota mensual el día {{fecha_primera_cuota}} 
 			y la última cuota mensual el día {{fecha_ultima_cuota}}.El deudor acepta realizar sus pagos mensuales en las oficinas del acreedor,
@@ -630,7 +634,8 @@ public class ContractsTemplates
 			<u>6. SEXTA (MORA):</u> El deudor podrá realizar el pago de su cuota anticipada a su fecha de pago, con el fin de
 			evitarse mora; En caso que el Deudor no pague en la fecha de cada cuota mensual,
 			automáticamente quedará constituido en mora y por el sólo hecho de incumplimiento, y desde esa fecha hasta el pago
-			efectivo de su cuota, reconocerá al acreedor un factor mora {{mora}} de aplicado a la cuota fija,
+			efectivo de su cuota, reconocerá al acreedor un factor mora {{mora}}
+			% de aplicado a la cuota fija,
 			equivalente a {{valor_mora}}, ({{valor_mora_label}}) por cada día transcurrido en mora hasta el pago efectivo de su cuota.
 		</p>
 		<p style='text-align: justify; font-size:9.5px;'> <u> 7. SEPTIMA (PÉRDIDA DE LA(S) GARANTIA(S)):</u> El deudor debe

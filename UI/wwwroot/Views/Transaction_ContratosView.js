@@ -1,6 +1,6 @@
 //@ts-check
 // @ts-ignore
-import { WRender, ComponentsManager, WAjaxTools, WArrayF, html } from "../WDevCore/WModules/WComponentsTools.js";
+import { WRender, ComponentsManager, WAjaxTools, WArrayF, html, ConvertToMoneyString } from "../WDevCore/WModules/WComponentsTools.js";
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js"
 // @ts-ignore
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
@@ -250,38 +250,38 @@ class Transaction_ContratosView extends HTMLElement {
             <div>
                 <label class="value-container">
                     Valor Capital C$:
-                    <span>${entity.Transaction_Contratos.Valoracion_empeño_cordobas?.toFixed(3)}</span>
+                    <span>${ConvertToMoneyString(entity.Transaction_Contratos.Valoracion_empeño_cordobas)}</span>
                 </label>
                 <label class="value-container">
                     Int. y demas cargo C$:
                     <span>${// @ts-ignore
-                        (entity.Transaction_Contratos.interes * this.tasaActual.Valor_de_venta).toFixed(3)}</span>
+                        ConvertToMoneyString(entity.Transaction_Contratos.interes * this.tasaActual.Valor_de_venta)}</span>
                 </label>
                 <label class="value-container">
                     Cuota fija C$:
-                    <span>${entity.Transaction_Contratos.cuotafija?.toFixed(3)}</span>
+                    <span>${ConvertToMoneyString(entity.Transaction_Contratos.cuotafija)}</span>
                 </label>
                 <label class="value-container">
                     Total a pagar C$:
-                    <span>${entity.Transaction_Contratos.total_pagar_cordobas?.toFixed(3)}</span>
+                    <span>${ConvertToMoneyString(entity.Transaction_Contratos.total_pagar_cordobas)}</span>
                 </label>
             </div>
             <div>
                 <label class="value-container">
                     Valor Capital $:
-                    <span>${entity.Transaction_Contratos.Valoracion_empeño_dolares?.toFixed(3)}</span>
+                    <span>${ConvertToMoneyString(entity.Transaction_Contratos.Valoracion_empeño_dolares)}</span>
                 </label>
                 <label class="value-container">
                     Int. y demas cargos $:
-                    <span>${entity.Transaction_Contratos.interes?.toFixed(3)}</span>
+                    <span>${ConvertToMoneyString(entity.Transaction_Contratos.interes)}</span>
                 </label>
                 <label class="value-container">
                     Cuota fija $:
-                    <span>${entity.Transaction_Contratos.cuotafija_dolares?.toFixed(3)}</span>
+                    <span>${ConvertToMoneyString(entity.Transaction_Contratos.cuotafija_dolares)}</span>
                 </label>
                 <label class="value-container">
                     Total a pagar $:
-                    <span>${entity.Transaction_Contratos.total_pagar_dolares?.toFixed(3)}</span>
+                    <span>${ConvertToMoneyString(entity.Transaction_Contratos.total_pagar_dolares)}</span>
                 </label>
             </div>  
         </div>`);

@@ -72,6 +72,16 @@ namespace Model
                     c.pago_contado = 0;
                     c.Estado = "PENDIENTE";
                 });
+                var Intereses = new Transactional_Configuraciones().GetIntereses();
+                Transaction_Contratos.DesgloseIntereses = new DesgloseIntereses
+                {
+                    GASTOS_ADMINISTRATIVOS = Convert.ToDouble(Intereses.Find(c => c.Nombre.Equals(InteresesPrestamosEnum.GASTOS_ADMINISTRATIVOS.ToString()))?.Valor),
+                    COMISIONES = Convert.ToDouble(Intereses.Find(c => c.Nombre.Equals(InteresesPrestamosEnum.COMISIONES.ToString()))?.Valor),
+                    MANTENIMIENTO_VALOR = Convert.ToDouble(Intereses.Find(c => c.Nombre.Equals(InteresesPrestamosEnum.MANTENIMIENTO_VALOR.ToString()))?.Valor),
+                    GASTOS_LEGALES = Convert.ToDouble(Intereses.Find(c => c.Nombre.Equals(InteresesPrestamosEnum.GASTOS_LEGALES.ToString()))?.Valor),
+                    INTERES_NETO_CORRIENTE = Convert.ToDouble(Intereses.Find(c => c.Nombre.Equals(InteresesPrestamosEnum.INTERES_NETO_CORRIENTE.ToString()))?.Valor),
+                    GESTION_CREDITICIA = Transaction_Contratos.gestion_crediticia,
+                };
 
                 Transaction_Contratos.Save();
 

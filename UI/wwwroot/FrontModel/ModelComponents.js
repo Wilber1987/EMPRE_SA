@@ -1,4 +1,5 @@
 import { ModelProperty } from "../WDevCore/WModules/CommonModel.js";
+import { ConvertToMoneyString } from "../WDevCore/WModules/WComponentsTools.js";
 
 class Tbl_Cuotas_ModelComponent {
     constructor(props) {
@@ -9,16 +10,16 @@ class Tbl_Cuotas_ModelComponent {
     /**@type {ModelProperty} */
     fecha = { type: "date",  label: "FECHA" };   
     /**@type {ModelProperty} */
-    interes = { type: "number", label: "IDCP $"  };    
+    interes = { type: "money", label: "IDCP $"  };    
     /**@type {ModelProperty} */
-    abono_capital = { type: "number", label: "ABONO AL CAPITAL $" };
+    abono_capital = { type: "money", label: "ABONO AL CAPITAL $" };
     /**@type {ModelProperty} */
-    total = { type: "number",  label: "CUOTA A PAGAR $" };
+    total = { type: "money",  label: "CUOTA A PAGAR $" };
     /**@type {ModelProperty} */
     total_cordobas = { type: "OPERATION",  label: "CUOTA A PAGAR CORDOBAS", action: (/**@type {Tbl_Cuotas} */ cuota)=>{
-        return (cuota.total * cuota.tasa_cambio).toFixed(3);
+        return ConvertToMoneyString(cuota.total * cuota.tasa_cambio);
     } };
     /**@type {ModelProperty} */
-    capital_restante = { type: "number", label: "MONTO RESTANTE $" };
+    capital_restante = { type: "money", label: "MONTO RESTANTE $" };
 }
 export { Tbl_Cuotas_ModelComponent }

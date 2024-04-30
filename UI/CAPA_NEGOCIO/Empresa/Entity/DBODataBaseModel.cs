@@ -116,6 +116,8 @@ namespace DataBaseModel
 		public Double? interes_dolares { get; set; }
 		public int? Id_User { get; set; }
 		public int? reestructurado { get; set; }
+		[JsonProp]
+		public DesgloseIntereses? DesgloseIntereses { get; set; }
 
 		[ManyToOne(TableName = "Catalogo_Clientes", KeyColumn = "codigo_cliente", ForeignKeyColumn = "codigo_cliente")]
 		public Catalogo_Clientes? Catalogo_Clientes { get; set; }
@@ -167,6 +169,31 @@ namespace DataBaseModel
 			var payment = tasa * Math.Pow(Convert.ToDouble(1 + tasa), Convert.ToDouble(cuotas)) * monto
 				/ (Math.Pow(Convert.ToDouble(1 + tasa), Convert.ToDouble(cuotas)) - 1);
 			return payment;
+		}
+	}
+
+	public class DesgloseIntereses
+	{
+		//porcentajes de intereses
+		public double? GASTOS_ADMINISTRATIVOS { get; set; }
+		public double? COMISIONES { get; set; }
+		public double? MANTENIMIENTO_VALOR { get; set; }
+		public double? GASTOS_LEGALES { get; set; }
+		public double? INTERES_NETO_CORRIENTE { get; set; }
+		public double? GESTION_CREDITICIA { get; set; }
+		//fin porcentajes de intereses
+
+		public double GetPorcentageInteresesSGC()
+		{
+			return GASTOS_ADMINISTRATIVOS.GetValueOrDefault() +
+					COMISIONES.GetValueOrDefault() +
+					MANTENIMIENTO_VALOR.GetValueOrDefault() +
+					GASTOS_LEGALES.GetValueOrDefault() +
+					INTERES_NETO_CORRIENTE.GetValueOrDefault();
+		}
+		public double GetPorcentageIntereses()
+		{
+			return GetPorcentageInteresesSGC() + GESTION_CREDITICIA.GetValueOrDefault();
 		}
 	}
 
@@ -369,7 +396,7 @@ namespace DataBaseModel
 		public Catalogo_Cuentas? Catalogo_Cuentas { get; set; }
 		[ManyToOne(TableName = "Catalogo_Tipo_Transaccion", KeyColumn = "id_tipo_transaccion", ForeignKeyColumn = "id_tipo_transaccion")]
 		public Catalogo_Tipo_Transaccion? Catalogo_Tipo_Transaccion { get; set; }
-	}	
+	}
 
 	public class Transaction_Movimiento : EntityClass
 	{
@@ -415,7 +442,7 @@ namespace DataBaseModel
 	}
 
 	public class Transaccion_Factura : EntityClass
-	{       
+	{
 		[PrimaryKey(Identity = true)]
 		public int? id_factura { get; set; }
 		public int? numero_contrato { get; set; }
@@ -431,15 +458,15 @@ namespace DataBaseModel
 		public string? no_factura { get; set; }
 		public double? subtotal { get; set; }
 		public double? iva { get; set; }
-		public double? total_cordobas { get;  set; }
-		public string? Moneda { get;  set; }
+		public double? total_cordobas { get; set; }
+		public string? Moneda { get; set; }
 
 		[JsonProp]
 		public Factura_contrato? Factura_contrato { get; set; }
 
 		[OneToMany(TableName = "Detalle_Factura_Recibo", KeyColumn = "id_factura", ForeignKeyColumn = "id_factura")]
 		public List<Detalle_Factura_Recibo>? Detalle_Factura_Recibo { get; set; }
-		
+
 	}
 
 	public class Factura_contrato
@@ -465,15 +492,17 @@ namespace DataBaseModel
 	}
 
 
-	public class Catalogo_Producto: EntityClass {
+	public class Catalogo_Producto : EntityClass
+	{
 		[PrimaryKey(Identity = true)]
 		public int? id_producto { get; set; }
 		public string descripcion { get; set; }
 		public int? id_categoria { get; set; }
 		public int? id_marca { get; set; }
 	}
- 
-	public class Catalogo_Marca: EntityClass {
+
+	public class Catalogo_Marca : EntityClass
+	{
 		[PrimaryKey(Identity = true)]
 		public int? id_marca { get; set; }
 		public string nombre { get; set; }
@@ -485,14 +514,16 @@ namespace DataBaseModel
 	}
 
 
-	public class Catalogo_Categorias: EntityClass {
+	public class Catalogo_Categorias : EntityClass
+	{
 		[PrimaryKey(Identity = true)]
 		public int? id_categoria { get; set; }
 		public string descripcion { get; set; }
 		public string estado { get; set; }
 	}
 
-	public class Transaction_Lotes: EntityClass {
+	public class Transaction_Lotes : EntityClass
+	{
 		[PrimaryKey(Identity = true)]
 		public int? id_transaccion { get; set; }
 		public string descripcion { get; set; }
@@ -502,8 +533,9 @@ namespace DataBaseModel
 		public string estado { get; set; }
 	}
 
-	
-	public class Transaction_Detalle_Lotes: EntityClass {
+
+	public class Transaction_Detalle_Lotes : EntityClass
+	{
 		[PrimaryKey(Identity = true)]
 		public int? id_detalle_transaccion { get; set; }
 		public int? id_lote { get; set; }
@@ -533,13 +565,13 @@ namespace DataBaseModel
 		public Tbl_Cuotas? Tbl_Cuotas { get; set; }
 	}
 
-    public class EstadoAnteriorCuota
-    {
-        public DateTime? fecha_pago { get;  set; }
-        public double? pago_contado { get;  set; }
-        public string? Estado { get;  set; }
-        public double? total { get;  set; }
-        public double? interes { get;  set; }
-        public double? abono_capital { get;  set; }
-    }
+	public class EstadoAnteriorCuota
+	{
+		public DateTime? fecha_pago { get; set; }
+		public double? pago_contado { get; set; }
+		public string? Estado { get; set; }
+		public double? total { get; set; }
+		public double? interes { get; set; }
+		public double? abono_capital { get; set; }
+	}
 }

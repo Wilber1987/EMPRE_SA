@@ -88,7 +88,7 @@ namespace DataBaseModel
         COMISIONES,
         MANTENIMIENTO_VALOR,
         GASTOS_LEGALES,
-        GESTIONES_CREDITICIAS
+        INTERES_NETO_CORRIENTE
     }
 
     public enum GeneralDataEnum

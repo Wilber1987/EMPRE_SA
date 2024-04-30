@@ -2,7 +2,7 @@
 // @ts-ignore
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js";
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js";
-import { ComponentsManager, html, WArrayF, WRender } from "../WDevCore/WModules/WComponentsTools.js";
+import { ComponentsManager, ConvertToMoneyString, html, WArrayF, WRender } from "../WDevCore/WModules/WComponentsTools.js";
 // @ts-ignore
 import { Catalogo_Cambio_Divisa_ModelComponent, Catalogo_Categoria_ModelComponent, Catalogo_Clientes, Catalogo_Estados_Articulos, Transactional_Valoracion } from "../FrontModel/DBODataBaseModel.js";
 import { ModalMessege, WForm } from "../WDevCore/WComponents/WForm.js";
@@ -66,22 +66,22 @@ class Transaction_Valoraciones_View extends HTMLElement {
                 porcentaje_empeno: { type: 'number', hidden: true },
                 valor_compra_cordobas: {
                     type: "operation", action: (element) => {
-                        return this.calculoCordobas(element.porcentaje_compra);
+                        return ConvertToMoneyString( this.calculoCordobas(element.porcentaje_compra));
                     }
                 }, valor_compra_dolares: {
                     type: "operation", action: (element) => {
                         // @ts-ignore
-                        return this.calculoDolares(element.porcentaje_compra);
+                        return ConvertToMoneyString( this.calculoDolares(element.porcentaje_compra));
                     }
                 },
                 valor_empeño_cordobas: {
                     type: "operation", action: (element) => {
-                        return this.calculoCordobas(element.porcentaje_empeno);
+                        return ConvertToMoneyString( this.calculoCordobas(element.porcentaje_empeno));
                     }
                 }, valor_empeño_dolares: {
                     type: "operation", action: (element) => {
                         // @ts-ignore
-                        return this.calculoDolares(element.porcentaje_empeno);
+                        return ConvertToMoneyString( this.calculoDolares(element.porcentaje_empeno));
                     }
                 }
             }),

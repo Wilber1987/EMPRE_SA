@@ -16,12 +16,13 @@ using iText.Kernel.Pdf;
 using iText.Html2pdf;
 using iText.Layout;
 using iText.Layout.Element;
+using System.Globalization;
 
 namespace CAPA_NEGOCIO.Services
 {
 	public class ContractTemplateService
 	{
-		
+
 		public static async Task<byte[]> GeneratePdfFromRazorTemplateAsync<TModel>(string razorTemplate, TModel model)
 		{
 			var engine = new RazorLightEngineBuilder()
@@ -75,9 +76,9 @@ namespace CAPA_NEGOCIO.Services
 			var configuraciones_theme = new Transactional_Configuraciones().GetTheme();
 			var configuraciones_generales = new Transactional_Configuraciones().GetGeneralData();
 
-			var configuraciones = new Transactional_Configuraciones().GetIntereses();
+			//var configuraciones = new Transactional_Configuraciones().GetIntereses();
 
-			templateContent = templateContent.Replace("{{cuotafija}}", Math.Round((decimal)model.cuotafija, 3).ToString("0.00"))
+			templateContent = templateContent.Replace("{{cuotafija}}", ConvertToMoneyString(model.cuotafija))
 				.Replace("{{numero_contrato}}", model.numero_contrato?.ToString("D9"))
 				.Replace("{{datos_apoderado}}", configuraciones_generales.Find(c => c.Nombre.Equals(GeneralDataEnum.APODERADO.ToString()))?.Valor)
 				.Replace("{{resumen_datos_apoderado}}", configuraciones_generales.Find(c => c.Nombre.Equals(GeneralDataEnum.DATOS_APODERADO.ToString()))?.Valor)
@@ -88,11 +89,11 @@ namespace CAPA_NEGOCIO.Services
 				.Replace("{{fecha_primera_cuota}}", fechaPrimeraCuota?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy"))
 				.Replace("{{fecha_ultima_cuota}}", fechaUltimaCuota?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy"))
 				.Replace("{{cuotafija_label}}", NumberUtility.NumeroALetras(model.cuotafija, "córdobas"))
-				.Replace("{{cuotafija_dolares}}", Math.Round((decimal)model.cuotafija_dolares, 3).ToString("0.00"))
+				.Replace("{{cuotafija_dolares}}", ConvertToMoneyString(model.cuotafija_dolares))
 				.Replace("{{cuotafija_dolares_label}}", NumberUtility.NumeroALetras(model.cuotafija_dolares, "dólares"))
-				.Replace("{{Valoracion_empeño_cordobas}}", Math.Round((decimal)model.Valoracion_empeño_cordobas, 3).ToString("0.00"))
+				.Replace("{{Valoracion_empeño_cordobas}}", ConvertToMoneyString(model.Valoracion_empeño_cordobas))
 				.Replace("{{Valoracion_empeño_cordobas_label}}", NumberUtility.NumeroALetras(model.Valoracion_empeño_cordobas, "córdobas"))
-				.Replace("{{Valoracion_empeño_dolares}}", Math.Round((decimal)model.Valoracion_empeño_dolares, 3).ToString("0.00"))
+				.Replace("{{Valoracion_empeño_dolares}}", ConvertToMoneyString(model.Valoracion_empeño_dolares))
 				.Replace("{{Valoracion_empeño_dolares_label}}", NumberUtility.NumeroALetras(model.Valoracion_empeño_dolares, "dólares"));
 
 			var renderedHtml = RenderTemplate(templateContent, model);
@@ -102,7 +103,7 @@ namespace CAPA_NEGOCIO.Services
 			//var interes = configuraciones.Select(i => Convert.ToInt32(i.Valor)).ToArray().Sum();
 			//LoggerServices.AddMessageInfo("FIN DE GET INTERESE");
 			Catalogo_Clientes? cliente = model.Catalogo_Clientes?.Find<Catalogo_Clientes>();
-			double valorInteres = configuraciones.Select(c => Convert.ToDouble(c.Valor)).ToList().Sum();
+			double valorInteres = model.DesgloseIntereses.GetPorcentageInteresesSGC();
 
 
 			//var montoMora = model.cuotafija * (model?.mora ?? 0.005) * 1;//como el cronjob es diario se va cargando mora cada dia
@@ -113,51 +114,58 @@ namespace CAPA_NEGOCIO.Services
 				.Replace("{{departamento}}", cliente.Catalogo_Departamento?.nombre)
 				.Replace("{{tabla_articulos}}", GenerateTableHtml(model.Detail_Prendas, model.tipo.Equals(Contratos_Type.EMPENO_VEHICULO.ToString())))
 				//MORA                
-				.Replace("{{valor_mora}}", "C$ " + Math.Round((decimal)model.cuotafija_dolares * (decimal)mora * (decimal)model.taza_cambio, 3).ToString("0.00"))
+				.Replace("{{valor_mora}}", "C$ " + ConvertToMoneyString(model.cuotafija_dolares * mora * model.taza_cambio))
 				.Replace("{{valor_mora_label}}", NumberUtility.NumeroALetras(model.cuotafija_dolares * mora * model.taza_cambio, "córdobas"))
 
 				/*INTERESES*/
-				.Replace("{{interes_inicial}}", cliente.Catalogo_Clasificacion_Interes?.porcentaje.ToString() ?? "6")
-				.Replace("{{interes_inicial_label}}", NumberUtility.NumeroALetras(
-					Convert.ToDecimal(model.Catalogo_Clientes.Catalogo_Clasificacion_Interes?.porcentaje.ToString() ?? "6")))
+				.Replace("{{interes_demas_cargos}}", model.gestion_crediticia.ToString() ?? "6")
+				.Replace("{{interes_demas_cargos_label}}", NumberUtility.NumeroALetras(
+					Convert.ToDecimal(model.gestion_crediticia.ToString() ?? "")))
 
 				.Replace("{{interes_gastos_administrativos}}",
-					configuraciones.Find(c => c.Nombre.Equals(InteresesPrestamosEnum.GASTOS_ADMINISTRATIVOS.ToString()))?.Valor)
-				.Replace("{{interes_gastos_administrativos_label}}",
-					NumberUtility.NumeroALetras(Convert.ToDecimal(configuraciones.Find(c =>
-					c.Nombre.Equals(InteresesPrestamosEnum.GASTOS_ADMINISTRATIVOS.ToString()))?.Valor)))
+					model.DesgloseIntereses.GASTOS_ADMINISTRATIVOS.ToString())
+				.Replace("{{interes_gastos_administrativos_label}}", NumberUtility.NumeroALetras(
+						Convert.ToDecimal(model.DesgloseIntereses.GASTOS_ADMINISTRATIVOS.ToString())))
 
 				.Replace("{{interes_gastos_legales}}",
-					configuraciones.Find(c => c.Nombre.Equals(InteresesPrestamosEnum.GASTOS_LEGALES.ToString()))?.Valor)
-				.Replace("{{interes_gastos_legales_label}}", NumberUtility.NumeroALetras(Convert.ToDecimal(configuraciones.Find(c =>
-					c.Nombre.Equals(InteresesPrestamosEnum.GASTOS_LEGALES.ToString()))?.Valor)))
+					model.DesgloseIntereses.GASTOS_LEGALES.ToString())
+				.Replace("{{interes_gastos_legales_label}}", NumberUtility.NumeroALetras(
+					Convert.ToDecimal(model.DesgloseIntereses.GASTOS_LEGALES.ToString())))
 
-				.Replace("{{interes_comisiones_label}}", NumberUtility.NumeroALetras(Convert.ToDecimal(configuraciones.Find(c =>
-					c.Nombre.Equals(InteresesPrestamosEnum.COMISIONES.ToString()))?.Valor)))
+				.Replace("{{interes_comisiones_label}}", NumberUtility.NumeroALetras(
+					Convert.ToDecimal(model.DesgloseIntereses.COMISIONES.ToString())))
 				.Replace("{{interes_comisiones}}",
-					configuraciones.Find(c => c.Nombre.Equals(InteresesPrestamosEnum.COMISIONES.ToString()))?.Valor)
+					model.DesgloseIntereses.COMISIONES.ToString())
 
-				.Replace("{{interes_mantenimiento_valor_label}}", NumberUtility.NumeroALetras(Convert.ToDecimal(configuraciones.Find(c =>
-					c.Nombre.Equals(InteresesPrestamosEnum.MANTENIMIENTO_VALOR.ToString()))?.Valor)))
+				.Replace("{{interes_mantenimiento_valor_label}}", NumberUtility.NumeroALetras(
+					Convert.ToDecimal(model.DesgloseIntereses.MANTENIMIENTO_VALOR.ToString())))
 				.Replace("{{interes_mantenimiento_valor}}",
-					configuraciones.Find(c => c.Nombre.Equals(InteresesPrestamosEnum.MANTENIMIENTO_VALOR.ToString()))?.Valor)
+					model.DesgloseIntereses.MANTENIMIENTO_VALOR.ToString())
 
-				.Replace("{{interes_demas_cargos_label}}", NumberUtility.NumeroALetras(Convert.ToDecimal(configuraciones.Find(c =>
-					c.Nombre.Equals(InteresesPrestamosEnum.GESTIONES_CREDITICIAS.ToString()))?.Valor)))
-				.Replace("{{interes_demas_cargos}}",
-					configuraciones.Find(c => c.Nombre.Equals(InteresesPrestamosEnum.GESTIONES_CREDITICIAS.ToString()))?.Valor)
+				.Replace("{{interes_inicial_label}}", NumberUtility.NumeroALetras(
+					Convert.ToDecimal(model.DesgloseIntereses.INTERES_NETO_CORRIENTE.ToString())))
+				.Replace("{{interes_inicial}}",
+					model.DesgloseIntereses.INTERES_NETO_CORRIENTE.ToString())
 
-				.Replace("{{sum_intereses}}", valorInteres.ToString())
+				.Replace("{{sum_intereses}}", (valorInteres + Convert.ToDouble(cliente.Catalogo_Clasificacion_Interes?.porcentaje - 1)).ToString())
 				.Replace("{{dias}}", DateTime.Now.Day.ToString())
 				.Replace("{{mes}}", DateTime.Now.ToString("MMMM"))
 				.Replace("{{anio}}", DateTime.Now.Year.ToString())
-				.Replace("{{tbody_amortizacion}}", GenerateTableHtml(model.Tbl_Cuotas, configuraciones, cliente, model));
+				.Replace("{{tbody_amortizacion}}", GenerateTableHtml(model.Tbl_Cuotas, cliente, model));
 			LoggerServices.AddMessageInfo("FIN DE RENDER 2");
 			// Generar el PDF
 			var pdfFilePath = Path.Combine(System.IO.Path.GetFullPath("./wwwroot/Contracts"), "output.pdf");
 			GeneratePdfFromHtml(renderedHtml, pdfFilePath);
 			LoggerServices.AddMessageInfo("FIN DE GENERATE");
 
+		}
+
+		private static String ConvertToMoneyString(double? cuotafija)
+		{
+			//CultureInfo cultura = new CultureInfo("es-ES"); 
+			//return cuotafija.GetValueOrDefault().ToString("#,##0.00", cultura); 
+			return cuotafija.GetValueOrDefault().ToString("#,##0.00", CultureInfo.GetCultureInfo("es-ES"))
+				.Replace(",", "|").Replace(".", ",").Replace("|", "."); ;
 		}
 
 		public static string RenderTemplate(string templateContent, object model)
@@ -311,42 +319,37 @@ namespace CAPA_NEGOCIO.Services
 			return htmlBuilder.ToString();
 		}
 
-		static string GenerateTableHtml(List<Tbl_Cuotas> listaDatos, List<Transactional_Configuraciones> configuraciones, Catalogo_Clientes cliente, Transaction_Contratos contrato)
+		static string GenerateTableHtml(List<Tbl_Cuotas> listaDatos, Catalogo_Clientes cliente, Transaction_Contratos contrato)
 		{
 			List<Tbl_Cuotas>? objListOrder = listaDatos?.OrderBy(order => order.fecha).ToList();
 			StringBuilder htmlBuilder = new StringBuilder();
 			// Abrir la etiqueta de la tabla con atributos de estilo para bordes y ancho 100%
 			htmlBuilder.Append("<tbody>");
 			// Contenido de la tabla
-			double valorInteres = configuraciones.Select(c => Convert.ToDouble(c.Valor)).ToList().Sum() / 100;
+			//double valorInteres = configuraciones.Select(c => Convert.ToDouble(c.Valor)).ToList().Sum() / 100;
 			objListOrder?.ForEach(dato =>
 			{
 				htmlBuilder.Append("<tr>");
 				htmlBuilder.Append($"<td class=\"desc\" colspan=\"2\">{dato.fecha?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy")}</td>");
-				
-				
-				var porcentajeDeInteresSinGestionCrediticia = contrato.tasas_interes * 100 - contrato.gestion_crediticia;
-				var porcentajeGestionCrediticia = 100 / (contrato.tasas_interes * 100 ) * contrato.gestion_crediticia; 
-				var porcentajeDemasCargos = 100 / (contrato.tasas_interes * 100 ) * porcentajeDeInteresSinGestionCrediticia;
-				
-				var interesNeto = dato.interes * (porcentajeGestionCrediticia / 100);
+
+				var interesNeto = dato.interes * (contrato.DesgloseIntereses?.INTERES_NETO_CORRIENTE / 100);
 				var demasCargos = dato.interes - interesNeto;
 
-				htmlBuilder.Append($"<td class=\"val\">{Math.Round(Convert.ToDecimal(interesNeto * dato.tasa_cambio), 3).ToString("0.00")}</td>");
-				htmlBuilder.Append($"<td class=\"val\">{Math.Round(Convert.ToDecimal(interesNeto), 3).ToString("0.00")}</td>");
+				htmlBuilder.Append($"<td class=\"val\">{ConvertToMoneyString(interesNeto * dato.tasa_cambio)}</td>");
+				htmlBuilder.Append($"<td class=\"val\">{ConvertToMoneyString(interesNeto)}</td>");
 
-				htmlBuilder.Append($"<td class=\"val\">{Math.Round(Convert.ToDecimal(demasCargos * dato.tasa_cambio ), 3).ToString("0.00")}</td>");
-				htmlBuilder.Append($"<td class=\"val\">{Math.Round(Convert.ToDecimal(demasCargos), 3).ToString("0.00")}</td>");
+				htmlBuilder.Append($"<td class=\"val\">{ConvertToMoneyString(demasCargos * dato.tasa_cambio)}</td>");
+				htmlBuilder.Append($"<td class=\"val\">{ConvertToMoneyString(demasCargos)}</td>");
 
 
-				htmlBuilder.Append($"<td class=\"val\">{Math.Round(Convert.ToDecimal(dato.interes * dato.tasa_cambio), 3).ToString("0.00")}</td>");
-				htmlBuilder.Append($"<td class=\"val\">{Math.Round(Convert.ToDecimal(dato.interes), 3).ToString("0.00")}</td>");
-				htmlBuilder.Append($"<td class=\"val\">{Math.Round(Convert.ToDecimal(dato.abono_capital * dato.tasa_cambio), 3).ToString("0.00")}</td>");
-				htmlBuilder.Append($"<td class=\"val\">{Math.Round(Convert.ToDecimal(dato.abono_capital), 3).ToString("0.00")}</td>");
-				htmlBuilder.Append($"<td class=\"val\">{Math.Round(Convert.ToDecimal(dato.total * dato.tasa_cambio), 3).ToString("0.00")}</td>");
-				htmlBuilder.Append($"<td class=\"val\">{Math.Round(Convert.ToDecimal(dato.total), 3).ToString("0.00")}</td>");
-				htmlBuilder.Append($"<td class=\"val\">{Math.Round(Convert.ToDecimal(dato.capital_restante * dato.tasa_cambio), 3).ToString("0.00")}</td>");
-				htmlBuilder.Append($"<td class=\"val\">{Math.Round(Convert.ToDecimal(dato.capital_restante), 3).ToString("0.00")}</td>");
+				htmlBuilder.Append($"<td class=\"val\">{ConvertToMoneyString(dato.interes * dato.tasa_cambio)}</td>");
+				htmlBuilder.Append($"<td class=\"val\">{ConvertToMoneyString(dato.interes)}</td>");
+				htmlBuilder.Append($"<td class=\"val\">{ConvertToMoneyString(dato.abono_capital * dato.tasa_cambio)}</td>");
+				htmlBuilder.Append($"<td class=\"val\">{ConvertToMoneyString(dato.abono_capital)}</td>");
+				htmlBuilder.Append($"<td class=\"val\">{ConvertToMoneyString(dato.total * dato.tasa_cambio)}</td>");
+				htmlBuilder.Append($"<td class=\"val\">{ConvertToMoneyString(dato.total)}</td>");
+				htmlBuilder.Append($"<td class=\"val\">{ConvertToMoneyString(dato.capital_restante * dato.tasa_cambio)}</td>");
+				htmlBuilder.Append($"<td class=\"val\">{ConvertToMoneyString(dato.capital_restante)}</td>");
 
 
 				// Agregar más columnas según las propiedades de tu objeto DatosTabla
