@@ -1,6 +1,7 @@
 using API.Controllers;
 using CAPA_DATOS;
 using CAPA_DATOS.BDCore;
+using CAPA_DATOS.Services;
 using CAPA_NEGOCIO.Services;
 using DataBaseModel;
 using iText.Kernel.Pdf.Annot.DA;
@@ -55,6 +56,7 @@ namespace Transactions
 				var user = AuthNetCore.User(token);
 				var dbUser = new Security_Users { Id_User = user.UserId }.Find<Security_Users>();
 				var contrato = new Transaction_Contratos() { numero_contrato = this.numero_contrato }.Find<Transaction_Contratos>();
+				var sucursal = new Catalogo_Sucursales() { Id_Sucursal = dbUser?.Id_Sucursal }.Find<Catalogo_Sucursales>();
 				if (contrato == null)
 				{
 					return new ResponseService()
@@ -93,7 +95,7 @@ namespace Transactions
 				double? abonoCapital = monto - mora - interesCorriente;
 				double? saldoRespaldo = contrato.saldo;
 				contrato.saldo -= abonoCapital;
-				if (contrato.saldo <= 0)
+				if (contrato.saldo <= 0.5)
 				{
 					contrato.saldo = 0;
 					contrato.estado = Contratos_State.CANCELADO.ToString();
@@ -144,7 +146,7 @@ namespace Transactions
 					tasa_cambio = this.tasa_cambio,
 					total = this.paga_dolares,
 					id_cliente = contrato.codigo_cliente,
-					id_sucursal = dbUser.Id_Sucursal,
+					id_sucursal = sucursal?.Id_Sucursal,
 					fecha = DateTime.Now,
 					Moneda = moneda,
 					total_cordobas = paga_cordobas,
@@ -165,7 +167,7 @@ namespace Transactions
 						total = this.total_dolares,
 						tasa_cambio = this.tasa_cambio,
 						id_cliente = contrato.codigo_cliente,
-						id_sucursal = dbUser.Id_Sucursal,
+						id_sucursal = dbUser?.Id_Sucursal,
 						reestructuracion = this.reestructurar == true ? 1 : 0,
 						total_pagado = this.total_apagar_dolares
 					},
@@ -173,17 +175,9 @@ namespace Transactions
 				};
 				factura.Save();
 				//categoria 1 y 6
-				var cuentaDestino = new Catalogo_Cuentas()
-				{
-					id_categoria = 1,
-					id_sucursal = dbUser.Id_Sucursal
-				}.Find<Catalogo_Cuentas>();
+				var cuentaDestino = Catalogo_Cuentas.GetCuentaIngresoRecibos(dbUser);
 
-				var cuentaOrigen = new Catalogo_Cuentas()
-				{
-					id_sucursal = dbUser.Id_Sucursal,
-					id_categoria = 6
-				}.Find<Catalogo_Cuentas>();
+				var cuentaOrigen =Catalogo_Cuentas.GetCuentaEgresoRecibos(dbUser);
 
 				if (cuentaDestino == null || cuentaOrigen == null)
 				{
@@ -594,9 +588,9 @@ namespace Transactions
 
 				var sucursal = new Catalogo_Sucursales() { Id_Sucursal = dbUser?.Id_Sucursal }.Find<Catalogo_Sucursales>();
 
-				decimal sumaInteres = (decimal)cuotas.Where(c => c.interes.HasValue).Sum(c => c.interes.Value);
+				double sumaInteres = cuotas.Where(c => c.interes.HasValue).Sum(c => c.interes.Value);
 
-				decimal sumaMora = (decimal)cuotas.Where(c => c.mora.HasValue).Sum(c => c.mora.Value);
+				double sumaMora = cuotas.Where(c => c.mora.HasValue).Sum(c => c.mora.Value);
 
 				var cuotasPendiente = new Tbl_Cuotas { numero_contrato = factura?.Factura_contrato?.numero_contrato }
 					.Where<Tbl_Cuotas>(FilterData.NotIn("id_cuota", detalleIds)).OrderBy(c => c.id_cuota).ToList();
@@ -615,7 +609,7 @@ namespace Transactions
 
 				templateContent = templateContent.Replace("{{recibo_num}}", factura?.id_factura?.ToString())
 				.Replace("{{logo}}", "data:image/png;base64," + configuraciones_theme.Find(c => c.Nombre.Equals(ConfiguracionesThemeEnum.LOGO.ToString()))?.Valor)
-				.Replace("{{cambio}}", Math.Round((decimal)factura?.tasa_cambio, 2).ToString())
+				.Replace("{{cambio}}", NumberUtility.ConvertToMoneyString(factura?.tasa_cambio))
 				.Replace("{{fecha}}", factura?.fecha?.ToString("dd/MM/yyyy"))
 				.Replace("{{sucursal}}", sucursal.Nombre)
 				.Replace("{{cajero}}", dbUser.Nombres)
@@ -624,22 +618,22 @@ namespace Transactions
 				.Replace("{{categoria}}", GetTipoArticulo(contrato.Detail_Prendas))
 				.Replace("{{cuotas}}", contrato.plazo.ToString())
 				.Replace("{{cuotas_pendientes}}", cuotasPendiente.Count.ToString())
-				.Replace("{{saldo_anterior}}", Math.Round((decimal)factura?.Factura_contrato?.saldo_anterior, 2).ToString())
-				.Replace("{{saldo_actual}}", Math.Round((decimal)factura?.Factura_contrato.saldo_actual, 2).ToString())
-				.Replace("{{total_pagado}}", Math.Round((decimal)factura?.total * (decimal)factura?.tasa_cambio, 2).ToString())
-				.Replace("{{total_pagado_dolares}}", Math.Round((decimal)factura?.total, 2).ToString())
-				.Replace("{{reestructuracion}}", Math.Round((decimal)(factura?.Factura_contrato?.reestructuracion ?? 0) * (decimal)factura?.tasa_cambio, 2).ToString())
-				.Replace("{{reestructuracion_dolares}}", Math.Round((decimal)(factura?.Factura_contrato?.reestructuracion ?? 0), 2).ToString())
-				.Replace("{{perdida_doc}}", Math.Round((decimal)(factura?.Factura_contrato?.perdida_de_documento ?? 0) * (decimal)factura?.tasa_cambio, 2).ToString())
-				.Replace("{{perdida_doc_dolares}}", Math.Round((decimal)(factura?.Factura_contrato?.perdida_de_documento ?? 0), 2).ToString())
-				.Replace("{{mora}}", Math.Round((decimal)sumaMora * (decimal)factura?.tasa_cambio, 2).ToString())
-				.Replace("{{mora_dolares}}", Math.Round((decimal)sumaMora, 2).ToString())
-				.Replace("{{idcp}}", Math.Round((decimal)sumaInteres * (decimal)factura?.tasa_cambio, 2).ToString())
-				.Replace("{{idcp_dolares}}", Math.Round((decimal)sumaInteres, 2).ToString())
-				.Replace("{{abono_capital}}", Math.Round((decimal)abono_capital * (decimal)factura?.tasa_cambio, 2).ToString())
-				.Replace("{{abono_capital_dolares}}", Math.Round((decimal)abono_capital, 2).ToString())
-				.Replace("{{saldo_actual_cordobas}}", Math.Round((decimal)factura?.Factura_contrato?.saldo_actual * (decimal)factura?.tasa_cambio, 2).ToString())
-				.Replace("{{saldo_actual_dolares}}", Math.Round((decimal)factura?.Factura_contrato?.saldo_actual, 2).ToString())
+				.Replace("{{saldo_anterior}}", NumberUtility.ConvertToMoneyString(factura?.Factura_contrato?.saldo_anterior))
+				.Replace("{{saldo_actual}}", NumberUtility.ConvertToMoneyString(factura?.Factura_contrato.saldo_actual))
+				.Replace("{{total_pagado}}", NumberUtility.ConvertToMoneyString(factura?.total * factura?.tasa_cambio))
+				.Replace("{{total_pagado_dolares}}", NumberUtility.ConvertToMoneyString(factura?.total))
+				.Replace("{{reestructuracion}}", NumberUtility.ConvertToMoneyString((factura?.Factura_contrato?.reestructuracion ?? 0) * factura?.tasa_cambio))
+				.Replace("{{reestructuracion_dolares}}", NumberUtility.ConvertToMoneyString(factura?.Factura_contrato?.reestructuracion ?? 0))
+				.Replace("{{perdida_doc}}", NumberUtility.ConvertToMoneyString((factura?.Factura_contrato?.perdida_de_documento ?? 0) * factura?.tasa_cambio))
+				.Replace("{{perdida_doc_dolares}}", NumberUtility.ConvertToMoneyString(factura?.Factura_contrato?.perdida_de_documento ?? 0))
+				.Replace("{{mora}}", NumberUtility.ConvertToMoneyString(sumaMora * factura?.tasa_cambio))
+				.Replace("{{mora_dolares}}", NumberUtility.ConvertToMoneyString(sumaMora))
+				.Replace("{{idcp}}", NumberUtility.ConvertToMoneyString(sumaInteres * factura?.tasa_cambio))
+				.Replace("{{idcp_dolares}}", NumberUtility.ConvertToMoneyString(sumaInteres))
+				.Replace("{{abono_capital}}", NumberUtility.ConvertToMoneyString(abono_capital * factura?.tasa_cambio))
+				.Replace("{{abono_capital_dolares}}", NumberUtility.ConvertToMoneyString(abono_capital))
+				.Replace("{{saldo_actual_cordobas}}", NumberUtility.ConvertToMoneyString(factura?.Factura_contrato?.saldo_actual * factura?.tasa_cambio))
+				.Replace("{{saldo_actual_dolares}}", NumberUtility.ConvertToMoneyString(factura?.Factura_contrato?.saldo_actual))
 				.Replace("{{proximo_pago}}", cuotasPendiente.First()?.fecha?.ToString("dd/MM/yyyy"));
 
 				return new ResponseService()

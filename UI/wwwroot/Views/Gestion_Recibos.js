@@ -3,7 +3,7 @@ import { Catalogo_Cambio_Divisa_ModelComponent } from "../FrontModel/DBODataBase
 import { Detail_Prendas, Transaction_Contratos } from "../FrontModel/Model.js";
 import { StyleScrolls, StylesControlsV2, StylesControlsV3 } from "../WDevCore/StyleModules/WStyleComponents.js";
 import { ModalMessege, ModalVericateAction, WForm } from "../WDevCore/WComponents/WForm.js";
-import { ComponentsManager, html, WArrayF, WRender } from "../WDevCore/WModules/WComponentsTools.js";
+import { ComponentsManager, ConvertToMoneyString, html, WArrayF, WRender } from "../WDevCore/WModules/WComponentsTools.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 import { contratosSearcher } from "../modules/SerchersModules.js";
 import { Catalogo_Cambio_Divisa } from "../FrontModel/Catalogo_Cambio_Divisa.js";
@@ -113,6 +113,10 @@ class Gestion_RecibosView extends HTMLElement {
 
 
     DefineMaxAndMin(selectContrato) {
+        //TODO BOORAR CICLO DE MORA FORZADA 
+        this.Contrato.Tbl_Cuotas?.filter(cuota => cuota.Estado == "PENDIENTE")?.forEach(cuota => {
+            cuota.mora = this.forceMora(cuota, selectContrato);
+        });
         const cuotasPendientes = this.Contrato.Tbl_Cuotas.sort((a, b) => a.id_cuota - b.id_cuota).filter(c => c.Estado?.toUpperCase() == "PENDIENTE");
         const CuotaActual = cuotasPendientes[0];
         const mora = WArrayF.SumValAtt(cuotasPendientes, "mora");
@@ -148,7 +152,6 @@ class Gestion_RecibosView extends HTMLElement {
     }
 
     BuildRecibosModel() {
-        console.log(this.ContractData);
         return new Recibos_ModelComponent({
             perdida_de_documento: {
                 type: "checkbox", hiddenInTable: true, require: false, action: (recibo, form) => {
@@ -204,8 +207,8 @@ class Gestion_RecibosView extends HTMLElement {
                     this.DefineMaxAndMinInForm(form);
                 }
             }, paga_cordobas: {
-                type: 'MONEY', max: this.pagoMaximoCordobas, default: this.pagoActualCordobas,
-                min: this.pagoMinimoCordobas, action: (/**@type {Recibos}*/ ObjectF, form, control) => {
+                type: 'MONEY', max: this.pagoMaximoCordobas?.toFixed(3), default: this.pagoActualCordobas,
+                min: this.pagoMinimoCordobas?.toFixed(3), action: (/**@type {Recibos}*/ ObjectF, form, control) => {
                     if (parseFloat(control.value) == parseFloat(control.max)) {
                         //control.value =  parseFloat(control.max).toFixed(3);
                         ObjectF.solo_abono = false;
@@ -230,8 +233,8 @@ class Gestion_RecibosView extends HTMLElement {
                     }
                 }
             }, paga_dolares: {
-                type: 'MONEY', max: this.pagoMaximoDolares, default: this.pagoActual,
-                min: this.pagoMinimoDolares, action: (/**@type {Recibos}*/ ObjectF, form, control) => {
+                type: 'MONEY', max: this.pagoMaximoDolares?.toFixed(3), default: this.pagoActual,
+                min: this.pagoMinimoDolares?.toFixed(3), action: (/**@type {Recibos}*/ ObjectF, form, control) => {
                     if (parseFloat(control.value) == parseFloat(control.max)) {
                         //control.value =  parseFloat(control.max).toFixed(3);
                         ObjectF.solo_abono = false;
@@ -256,25 +259,25 @@ class Gestion_RecibosView extends HTMLElement {
                 }
             }, monto_dolares: {
                 type: 'MONEY', defaultValue: 0, action: (/**@type {Recibos}*/ ObjectF, form) => {
-                    ObjectF.monto_cordobas = (ObjectF.monto_dolares * ObjectF.tasa_cambio);
-                    ObjectF.cambio_dolares = ObjectF.monto_dolares - ObjectF.paga_dolares;
-                    ObjectF.cambio_cordobas = ObjectF.monto_cordobas - ObjectF.paga_cordobas;
+                    ObjectF.monto_cordobas = (ObjectF.monto_dolares * ObjectF.tasa_cambio).toFixed(3);
+                    ObjectF.cambio_dolares = (ObjectF.monto_dolares - ObjectF.paga_dolares).toFixed(3);
+                    ObjectF.cambio_cordobas = (ObjectF.monto_cordobas - ObjectF.paga_cordobas).toFixed(3);
                     this.reciboForm?.DrawComponent();
                 }
             }, monto_cordobas: {
                 type: 'MONEY', defaultValue: 0, action: (/**@type {Recibos}*/ ObjectF, form) => {
-                    ObjectF.monto_dolares = (ObjectF.monto_cordobas * ObjectF.tasa_cambio);
-                    ObjectF.cambio_dolares = ObjectF.monto_dolares - ObjectF.paga_dolares;
-                    ObjectF.cambio_cordobas = ObjectF.monto_cordobas - ObjectF.paga_cordobas;
+                    ObjectF.monto_dolares = (ObjectF.monto_cordobas * ObjectF.tasa_cambio).toFixed(3);
+                    ObjectF.cambio_dolares = (ObjectF.monto_dolares - ObjectF.paga_dolares).toFixed(3);
+                    ObjectF.cambio_cordobas = (ObjectF.monto_cordobas - ObjectF.paga_cordobas).toFixed(3);
                     this.reciboForm?.DrawComponent();
                 }
             }, cambio_dolares: {
                 type: 'MONEY', disabled: true, require: false, defaultValue: 0, action: (/**@type {Recibos}*/ ObjectF, form) => {
-                    return ObjectF.cambio_dolares = ObjectF.monto_dolares - ObjectF.paga_dolares;
+                    return ConvertToMoneyString(ObjectF.cambio_dolares = ObjectF.monto_dolares - ObjectF.paga_dolares);
                 }
             }, cambio_cordobas: {
                 type: 'MONEY', disabled: true, require: false, defaultValue: 0, action: (/**@type {Recibos}*/ ObjectF, form) => {
-                    return ObjectF.cambio_cordobas = ObjectF.monto_cordobas - ObjectF.paga_cordobas;
+                    return ConvertToMoneyString(ObjectF.cambio_cordobas = ObjectF.monto_cordobas - ObjectF.paga_cordobas);
                 }
             }
         });
@@ -298,10 +301,7 @@ class Gestion_RecibosView extends HTMLElement {
         const plazo = Contrato.plazo;
         const fecha = new Date(Contrato.fecha_cancelar);
         let canReestructure = false;
-        //TODO BOORAR CICLO DE MORA FORZADA 
-        Contrato.Tbl_Cuotas?.filter(cuota => cuota.Estado == "PENDIENTE")?.forEach(cuota => {
-            cuota.mora = this.forceMora(cuota, Contrato);
-        });
+
 
         //TODO REPARAR FECHA        
         // @ts-ignore
@@ -569,8 +569,8 @@ class Gestion_RecibosView extends HTMLElement {
             formObject["total_parciales"] = 1;//TODO todo preguntar
             formObject["fecha_roc"] = new Date();
             // @ts-ignore
-            formObject["paga_cordobas"] = (primeraCuotaConCapitalMayorACero * tasasCambio[0].Valor_de_venta).toFixed(3);
-            formObject["paga_dolares"] = primeraCuotaConCapitalMayorACero;
+            formObject["paga_cordobas"] = this.pagoActualCordobas.toFixed(3);
+            formObject["paga_dolares"] = this.pagoActual.toFixed(3);
             formObject["monto_cordobas"] = formObject["paga_cordobas"]
             formObject["monto_dolares"] = formObject["paga_dolares"]
             formObject["solo_abono"] = false;

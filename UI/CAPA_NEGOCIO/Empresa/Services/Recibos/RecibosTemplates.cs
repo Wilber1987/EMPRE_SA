@@ -75,7 +75,7 @@ public class RecibosTemplates
 			</div>
 
 			<div class='w-50 ' >
-				<p class='w-50 '><strong>Saldo Anterior:</strong> C$ {{saldo_anterior}}</p>    
+				<p class='w-50 '><strong>Saldo Anterior:</strong> $ {{saldo_anterior}}</p>    
 				<p class='w-50 '><strong>Saldo Actual:</strong> $ {{saldo_actual}}</p>
 			</div>
 

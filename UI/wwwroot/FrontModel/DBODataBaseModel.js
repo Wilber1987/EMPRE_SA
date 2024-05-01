@@ -53,11 +53,11 @@ class Transactional_Valoracion extends EntityClass {
     Plazo = { type: 'number', hiddenInTable: true, max: 24, min: 1, hiddenFilter: true };
     Tasa_interes = { type: 'number', hiddenInTable: true, enabled: false, Dataset: [], hiddenFilter: true };
     Fecha = { type: 'date', hiddenInTable: true, hiddenFilter: true };
-    Tasa_de_cambio = { type: 'number', hiddenInTable: true, hiddenFilter: true };
-    Valoracion_compra_cordobas = { type: 'number', hiddenFilter: true };
-    Valoracion_compra_dolares = { type: 'number', hiddenFilter: true };
-    Valoracion_empeño_cordobas = { type: 'number', hiddenFilter: true };
-    Valoracion_empeño_dolares = { type: 'number', hiddenFilter: true };
+    Tasa_de_cambio = { type: 'money', hiddenInTable: true, hiddenFilter: true };
+    Valoracion_compra_cordobas = { type: 'money', hiddenFilter: true };
+    Valoracion_compra_dolares = { type: 'money', hiddenFilter: true };
+    Valoracion_empeño_cordobas = { type: 'money', hiddenFilter: true };
+    Valoracion_empeño_dolares = { type: 'money', hiddenFilter: true };
     Catalogo_Estados_Articulos = { type: 'WSELECT', hiddenInTable: true, ModelObject: () => new Catalogo_Estados_Articulos(), hiddenFilter: true };
     //TASAS DE INTERES
     Valoracion_empeño_dolares = { type: 'operation' };

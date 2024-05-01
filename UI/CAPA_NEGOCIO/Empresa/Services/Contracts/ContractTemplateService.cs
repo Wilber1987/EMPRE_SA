@@ -78,7 +78,7 @@ namespace CAPA_NEGOCIO.Services
 
 			//var configuraciones = new Transactional_Configuraciones().GetIntereses();
 
-			templateContent = templateContent.Replace("{{cuotafija}}", ConvertToMoneyString(model.cuotafija))
+			templateContent = templateContent.Replace("{{cuotafija}}", NumberUtility.ConvertToMoneyString(model.cuotafija))
 				.Replace("{{numero_contrato}}", model.numero_contrato?.ToString("D9"))
 				.Replace("{{datos_apoderado}}", configuraciones_generales.Find(c => c.Nombre.Equals(GeneralDataEnum.APODERADO.ToString()))?.Valor)
 				.Replace("{{resumen_datos_apoderado}}", configuraciones_generales.Find(c => c.Nombre.Equals(GeneralDataEnum.DATOS_APODERADO.ToString()))?.Valor)
@@ -89,11 +89,11 @@ namespace CAPA_NEGOCIO.Services
 				.Replace("{{fecha_primera_cuota}}", fechaPrimeraCuota?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy"))
 				.Replace("{{fecha_ultima_cuota}}", fechaUltimaCuota?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy"))
 				.Replace("{{cuotafija_label}}", NumberUtility.NumeroALetras(model.cuotafija, "córdobas"))
-				.Replace("{{cuotafija_dolares}}", ConvertToMoneyString(model.cuotafija_dolares))
+				.Replace("{{cuotafija_dolares}}", NumberUtility.ConvertToMoneyString(model.cuotafija_dolares))
 				.Replace("{{cuotafija_dolares_label}}", NumberUtility.NumeroALetras(model.cuotafija_dolares, "dólares"))
-				.Replace("{{Valoracion_empeño_cordobas}}", ConvertToMoneyString(model.Valoracion_empeño_cordobas))
+				.Replace("{{Valoracion_empeño_cordobas}}", NumberUtility.ConvertToMoneyString(model.Valoracion_empeño_cordobas))
 				.Replace("{{Valoracion_empeño_cordobas_label}}", NumberUtility.NumeroALetras(model.Valoracion_empeño_cordobas, "córdobas"))
-				.Replace("{{Valoracion_empeño_dolares}}", ConvertToMoneyString(model.Valoracion_empeño_dolares))
+				.Replace("{{Valoracion_empeño_dolares}}", NumberUtility.ConvertToMoneyString(model.Valoracion_empeño_dolares))
 				.Replace("{{Valoracion_empeño_dolares_label}}", NumberUtility.NumeroALetras(model.Valoracion_empeño_dolares, "dólares"));
 
 			var renderedHtml = RenderTemplate(templateContent, model);
@@ -114,7 +114,7 @@ namespace CAPA_NEGOCIO.Services
 				.Replace("{{departamento}}", cliente.Catalogo_Departamento?.nombre)
 				.Replace("{{tabla_articulos}}", GenerateTableHtml(model.Detail_Prendas, model.tipo.Equals(Contratos_Type.EMPENO_VEHICULO.ToString())))
 				//MORA                
-				.Replace("{{valor_mora}}", "C$ " + ConvertToMoneyString(model.cuotafija_dolares * mora * model.taza_cambio))
+				.Replace("{{valor_mora}}", "C$ " + NumberUtility.ConvertToMoneyString(model.cuotafija_dolares * mora * model.taza_cambio))
 				.Replace("{{valor_mora_label}}", NumberUtility.NumeroALetras(model.cuotafija_dolares * mora * model.taza_cambio, "córdobas"))
 
 				/*INTERESES*/
@@ -160,14 +160,7 @@ namespace CAPA_NEGOCIO.Services
 
 		}
 
-		private static String ConvertToMoneyString(double? cuotafija)
-		{
-			//CultureInfo cultura = new CultureInfo("es-ES"); 
-			//return cuotafija.GetValueOrDefault().ToString("#,##0.00", cultura); 
-			return cuotafija.GetValueOrDefault().ToString("#,##0.00", CultureInfo.GetCultureInfo("es-ES"))
-				.Replace(",", "|").Replace(".", ",").Replace("|", "."); ;
-		}
-
+		
 		public static string RenderTemplate(string templateContent, object model)
 		{
 
@@ -335,21 +328,21 @@ namespace CAPA_NEGOCIO.Services
 				var interesNeto = dato.interes * (contrato.DesgloseIntereses?.INTERES_NETO_CORRIENTE / 100);
 				var demasCargos = dato.interes - interesNeto;
 
-				htmlBuilder.Append($"<td class=\"val\">{ConvertToMoneyString(interesNeto * dato.tasa_cambio)}</td>");
-				htmlBuilder.Append($"<td class=\"val\">{ConvertToMoneyString(interesNeto)}</td>");
+				htmlBuilder.Append($"<td class=\"val\">{NumberUtility.ConvertToMoneyString(interesNeto * dato.tasa_cambio)}</td>");
+				htmlBuilder.Append($"<td class=\"val\">{NumberUtility.ConvertToMoneyString(interesNeto)}</td>");
 
-				htmlBuilder.Append($"<td class=\"val\">{ConvertToMoneyString(demasCargos * dato.tasa_cambio)}</td>");
-				htmlBuilder.Append($"<td class=\"val\">{ConvertToMoneyString(demasCargos)}</td>");
+				htmlBuilder.Append($"<td class=\"val\">{NumberUtility.ConvertToMoneyString(demasCargos * dato.tasa_cambio)}</td>");
+				htmlBuilder.Append($"<td class=\"val\">{NumberUtility.ConvertToMoneyString(demasCargos)}</td>");
 
 
-				htmlBuilder.Append($"<td class=\"val\">{ConvertToMoneyString(dato.interes * dato.tasa_cambio)}</td>");
-				htmlBuilder.Append($"<td class=\"val\">{ConvertToMoneyString(dato.interes)}</td>");
-				htmlBuilder.Append($"<td class=\"val\">{ConvertToMoneyString(dato.abono_capital * dato.tasa_cambio)}</td>");
-				htmlBuilder.Append($"<td class=\"val\">{ConvertToMoneyString(dato.abono_capital)}</td>");
-				htmlBuilder.Append($"<td class=\"val\">{ConvertToMoneyString(dato.total * dato.tasa_cambio)}</td>");
-				htmlBuilder.Append($"<td class=\"val\">{ConvertToMoneyString(dato.total)}</td>");
-				htmlBuilder.Append($"<td class=\"val\">{ConvertToMoneyString(dato.capital_restante * dato.tasa_cambio)}</td>");
-				htmlBuilder.Append($"<td class=\"val\">{ConvertToMoneyString(dato.capital_restante)}</td>");
+				htmlBuilder.Append($"<td class=\"val\">{NumberUtility.ConvertToMoneyString(dato.interes * dato.tasa_cambio)}</td>");
+				htmlBuilder.Append($"<td class=\"val\">{NumberUtility.ConvertToMoneyString(dato.interes)}</td>");
+				htmlBuilder.Append($"<td class=\"val\">{NumberUtility.ConvertToMoneyString(dato.abono_capital * dato.tasa_cambio)}</td>");
+				htmlBuilder.Append($"<td class=\"val\">{NumberUtility.ConvertToMoneyString(dato.abono_capital)}</td>");
+				htmlBuilder.Append($"<td class=\"val\">{NumberUtility.ConvertToMoneyString(dato.total * dato.tasa_cambio)}</td>");
+				htmlBuilder.Append($"<td class=\"val\">{NumberUtility.ConvertToMoneyString(dato.total)}</td>");
+				htmlBuilder.Append($"<td class=\"val\">{NumberUtility.ConvertToMoneyString(dato.capital_restante * dato.tasa_cambio)}</td>");
+				htmlBuilder.Append($"<td class=\"val\">{NumberUtility.ConvertToMoneyString(dato.capital_restante)}</td>");
 
 
 				// Agregar más columnas según las propiedades de tu objeto DatosTabla

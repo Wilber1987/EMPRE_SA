@@ -85,17 +85,9 @@ namespace Model
 
                 Transaction_Contratos.Save();
 
-                var cuentaOrigen = new Catalogo_Cuentas()
-                {
-                    id_sucursal = dbUser?.Id_Sucursal,
-                    id_categoria = 4
-                }.Find<Catalogo_Cuentas>();
+                var cuentaOrigen = Catalogo_Cuentas.GetCuentaEgresoContratos(dbUser);
 
-                var cuentaDestino = new Catalogo_Cuentas()
-                {
-                    id_categoria = 9,
-                    id_sucursal = dbUser?.Id_Sucursal
-                }.Find<Catalogo_Cuentas>();
+                var cuentaDestino = Catalogo_Cuentas.GetCuentaRegistoContratos(dbUser);
 
                 if (cuentaDestino == null || cuentaOrigen == null)
                 {

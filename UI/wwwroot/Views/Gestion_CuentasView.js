@@ -1,5 +1,5 @@
 //@ts-check
-import { WRender, ComponentsManager, WAjaxTools, WArrayF } from "../WDevCore/WModules/WComponentsTools.js";
+import { WRender, ComponentsManager, WAjaxTools, WArrayF, ConvertToMoneyString } from "../WDevCore/WModules/WComponentsTools.js";
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js"
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
 import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
@@ -244,13 +244,13 @@ class GestionCuentaComponent extends HTMLElement {
             // @ts-ignore
             detalle.append(WRender.Create({ className: "detail-label", children: [movimiento.Transaction_Movimiento?.concepto] }));
             fecha.append(WRender.Create({ className: "fecha-label", children: [movimiento.fecha?.toDateFormatEs()] }));
-            debito.append(WRender.Create({ className: "debito-label", children: [currency, "- " + movimiento[debitoProp]?.toFixed(3)] }));
-            creadito.append(WRender.Create({ className: "creadito-label", children: [currency, "+ " + movimiento[creaditoProp]?.toFixed(3)] }));
-            saldo.append(WRender.Create({ className: "saldo-label", children: [currency, movimiento[montoProp] != null ? movimiento[montoProp]?.toFixed(3) : "0.000"] }));
+            debito.append(WRender.Create({ className: "debito-label", children: [currency, "- " + ConvertToMoneyString(movimiento[debitoProp])] }));
+            creadito.append(WRender.Create({ className: "creadito-label", children: [currency, "+ " + ConvertToMoneyString(movimiento[creaditoProp])] }));
+            saldo.append(WRender.Create({ className: "saldo-label", children: [currency, movimiento[montoProp] != null ? ConvertToMoneyString(movimiento[montoProp]) : "0.000"] }));
         });
         detalle.append(WRender.Create({ className: "total ", innerHTML: "Total" }));
-        debito.append(WRender.Create({ className: "debito-label total", children: [currency, "- " + WArrayF.SumValAtt(movimientos, debitoProp).toFixed(3)] }));
-        creadito.append(WRender.Create({ className: "creadito-label total", children: [currency, "+ " + WArrayF.SumValAtt(movimientos, creaditoProp).toFixed(3)] }));
+        debito.append(WRender.Create({ className: "debito-label total", children: [currency, "- " + ConvertToMoneyString(WArrayF.SumValAtt(movimientos, debitoProp))] }));
+        creadito.append(WRender.Create({ className: "creadito-label total", children: [currency, "+ " + ConvertToMoneyString(WArrayF.SumValAtt(movimientos, creaditoProp))] }));
         //this.columChartMovimientos
     }
 

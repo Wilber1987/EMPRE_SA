@@ -55,3 +55,6 @@ WHERE Id_Configuracion=9;
 
 
 ALTER TABLE EMPRE_SA.dbo.Transaction_Contratos ADD DesgloseIntereses nvarchar(MAX) NULL;
+UPDATE EMPRE_SA.[security].Security_Users
+SET  Estado=N'ACTIVO', Id_Sucursal=1
+
