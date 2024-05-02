@@ -1,3 +1,4 @@
+using CAPA_DATOS.Security;
 using Microsoft.AspNetCore.Mvc;
 using System.Text;
 using Transactions;
@@ -10,34 +11,34 @@ namespace API.Controllers
     {
         //Recibos
         [HttpPost]
-        [AuthController]
+        [AuthController(Permissions.GESTION_RECIBOS)]
         public List<Recibos> GetRecibos(Recibos Inst)
         {
             return Inst.Get<Recibos>();
         }
         [HttpPost]
-        [AuthController]
+        [AuthController(Permissions.GESTION_RECIBOS)]
         public object saveRecibos(Recibos inst)
         {            
             return inst.SaveRecibos(HttpContext.Session.GetString("seassonKey"));
         }
         [HttpPost]
-        [AuthController]
-        public object updateRecibos(Recibos inst)
+        [AuthController(Permissions.GESTION_RECIBOS)]
+        public object? updateRecibos(Recibos inst)
         {
             return true;
             //return inst.Update();
         }
         [HttpPost]
-        [AuthController]
-        public object anularRecibo(Recibos inst)
+        [AuthController(Permissions.GESTION_RECIBOS)]
+        public object? anularRecibo(Recibos inst)
         {            
             return inst.AnularFactura(HttpContext.Session.GetString("seassonKey"));
         }
 
         [HttpPost]
-        [AuthController]
-        public Object printRecibo(Recibos inst)
+        [AuthController(Permissions.GESTION_RECIBOS)]
+        public Object? printRecibo(Recibos inst)
         {            
             return inst.PrintRecibo(HttpContext.Session.GetString("seassonKey"));
         }

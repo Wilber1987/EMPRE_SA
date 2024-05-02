@@ -21,6 +21,7 @@ namespace DataBaseModel
 	}
 
 
+	//TODO ELIMINAR A POSTERIOR LO DE LOS AGENTES
 	public class Catalogo_Agentes : EntityClass
 	{
 		[PrimaryKey(Identity = true)]
@@ -246,10 +247,5 @@ namespace DataBaseModel
 		//[OneToMany(TableName = "Catalogo_Clientes", KeyColumn = "id_profesion", ForeignKeyColumn = "id_profesion")]
 		//public List<Catalogo_Clientes>? Catalogo_Clientes { get; set; }
 	}
-	public class Catalogo_Tipo_Transaccion : EntityClass
-	{
-		[PrimaryKey(Identity = true)]
-		public int? id_tipo_transaccion { get; set; }
-		public string? descripcion { get; set; }
-	}
+	
 }

@@ -70,7 +70,7 @@ class Transactional_Valoracion extends EntityClass {
     }
 }
 export { Transactional_Valoracion }
-
+//TODO ELIMINAR A POSTERIOR LO DE LOS AGENTES
 class Catalogo_Agentes extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
@@ -290,74 +290,12 @@ class Transaction_Contratos_ModelComponent extends EntityClass {
     //interes_dolares = { type: "MONEY", hiddenInTable: true, hiddenFilter: true };
     Id_User = { type: "number", hidden: true, hiddenFilter: true };
     reestructurado = { type: "number", hiddenFilter: true };
-    Catalogo_Agentes = { type: 'WSELECT', ModelObject: () => new Catalogo_Agentes(), hiddenInTable: true, hiddenFilter: true };
+    //Catalogo_Agentes = { type: 'WSELECT', ModelObject: () => new Catalogo_Agentes(), hiddenInTable: true, hiddenFilter: true };
     Detail_Prendas = { type: 'MasterDetail', ModelObject: () => new Detail_Prendas_ModelComponent(), hiddenFilter: true };
     Tbl_Cuotas = { type: 'MasterDetail', ModelObject: () => new Tbl_Cuotas_ModelComponent(), hiddenFilter: true };
 }
 export { Transaction_Contratos_ModelComponent }
 
-/*class Transaction_Contratos_ModelComponent extends EntityClass { //todo eliminar
-    constructor(props) {
-        super(props, 'EntityDBO');
-        for (const prop in props) {
-            this[prop] = props[prop];
-        }
-    }
-    Catalogo_Clientes = { type: 'WSELECT', ModelObject: () => new Catalogo_Clientes() };
-    numero_contrato = { type: 'number', primary: true };
-    fecha_contrato = { type: 'date' };
-    fecha_cancelar = { type: 'date', hiddenInTable: true, hiddenFilter: true };
-    monto = { type: 'number', hiddenFilter: true };
-    interes = { type: 'number', hiddenFilter: true };
-    mora = { type: 'number', hiddenInTable: true, hiddenFilter: true };
-    estado = { type: 'select', Dataset: ["ACTIVO", "INACTIVO"] };
-    fecha_vencimiento = { type: 'date' };
-    dias_mora = { type: 'number' , hiddenFilter: true};
-    saldo_mora = { type: 'number', hiddenInTable: true, hiddenFilter: true };
-    saldo = { type: 'number', hiddenInTable: true, hiddenFilter: true };
-    fecha_baja = { type: 'date', hiddenInTable: true, hiddenFilter: true };
-    abonos = { type: 'number', hiddenInTable: true, hiddenFilter: true };
-    ultima_visita = { type: 'date', hiddenInTable: true, hiddenFilter: true };
-    tipo = { type: 'number', hiddenInTable: true, hiddenFilter: true };
-    entregado = { type: 'text', hiddenInTable: true, hiddenFilter: true };
-    interes_actual = { type: 'number', hiddenInTable: true, hiddenFilter: true };
-    observaciones = { type: 'text', hiddenInTable: true, hiddenFilter: true };
-    iva = { type: 'number', hiddenInTable: true, hiddenFilter: true };
-    margen = { type: 'number', hiddenInTable: true, hiddenFilter: true };
-    interesl = { type: 'number', hiddenInTable: true, hiddenFilter: true };
-    moral = { type: 'number', hiddenInTable: true, hiddenFilter: true };
-    descuento = { type: 'number', hiddenInTable: true, hiddenFilter: true };
-    util = { type: 'number', hiddenInTable: true, hiddenFilter: true };
-    taza_interes_cargos = { type: 'number', hiddenInTable: true, hiddenFilter: true };
-    taza_mora = { type: 'number', hiddenInTable: true, hiddenFilter: true };
-    fecha_mora = { type: 'date', hiddenInTable: true, hiddenFilter: true };
-    fecha_interes = { type: 'date', hiddenInTable: true, hiddenFilter: true };
-    taza_gestion_crediticia = { type: 'number', hiddenInTable: true, hiddenFilter: true };
-    Id_User_OLD = { type: 'number', hiddenInTable: true, hiddenFilter: true };
-    taza_cambio = { type: 'number', hiddenInTable: true, hiddenFilter: true };
-    dkm = { type: 'number', hiddenInTable: true, hiddenFilter: true };
-    gasolinamonto = { type: 'number', hiddenInTable: true, hiddenFilter: true };
-    valorcad = { type: 'number', hiddenInTable: true, hiddenFilter: true };
-    plazo = { type: 'number', hiddenInTable: true, hiddenFilter: true };
-    cuotafija = { type: 'number', hiddenInTable: true, hiddenFilter: true };
-    montocuotaatrazadas = { type: 'number', hiddenInTable: true, hiddenFilter: true };
-    mes_pagado = { type: 'date', hiddenInTable: true, hiddenFilter: true };
-    tasa_hoy = { type: 'number', hiddenInTable: true, hiddenFilter: true };
-    numero_protocolo = { type: 'number', hiddenInTable: true, hiddenFilter: true };
-    valor_dolar = { type: 'number', hiddenInTable: true, hiddenFilter: true };
-    parciales = { type: 'number', hiddenInTable: true, hiddenFilter: true };
-    mora_parcial = { type: 'number', hiddenInTable: true, hiddenFilter: true };
-    interes_parcial = { type: 'number', hiddenInTable: true, hiddenFilter: true };
-    motivo_anulacion = { type: 'text', hiddenInTable: true, hiddenFilter: true };
-    idcatemp = { type: 'number', hiddenInTable: true, hiddenFilter: true };
-    cuota_fija_inicial = { type: 'number', hiddenInTable: true, hiddenFilter: true };
-    fecha_cancelar_inicial = { type: 'date', hiddenInTable: true, hiddenFilter: true };
-    plazo_inicial = { type: 'number', hiddenInTable: true, hiddenFilter: true };
-    dias_para_baja = { type: 'number', hiddenInTable: true, hiddenFilter: true };
-    Catalogo_Agentes = { type: 'WSELECT', ModelObject: () => new Catalogo_Agentes(), hiddenInTable: true, hiddenFilter: true };
-    Detail_Prendas = { type: 'MasterDetail', ModelObject: () => new Detail_Prendas_ModelComponent() };
-}
-export { Transaction_Contratos_ModelComponent }*/
 class Detail_Prendas_ModelComponent extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
@@ -375,17 +313,10 @@ class Detail_Prendas_ModelComponent extends EntityClass {
     monto_aprobado_cordobas = { type: 'money', label: "Monto aprob. cordobas", disabled: true };
     monto_aprobado_dolares = { type: 'money', label: "Monto aprob. dolares", disabled: true };
     iva = { type: 'text', hidden: true };
-    //margen = { type: 'text', hiddenInTable: true };
     estado = { type: 'select', Dataset: ["ACTIVO", "INACTIVO"], hiddenInTable: true };
-    //interesl = { type: 'number' , hiddenInTable: true};
-    //moral = { type: 'number' , hiddenInTable: true};
-    //fliquidacion = { type: 'date', hiddenInTable: true };
     precio_venta = { type: 'money', hiddenInTable: true, hidden: true };
     en_manos_de = { type: 'select', Dataset: ["ACREEDOR", "DEUDOR"], hiddenInTable: true };
     color = { type: 'text' };
-    //factura = { type: 'text' };
-    //tipo_movimiento = { type: 'text' , hiddenInTable: true};
-    //v_porcentage_etiqueta = { type: 'number' , hiddenInTable: true};
     Catalogo_Categoria = {
         hiddenInTable: true,
         type: 'WSELECT', ModelObject: () => new Catalogo_Categoria_ModelComponent(), action: (ObjectF, form, InputControl, prop) => {
@@ -427,59 +358,6 @@ class Detail_Prendas_Vehiculos_ModelComponent extends EntityClass {
 }
 export { Detail_Prendas_Vehiculos_ModelComponent }
 
-class Transaction_Facturas_ModelComponent extends EntityClass {
-    constructor(props) {
-        super(props, 'EntityDBO');
-        for (const prop in props) {
-            this[prop] = props[prop];
-        }
-    }
-    numero_factura = { type: 'number', primary: true };
-    abono_de_cuota = { type: 'number' };
-    mora = { type: 'number' };
-    interes = { type: 'number' };
-    total = { type: 'number' };
-    fecha = { type: 'date' };
-    fecha_pago = { type: 'date' };
-    pago_contado = { type: 'number' };
-    saldo_monto = { type: 'number' };
-    fecha_mora = { type: 'date' };
-    fecha_interes = { type: 'date' };
-    taza_cambio = { type: 'number' };
-    //interes_actual = { type: 'number' };
-    //Id_User_OLD = { type: 'number' };
-    fecha_grabado = { type: 'date' };
-    mes_pagado = { type: 'date' };
-    ultima_visita = { type: 'date' };
-    dmpagadas = { type: 'number' };
-    tipo = { type: 'text' };
-    morac = { type: 'number' };
-    interesc = { type: 'number' };
-    abonoc = { type: 'number' };
-    totalc = { type: 'number' };
-    parciales = { type: 'number' };
-    moraparcial = { type: 'number' };
-    interesparcial = { type: 'number' };
-    motivo_anulacion = { type: 'text' };
-    Transaction_Contratos = { type: 'WSELECT', ModelObject: () => new Transaction_Contratos_ModelComponent() };
-}
-export { Transaction_Facturas_ModelComponent }
-
-
-// class Catalogo_Cambio_Divisa extends EntityClass {
-//     constructor(props) {
-//         super(props, 'EntityDBO');
-//         for (const prop in props) {
-//             this[prop] = props[prop];
-//         }
-//     }
-//     id_cambio = { type: 'number', primary: true };
-//     fecha = { type: 'date' };
-//     valor_de_compra = { type: 'number', hiddenFilter: true };
-//     valor_de_venta = { type: 'number', hiddenFilter: true };
-// }
-// export { Catalogo_Cambio_Divisa }
-
 class Catalogo_Cambio_Divisa_ModelComponent extends EntityClass {
     constructor(props) {
         super(props, 'EntityDbo');
@@ -510,7 +388,6 @@ class Catalogo_Cuentas extends EntityClass {
     tipo_cuenta = { type: 'select', Dataset: ['PROPIA', 'PAGO', 'EXTERNA'] };
     Catalogo_Sucursales = { type: 'WSELECT', ModelObject: () => new Catalogo_Sucursales() };
     Categoria_Cuentas = { type: 'WSELECT', ModelObject: () => new Categoria_Cuentas() };
-    /*Catalogo_Tipo_Transaccion = { type: 'WSELECT', ModelObject: () => new Catalogo_Tipo_Transaccion() };*/
 }
 export { Catalogo_Cuentas }
 
@@ -726,17 +603,7 @@ class Catalogo_Sucursales extends EntityClass {
 
 }
 export { Catalogo_Sucursales }
-class Catalogo_Tipo_Transaccion extends EntityClass {
-    constructor(props) {
-        super(props, 'EntityDBO');
-        for (const prop in props) {
-            this[prop] = props[prop];
-        }
-    }
-    id_tipo_transaccion = { type: 'number', primary: true };
-    descripcion = { type: 'text' };
-}
-export { Catalogo_Tipo_Transaccion }
+
 class Datos_Configuracion extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
@@ -767,14 +634,14 @@ class Transaccion_Factura extends EntityClass {
     tipo = { type: "text", hidden: true };
     concepto = { type: "text", hiddenFilter: true };
     tasa_cambio = { type: "money", label: "tasa_cambio C$" };
-    Moneda = { type: "text", label : " " };
+    Moneda = { type: "text", label : "Moneda" };
     total = { type: "money" };    
     estado = { type: "select", Dataset: ["ANULADO", "ACTIVO"] };
     id_cliente = { type: "number", hidden: true };
     id_sucursal = { type: "number", hidden: true };
-    fecha = { type: "date" };
-    Factura_contrato = { type: 'model', label: "Datos del contrato al momento del pago", ModelObject: () => new Factura_contrato(), hidden: true };
+    fecha = { type: "date" };    
     Detalle_Factura_Recibo = { type: 'MasterDetail', label: "Cuotas Pagadas", ModelObject: () => new Detalle_Factura_Recibo(), hiddenFilter: true };
+    Factura_contrato = { type: 'model', label: "Datos del contrato al momento del pago", ModelObject: () => new Factura_contrato(), hidden: true };
 
 }
 export { Transaccion_Factura }
@@ -810,10 +677,10 @@ class Detalle_Factura_Recibo extends EntityClass {
     id = { type: "number", primary: true };
     id_factura = { type: "number" };
     id_cuota = { type: "number" };
-    total_cuota = { type: "string" };
-    monto_pagado = { type: "string" };
-    capital_restante = { type: "string" };
+    total_cuota = { type: "money" };
+    monto_pagado = { type: "money" };
+    capital_restante = { type: "money" };
     concepto = { type: "text" };
-    tasa_cambio = { type: "string" };
+    tasa_cambio = { type: "money" };
 }
 export { Detalle_Factura_Recibo }

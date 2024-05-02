@@ -18,27 +18,17 @@ namespace CAPA_NEGOCIO.Services
             PASSWORD = "nbixjsqrnhkblxag",
             USERNAME = "alderhernandez@gmail.com"
         };        
-        public static string SendMailContract<T>(List<string> toMails, string from, string subject, string path, T model)
-        {
-            try
-            {
+        public static async void SendMailContract<T>(List<string> toMails, string from, string subject, string path, T model)
+        {            
                 var templatePage = Path.Combine(System.IO.Path.GetFullPath("../UI/Pages/Mails"), path);
-                /*******modelo de prueba *****/
-               
-                SMTPMailServices.SendMail(
+                /*******modelo de prueba *****/               
+               await SMTPMailServices.SendMail(
                     "reply@noreply.com",
                     toMails,
                     subject,
                     ContractTemplateService.RenderTemplate(templatePage, model), null,
                     config
                 );
-                return "true";
-               
-            }
-            catch (Exception ex)
-            {
-                return ex.Message;
-            }
         }
     }
 }

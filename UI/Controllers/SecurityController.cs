@@ -28,7 +28,7 @@ namespace API.Controllers
         }
         public static bool IsAdmin(string identfy)
         {
-            return AuthNetCore.HavePermission(PermissionsEnum.ADMIN_ACCESS.ToString(), identfy);
+            return AuthNetCore.HavePermission(Permissions.ADMIN_ACCESS.ToString(), identfy);
         }       
         public static bool HavePermission(string permission, string identfy)
         {

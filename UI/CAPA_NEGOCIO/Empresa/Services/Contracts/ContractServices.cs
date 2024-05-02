@@ -140,37 +140,4 @@ namespace Model
             return valoracionesTransaction ?? new ContractServices();
         }
     }
-
-    public class Tbl_Cuotas : EntityClass
-    {
-        [PrimaryKey(Identity = true)]
-        public int? id_cuota { get; set; }
-        /**@type {Date} */
-        public DateTime? fecha { get; set; }
-        /**@type {Number} Tbl_cuotas del abono*/
-        public double? total { get; set; }
-        /**@type {Number} valor del interes del capital*/
-        public double? interes { get; set; }
-        /**@type {Number} */
-        public double? abono_capital { get; set; }
-        /**@type {Number} capital restante*/
-        public double? capital_restante { get; set; }
-        /**@type {Number} capital mora*/
-        public double? mora { get; set; }
-        /**DATOS DE LA FATURA */
-        /**@type {Date} */
-        public DateTime? fecha_pago { get; set; }
-        /**@type {Number} Tbl_cuotas del abono*/
-        public double? pago_contado { get; set; }
-        /**@type {Number} Tbl_cuotas del abono*/
-        public double? descuento { get; set; }
-        /**@type {Number} Tbl_cuotas del abono*/
-        public double? tasa_cambio { get; set; }
-        public int? numero_contrato { get; set; }
-        public string? Estado { get; set; }
-
-        [ManyToOne(TableName = "Transaction_Contratos", KeyColumn = "numero_contrato", ForeignKeyColumn = "numero_contrato")]
-        public Transaction_Contratos? Transaction_Contratos { get; set; }
-
-    }
 }

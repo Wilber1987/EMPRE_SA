@@ -7,7 +7,7 @@
         Response.Redirect("../Security/login");
         return;
     }
-    @if (!SecurityController.HavePermission(PermissionsEnum.GESTION_PRESTAMOS_POR_PERSONAS_NATURALES.ToString(),HttpContext.Session.GetString("seassonKey")) )
+    @if (!SecurityController.HavePermission(Permissions.GESTION_PRESTAMOS_POR_PERSONAS_NATURALES.ToString(),HttpContext.Session.GetString("seassonKey")) )
     {
        Response.Redirect("../Security/login");
         return;

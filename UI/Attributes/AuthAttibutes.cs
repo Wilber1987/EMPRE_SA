@@ -6,6 +6,13 @@ namespace API.Controllers
 {
     public class AuthControllerAttribute : ActionFilterAttribute
     {
+        public List<Permissions> PermissionsList { get; set; }
+        public AuthControllerAttribute(){
+            PermissionsList = new List<Permissions>();
+        }
+        public AuthControllerAttribute(params Permissions[] permissionsList){
+            PermissionsList = permissionsList.ToList() ?? new List<Permissions>();
+        }
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             if (!AuthNetCore.Authenticate( filterContext.HttpContext.Session.GetString("seassonKey")))
@@ -21,7 +28,7 @@ namespace API.Controllers
     {
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
-            if (!AuthNetCore.HavePermission(PermissionsEnum.ADMIN_ACCESS.ToString(), filterContext.HttpContext.Session.GetString("seassonKey")))
+            if (!AuthNetCore.HavePermission(Permissions.ADMIN_ACCESS.ToString(), filterContext.HttpContext.Session.GetString("seassonKey")))
             {
                 Authenticate Aut = new Authenticate();
                 Aut.AuthVal = false;

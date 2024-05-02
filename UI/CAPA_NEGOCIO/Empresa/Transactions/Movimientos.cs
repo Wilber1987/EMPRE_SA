@@ -1,5 +1,6 @@
 using API.Controllers;
 using CAPA_DATOS;
+using CAPA_NEGOCIO.Services;
 using DataBaseModel;
 
 namespace Transactions
@@ -66,7 +67,8 @@ namespace Transactions
 
         public List<Movimientos_Cuentas> Get()
         {
-            return new Transaction_Movimiento(){
+            return new Transaction_Movimiento()
+            {
                 filterData = this.filterData
             }.Get<Transaction_Movimiento>().Select(z =>
             {
@@ -107,32 +109,34 @@ namespace Transactions
                 id_cuentas = this.Catalogo_Cuentas_Origen?.id_cuentas
             }.Find<Catalogo_Cuentas>();
 
-            var permiso_cuenta_origen = new Permisos_Cuentas(){
+            var permiso_cuenta_origen = new Permisos_Cuentas()
+            {
                 id_categoria_cuenta_destino = cuentaOrigen.Categoria_Cuentas.id_categoria
             }.Find<Permisos_Cuentas>();
 
-            var permiso_cuenta_destino = new Permisos_Cuentas(){
+            var permiso_cuenta_destino = new Permisos_Cuentas()
+            {
                 id_categoria_cuenta_destino = cuentaDestino.Categoria_Cuentas.id_categoria
             }.Find<Permisos_Cuentas>();
 
-            if (permiso_cuenta_origen!= null && (bool)!permiso_cuenta_origen.permite_debito)
+            if (permiso_cuenta_origen != null && (bool)!permiso_cuenta_origen.permite_debito)
             {
                 return new ResponseService()
                 {
                     status = 400,
-                    message = cuentaOrigen.nombre+" no permite débitos hacia la cuenta: "+cuentaDestino.nombre
+                    message = cuentaOrigen.nombre + " no permite débitos hacia la cuenta: " + cuentaDestino.nombre
                 };
             }
 
-            if (permiso_cuenta_destino !=null && (bool)!permiso_cuenta_destino.permite_credito)
+            if (permiso_cuenta_destino != null && (bool)!permiso_cuenta_destino.permite_credito)
             {
                 return new ResponseService()
                 {
                     status = 400,
-                    message = cuentaDestino.nombre+" no permite créditos desde la cuenta: "+cuentaOrigen.nombre
+                    message = cuentaDestino.nombre + " no permite créditos desde la cuenta: " + cuentaOrigen.nombre
                 };
             }
-            
+
             if (cuentaOrigen != null && cuentaDestino != null)
             {
                 cuentaOrigen.saldo = cuentaOrigen?.saldo ?? 0;
@@ -228,6 +232,10 @@ namespace Transactions
                 cuentaDestino.Update();
                 cuentaOrigen.Update();
                 var result = encabezado.Save();
+                if (is_transaction != true)
+                {
+                    SendNotification(encabezado);
+                }
                 return new ResponseService()
                 {
                     status = 200,
@@ -240,6 +248,38 @@ namespace Transactions
                 status = 400,
                 message = "Cuentas invalidas"
             };
+        }
+        public void SendNotification(Transaction_Movimiento item)
+        {
+            try
+            {
+                var modelo = new
+                {
+                    FechaMovimiento = item.fecha,
+                    CuentaOrigen = "Cuenta origen",
+                    CuentaDestino = "Cuenta destino",
+                    TipoMoneda = item.moneda,
+                    Monto = 100,
+                    Concepto = item.concepto,
+                    Usuario = "todo usuario"
+                };
+                MailServices.SendMailContract(new List<String>() {
+                    "wilberj1987@gmail.com",
+                    "alderhernandez@gmail.com" },
+                    "noreply@noreply",
+                    "Notificación de movimiento entre cuentas",
+                    "NotificacionMovimientoCuentas.cshtml",
+                    modelo
+                );//todo definir correos a enviar
+                var update = new Transaction_Movimiento()
+                {
+                    id_movimiento = item.id_movimiento
+                }.Find<Transaction_Movimiento>();
+            }
+            catch (System.Exception ex)
+            {
+                LoggerServices.AddMessageError("ERROR ENVIENDO EL CORREO: ", ex);
+            }
         }
     }
 }

@@ -2,6 +2,8 @@
 using DataBaseModel;
 using Microsoft.AspNetCore.Mvc;
 using CAPA_DATOS;
+using API.Controllers;
+using CAPA_DATOS.Security;
 
 namespace UI.Controllers
 {
@@ -10,6 +12,7 @@ namespace UI.Controllers
     public class PdfController : ControllerBase
     {
         [HttpPost]
+        [AuthController]
         public ResponseService GeneratePdfContract(Transaction_Contratos Inst)
         {
             try

@@ -1,3 +1,4 @@
+using CAPA_DATOS.Security;
 using DataBaseModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,10 +11,10 @@ namespace API.Controllers
     public class Transactional_ValoracionController : ControllerBase
     {
         [HttpPost]
-        [AuthController]
+        [AuthController(Permissions.GESTION_EMPEÑOS)]
         public List<Transactional_Valoracion> GuardarValoraciones(ContractServices Inst)
         {
             return new Transactional_Valoracion().GuardarValoraciones(Inst.valoraciones);
         }
-    }  
+    }
 }

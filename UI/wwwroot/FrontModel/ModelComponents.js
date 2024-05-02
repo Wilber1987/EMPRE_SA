@@ -21,5 +21,7 @@ class Tbl_Cuotas_ModelComponent {
     } };
     /**@type {ModelProperty} */
     capital_restante = { type: "money", label: "MONTO RESTANTE $" };
+    /**@type {ModelProperty} */
+    Estado = { type: "text"};
 }
 export { Tbl_Cuotas_ModelComponent }

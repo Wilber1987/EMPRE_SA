@@ -23,76 +23,10 @@
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
 
-<body id="App">    
-  <div class="home-menu">
-    @if (SecurityController.HavePermission(PermissionsEnum.GESTION_EMPEÑOS.ToString(), identify))
-            {
-                <a class="title-block">EMPEÑOS</a>
-                <div class="block-menu">
-                    @if (SecurityController.HavePermission(PermissionsEnum.GESTION_CLIENTES.ToString(),
-                   identify))
-
-                    {
-                        <a class="" asp-area="" asp-page="/PagesViews/Gestion_Clientes">Gestión de
-                            clientes</a>
-                    }
-                    <a class="" id="Transaction_Valoraciones_View" asp-area=""
-                        asp-page="/PagesViews/Transaction_Valoraciones_View">VALORACIONES</a>
-                    <a class="" id="Transaction_ContratosView" asp-area=""
-                        asp-page="/PagesViews/Transaction_ContratosView">CONTRATOS</a>
-                </div>
-            }
-            @if (SecurityController.HavePermission(PermissionsEnum.GESTION_EMPEÑOS.ToString(), identify))
-            {
-                <a class="title-block">GESTIÓN DE RECIBOS</a>
-                <div class="block-menu">
-                    @if (SecurityController.HavePermission(PermissionsEnum.GESTION_CLIENTES.ToString(),//TODO
-                   identify))
-                    {
-                        <a class=""  asp-area="" asp-page="/PagesViews/Gestion_Recibos">Nuevo Recibo</a>
-                        <a class=""  asp-area="" asp-page="/PagesViews/Ver_Recibos">Ver Recibos</a>
-                    }
-                </div>
-            }
-            @if (SecurityController.HavePermission(PermissionsEnum.GESTION_COMPRAS.ToString(), identify))
-            {
-                <a class="title-block">GESTIÓN DE FACTURAS</a>
-                <div class="block-menu">                
-                    @if (SecurityController.HavePermission(PermissionsEnum.GESTION_COMPRAS.ToString(),//TODO
-                   identify))
-                    {
-                        @* <a class="menu-item" id="" asp-area="" asp-page="/Facturacion/ComprasComponentView">
-                            Nueva Compra</a>
-                        <a class="menu-item" id="" asp-area="" asp-page="/Facturacion/ComprasManager">
-                            Ver Compras</a> 
-                        <a class="menu-item" id="" asp-area="" asp-page="/Facturacion/FacturasComponentView">
-                            Nueva Factura</a> *@
-                            @if (SecurityController.HavePermission(PermissionsEnum.GESTION_LOTES.ToString(),//TODO
-                            identify))
-                                { 
-                                    <a class="menu-item" id="" asp-area="" asp-page="/Facturacion/LotesManager">
-                            Ver Existencias</a>   
-                             }                          
-
-                    }
-                </div>
-            }
-            @if (SecurityController.HavePermission(PermissionsEnum.GESTION_EMPEÑOS.ToString(), identify))
-            {
-                <a class="title-block">GESTIÓN DE CUENTAS</a>
-                <div class="block-menu">
-                    @if (SecurityController.HavePermission(PermissionsEnum.GESTION_CLIENTES.ToString(),//TODO
-                   identify))
-                    {
-                        <a class=""  asp-area="" asp-page="/PagesViews/Gestion_CuentasView">Gestión de
-                            Cuentas</a>
-                        <a class=""  asp-area=""
-                            asp-page="/PagesViews/Movimientos_CuentasView">Movimientos</a>
-                    }
-                </div>
-            }
-
-</div>
+<body id="App">
+    <div class="home-menu">
+         <partial name="MainMenu" />
+    </div>
 </body>
 
 </html>

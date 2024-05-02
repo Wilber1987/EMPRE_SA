@@ -77,11 +77,12 @@ class DBOCatalogosManagerView extends HTMLElement {
                 name: WOrtograficValidation.es('Catalogo_Tipo_Agente'), action: async () => {
                     this.NavigateFunction(new Catalogo_Tipo_Agente())
                 }
-            }, {
+            },//TODO ELIMINAR A POSTERIOR LO DE LOS AGENTES
+            /* {
                 name: WOrtograficValidation.es('Catalogo_Agentes'), action: async () => {
                     this.NavigateFunction(new Catalogo_Agentes())
                 }
-            }, {
+            },*/ {
                 name: WOrtograficValidation.es('Catalogo_Nacionalidad'), action: async () => {
                     this.NavigateFunction(new Catalogo_Nacionalidad())
                 }

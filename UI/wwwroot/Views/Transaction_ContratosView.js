@@ -88,7 +88,7 @@ class Transaction_ContratosView extends HTMLElement {
         });
         this.CuotasTable = new WTableComponent({
             Dataset: this.entity.Transaction_Contratos?.Tbl_Cuotas ?? [],
-            ModelObject: new Tbl_Cuotas_ModelComponent(),
+            ModelObject: new Tbl_Cuotas_ModelComponent({Estado: undefined}),
             paginate: false,
             AddItemsFromApi: false,
             AutoSave: false,

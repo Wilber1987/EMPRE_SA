@@ -79,6 +79,10 @@ VALUES (
         'PERMITE GESTIONAR LOTES',
         'ACTIVO'
     );
+INSERT INTO EMPRE_SA.[security].Security_Permissions
+(Descripcion, Estado, Detalles)
+VALUES(N'GESTION_RECIBOS', N'ACTIVO', N'PERMITE GESTIONAR RECIBOS');
+
 
     
 INSERT INTO EMPRE_SA.[security].Security_Roles

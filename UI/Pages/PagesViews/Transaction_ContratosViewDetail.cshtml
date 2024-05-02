@@ -7,7 +7,7 @@
         Response.Redirect("../Security/login");
         return;
     }
-    @if (!SecurityController.HavePermission(PermissionsEnum.GESTION_EMPEÑOS.ToString(), HttpContext.Session.GetString("seassonKey")) )//todo
+    @if (!SecurityController.HavePermission(Permissions.GESTION_EMPEÑOS.ToString(), HttpContext.Session.GetString("seassonKey")) )//todo
     {
        Response.Redirect("../Security/login");
         return;

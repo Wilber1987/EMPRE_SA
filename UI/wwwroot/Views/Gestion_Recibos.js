@@ -161,10 +161,13 @@ class Gestion_RecibosView extends HTMLElement {
                         recibo.perdida_de_documento_monto = 0;
                     }
                     this.DefineMaxAndMinInForm(form);
-
                 }
             }, cancelar: {
                 type: "checkbox", hiddenInTable: true, require: false, action: (recibo, form) => {
+                    recibo.solo = false;
+                    recibo.reestructurar = false;
+                    recibo.solo_interes_mora = false;
+                    recibo.solo_abono = false;
                     if (recibo.cancelar == true) {
                         form.ModelObject.paga_dolares.disabled = true;
                         form.ModelObject.paga_cordobas.disabled = true;
@@ -177,6 +180,8 @@ class Gestion_RecibosView extends HTMLElement {
             }, solo_abono: {
                 type: "checkbox", require: false, hidden: !this.ContractData.canSoloAbono,
                 action: (recibo, form) => {
+                    recibo.cancelar = false;
+                    recibo.solo_interes_mora = false;
                     this.DefineMaxAndMinInForm(form);
                 }
             }, reestructurar: {
@@ -197,6 +202,7 @@ class Gestion_RecibosView extends HTMLElement {
                 type: "checkbox", require: false, hidden: !this.ContractData.soloInteresMora,
                 action: (recibo, form) => {
                     recibo.cancelar = false;
+                    recibo.solo_abono = false;
                     if (recibo.solo_interes_mora == true) {
                         form.ModelObject.paga_dolares.disabled = true;
                         form.ModelObject.paga_cordobas.disabled = true;
@@ -289,6 +295,10 @@ class Gestion_RecibosView extends HTMLElement {
         this.reciboForm.FormObject.paga_cordobas = this.pagoActualCordobas?.toFixed(3);
         this.reciboForm.FormObject.monto_dolares = this.pagoActual?.toFixed(3);
         this.reciboForm.FormObject.monto_cordobas = this.pagoActualCordobas?.toFixed(3);
+        this.reciboForm.ModelObject.paga_dolares.max = this.pagoMaximoDolares?.toFixed(3);
+        this.reciboForm.ModelObject.paga_dolares.min = this.pagoMinimoDolares?.toFixed(3);
+        this.reciboForm.ModelObject.paga_cordobas.max = this.pagoMaximoCordobas?.toFixed(3);
+        this.reciboForm.ModelObject.paga_cordobas.min = this.pagoMinimoCordobas?.toFixed(3);
         form.DrawComponent();
     }
 

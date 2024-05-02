@@ -47,7 +47,7 @@ namespace DataBaseModel
 
         internal object? UpdateConfig(string? identity)
         {
-            if (!AuthNetCore.HavePermission(CAPA_DATOS.Security.PermissionsEnum.ADMIN_ACCESS.ToString(), identity))
+            if (!AuthNetCore.HavePermission(CAPA_DATOS.Security.Permissions.ADMIN_ACCESS.ToString(), identity))
             {
                 throw new Exception("no tienes permisos para configurar la aplicación");
             }

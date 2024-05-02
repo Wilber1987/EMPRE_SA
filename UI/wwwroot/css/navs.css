@@ -1,14 +1,14 @@
-.collapse {
+#Aside .collapse {
     max-height: 0px;
     overflow: hidden;
     transition: all .5s;
 }
 
-.active-title+.collapse {
+#Aside .active-title+.collapse {
     max-height: inherit;
 }
 
-.title-collapse::after {
+#Aside .title-collapse::after {
     content: ">";
     margin-left: 8px;
     transition: all .2s;
@@ -20,7 +20,7 @@
     clip-path: polygon(50% 50%, 100% 0%, 100% 50%, 50% 100%, 0% 50%, 0% 0%);
 }
 
-.active-title::after {
+#Aside .active-title::after {
     transform: rotate(-180deg);
 }
 
@@ -47,21 +47,21 @@
     gap: 10px;
     font-weight: 600;
 }
-.block-menu {
+.home-menu .collapse {
     display: grid;
     grid-template-columns: repeat(3, 30%);
     gap: 10px;
 }
-.block-menu a{
+.home-menu .menu-item{
     display: block;
-    padding: 20px;
+    padding: 10px;
     list-style: none;
     border-radius: 10px;
     background-color: #eee;
     text-decoration: none;
     color: var(--font-fourth-color);
 }
-.title-block {
+.home-menu .title-collapse {
     display: block;
     padding: 10px 20px;
     list-style: none;
