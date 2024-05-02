@@ -27,6 +27,10 @@ git commit && git push
 push de submodule
 git push origin HEAD:main
 
+credenciales de azure y outlook: datos empresa: 
+correo: empresociedadanonima@outlook.com
+password: villagui24
+cel: 85777676
 
 ELIMINAR DATOS DE PRUEBA: 
 

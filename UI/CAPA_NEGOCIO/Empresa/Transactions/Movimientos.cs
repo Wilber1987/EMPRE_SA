@@ -45,6 +45,10 @@ namespace Transactions
                 if (response.status == 200)
                 {
                     CommitGlobalTransaction();
+                    if (is_transaction != true)
+                    {
+                        SendNotification((Transaction_Movimiento)response.body);
+                    }
                 }
                 else
                 {
@@ -231,11 +235,7 @@ namespace Transactions
 
                 cuentaDestino.Update();
                 cuentaOrigen.Update();
-                var result = encabezado.Save();
-                if (is_transaction != true)
-                {
-                    SendNotification(encabezado);
-                }
+                var result = encabezado.Save();                
                 return new ResponseService()
                 {
                     status = 200,
