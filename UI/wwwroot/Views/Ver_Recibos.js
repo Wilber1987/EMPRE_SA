@@ -93,9 +93,7 @@ class Ver_RecibosView extends HTMLElement {
                     WRender.Create({ className: "print-container-iframe", children: [objFra] })]
                 })
             }))
-
             objFra.onload = print
-
             //document.body.appendChild(objFra); 
             // const ventimp = window.open(' ', 'popimpr');
             // ventimp?.document.write(response.message);
