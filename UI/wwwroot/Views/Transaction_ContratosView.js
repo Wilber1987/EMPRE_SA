@@ -97,27 +97,36 @@ class Transaction_ContratosView extends HTMLElement {
 
             }
         });
-        const fechaCancelacion = WRender.Create({ tagName:'label',  innerText: this.fechaCancelacion()})
+        const fechaCancelacion = WRender.Create({ tagName: 'label', innerText: this.fechaCancelacion() })
         this.inputPlazo = WRender.Create({
-            tagName: 'input', type: 'number', className: "input-plazo", onchange: (ev) => {
+            tagName: 'input', type: 'number', className: "input-contrato", onchange: (ev) => {
                 this.entity.Transaction_Contratos.plazo = ev.target.value;
                 this.update();
                 fechaCancelacion.innerText = this.fechaCancelacion()
             }, value: 1, min: 1, max: this.prioridadEnElPlazo()
         });
+        this.SelectMoneda = WRender.Create({
+            tagName: 'select', class: 'input-contrato', children: [
+                { tagName: 'option', innerText: 'Desembolso en dólares', value: 'DOLARES' },
+                { tagName: 'option', innerText: 'Desembolso en córdoba', value: 'CORDOBAS' }
+            ], onchange: (ev) => {
+                this.entity.Moneda = ev.target.value
+            }
+        });
+
         this.setPlazo();
         this.inputObservacion = WRender.Create({
             tagName: 'textarea', placeholder: "observaciones...", className: "input-observacion", onchange: (ev) => {
                 this.entity.Transaction_Contratos.observaciones = ev.target.value;
             }
         });
-        
+
         const optionContainer = WRender.Create({
             className: "OptionContainer form",
             children: [
-                "Plazo:", this.inputPlazo,
+                "Plazo:", this.inputPlazo, this.SelectMoneda,
                 "Fecha de cancelación:",
-                fechaCancelacion, this.inputObservacion,
+                fechaCancelacion,  this.inputObservacion,
             ]
         });
         this.contratosForm.append(optionContainer, this.prendasTable, this.CuotasTable);
@@ -255,7 +264,7 @@ class Transaction_ContratosView extends HTMLElement {
                 <label class="value-container">
                     Int. y demas cargo C$:
                     <span>${// @ts-ignore
-                        ConvertToMoneyString(entity.Transaction_Contratos.interes * this.tasaActual.Valor_de_venta)}</span>
+            ConvertToMoneyString(entity.Transaction_Contratos.interes * this.tasaActual.Valor_de_venta)}</span>
                 </label>
                 <label class="value-container">
                     Cuota fija C$:
@@ -418,8 +427,8 @@ class Transaction_ContratosView extends HTMLElement {
             padding: 20px;
             flex-wrap: wrap;
         } 
-        input.input-plazo {
-            width: 100px !important;
+        .input-contrato  {
+            width: 180px !important;
             text-align: right;
         }
         .input-observacion {

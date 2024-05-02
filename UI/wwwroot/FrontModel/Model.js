@@ -7,7 +7,8 @@ class ValoracionesTransaction extends EntityClass {
         super();
         for (const prop in props) {
             this[prop] = props[prop];
-        }
+        };
+        this.Moneda = undefined;
     }   
     /**@type {Array<Transactional_Valoracion>} */
     valoraciones;  

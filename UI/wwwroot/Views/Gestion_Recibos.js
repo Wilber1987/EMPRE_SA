@@ -113,7 +113,7 @@ class Gestion_RecibosView extends HTMLElement {
 
 
     DefineMaxAndMin(selectContrato) {
-        //TODO BOORAR CICLO DE MORA FORZADA 
+        //TODO BORRAR CICLO DE MORA FORZADA 
         this.Contrato.Tbl_Cuotas?.filter(cuota => cuota.Estado == "PENDIENTE")?.forEach(cuota => {
             cuota.mora = this.forceMora(cuota, selectContrato);
         });
@@ -404,21 +404,19 @@ class Gestion_RecibosView extends HTMLElement {
             } else {
                 this.proyeccionDetail.appendChild(html`<div class="proyeccion-container-detail">
     <label class="value-container">
-        DIAS DE MORA:
+        DÍAS DE MORA:
         <span>${diasMora}</span>
     </label>
     <label class="value-container">
         MORA C$:
-        <span>${recibo.mora_cordobas}</span>
+        <span>${ConvertToMoneyString(recibo.mora_cordobas)}</span>
     </label>
     <label class="value-container">
         MORA $:
-        <span>${recibo.mora_dolares}</span>
+        <span>${ConvertToMoneyString(recibo.mora_dolares)}</span>
     </label>
 </div>`)
             }
-
-
         }
         reciboModel.temporal.hidden = true;
         reciboModel.cancelar.hidden = true;
@@ -725,11 +723,11 @@ class Gestion_RecibosView extends HTMLElement {
         <div class="DataContainer">
             <span>Saldo actual C$:</span>
             <label>${ // @ts-ignore
-            (selectContrato.saldo * this.tasasCambio[0].Valor_de_venta).toFixed(3)}</label>
+            ConvertToMoneyString(selectContrato.saldo * this.tasasCambio[0].Valor_de_venta)}</label>
         </div>
         <div class="DataContainer">
             <span>Saldo actual $:</span>
-            <label>${selectContrato.saldo.toFixed(3)}</label>
+            <label>${ConvertToMoneyString(selectContrato.saldo)}</label>
         </div>
         <div class="DataContainer">
             <span>Plazo:</span>

@@ -13,8 +13,8 @@ class Movimientos_Cuentas extends EntityClass {
 	Catalogo_Cuentas_Destino = { type: 'WSELECT', ModelObject: () => new Catalogo_Cuentas() };
 	//moneda = { type: 'select', Dataset: ["C$", "$"], hiddenInTable: false,hidden:true, disabled: true, require: false, };
 	moneda = { type: "radio", Dataset: ["CORDOBAS", "DOLARES"] };
-	monto = { type: "number", hiddenFilter: true };
-	tasa_cambio = { type: "number", disabled: true , hiddenFilter: true, hidden: true};
+	monto = { type: "money", hiddenFilter: true };
+	tasa_cambio = { type: "money", disabled: true , hiddenFilter: true, hidden: true};
 	//tasa_cambio_compra = { type: "number", disabled: true , hiddenFilter: true};	
 	id_usuario_crea = { type: "number", hidden: true, hiddenFilter: true };
 	fecha = { type: "date", disabled: true, require: false };	

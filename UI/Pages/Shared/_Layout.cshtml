@@ -47,7 +47,7 @@
             <h3>TRANSACCIONES</h3>
 
             <a class="menu-item" id="Home" asp-area="" asp-page="/">HOME</a>
-            @if (SecurityController.HavePermission(PermissionsEnum.GESTION_PRESTAMOS_Y_EMPEÑOS.ToString(), identify))
+            @if (SecurityController.HavePermission(PermissionsEnum.GESTION_EMPEÑOS.ToString(), identify))
             {
                 <a class="title-collapse" id="PrestamosClientesMenu" onclick="changeActive(this)">EMPEÑOS</a>
                 <div class="collapse">
@@ -65,7 +65,7 @@
                         asp-page="/PagesViews/Transaction_ContratosView">CONTRATOS</a>
                 </div>
             }
-            @if (SecurityController.HavePermission(PermissionsEnum.GESTION_PRESTAMOS_Y_EMPEÑOS.ToString(), identify))
+            @if (SecurityController.HavePermission(PermissionsEnum.GESTION_EMPEÑOS.ToString(), identify))
             {
                 <a class="title-collapse" id="GestionRecibosMenu" onclick="changeActive(this)">GESTIÓN DE RECIBOS</a>
                 <div class="collapse">
@@ -78,19 +78,19 @@
                     }
                 </div>
             }
-            @if (SecurityController.HavePermission(PermissionsEnum.GESTION_COMPRAS_Y_VENTAS.ToString(), identify))
+            @if (SecurityController.HavePermission(PermissionsEnum.GESTION_COMPRAS.ToString(), identify))
             {
                 <a class="title-collapse" id="GestionFacturaMenu" onclick="changeActive(this)">GESTIÓN DE FACTURACIÓN</a>
                 <div class="collapse">
-                    @if (SecurityController.HavePermission(PermissionsEnum.GESTION_COMPRAS_Y_VENTAS.ToString(),//TODO
+                    @if (SecurityController.HavePermission(PermissionsEnum.GESTION_COMPRAS.ToString(),//TODO
                    identify))
                     {
-                        <a class="menu-item" id="ComprasComponentView" asp-area="" asp-page="/Facturacion/ComprasComponentView">
+                        @* <a class="menu-item" id="ComprasComponentView" asp-area="" asp-page="/Facturacion/ComprasComponentView">
                             Nueva Compra</a>
                         <a class="menu-item" id="ComprasManager" asp-area="" asp-page="/Facturacion/ComprasManager">
                             Ver Compras</a>
-                        <a class="menu-item" id="" asp-area="" asp-page="/Facturacion/FacturasComponentView">
-                            Nueva Factura</a>
+                        <a class="menu-item" id="FacturasComponentView" asp-area="" asp-page="/Facturacion/FacturasComponentView">
+                            Nueva Factura</a> *@
                         <a class="menu-item" id="LotesManager" asp-area="" asp-page="/Facturacion/LotesManager">Ver
                             Existencias</a>                      
                       

@@ -13,11 +13,12 @@ class Tbl_Lotes_ModelComponent extends EntityClass {
         }
     }
     /**@type {ModelProperty}*/ Id_Lote = { type: 'number', primary: true, hiddenFilter: true };
-    /**@type {ModelProperty}*/ Lote = { type: 'text' };
+   
     /**@type {ModelProperty}*/ Id_Producto = { type: 'number', hiddenInTable: true, hiddenFilter: true };
     /**@type {ModelProperty}*/ Id_Almacen = { type: 'number', hiddenInTable: true, hiddenFilter: true };
     /**@type {ModelProperty}*/ Cat_Producto = { type: 'WSELECT', ModelObject: () => new Cat_Producto_ModelComponent() };
     /**@type {ModelProperty}*/ Cat_Almacenes = { type: 'WSELECT', ModelObject: () => new Cat_Almacenes_ModelComponent() };
+    /**@type {ModelProperty}*/ Lote = { type: 'text' };
     /**@type {ModelProperty}*/ Precio_Venta = { type: 'Money', hiddenFilter: true };
     /**@type {ModelProperty}*/ Precio_Compra = { type: 'Money', hiddenFilter: true };
     /**@type {ModelProperty}*/ Cantidad_Inicial = { type: 'number', hiddenInTable: true, hiddenFilter: true };

@@ -1,16 +1,12 @@
 //@ts-check
-import { WRender, ComponentsManager, WAjaxTools, WArrayF, ConvertToMoneyString } from "../WDevCore/WModules/WComponentsTools.js";
-import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js"
-import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
-import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
-import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
-import { ModalMessege, WForm } from "../WDevCore/WComponents/WForm.js";
-import { Catalogo_Cambio_Divisa_ModelComponent, Catalogo_Cuentas } from "../FrontModel/DBODataBaseModel.js";
-import { WOrtograficValidation } from "../WDevCore/WModules/WOrtograficValidation.js";
-import { css } from "../WDevCore/WModules/WStyledRender.js";
+import { Catalogo_Cuentas } from "../FrontModel/DBODataBaseModel.js";
+import { Detail_Movimiento } from "../FrontModel/MovimientosCuentas.js";
+import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js";
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
-import { Detail_Movimiento, Movimientos_Cuentas } from "../FrontModel/MovimientosCuentas.js";
 import { ColumChart } from "../WDevCore/WComponents/WChartJSComponents.js";
+import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
+import { ComponentsManager, ConvertToMoneyString, WArrayF, WRender } from "../WDevCore/WModules/WComponentsTools.js";
+import { css } from "../WDevCore/WModules/WStyledRender.js";
 
 /**
  * @typedef {Object} ComponentConfig
@@ -187,8 +183,10 @@ class GestionCuentaComponent extends HTMLElement {
             className: "detalle-cuenta",
             children: [
                 WRender.CreateStringNode(`<div>${cuenta.nombre}</div>`),
-                WRender.CreateStringNode(`<div class="monto-cuenta"> Monto C$: ${(cuenta.saldo ?? 0).toFixed(2)}</div>`),
-                WRender.CreateStringNode(`<div class="monto-cuenta"> Monto $: ${(cuenta.saldo_dolares ?? 0).toFixed(2)}</div>`),
+                // @ts-ignore
+                WRender.CreateStringNode(`<div class="monto-cuenta"> Monto C$: ${ConvertToMoneyString(cuenta.saldo ?? 0)}</div>`),
+                // @ts-ignore
+                WRender.CreateStringNode(`<div class="monto-cuenta"> Monto $: ${ConvertToMoneyString(cuenta.saldo_dolares ?? 0)}</div>`),
                 WRender.Create({
                     tagName: 'input', type: 'button', className: 'Btn-Mini', value: 'Movimientos $', onclick: async () => {
                         displayType = "dolares";
@@ -230,10 +228,10 @@ class GestionCuentaComponent extends HTMLElement {
         debito.innerHTML = "";
         creadito.innerHTML = "";
         saldo.innerHTML = "";
-        let debitoProp = type == "dolares" ? "debito_dolares" : "debito";
-        let creaditoProp = type == "dolares" ? "credito_dolares" : "credito";
-        let montoProp = type == "dolares" ? "monto_final_dolares" : "monto_final";
-        let currency = type == "dolares" ? "$" : "C$";
+        let debitoProp = type.toLowerCase() == "dolares" ? "debito_dolares" : "debito";
+        let creaditoProp = type.toLowerCase() == "dolares" ? "credito_dolares" : "credito";
+        let montoProp = type.toLowerCase() == "dolares" ? "monto_final_dolares" : "monto_final";
+        let currency = type.toLowerCase() == "dolares" ? "$" : "C$";
 
         detalle.append(WRender.Create({ className: "header", innerHTML: "Detalle" }));
         fecha.append(WRender.Create({ className: "header", innerHTML: "Fecha" }));
@@ -319,4 +317,5 @@ class GestionCuentaComponent extends HTMLElement {
     `
 }
 customElements.define('w-component', GestionCuentaComponent);
-export { GestionCuentaComponent }
+export { GestionCuentaComponent };
+

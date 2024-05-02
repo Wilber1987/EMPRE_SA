@@ -66,22 +66,22 @@ class Transaction_Valoraciones_View extends HTMLElement {
                 porcentaje_empeno: { type: 'number', hidden: true },
                 valor_compra_cordobas: {
                     type: "operation", action: (element) => {
-                        return ConvertToMoneyString( this.calculoCordobas(element.porcentaje_compra));
+                        return ConvertToMoneyString(this.calculoCordobas(element.porcentaje_compra));
                     }
                 }, valor_compra_dolares: {
                     type: "operation", action: (element) => {
                         // @ts-ignore
-                        return ConvertToMoneyString( this.calculoDolares(element.porcentaje_compra));
+                        return ConvertToMoneyString(this.calculoDolares(element.porcentaje_compra));
                     }
                 },
                 valor_empeño_cordobas: {
                     type: "operation", action: (element) => {
-                        return ConvertToMoneyString( this.calculoCordobas(element.porcentaje_empeno));
+                        return ConvertToMoneyString(this.calculoCordobas(element.porcentaje_empeno));
                     }
                 }, valor_empeño_dolares: {
                     type: "operation", action: (element) => {
                         // @ts-ignore
-                        return ConvertToMoneyString( this.calculoDolares(element.porcentaje_empeno));
+                        return ConvertToMoneyString(this.calculoDolares(element.porcentaje_empeno));
                     }
                 }
             }),
@@ -499,32 +499,37 @@ class Transaction_Valoraciones_View extends HTMLElement {
         }))
     }
     GenerateCompra() {
-        if (this.Cliente.codigo_cliente == undefined) {            
+        if (this.Cliente.codigo_cliente == undefined) {
             this.append(ModalMessege("Seleccione un cliente para continuar"));
             return;
         }
-        if (this.valoracionesTable?.Dataset.length == 0) {            
+        if (this.valoracionesTable?.Dataset.length == 0) {
             this.append(ModalMessege("Agregue valoraciones para poder continuar"));
             return;
         }
         const nuevaCompra = new Tbl_Compra();
         // @ts-ignore
-        nuevaCompra.Tasa_Cambio =  this.tasasCambio[0]?.Valor_de_venta;
+        nuevaCompra.Tasa_Cambio = this.tasasCambio[0]?.Valor_de_venta;
+
         nuevaCompra.Cat_Proveedor = new Cat_Proveedor({
             stado: "ACTIVO",
             Identificacion: this.Cliente.identificacion,
             Nombre: `${this.Cliente.primer_nombre} ${this.Cliente.segundo_nombre} ${this.Cliente.primer_apellido} ${this.Cliente.segundo_apellidio}`,
             Datos_Proveedor: this.Cliente
         });
+        nuevaCompra.Datos_Compra = { RUC: this.Cliente.identificacion }
         const IvaPercent = 0;
         nuevaCompra.Detalle_Compra = this.valoracionesTable?.Dataset.map((/**@type {Transactional_Valoracion} */ element) => {
             const detalleCompra = new Detalle_Compra();
-            detalleCompra.Cantidad = 1;           
+            detalleCompra.Cantidad = 1;
+            const beneficioVentaC = this.Beneficios?.find(b => b.Nombre == "BENEFICIO_VENTA_ARTICULO_COMPRADO")
+            
             // @ts-ignore
             detalleCompra.Precio_Unitario = element.Valoracion_compra_dolares;
-            detalleCompra.Precio_Venta = element.Precio_venta_empeño_dolares;
+            // @ts-ignore
+            detalleCompra.Precio_Venta = ((element.Valoracion_compra_dolares) * (beneficioVentaC.Valor / 100 + 1));
             detalleCompra.SubTotal = detalleCompra.Precio_Unitario * detalleCompra.Cantidad;
-            detalleCompra.Aplica_Iva = false; 
+            detalleCompra.Aplica_Iva = false;
             detalleCompra.Iva = detalleCompra.Precio_Unitario * IvaPercent;
             detalleCompra.Total = detalleCompra.SubTotal + detalleCompra.Iva;
             detalleCompra.Datos_Producto_Lote = element;
@@ -543,14 +548,14 @@ class Transaction_Valoraciones_View extends HTMLElement {
             });
             return detalleCompra;
         }) ?? [];
-        this.append(new WModalForm({ 
-           title: "REGISTRAR COMPRA",
-            ObjectModal: new ComprasComponent({ 
-                Entity: nuevaCompra, 
+        this.append(new WModalForm({
+            title: "REGISTRAR COMPRA",
+            ObjectModal: new ComprasComponent({
+                Entity: nuevaCompra,
                 TasaCambio: nuevaCompra.Tasa_Cambio,
                 IvaPercent: IvaPercent,
                 WithTemplate: true
-            }) 
+            })
         }));
     }
     selectCliente = (/**@type {Catalogo_Clientes} */ selectCliente) => {
@@ -589,7 +594,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
         if (this.valoracionesForm != undefined) {
             for (const prop in this.valoracionesForm?.FormObject) {
                 if (prop == "Detail_Valores") continue;
-                if (prop == "Tasa_interes") continue;                
+                if (prop == "Tasa_interes") continue;
                 if (prop == "id_valoracion" && valoracion.requireReValoracion()) continue;
                 this.valoracionesForm.FormObject[prop] = valoracion[prop]
             }
@@ -632,6 +637,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
         const beneficioVentaE = this.Beneficios?.find(b => b.Nombre == "BENEFICIO_VENTA_ARTICULO_EMPENO");
         const mora = detail.Tasa_interes * 2 / 100;
         const precio_venta_empeño = ((parseFloat(detail.Valoracion_empeño_cordobas) * (mora + 1)) * (beneficioVentaE.Valor / 100 + 1));
+        //console.log(precio_venta_empeño);
 
 
         // @ts-ignore
@@ -651,11 +657,11 @@ class Transaction_Valoraciones_View extends HTMLElement {
             <div class="column-venta">
                 <label>VENTA DE EMPEÑO</label>
                 <span>C$ ${precio_venta_empeño.toString() == "NaN" ? "0.00"
-                        : precio_venta_empeño.toFixed(3)}</span>
+                : precio_venta_empeño.toFixed(3)}</span>
                 <span>$ ${precio_venta_empeño.toString() == "NaN" ? "0.00"
-                        : (precio_venta_empeño /
-                            // @ts-ignore
-                            this.tasasCambio[0].Valor_de_venta).toFixed(3)}</span>
+                : (precio_venta_empeño /
+                    // @ts-ignore
+                    this.tasasCambio[0].Valor_de_venta).toFixed(3)}</span>
             </div>
         </div>`);
         this.multiSelectEstadosArticulos?.SetOperationValues();

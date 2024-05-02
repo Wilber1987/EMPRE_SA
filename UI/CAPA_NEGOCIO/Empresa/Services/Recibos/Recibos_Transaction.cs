@@ -634,7 +634,7 @@ namespace Transactions
 				.Replace("{{abono_capital_dolares}}", NumberUtility.ConvertToMoneyString(abono_capital))
 				.Replace("{{saldo_actual_cordobas}}", NumberUtility.ConvertToMoneyString(factura?.Factura_contrato?.saldo_actual * factura?.tasa_cambio))
 				.Replace("{{saldo_actual_dolares}}", NumberUtility.ConvertToMoneyString(factura?.Factura_contrato?.saldo_actual))
-				.Replace("{{proximo_pago}}", cuotasPendiente.First()?.fecha?.ToString("dd/MM/yyyy"));
+				.Replace("{{proximo_pago}}",  cuotasPendiente.Count != 0 ? cuotasPendiente.First()?.fecha?.ToString("dd/MM/yyyy") : "-");
 
 				return new ResponseService()
 				{

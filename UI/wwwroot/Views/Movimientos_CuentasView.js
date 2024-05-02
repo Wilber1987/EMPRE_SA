@@ -20,19 +20,15 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
         model.tasa_cambio.defaultValue = tasa[0].Valor_de_compra;
         /**@type {Catalogo_Cambio_Divisa} */
         const tasaActual = tasa[0];
-        // model.tasa_cambio_compra.defaultValue = tasa[0].Valor_de_venta;
-
         this.Cuentas = await new Catalogo_Cuentas().Get();
-
-        //model.tasa_cambio = await new Catalogo_Cambio_Divisa_ModelComponent().Get();
-
         this.OptionContainer = WRender.Create({ className: "OptionContainer" });
         this.TabContainer = WRender.Create({ className: "TabContainer", id: 'TabContainer' });
 
         this.Manager = new ComponentsManager({ MainContainer: this.TabContainer, SPAManage: false });
         this.TableComponent = new WTableComponent({
-            ModelObject: model, Dataset: dataset, Options: {
+            ModelObject: model, Dataset: dataset, WSelectAddObject: false, Options: {
                 Filter: true,
+
                 //Add: true, UrlAdd: "guardarMovimiento",
                 //Edit: true, UrlUpdate: "editarMovimiento",
                 //Search: true, //UrlSearch: "../application/controllers/Vehiculos_Controller.php/get" + Model.constructor.name,
@@ -82,16 +78,6 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
                 ]
             }
         })
-
-        // this.FilterOptions = new WFilterOptions({
-        //     Dataset: dataset,
-        //     ModelObject: model,
-        //     Display: true,
-        //     FilterFunction: (DFilt) => {
-        //         console.log(DFilt);
-        //         this.TableComponent?.DrawTable(DFilt);
-        //     }
-        // });
         const ObjectOptions = {
             SaveFunction: (param, response) => {
                 console.log(response)
@@ -108,8 +94,17 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
             tagName: 'button', className: 'Block-Secundary', innerText: 'Registrar movimiento interno',
             onclick: () => {
                 const modelExterno = new Movimientos_Cuentas();
-                modelExterno.Catalogo_Cuentas_Destino.Dataset = this.Cuentas?.filter(x => x.tipo_cuenta == "PROPIA");
                 modelExterno.Catalogo_Cuentas_Origen.Dataset = this.Cuentas?.filter(x => x.tipo_cuenta == "PROPIA");
+                modelExterno.Catalogo_Cuentas_Origen.action = (entity, form) => {
+                    modelExterno.Catalogo_Cuentas_Destino.Dataset = this.Cuentas?.filter(x => x.tipo_cuenta == "PROPIA"
+                        && x.id_cuentas != entity.Catalogo_Cuentas_Origen.id_cuentas);
+                    form.DrawComponent();
+                }
+                const cuentaPrimaria = this.Cuentas?.find(x => x.tipo_cuenta == "PROPIA"
+                    && x.id_cuentas);
+
+                modelExterno.Catalogo_Cuentas_Destino.Dataset = this.Cuentas?.filter(x => x.tipo_cuenta == "PROPIA"
+                    && x.id_cuentas != cuentaPrimaria.id_cuentas);
                 // @ts-ignore
                 modelExterno.tasa_cambio = tasaActual.Valor_de_venta;
                 //modelExterno.tasa_cambio_compra = model.tasa_cambio_compra;
@@ -140,7 +135,6 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
 
                 // @ts-ignore
                 modelExterno.tasa_cambio = tasaActual.Valor_de_compra;
-                //modelExterno.tasa_cambio_compra = model.tasa_cambio_compra;
                 this.append(new WModalForm({ title: "Egreso", ModelObject: modelExterno, AutoSave: true, ObjectOptions: this.ObjectOptionsModal }))
             }
         }))
@@ -153,15 +147,10 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
                 modelExterno.Catalogo_Cuentas_Destino.Dataset = this.Cuentas?.filter(x => x.tipo_cuenta == "PAGO");
                 // @ts-ignore
                 modelExterno.tasa_cambio = tasaActual.Valor_de_venta;
-                //modelExterno.tasa_cambio_compra = model.tasa_cambio_compra;
                 this.append(new WModalForm({ title: "Egreso", ModelObject: modelExterno, AutoSave: true, ObjectOptions: this.ObjectOptionsModal }))
             }
         }))
-
-
         this.Manager?.NavigateFunction("tabla", this.MainComponent)
-
-
         this.append(
             StylesControlsV2.cloneNode(true),
             StyleScrolls.cloneNode(true),
@@ -169,8 +158,6 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
             this.OptionContainer,
             this.TabContainer
         );
-
-
     }
     ObjectOptionsModal = {
         SaveFunction: async (profile, response) => {
@@ -182,10 +169,6 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
             }
         }
     }
-    /*Gestion_CuentasForm = new Gestion_CuentasForm();
-    NewTransaction(Model) {
-        this.Manager?.NavigateFunction("Gestion_CuentasForm", this.Gestion_CuentasForm)
-    }*/
 
 }
 customElements.define('w-gestion_movimientos_cuentas', Gestion_movimientos_CuentasView);

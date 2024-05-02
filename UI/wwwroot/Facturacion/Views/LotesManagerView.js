@@ -42,7 +42,7 @@ class LotesManagerView extends HTMLElement {
                     Options: {
                         Search: false, Filter: true, Add: false, Edit: false, FilterDisplay: true,
                         UserActions: [{
-                            name: "Anular",
+                            name: "Dar de baja",
                             action: async (/**@type {Tbl_Lotes}*/Lote) => {
                                 this.append(ModalVericateAction(async () => {
                                  

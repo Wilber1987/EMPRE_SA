@@ -11,6 +11,7 @@ namespace Model
 
         public Transaction_Contratos? Transaction_Contratos { get; set; }
         public List<Transactional_Valoracion>? valoraciones { get; set; }
+        public string? Moneda { get; set; }
         /**@type {Number} */
 
         public ResponseService SaveDataContract(string seasonKey)
@@ -82,7 +83,6 @@ namespace Model
                     INTERES_NETO_CORRIENTE = Convert.ToDouble(Intereses.Find(c => c.Nombre.Equals(InteresesPrestamosEnum.INTERES_NETO_CORRIENTE.ToString()))?.Valor),
                     GESTION_CREDITICIA = Transaction_Contratos.gestion_crediticia,
                 };
-
                 Transaction_Contratos.Save();
 
                 var cuentaOrigen = Catalogo_Cuentas.GetCuentaEgresoContratos(dbUser);
@@ -97,15 +97,14 @@ namespace Model
                         message = "Cuentas no configuradas correctamente"
                     };
                 }
-
                 ResponseService response = new Movimientos_Cuentas
                 {
                     Catalogo_Cuentas_Destino = cuentaDestino,
                     Catalogo_Cuentas_Origen = cuentaOrigen,
                     concepto = "Desembolso de monto para, contrato No: " + Transaction_Contratos.numero_contrato,
                     descripcion = "Desembolso de monto para, contrato No: " + Transaction_Contratos.numero_contrato,
-                    moneda = "DOLARES",
-                    monto = Transaction_Contratos.monto,
+                    moneda = Moneda ?? "DOLARES",
+                    monto = Moneda == "CORDOBAS" ? Transaction_Contratos.Valoracion_empeño_cordobas : Transaction_Contratos.monto,
                     tasa_cambio = Transaction_Contratos.taza_cambio,
                     tasa_cambio_compra = Transaction_Contratos.taza_cambio_compra,
                     is_transaction = true

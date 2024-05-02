@@ -118,10 +118,14 @@ namespace DataBaseModel
 		private static Catalogo_Cuentas? GetCuenta(Security_Users dbUser, Categoria_CuentasEnum categoria, string type)
 		{
 			int? idCategoria = GetId_categoria(categoria);
-			Catalogo_Cuentas? cuenta = new Catalogo_Cuentas
+			Catalogo_Cuentas? cuenta = null;
+			if (idCategoria != null)
 			{
-				id_sucursal = dbUser.Id_Sucursal
-			}.Find<Catalogo_Cuentas>(FilterData.Equal("id_categoria", idCategoria));
+				cuenta = new Catalogo_Cuentas
+				{
+					id_sucursal = dbUser.Id_Sucursal
+				}.Find<Catalogo_Cuentas>(FilterData.Equal("id_categoria", idCategoria));
+			}
 			cuenta = CrearCuentaSiNoExiste(dbUser, idCategoria, cuenta, categoria, type);
 			return cuenta;
 		}
@@ -131,7 +135,7 @@ namespace DataBaseModel
 			return GetCuenta(dbUser, Categoria_CuentasEnum.CAJA_GENERAL, "PROPIA");
 		}
 		internal static Catalogo_Cuentas? GetCuentaRegistoContratos(Security_Users dbUser)
-		{			
+		{
 			return GetCuenta(dbUser, Categoria_CuentasEnum.DESEMBOLSO_CONTRATOS, "EXTERNA");
 		}
 
@@ -150,11 +154,11 @@ namespace DataBaseModel
 		{
 			if (idCategoria == null)
 			{
-				Categoria_Cuentas categoria_Cuentas = new Categoria_Cuentas
+				Categoria_Cuentas? categoria_Cuentas = (Categoria_Cuentas?)new Categoria_Cuentas
 				{
 					descripcion = categoria_CuentasEnum.ToString()
-				};
-				idCategoria = categoria_Cuentas.id_categoria;
+				}.Save();
+				idCategoria = categoria_Cuentas?.id_categoria;
 			}
 			if (cuenta == null)
 			{

@@ -58,3 +58,38 @@ ALTER TABLE EMPRE_SA.dbo.Transaction_Contratos ADD DesgloseIntereses nvarchar(MA
 UPDATE EMPRE_SA.[security].Security_Users
 SET  Estado=N'ACTIVO', Id_Sucursal=1
 
+UPDATE EMPRE_SA.dbo.Categoria_Cuentas
+SET descripcion=N'CAJA 1'
+WHERE id_categoria=1;
+UPDATE EMPRE_SA.dbo.Categoria_Cuentas
+SET descripcion=N'CAJA 2'
+WHERE id_categoria=2;
+UPDATE EMPRE_SA.dbo.Categoria_Cuentas
+SET descripcion=N'CAJA_CHICA'
+WHERE id_categoria=3;
+UPDATE EMPRE_SA.dbo.Categoria_Cuentas
+SET descripcion=N'CAJA_GENERAL'
+WHERE id_categoria=4;
+UPDATE EMPRE_SA.dbo.Categoria_Cuentas
+SET descripcion=N'BANCO'
+WHERE id_categoria=5;
+UPDATE EMPRE_SA.dbo.Categoria_Cuentas
+SET descripcion=N'FACTURAS_CONTRATOS'
+WHERE id_categoria=6;
+UPDATE EMPRE_SA.dbo.Categoria_Cuentas
+SET descripcion=N'FACTURAS_VENTAS'
+WHERE id_categoria=7;
+UPDATE EMPRE_SA.dbo.Categoria_Cuentas
+SET descripcion=N'OBLIGACIONES'
+WHERE id_categoria=8;
+UPDATE EMPRE_SA.dbo.Categoria_Cuentas
+SET descripcion=N'EMPEÑOS'
+WHERE id_categoria=9;
+UPDATE EMPRE_SA.dbo.Categoria_Cuentas
+SET descripcion=N'PRESTAMOS'
+WHERE id_categoria=10;
+
+DELETE FROM EMPRE_SA.dbo.Categoria_Cuentas
+WHERE id_categoria=1009;
+DELETE FROM EMPRE_SA.dbo.Categoria_Cuentas
+WHERE id_categoria=1010;

@@ -83,22 +83,7 @@ namespace DataBaseModel
                     subtotal += detalle.Total;
                     ivaTotal += detalle.Iva;
                     total += detalle.SubTotal;
-                    detalle.lotes = new List<Tbl_Lotes>{
-                        new Tbl_Lotes()
-                            {
-                                Cat_Producto = detalle?.Cat_Producto,
-                                Precio_Venta = detalle?.Precio_Venta,
-                                Precio_Compra = detalle?.Precio_Unitario,
-                                Cantidad_Inicial = detalle?.Cantidad,
-                                Cantidad_Existente = detalle?.Cantidad,
-                                Id_Sucursal = dbUser?.Id_Sucursal,
-                                Id_User =  dbUser?.Id_User,
-                                Fecha_Ingreso = DateTime.Now,
-                                Datos_Producto = detalle?.Datos_Producto_Lote,
-                                Id_Almacen = GetAlmacen(dbUser?.Id_Sucursal ?? 0),
-                                Lote = GenerarLote()
-                            }
-                        };
+                    SetLote(dbUser, detalle);
                 };
                 Fecha = DateTime.Now;
                 Total = total;
@@ -123,6 +108,26 @@ namespace DataBaseModel
                 };
             }
 
+        }
+
+        private void SetLote(Security_Users? dbUser, Detalle_Compra? detalle)
+        {
+
+            detalle.lotes = new List<Tbl_Lotes>{ new Tbl_Lotes()
+                {
+                    Cat_Producto = detalle?.Cat_Producto,
+                    Precio_Venta = detalle?.Precio_Venta,
+                    Precio_Compra = detalle?.Precio_Unitario,
+                    Cantidad_Inicial = detalle?.Cantidad,
+                    Cantidad_Existente = detalle?.Cantidad,
+                    Id_Sucursal = dbUser?.Id_Sucursal,
+                    Id_User =  dbUser?.Id_User,
+                    Fecha_Ingreso = DateTime.Now,
+                    Datos_Producto = detalle?.Datos_Producto_Lote,
+                    Id_Almacen = GetAlmacen(dbUser?.Id_Sucursal ?? 0),
+                    Lote = GenerarLote()
+                }
+            };
         }
 
         public int GetAlmacen(int Id_Sucursal)
