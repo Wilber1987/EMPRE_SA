@@ -34,6 +34,10 @@ namespace API.Controllers
         {
             return AuthNetCore.HavePermission(permission, identfy);
         }
+        public object RecoveryPassword(UserModel Inst)
+        {
+            return AuthNetCore.RecoveryPassword(Inst.mail);     
+        }
 
     }
 }

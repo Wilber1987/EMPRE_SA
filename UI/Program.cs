@@ -4,9 +4,9 @@ using CAPA_DATOS.Cron.Jobs;
 using Model;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
-//SqlADOConexion.IniciarConexion("sa", "zaxscd", ".", "EMPRE_SA");
+SqlADOConexion.IniciarConexion("sa", "zaxscd", ".", "EMPRE_SA");
 //SqlADOConexion.IniciarConexion("sa", "123", ".\\SQLEXPRESS", "EMPRE_SA");
-SqlADOConexion.IniciarConexion("empresa", "Wmatus09%", "tcp:empresociedadanonima.database.windows.net", "EMPRE_SA");
+//SqlADOConexion.IniciarConexion("empresa", "Wmatus09%", "tcp:empresociedadanonima.database.windows.net", "EMPRE_SA");
 
 //var test = new test{ Parameters = new List<object> {1 , 2}}.Get<test>(true);
 //var testfilter = (from t in test where t.val1 == "1"  select t).ToList();
@@ -26,14 +26,14 @@ builder.Services.AddSession(options =>
 	options.IdleTimeout = TimeSpan.FromMinutes(40);
 });
 //TODO ACTIVAR CROMEJOB
-/*
+
 builder.Services.AddCronJob<CalculateMoraCuotasSchedulerJob>(options =>
 {
 	// Corre cada minuto
 	//options.CronExpression = "0 0 13 1/1 * ? *";//ejecucion diaria a las 1 de la mañana
 	options.CronExpression = "0 12 * * *";
 	options.TimeZone = TimeZoneInfo.Local;
-});*/
+});
 
 var app = builder.Build();
 // builder.Services.AddSession(options =>
