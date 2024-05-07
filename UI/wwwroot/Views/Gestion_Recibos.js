@@ -10,6 +10,7 @@ import { Catalogo_Cambio_Divisa } from "../FrontModel/Catalogo_Cambio_Divisa.js"
 import { Recibos_ModelComponent } from "../FrontModel/ModelComponents/Recibos_ModelComponent.js";
 import { Recibos } from "../FrontModel/Recibos.js";
 import { WOrtograficValidation } from "../WDevCore/WModules/WOrtograficValidation.js";
+import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 class Gestion_RecibosView extends HTMLElement {
     // @ts-ignore
     constructor(props) {
@@ -84,6 +85,10 @@ class Gestion_RecibosView extends HTMLElement {
                 const response = await new Recibos(this.reciboForm?.FormObject).Save(); //this.reciboModel?.Save() // this.reciboModel?.GuardarValoraciones(this.valoracionesTable?.Dataset);
                 if (response.status == 200) {
                     //location.href = "/PagesViews/Ver_Recibos";
+                    if (response.message == "Factura temporal") {
+                        this.printRecibo(response.body)
+                        return;
+                    }
                     this.append(ModalVericateAction(() => {
                         location.href = "/PagesViews/Ver_Recibos?id_Recibo=" + response.body.id_factura;
                         //location.href = "/PagesViews/Print_Recibo?id_Recibo=" + response.body.id_recibo;
@@ -109,6 +114,65 @@ class Gestion_RecibosView extends HTMLElement {
         );
         // @ts-ignore
         this.calculoRecibo(selectContrato, this.tasasCambio);
+    }
+    printRecibo(body) {
+
+        const objFra = WRender.Create({
+            tagName: "iframe",
+            style: { minHeight: "700px" },
+            // @ts-ignore
+            srcdoc: body
+        })
+        const print = function () {
+            // @ts-ignore
+            objFra.contentWindow.focus(); // Set focus.
+            // @ts-ignore
+            objFra.contentWindow.print(); // Print it  
+        };
+        const btn = html`<img class="print" src="../WDevCore/Media/print.png"/>`
+        btn.onclick = print
+        this.append(new WModalForm({
+            ObjectModal: WRender.Create({
+                class: "print-container", children: [this.PrintIconStyle(), [btn],
+
+                WRender.Create({ className: "print-container-iframe", children: [objFra] })]
+            })
+        }))
+        objFra.onload = print
+    }
+    PrintIconStyle() {
+        return css`
+           .print {
+            width: 30px;
+            height: 30px;
+            padding: 5px;
+            border: solid 1px #bdbcbc; 
+            border-radius: 5px;
+            cursor: pointer;        
+        } .print-container {
+            width: 98%;   
+            margin: auto;          
+        } .print-container div{
+            width: 100%; 
+           display: flex;
+           justify-content: flex-end;
+           padding: 5px;
+           border-radius: 5px;
+           border: solid 1px #bdbcbc; 
+           margin-bottom: 5px;
+        } .print-container-iframe {
+            overflow-y: auto;  
+            max-height: 650px;
+            background-color: #bdbcbc;  
+        }  .print-container iframe { 
+            width: 320px;
+            max-width: 320px;
+            margin: 10px auto;
+            display: block;
+            background-color: #fff;
+            border: none;
+        }
+         `;
     }
 
 
@@ -146,12 +210,17 @@ class Gestion_RecibosView extends HTMLElement {
             this.pagoMaximoDolares = total_capital_restante;
             this.pagoActual = CuotaActual.total + mora + reestructuracion + perdida_de_documento;
         }
+        if (this.pagoActual > this.pagoMaximoDolares) {
+            this.pagoMaximoDolares = this.pagoActual
+        }
         this.pagoMinimoCordobas = this.pagoMinimoDolares * this.tasasCambio[0].Valor_de_venta;
         this.pagoMaximoCordobas = this.pagoMaximoDolares * this.tasasCambio[0].Valor_de_venta;
         this.pagoActualCordobas = this.pagoActual * this.tasasCambio[0].Valor_de_venta;
+        console.log(this.pagoActualCordobas, this.pagoMaximoCordobas);
     }
 
     BuildRecibosModel() {
+        console.log(this.pagoMaximoCordobas);
         return new Recibos_ModelComponent({
             perdida_de_documento: {
                 type: "checkbox", hiddenInTable: true, require: false, action: (recibo, form) => {

@@ -9,16 +9,16 @@ class ValoracionesTransaction extends EntityClass {
             this[prop] = props[prop];
         };
         this.Moneda = undefined;
-    }   
+    }
     /**@type {Array<Transactional_Valoracion>} */
-    valoraciones;  
-  
+    valoraciones;
+
     /**@type {Transaction_Contratos} */
     Transaction_Contratos;
 
     SaveDataContract = async () => {
         return await this.SaveData("Transactional_Contrato/SaveDataContract", this)
-         true;
+        true;
     }
     SaveContract = async () => {
         return this.SaveData("Transactional_Contrato/SaveContract", this)
@@ -74,6 +74,7 @@ class Tbl_Cuotas extends EntityClass {
 export { Tbl_Cuotas }
 
 class Transaction_Contratos extends EntityClass {
+
     constructor(props) {
         super(props, 'EntityDBO');
         for (const prop in props) {
@@ -159,7 +160,7 @@ class Transaction_Contratos extends EntityClass {
     /**@type {Number} */
     Valoracion_empeño_cordobas;
     /**@type {Number} */
-    Valoracion_empeño_dolares;  
+    Valoracion_empeño_dolares;
     /**@type {Number} */
     taza_interes_cargos;
 
@@ -182,7 +183,10 @@ class Transaction_Contratos extends EntityClass {
     total_pagar_cordobas;
     /**@type {Number} */
     total_pagar_dolares;
-    
+    Anular = async () => {
+        return await this.SaveData("Transactional_Contrato/AnularContract", this)
+    }
+
 }
 
 export { Transaction_Contratos }
@@ -242,9 +246,9 @@ class Catalogo_Categoria extends EntityClass {
     /**@type {Boolean}*/ isEditable;
     /**@type {Array<Detail_Prendas>} OneToMany*/ Detail_Prendas;
     /**@type {Array<Transactional_Valoracion>} OneToMany*/ Transactional_Valoracion;
- }
- export { Catalogo_Categoria }
- 
+}
+export { Catalogo_Categoria }
+
 class Detail_Prendas_Vehiculos extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');

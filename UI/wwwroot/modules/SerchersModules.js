@@ -97,9 +97,10 @@ export { clientSearcher }
 /**
  * 
  * @param { Function } [action] 
+ * @param { Function } [anularAction]
  * @returns { HTMLElement }
  */
-const contratosSearcher = (action) => {
+const contratosSearcher = (action, anularAction) => {
     const model = new Transaction_Contratos_ModelComponent();
     model.Tbl_Cuotas.ModelObject = () => new Tbl_Cuotas_ModelComponent({
         Estado: { type: "operation" , action: (/** @type {Tbl_Cuotas} */ cuota)=>{
@@ -124,6 +125,12 @@ const contratosSearcher = (action) => {
                     // @ts-ignore
                     await action(cliente);
                 }
+            }, {
+                name: "Anular",
+                action: async (cliente) => {
+                    // @ts-ignore
+                    await anularAction(cliente);
+                }
             }]
         }
     })
@@ -134,7 +141,6 @@ const contratosSearcher = (action) => {
         Display: true,
         FilterFunction: (DFilt) => {
             TableComponent.Dataset = DFilt;
-            console.log(DFilt);
             TableComponent?.DrawTable();
             // @ts-ignore
             //action(DFilt, FilterOptions);

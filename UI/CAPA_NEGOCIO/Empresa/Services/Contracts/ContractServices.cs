@@ -27,7 +27,6 @@ namespace Model
             }
             catch (System.Exception)
             {
-
                 return new ResponseService()
                 {
                     status = 200

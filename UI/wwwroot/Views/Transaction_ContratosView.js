@@ -88,7 +88,7 @@ class Transaction_ContratosView extends HTMLElement {
         });
         this.CuotasTable = new WTableComponent({
             Dataset: this.entity.Transaction_Contratos?.Tbl_Cuotas ?? [],
-            ModelObject: new Tbl_Cuotas_ModelComponent({Estado: undefined}),
+            ModelObject: new Tbl_Cuotas_ModelComponent({ Estado: undefined }),
             paginate: false,
             AddItemsFromApi: false,
             AutoSave: false,
@@ -126,7 +126,7 @@ class Transaction_ContratosView extends HTMLElement {
             children: [
                 "Plazo:", this.inputPlazo, this.SelectMoneda,
                 "Fecha de cancelación:",
-                fechaCancelacion,  this.inputObservacion,
+                fechaCancelacion, this.inputObservacion,
             ]
         });
         this.contratosForm.append(optionContainer, this.prendasTable, this.CuotasTable);
@@ -467,6 +467,24 @@ class MainContract extends HTMLElement {
             name: "Contratos", action: () => {
                 this.Manager.NavigateFunction("contratos", contratosSearcher((contrato) => {
                     location.href = "/PagesViews/Transaction_ContratosViewDetail?numero_contrato=" + contrato.numero_contrato;
+                }, (/** @type {Transaction_Contratos} */ contrato) => {
+                    const modal = new WModalForm({
+                        ModelObject: {
+                            motivo_anulacion: { type: "TEXTAREA" }
+                        }, EditObject: contrato,
+                        title: "ANULACIÓN DE CONTRATO",
+                        ObjectOptions: {
+                            SaveFunction: async () => {
+                                this.append(ModalVericateAction(async (editObject) => {
+                                    console.log(contrato, editObject);
+                                    const response = await new Transaction_Contratos(contrato).Anular();
+                                    this.append(ModalMessege(response.message));
+                                    modal.close();
+                                }, "Esta seguro que desea anular este contrato"))
+                            }
+                        }
+                    });
+                    this.append(modal);
                 }))
             }
         }, {
