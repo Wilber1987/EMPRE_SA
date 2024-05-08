@@ -518,6 +518,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
             Datos_Proveedor: this.Cliente
         });
         nuevaCompra.Datos_Compra = { RUC: this.Cliente.identificacion }
+        nuevaCompra.Moneda = "DOLARES";
         const IvaPercent = 0;
         nuevaCompra.Detalle_Compra = this.valoracionesTable?.Dataset.map((/**@type {Transactional_Valoracion} */ element) => {
             const detalleCompra = new Detalle_Compra();
@@ -533,7 +534,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
             detalleCompra.Iva = detalleCompra.Precio_Unitario * IvaPercent;
             detalleCompra.Total = detalleCompra.SubTotal + detalleCompra.Iva;
             detalleCompra.Datos_Producto_Lote = element;
-            detalleCompra.Presentacion = "UND";
+            detalleCompra.Presentacion = "UND";            
             detalleCompra.Cat_Producto = new Cat_Producto({
                 Descripcion: element.Descripcion,
                 Cat_Marca: new Cat_Marca({
@@ -548,15 +549,19 @@ class Transaction_Valoraciones_View extends HTMLElement {
             });
             return detalleCompra;
         }) ?? [];
-        this.append(new WModalForm({
+        const modal = new WModalForm({
             title: "REGISTRAR COMPRA",
             ObjectModal: new ComprasComponent({
                 Entity: nuevaCompra,
                 TasaCambio: nuevaCompra.Tasa_Cambio,
                 IvaPercent: IvaPercent,
-                WithTemplate: true
+                WithTemplate: true, 
+                action: async (response)=>{
+                    console.log(response);
+                }
             })
-        }));
+        })
+        this.append(modal);
     }
     selectCliente = (/**@type {Catalogo_Clientes} */ selectCliente) => {
         this.Cliente = selectCliente;

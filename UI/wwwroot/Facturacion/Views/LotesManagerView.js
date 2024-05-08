@@ -52,11 +52,11 @@ class LotesManagerView extends HTMLElement {
                     }
                 }))
             }
-        }, {
+        }/*, {
             name: "Nueva Factura Proveedor", action: () => {
                window.location.href = "/Facturacion/LotesComponentView";
             }
-        }
+        }*/
     ]
 
     Draw = async () => {

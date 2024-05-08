@@ -1,6 +1,6 @@
 //@ts-check
 // @ts-ignore
-import { ComponentsManager, html, WArrayF, WRender } from "../../WDevCore/WModules/WComponentsTools.js";
+import { ComponentsManager, ConvertToMoneyString, html, WArrayF, WRender } from "../../WDevCore/WModules/WComponentsTools.js";
 // @ts-ignore
 import { WTableComponent } from "../../WDevCore/WComponents/WTableComponent.js";
 // @ts-ignore
@@ -12,6 +12,7 @@ import { Tbl_Compra_ModelComponent } from "../FrontModel/ModelComponent/Tbl_Comp
 import { Tbl_Compra } from "../FrontModel/Tbl_Compra.js";
 // @ts-ignore
 import { ModelProperty } from "../../WDevCore/WModules/CommonModel.js";
+import { WOrtograficValidation } from "../../WDevCore/WModules/WOrtograficValidation.js";
 
 /**
  * @typedef {Object} ComprasConfig
@@ -31,9 +32,10 @@ class ComprasComponent extends HTMLElement {
     constructor(ComprasConfig) {
         super();
         this.ComprasConfig = ComprasConfig ?? {};
+        this.ComprasConfig.Entity = this.ComprasConfig.Entity ?? new Tbl_Compra();
         this.OptionContainer = WRender.Create({ className: "OptionContainer" });
         this.TabContainer = WRender.Create({ className: "TabContainer", id: 'TabContainer' });
-        this.CompraContainer = WRender.Create({ className: "valoraciones-container" });
+        this.CompraContainer = WRender.Create({ className: "compras-container" });
         this.append(this.CustomStyle, this.OptionContainer, this.TabContainer);
         this.indexFactura = 0;
         this.valoresObject = {
@@ -54,6 +56,8 @@ class ComprasComponent extends HTMLElement {
             ModelObject: this.ComprasModel,
             AutoSave: false,
             EditObject: this.ComprasConfig.Entity,
+            limit: 3,
+            DivColumns: "repeat(3, 32%)",
             //Options: false,
             // @ts-ignore
             SaveFunction: async (/**@type {Tbl_Compra} */ compra) => {
@@ -89,19 +93,22 @@ class ComprasComponent extends HTMLElement {
      */
     TotalesDetailUpdate(subtotal, iva, total) {
         // @ts-ignore
+        this.ComprasConfig.Entity.Moneda = this.ComprasConfig.Entity?.Moneda ?? "CORDOBAS"
+        // @ts-ignore                
         this.TotalesDetail.innerHTML = "";
         this.TotalesDetail?.append(html`<div class="detail-container">
+            <h3>Resumen</h3>
             <label class="value-container">
-                Sub Total:
-                <span>C$ ${subtotal}</span>
+                <span>Sub Total:</span>
+                <span class="value">${WOrtograficValidation.es(this.ComprasConfig.Entity?.Moneda)} ${ConvertToMoneyString(subtotal)}</span>
             </label>
             <label class="value-container">
-                Iva :
-                <span>C$ ${iva}</span>
+                <span>Iva:</span>
+                <span class="value">${WOrtograficValidation.es(this.ComprasConfig.Entity?.Moneda)} ${ConvertToMoneyString(iva)}</span>
             </label>
-            <label class="value-container">
-                Total:
-                <span>C$ ${total} </span>
+            <label class="value-container total">
+                <span>Total:</span>
+                <span class="value">${WOrtograficValidation.es(this.ComprasConfig.Entity?.Moneda)} ${ConvertToMoneyString(total)} </span>
             </label>
         </div>`
         );
@@ -149,18 +156,37 @@ class ComprasComponent extends HTMLElement {
     //this.contratosForm.append(optionContainer, this.ComprasForm);
 
     CustomStyle = css`
-        .valoraciones-container{
+        .compras-container{
             padding: 20px;
             display: grid;
-            grid-template-columns:  calc(100% - 180px) 160px;
-            gap: 20px 30px;
+            grid-template-columns:  calc(100% - 220px) 200px;
+            gap: 20px;
+        }
+        .resumen-container, w-form {
+            box-shadow: 0 0 5px 0 #999;
+            padding: 20px;
+            border-radius: 5px;
         }
         .resumen-container .detail-container {
             display: flex;
             flex-direction: column;
             gap: 10px;
         }
-        #valoracionesForm, .multiSelectEstadosArticulos,#ComprasForm {
+        .detail-container h3 {
+            color: #4894aa;
+            margin: 10px 0px;
+        }
+        .value{
+            text-align: right;
+        }
+        .value-container {
+            display: grid;
+            grid-template-columns: 50% 50%;
+        }
+        .total {
+            font-weight: 700;
+        }
+        #comprasForm, .multiSelectEstadosArticulos,#ComprasForm {
             grid-column: span 2;
         }
         .beneficios-detail h4 {
@@ -193,7 +219,7 @@ class ComprasComponent extends HTMLElement {
         font-weight: bold;
         border-bottom: solid 1px #d4d4d4;
         }
-        #valoracionesTable,
+        #comprasTable,
         #detalleComprasTable,
         .TabContainerTables,
         .nav-header,
