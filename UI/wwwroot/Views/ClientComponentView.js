@@ -65,7 +65,7 @@ class ClientComponentView extends HTMLElement {
                     return;
                 }
                 // if (!this.FormularioDatos?.Validate()) {
-                //     this.Manager?.NavigateFunction("formularioDatosLaborales", this.FormularioDatos)
+                //     this.Manager?.NavigateFunction("formularioDatosLabora    les", this.FormularioDatos)
                 //     this.append(ModalMessege("Necesita llenar todos los datos laborales del cliente primeramente"));
                 //     return;
                 // }

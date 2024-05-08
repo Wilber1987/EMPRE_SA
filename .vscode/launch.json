@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/UI/bin/Debug/net6.0/UI.dll",
+            "program": "${workspaceFolder}/UI/bin/Debug/net8.0/UI.dll",
             "args": [],
             "cwd": "${workspaceFolder}/UI",
             "stopAtEntry": false,

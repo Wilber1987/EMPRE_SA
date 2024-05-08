@@ -21,7 +21,7 @@ class Gestion_ClientesView extends HTMLElement {
     }
     Draw = async () => {
         const model = new Catalogo_Clientes();
-        this.Gestion_ClientesForm = new ClientComponentView();
+       
         //const dataset = await model.Get();
 
         this.OptionContainer = WRender.Create({ className: "OptionContainer" });
@@ -50,6 +50,7 @@ class Gestion_ClientesView extends HTMLElement {
     }
 
     NewTransaction(Model) {
+        this.Gestion_ClientesForm = new ClientComponentView();
         this.Manager?.NavigateFunction("Gestion_ClientesForm", this.Gestion_ClientesForm)
     }
     NewGestionClientes() {
