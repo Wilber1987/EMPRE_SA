@@ -2,6 +2,7 @@ using API.Controllers;
 using CAPA_DATOS;
 using CAPA_NEGOCIO.Services;
 using DataBaseModel;
+using Microsoft.Diagnostics.Tracing.Parsers.MicrosoftWindowsWPF;
 
 namespace Transactions
 {
@@ -235,7 +236,7 @@ namespace Transactions
 
                 cuentaDestino.Update();
                 cuentaOrigen.Update();
-                var result = encabezado.Save();                
+                var result = encabezado.Save();
                 return new ResponseService()
                 {
                     status = 200,
@@ -265,10 +266,11 @@ namespace Transactions
                 };
                 MailServices.SendMailContract(new List<String>() {
                     "wilberj1987@gmail.com",
-                    "alderhernandez@gmail.com" },
+                    //"alderhernandez@gmail.com" 
+                    },
                     "noreply@noreply",
                     "Notificación de movimiento entre cuentas",
-                    "NotificacionMovimientoCuentas.cshtml",
+                    NotificacionTemplate,
                     modelo
                 );//todo definir correos a enviar
                 var update = new Transaction_Movimiento()
@@ -281,5 +283,24 @@ namespace Transactions
                 LoggerServices.AddMessageError("ERROR ENVIENDO EL CORREO: ", ex);
             }
         }
+        static string NotificacionTemplate = @"<!DOCTYPE html>
+            <html lang='es'>
+            <head>
+                <meta charset='UTF-8'>
+                <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+                <title>Notificación de Movimiento entre Cuentas</title>
+            </head>
+            <body>
+                <div style='font-family: Arial, sans-serif; padding: 20px; background-color: #f7f7f7;'>
+                    <h2 style='color: #333;'>Notificación de Movimiento entre Cuentas</h2>
+                    <p><strong>Fecha del movimiento:</strong> {{FechaMovimiento}}</p>        
+                    <p><strong>Cuenta de origen:</strong> {{CuentaOrigen}}</p>
+                    <p><strong>Cuenta de destino:</strong> {{CuentaDestino}}</p>        
+                    <p><strong>Monto:</strong> <span style='color: black; background-color: yellow;'>{{TipoMoneda}} {{Monto}}</span></p>
+                    <p><strong>Concepto:</strong> {{Concepto}}</p>
+                    <p><strong>Usuario que realizó el movimiento:</strong> {{Usuario}}</p>
+                </div>
+            </body>
+            </html>";
     }
 }

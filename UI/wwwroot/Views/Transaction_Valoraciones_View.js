@@ -225,7 +225,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
      * @returns {string}
      */
     valoracionResumen(Valoracion_compra_cordobas, Valoracion_compra_dolares, Valoracion_empeño_cordobas, Valoracion_empeño_dolares) {
-        return `Compra C$: ${Valoracion_compra_cordobas} - Compra $: ${Valoracion_compra_dolares} - Empeño C$: ${Valoracion_empeño_cordobas} - Empeño $: ${Valoracion_empeño_dolares}`;
+        return `Compra C$: ${ConvertToMoneyString(Valoracion_compra_cordobas)} - Compra $: ${ConvertToMoneyString(Valoracion_compra_dolares)} - Empeño C$: ${ConvertToMoneyString(Valoracion_empeño_cordobas)} - Empeño $: ${ConvertToMoneyString(Valoracion_empeño_dolares)}`;
     }
     buildValoresModel(tasasCambio) {
         this.valoresModel = {
@@ -556,8 +556,9 @@ class Transaction_Valoraciones_View extends HTMLElement {
                 TasaCambio: nuevaCompra.Tasa_Cambio,
                 IvaPercent: IvaPercent,
                 WithTemplate: true, 
-                action: async (response)=>{
-                    console.log(response);
+                action: async (object, response)=>{
+                    this.append(ModalMessege(response.message));
+                    modal.close();
                 }
             })
         })

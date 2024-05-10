@@ -94,6 +94,7 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
             tagName: 'button', className: 'Block-Secundary', innerText: 'Registrar movimiento interno',
             onclick: () => {
                 const modelExterno = new Movimientos_Cuentas();
+                modelExterno.tasa_cambio.defaultValue = tasa[0].Valor_de_venta;
                 modelExterno.Catalogo_Cuentas_Origen.Dataset = this.Cuentas?.filter(x => x.tipo_cuenta == "PROPIA");
                 modelExterno.Catalogo_Cuentas_Origen.action = (entity, form) => {
                     modelExterno.Catalogo_Cuentas_Destino.Dataset = this.Cuentas?.filter(x => x.tipo_cuenta == "PROPIA"
@@ -105,8 +106,6 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
 
                 modelExterno.Catalogo_Cuentas_Destino.Dataset = this.Cuentas?.filter(x => x.tipo_cuenta == "PROPIA"
                     && x.id_cuentas != cuentaPrimaria.id_cuentas);
-                // @ts-ignore
-                modelExterno.tasa_cambio = tasaActual.Valor_de_venta;
                 //modelExterno.tasa_cambio_compra = model.tasa_cambio_compra;
                 this.append(new WModalForm({ title: "Movimiento a cuenta", ModelObject: modelExterno, AutoSave: true, ObjectOptions: ObjectOptions }))
             }
@@ -117,10 +116,11 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
             tagName: 'button', className: 'Block-Primary', innerText: 'Registrar nuevo ingreso',
             onclick: () => {
                 const modelExterno = new Movimientos_Cuentas();
+                modelExterno.tasa_cambio.defaultValue = tasa[0].Valor_de_venta;
+                console.log(modelExterno);
                 modelExterno.Catalogo_Cuentas_Origen.Dataset = this.Cuentas?.filter(x => x.tipo_cuenta != "PROPIA");
                 modelExterno.Catalogo_Cuentas_Destino.Dataset = this.Cuentas?.filter(x => x.tipo_cuenta == "PROPIA");
-                // @ts-ignore
-                modelExterno.tasa_cambio = tasaActual.Valor_de_venta;
+                
                 //modelExterno.tasa_cambio_compra = model.tasa_cambio_compra;
                 this.append(new WModalForm({ title: "Ingreso", ModelObject: modelExterno, AutoSave: true, ObjectOptions: this.ObjectOptionsModal }))
             }
@@ -130,11 +130,12 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
             tagName: 'button', className: 'Block-Tertiary', innerText: 'Registrar nuevo egreso',
             onclick: () => {
                 const modelExterno = new Movimientos_Cuentas();
+                modelExterno.tasa_cambio.defaultValue = tasa[0].Valor_de_compra;
                 modelExterno.Catalogo_Cuentas_Origen.Dataset = this.Cuentas?.filter(x => x.tipo_cuenta == "PROPIA");
                 modelExterno.Catalogo_Cuentas_Destino.Dataset = this.Cuentas?.filter(x => x.tipo_cuenta != "PROPIA");
 
                 // @ts-ignore
-                modelExterno.tasa_cambio = tasaActual.Valor_de_compra;
+                //modelExterno.tasa_cambio = tasaActual.Valor_de_compra;
                 this.append(new WModalForm({ title: "Egreso", ModelObject: modelExterno, AutoSave: true, ObjectOptions: this.ObjectOptionsModal }))
             }
         }))
@@ -143,6 +144,7 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
             tagName: 'button', className: 'Block-Fourth', innerText: 'Realizar Pago',
             onclick: () => {
                 const modelExterno = new Movimientos_Cuentas();
+                modelExterno.tasa_cambio.defaultValue = tasa[0].Valor_de_compra;
                 modelExterno.Catalogo_Cuentas_Origen.Dataset = this.Cuentas?.filter(x => x.tipo_cuenta == "PROPIA");
                 modelExterno.Catalogo_Cuentas_Destino.Dataset = this.Cuentas?.filter(x => x.tipo_cuenta == "PAGO");
                 // @ts-ignore

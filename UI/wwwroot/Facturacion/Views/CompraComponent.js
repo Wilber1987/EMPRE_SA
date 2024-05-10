@@ -70,7 +70,7 @@ class ComprasComponent extends HTMLElement {
                     if (this.ComprasConfig?.action != undefined) {
                         this.append(ModalVericateAction(async () => {
                             // @ts-ignore
-                            this.ComprasConfig?.action(compra);
+                            this.ComprasConfig?.action(compra, response);
                         }, response.message));
                     } else {
                         this.append(ModalMessege(response.message))
@@ -123,6 +123,11 @@ class ComprasComponent extends HTMLElement {
         this.ComprasModel.Tasa_Cambio.defaultValue = this.TasaCambio;
         this.ComprasModel.Detalle_Compra.ModelObject = this.ComprasModel.Detalle_Compra.ModelObject();
         if (this.ComprasConfig.WithTemplate) {
+            this.ComprasModel.Detalle_Compra.Options = {
+                Add: false,
+                Delete: false,
+                Edit: false
+            }
             this.ComprasModel.Cat_Proveedor.Dataset = [this.ComprasConfig.Entity?.Cat_Proveedor];
             this.ComprasModel.Detalle_Compra.ModelObject.Cat_Producto.Dataset = this.ComprasConfig.Entity?.Detalle_Compra?.map(d => d.Cat_Producto) ?? [];
         }
@@ -144,7 +149,6 @@ class ComprasComponent extends HTMLElement {
             let total;
             let iva;
             if (EditObject.Detalle_Compra != undefined) {
-                console.log(EditObject);
                 subtotal = WArrayF.SumValAtt(EditObject.Detalle_Compra, "SubTotal");
                 iva = WArrayF.SumValAtt(EditObject.Detalle_Compra, "Iva");
                 total = WArrayF.SumValAtt(EditObject.Detalle_Compra, "Total");
@@ -241,6 +245,11 @@ class ComprasComponent extends HTMLElement {
         }w-main-compras {
             display: block;
             width: 98%;
+        }
+        @media (max-width: 900px){
+            .compras-container{
+                grid-template-columns:  100%;
+            }
         }
     `
 }
