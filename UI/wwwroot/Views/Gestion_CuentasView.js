@@ -169,7 +169,7 @@ class GestionCuentaComponent extends HTMLElement {
             val: 1
         }));
         //TODO REVISAR COLUMNS CART
-        console.log(movimientos, movimientosMap);
+        //console.log(movimientos, movimientosMap);
         this.columChartMovimientos = new ColumChart({
             Title: "Movimientos",
             // @ts-ignore
@@ -222,7 +222,7 @@ class GestionCuentaComponent extends HTMLElement {
      * @param {String} [type]
      */
     buildDetailMovimientos(movimientos, detalle, fecha, debito, creadito, saldo, type = "dolares") {
-        console.log(type);
+        //console.log(type);
         detalle.innerHTML = "";
         fecha.innerHTML = "";
         debito.innerHTML = "";
@@ -238,7 +238,7 @@ class GestionCuentaComponent extends HTMLElement {
         debito.append(WRender.Create({ className: "header", innerHTML: "Egreso" }));
         creadito.append(WRender.Create({ className: "header", innerHTML: "Ingreso" }));
         saldo.append(WRender.Create({ className: "header", innerHTML: "Saldo" }));
-        movimientos.filter(movimiento => movimiento[creaditoProp] != null).forEach(movimiento => {
+        movimientos.filter(movimiento => movimiento.moneda.toLowerCase() == type).forEach(movimiento => {
             // @ts-ignore
             detalle.append(WRender.Create({ className: "detail-label", children: [movimiento.Transaction_Movimiento?.concepto] }));
             fecha.append(WRender.Create({ className: "fecha-label", children: [movimiento.fecha?.toDateFormatEs()] }));

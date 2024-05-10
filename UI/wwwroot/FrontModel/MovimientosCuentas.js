@@ -13,13 +13,12 @@ class Movimientos_Cuentas extends EntityClass {
 	/**@type {ModelProperty} */ Catalogo_Cuentas_Origen = { type: 'WSELECT', ModelObject: () => new Catalogo_Cuentas() };
 	/**@type {ModelProperty} */ Catalogo_Cuentas_Destino = { type: 'WSELECT', ModelObject: () => new Catalogo_Cuentas() };
 	//moneda = { type: 'select', Dataset: ["C$", "$"], hiddenInTable: false,hidden:true, disabled: true, require: false, };
-	
+	/**@type {ModelProperty} */ moneda = { type: "radio", Dataset: ["CORDOBAS", "DOLARES"] };
 	/**@type {ModelProperty} */ monto = { type: "money", hiddenFilter: true };
 	/**@type {ModelProperty} */ tasa_cambio = { type: "money", disabled: true , hiddenFilter: true, hidden: true};
 	//tasa_cambio_compra = { type: "number", disabled: true , hiddenFilter: true};	
 	/**@type {ModelProperty} */ id_usuario_crea = { type: "number", hidden: true, hiddenFilter: true };
-	/**@type {ModelProperty} */ fecha = { type: "datetime", disabled: true, require: false };	
-	/**@type {ModelProperty} */ moneda = { type: "radio", Dataset: ["CORDOBAS", "DOLARES"] };
+	/**@type {ModelProperty} */ fecha = { type: "datetime", disabled: true, require: false };		
 	/**@type {ModelProperty} */ concepto = { type: "textarea" };
 	/**@type {ModelProperty} */ descripcion = { type: "textarea", require: false , hiddenFilter: true, hiddenInTable: true};
 }

@@ -1,5 +1,6 @@
 using API.Controllers;
 using CAPA_DATOS;
+using CAPA_DATOS.Services;
 using CAPA_NEGOCIO.Services;
 using DataBaseModel;
 using Microsoft.Diagnostics.Tracing.Parsers.MicrosoftWindowsWPF;
@@ -201,7 +202,7 @@ namespace Transactions
                     is_transaction = this.is_transaction,
                     Detail_Movimiento = new List<Detail_Movimiento>(){
                             new Detail_Movimiento(){
-                                id_cuenta = this.Catalogo_Cuentas_Origen?.id_cuentas,
+                                catalogo_Cuentas = this.Catalogo_Cuentas_Origen,
                                 debito = this.moneda?.ToUpper() == "CORDOBAS" ? this.monto : 0,
                                 debito_dolares = this.moneda?.ToUpper() == "DOLARES" ? this.monto : 0,
                                 credito = 0,
@@ -214,7 +215,7 @@ namespace Transactions
                                 tasa_cambio_compra = this.tasa_cambio_compra,
                                 moneda = this.moneda?.ToUpper()
                             },new Detail_Movimiento(){
-                                id_cuenta = this.Catalogo_Cuentas_Destino?.id_cuentas,
+                                catalogo_Cuentas = this.Catalogo_Cuentas_Destino,
                                 debito = 0,
                                 debito_dolares = 0,
                                 credito =  this.moneda?.ToUpper() == "CORDOBAS" ? this.monto : 0,
@@ -236,7 +237,7 @@ namespace Transactions
 
                 cuentaDestino.Update();
                 cuentaOrigen.Update();
-                var result = encabezado.Save();
+                object? result = encabezado.Save();
                 return new ResponseService()
                 {
                     status = 200,
@@ -254,15 +255,19 @@ namespace Transactions
         {
             try
             {
+                var user = new Security_Users { Id_User = item.id_usuario_crea }.Find<Security_Users>();
+                var constOrigen = item.Detail_Movimiento?.Find(x => x.credito == 0);
+                var constDestino = item.Detail_Movimiento?.Find(x => x.debito == 0);
                 var modelo = new
                 {
                     FechaMovimiento = item.fecha,
-                    CuentaOrigen = "Cuenta origen",
-                    CuentaDestino = "Cuenta destino",
-                    TipoMoneda = item.moneda,
-                    Monto = 100,
+                    CuentaOrigen = $"{constOrigen?.catalogo_Cuentas?.nombre} ({constOrigen?.catalogo_Cuentas?.id_sucursal?.ToString("D9")}) de la sucursal: {constOrigen?.catalogo_Cuentas?.Catalogo_Sucursales?.Descripcion}",
+                    CuentaDestino = $"{constDestino?.catalogo_Cuentas?.nombre} ({constDestino?.catalogo_Cuentas?.id_sucursal?.ToString("D9")}) de la sucursal: {constDestino?.catalogo_Cuentas?.Catalogo_Sucursales?.Descripcion}",
+                    TipoMoneda = item.moneda?.ToUpper() == "DOLARES" ? "$": "C$",
+                    Monto = NumberUtility.ConvertToMoneyString(constDestino?.moneda?.ToUpper().Equals("DOLARES") == true
+                    ? constDestino?.credito_dolares : constDestino?.credito),
                     Concepto = item.concepto,
-                    Usuario = "todo usuario"
+                    Usuario = $"{user?.Nombres} ({item.id_usuario_crea?.ToString("D9")})"
                 };
                 MailServices.SendMailContract(new List<String>() {
                     "wilberj1987@gmail.com",
@@ -283,7 +288,7 @@ namespace Transactions
                 LoggerServices.AddMessageError("ERROR ENVIENDO EL CORREO: ", ex);
             }
         }
-        static string NotificacionTemplate = @"<!DOCTYPE html>
+        static readonly string NotificacionTemplate = @"<!DOCTYPE html>
             <html lang='es'>
             <head>
                 <meta charset='UTF-8'>
