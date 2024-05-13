@@ -61,21 +61,7 @@ namespace DataBaseModel
                             message = "La cantidad de los productos (" + detalle?.Cat_Producto?.Descripcion + ") debe ser mayor que cero"
                         };
                     }
-                    Cat_Producto? producto = detalle.Cat_Producto?.Find<Cat_Producto>();
-                    if (producto != null)
-                    {
-                        detalle.Cat_Producto = producto;
-                    }
-                    Cat_Categorias? categoria = detalle.Cat_Producto?.Cat_Categorias?.Find<Cat_Categorias>();
-                    if (detalle.Cat_Producto != null && categoria != null)
-                    {
-                        detalle.Cat_Producto.Cat_Categorias = categoria;
-                    }
-                    Cat_Marca? marca = detalle.Cat_Producto?.Cat_Marca?.Find<Cat_Marca>();
-                    if (detalle.Cat_Producto != null && marca != null)
-                    {
-                        detalle.Cat_Producto.Cat_Marca = marca;
-                    }
+                    Cat_Producto.SetProductData(detalle.Cat_Producto);
                     detalle.SubTotal = detalle.Cantidad * detalle.Precio_Unitario;
                     detalle.Iva ??= 0;
                     detalle.Total += detalle.Iva;
@@ -110,6 +96,8 @@ namespace DataBaseModel
 
         }
 
+        
+
         private void SetLote(Security_Users? dbUser, Detalle_Compra? detalle)
         {
 
@@ -124,52 +112,13 @@ namespace DataBaseModel
                     Id_User =  dbUser?.Id_User,
                     Fecha_Ingreso = DateTime.Now,
                     Datos_Producto = detalle?.Datos_Producto_Lote,
-                    Id_Almacen = GetAlmacen(dbUser?.Id_Sucursal ?? 0),
-                    Lote = GenerarLote()
+                    Id_Almacen = new Cat_Almacenes().GetAlmacen(dbUser?.Id_Sucursal ?? 0),
+                    Lote =Tbl_Lotes.GenerarLote()
                 }
             };
         }
-
-        public int GetAlmacen(int Id_Sucursal)
-        {
-            try
-            {
-                var primerAlmacen = new Cat_Almacenes()
-                {
-                    Descripcion = "Almacén Sucursal: " + Id_Sucursal
-                }.Get<Cat_Almacenes>().FirstOrDefault();
-
-                if (primerAlmacen != null)
-                {
-                    return primerAlmacen.Id_Almacen ?? 0;
-                }
-                else
-                {
-                    var nuevoAlmacen = new Cat_Almacenes()
-                    {
-                        Descripcion = "Almacén Sucursal: " + Id_Sucursal,
-                        Estado = "Activo"
-                    };
-                    nuevoAlmacen.Save();
-                    return nuevoAlmacen.Id_Almacen ?? 0;
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error al obtener el almacén: " + ex.Message);
-                return 0;
-            }
-        }
-        public string GenerarLote()
-        {
-            string fechaLote = DateTime.Now.ToString("yyyyMMddHHmmss");
-            string caracteresPermitidos = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            Random random = new Random();
-            string parteAleatoria = new string(Enumerable.Repeat(caracteresPermitidos, 3)
-                                            .Select(s => s[random.Next(s.Length)]).ToArray());
-            string codigoLote = fechaLote + parteAleatoria;
-            return codigoLote;
-        }
+        
+       
 
         public object? AnularCompra(string token)
         {

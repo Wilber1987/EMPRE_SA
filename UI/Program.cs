@@ -11,6 +11,8 @@ SqlADOConexion.IniciarConexion("sa", "zaxscd", ".", "EMPRE_SA");
 //var test = new test{ Parameters = new List<object> {1 , 2}}.Get<test>(true);
 //var testfilter = (from t in test where t.val1 == "1"  select t).ToList();
 
+new ContractServices().Vencimientos();
+
 var builder = WebApplication.CreateBuilder(args);
 //AppGenerate.Program.Main(); //generador de codigo
 
@@ -27,7 +29,7 @@ builder.Services.AddSession(options =>
 });
 //TODO ACTIVAR CROMEJOB
 
-builder.Services.AddCronJob<CalculateMoraCuotasSchedulerJob>(options =>
+builder.Services.AddCronJob<DailyCronJob>(options =>
 {
 	// Corre cada minuto
 	//options.CronExpression = "0 0 13 1/1 * ? *";//ejecucion diaria a las 1 de la mañana

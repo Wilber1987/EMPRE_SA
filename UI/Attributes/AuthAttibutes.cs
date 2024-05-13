@@ -13,6 +13,7 @@ namespace API.Controllers
         public AuthControllerAttribute(params Permissions[] permissionsList){
             PermissionsList = permissionsList.ToList() ?? new List<Permissions>();
         }
+        //TODO IMPLEMENTAR PERMISOS
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             if (!AuthNetCore.Authenticate( filterContext.HttpContext.Session.GetString("seassonKey")))

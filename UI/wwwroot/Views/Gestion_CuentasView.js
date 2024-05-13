@@ -49,13 +49,13 @@ class Gestion_CuentasView extends HTMLElement {
                 this.Manager.NavigateFunction("PROPIAS", new GestionCuentaComponent({ Dataset: dataset.filter(c => c.tipo_cuenta == "PROPIA") }));
             }
         }))
-        this.OptionContainer.append(WRender.Create({
+        /*this.OptionContainer.append(WRender.Create({
             tagName: 'button', className: 'Block-Basic', innerText: 'ver Ingresos',
             onclick: () => {
                 // @ts-ignore
                 this.Manager.NavigateFunction("INGRESOS", new GestionCuentaComponent({ Dataset: dataset.filter(c => c.tipo_cuenta == "EXTERNA") }));
             }
-        }))
+        }))*/
         this.OptionContainer.append(WRender.Create({
             tagName: 'button', className: 'Block-Secundary', innerText: 'ver Pagos',
             onclick: () => {

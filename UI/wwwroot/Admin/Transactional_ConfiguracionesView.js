@@ -63,7 +63,7 @@ class Transactional_ConfiguracionesView extends HTMLElement {
     }
 
     IsNumber(element) {
-        return element.Tipo_Configuracion == "INTERESES" || element.Tipo_Configuracion == "BENEFICIOS";
+        return element.Tipo_Configuracion == "INTERESES" || element.Tipo_Configuracion == "BENEFICIOS" || element.Tipo_Configuracion == "NUMBER";
     }
     IsDrawImage(element) {
         return element.Nombre == "FIRMA_DIGITAL_APODERADO"

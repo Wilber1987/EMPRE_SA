@@ -605,6 +605,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
             for (const prop in this.valoracionesForm?.FormObject) {
                 if (prop == "Detail_Valores") continue;
                 if (prop == "Tasa_interes") continue;
+                if (prop == "Serie") continue;
                 if (prop == "id_valoracion" && valoracion.requireReValoracion()) continue;
                 this.valoracionesForm.FormObject[prop] = valoracion[prop]
             }
@@ -646,7 +647,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
         const beneficioVentaC = this.Beneficios?.find(b => b.Nombre == "BENEFICIO_VENTA_ARTICULO_COMPRADO");
         const beneficioVentaE = this.Beneficios?.find(b => b.Nombre == "BENEFICIO_VENTA_ARTICULO_EMPENO");
         const mora = detail.Tasa_interes * 2 / 100;
-        const precio_venta_empeño = ((parseFloat(detail.Valoracion_empeño_cordobas) * (mora + 1)) * (beneficioVentaE.Valor / 100 + 1));
+        const precio_venta_empeño = ((parseFloat(detail.Valoracion_empeño_dolares) * (mora + 1)) * (beneficioVentaE.Valor / 100 + 1));
         //console.log(precio_venta_empeño);
         // @ts-ignore
         this.valoracionesForm.FormObject.Precio_venta_empeño_cordobas = (precio_venta_empeño);
@@ -664,11 +665,11 @@ class Transaction_Valoraciones_View extends HTMLElement {
             <div class="column-venta">
                 <label>VENTA DE EMPEÑO</label>
                 <span>C$ ${precio_venta_empeño.toString() == "NaN" ? "0.00"
-                : precio_venta_empeño.toFixed(3)}</span>
-                <span>$ ${precio_venta_empeño.toString() == "NaN" ? "0.00"
-                : (precio_venta_empeño /
+                : (precio_venta_empeño *
                     // @ts-ignore
                     this.tasasCambio[0].Valor_de_venta).toFixed(3)}</span>
+                <span>$ ${precio_venta_empeño.toString() == "NaN" ? "0.00"
+                : precio_venta_empeño .toFixed(3)}</span>
             </div>
         </div>`);
         this.multiSelectEstadosArticulos?.SetOperationValues();
