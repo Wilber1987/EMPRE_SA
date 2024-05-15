@@ -48,6 +48,11 @@ class ClientComponentView extends HTMLElement {
                     name: 'Datos Laborales', action: () => {
                         this.DatosLaborales()
                     }
+                }, {
+                    name: 'Nuevo Cliente', action: () => {
+                        this.cliente = {}
+                        this.Draw()
+                    }
                 }
             ]
         }); //WRender.Create({ className: "OptionContainer" });

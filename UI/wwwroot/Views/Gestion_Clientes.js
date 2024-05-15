@@ -35,7 +35,10 @@ class Gestion_ClientesView extends HTMLElement {
 
         this.OptionContainer.append(WRender.Create({
             tagName: 'button', className: 'Block-Primary', innerText: 'Ingresar Cliente',
-            onclick: () => this.NewTransaction()
+            onclick: () => {
+                this.Gestion_ClientesForm = new ClientComponentView();
+                this.NewTransaction()
+            }
         }))
         this.NewGestionClientes()
         this.append(
@@ -50,7 +53,7 @@ class Gestion_ClientesView extends HTMLElement {
     }
 
     NewTransaction(Model) {
-        this.Gestion_ClientesForm = new ClientComponentView();
+       
         this.Manager?.NavigateFunction("Gestion_ClientesForm", this.Gestion_ClientesForm)
     }
     NewGestionClientes() {
@@ -73,11 +76,12 @@ class Gestion_ClientesView extends HTMLElement {
             }
         }, {
             name: "Editar", action: (cliente) => {
-                if (this.Gestion_ClientesForm != null) {
-                    this.Gestion_ClientesForm.cliente = cliente
-                    this.Gestion_ClientesForm.Draw();
-                    this.NewTransaction();
+                if (this.Gestion_ClientesForm == null) {
+                    this.Gestion_ClientesForm = new ClientComponentView();                  
                 }
+                this.Gestion_ClientesForm.cliente = cliente
+                this.Gestion_ClientesForm.Draw();
+                this.NewTransaction();
 
             }
         }]))
