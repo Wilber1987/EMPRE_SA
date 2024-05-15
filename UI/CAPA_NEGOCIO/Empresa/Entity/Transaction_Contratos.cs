@@ -65,7 +65,7 @@ namespace DataBaseModel
 			{
 				//BeginGlobalTransaction();
 				var User = AuthNetCore.User(seasonKey);
-				  var dbUser = new Security_Users { Id_User = User.UserId }.Find<Security_Users>();
+				var dbUser = new Security_Users { Id_User = User.UserId }.Find<Security_Users>();
 				Transaction_Contratos? Transaction_Contratos = new Transaction_Contratos
 				{
 					numero_contrato = this.numero_contrato
@@ -158,6 +158,77 @@ namespace DataBaseModel
 			var payment = tasa * Math.Pow(Convert.ToDouble(1 + tasa), Convert.ToDouble(cuotas)) * monto
 				/ (Math.Pow(Convert.ToDouble(1 + tasa), Convert.ToDouble(cuotas)) - 1);
 			return payment;
+		}
+
+		internal void EstablecerComoVencido()
+		{
+			try
+			{
+				BeginGlobalTransaction();
+				estado = EstadoEnum.VENCIDO.ToString();
+				Update();
+				Transactional_Configuraciones beneficioVentaE = new Transactional_Configuraciones()
+		   			.GetConfig(ConfiguracionesBeneficiosEnum.BENEFICIO_VENTA_ARTICULO_EMPENO.ToString());
+				var dbUser = new Security_Users { Id_User = Id_User }.Find<Security_Users>();
+
+				Detail_Prendas?.ForEach(prenda =>
+				{
+					if (prenda.en_manos_de == EnManosDe.ACREEDOR.ToString())
+					{
+						GenerarLoteAPartirDePrenda(prenda, beneficioVentaE, dbUser);
+					}
+				});
+				Tbl_Cuotas?.ForEach(Cuota =>
+				{
+					Cuota.Estado = EstadoEnum.VENCIDO.ToString();
+					Cuota.Update();
+				});
+				CommitGlobalTransaction();
+			}
+			catch (System.Exception Exception)
+			{
+				RollBackGlobalTransaction();
+				LoggerServices.AddMessageError("error al vencer contrato", Exception);
+			}
+		}
+
+		private void GenerarLoteAPartirDePrenda(Detail_Prendas prenda, Transactional_Configuraciones beneficioVentaE, Security_Users? dbUser)
+		{
+			double? mora = prenda.Transactional_Valoracion?.Tasa_interes * 2 / 100;
+			double? precio_venta_empeño = (prenda.Transactional_Valoracion?.Valoracion_empeño_dolares)
+				* (mora + 1)
+				* (Convert.ToDouble(beneficioVentaE.Valor) / 100 + 1);
+			Cat_Producto producto = new Cat_Producto
+			{
+				Descripcion = prenda.Descripcion,
+				Cat_Marca = new Cat_Marca
+				{
+					Nombre = prenda.marca,
+					Descripcion = prenda.marca,
+					Estado = EstadoEnum.ACTIVO.ToString()
+				},
+				Cat_Categorias = new Cat_Categorias
+				{
+					Descripcion = prenda.Catalogo_Categoria?.descripcion,
+					Estado = EstadoEnum.ACTIVO.ToString()
+				}
+			};
+			Cat_Producto.SetProductData(producto);
+			new Tbl_Lotes()
+			{
+				Cat_Producto = producto,
+				Precio_Venta = precio_venta_empeño,
+				Precio_Compra = prenda.Transactional_Valoracion?.Valoracion_empeño_dolares,
+				Cantidad_Inicial = 1,
+				Cantidad_Existente = 1,
+				Id_Sucursal = dbUser?.Id_Sucursal,
+				Id_User = dbUser?.Id_User,
+				Fecha_Ingreso = DateTime.Now,
+				Datos_Producto = prenda,
+				Detalles = $"Existencia perteneciente a vencimineto de contrato No. {numero_contrato.GetValueOrDefault():D9}",
+				Id_Almacen = new Cat_Almacenes().GetAlmacen(dbUser?.Id_Sucursal ?? 0),
+				Lote = Tbl_Lotes.GenerarLote()
+			}.Save();
 		}
 	}
 	public class Tbl_Cuotas : EntityClass

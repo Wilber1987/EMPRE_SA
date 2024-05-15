@@ -48,6 +48,11 @@ class ClientComponentView extends HTMLElement {
                     name: 'Datos Laborales', action: () => {
                         this.DatosLaborales()
                     }
+                }, {
+                    name: 'Nuevo Cliente', action: () => {
+                        this.cliente = {}
+                        this.Draw()
+                    }
                 }
             ]
         }); //WRender.Create({ className: "OptionContainer" });
@@ -65,7 +70,7 @@ class ClientComponentView extends HTMLElement {
                     return;
                 }
                 // if (!this.FormularioDatos?.Validate()) {
-                //     this.Manager?.NavigateFunction("formularioDatosLaborales", this.FormularioDatos)
+                //     this.Manager?.NavigateFunction("formularioDatosLabora    les", this.FormularioDatos)
                 //     this.append(ModalMessege("Necesita llenar todos los datos laborales del cliente primeramente"));
                 //     return;
                 // }

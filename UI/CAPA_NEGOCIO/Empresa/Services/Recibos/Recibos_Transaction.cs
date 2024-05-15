@@ -9,7 +9,7 @@ using Model;
 
 namespace Transactions
 {
-	public class Recibos : EntityClass
+	public class Recibos_Transactions : EntityClass
 	{
 		[PrimaryKey(Identity = true)]
 		public int? id_recibo { get; set; }
@@ -712,5 +712,35 @@ namespace Transactions
 			return Detail_Prendas[0].Catalogo_Categoria?.descripcion;
 		}
 
+		public void CalculateMora()
+		{
+			var cuotas = new Tbl_Cuotas().Where<Tbl_Cuotas>(
+				FilterData.Equal("Estado", EstadoEnum.PENDIENTE),
+				FilterData.Less("fecha", DateTime.Now)
+			);
+			//.Where(cuota => (cuota.pago_contado == null || cuota.total > cuota.pago_contado || cuota.pago_contado == null) && cuota.fecha < DateTime.Now)
+			//.ToList();
+			//double sumaCapitalRestante = (double)cuotas.Sum(cuota => cuota.capital_restante);
+			foreach (var cuota in cuotas)
+			{
+				//por ejemplo si la cuota es $10 y tiene 5 días de mora el cálculo sería 
+				//((10*0.005)*5) = $0.25 seria el valor de la mora por los 5 días.
+				//DateTime fechaOriginal = cuota.fecha.GetValueOrDefault();
+				//DateTime fechaActual = DateTime.Now;
+				//TimeSpan diferencia = fechaActual - fechaOriginal;
+				//int diasDeDiferencia = diferencia.Days;
+				//if (cuota.fecha < DateTime.Now)
+				//{
+					var montoMora = cuota.total * ((cuota.Transaction_Contratos?.mora / 100) ?? 0.005) * 1;//como el cronjob es diario se va cargando mora cada dia
+					if (montoMora > 0)
+					{
+						cuota.mora += montoMora;
+						//cuota.total += cuota.total + montoMora;
+						cuota.Update();
+					}
+				//}
+
+			}
+		}
 	}
 }

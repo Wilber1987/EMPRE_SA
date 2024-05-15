@@ -19,10 +19,10 @@ class Tbl_Compra_ModelComponent extends EntityClass {
         ModelObject: () => new BasicDatosCompra(), hiddenFilter: true, hiddenInTable: true, require: false
     };
    /**@type {ModelProperty}*/ Fecha = { type: 'date' };
-   /**@type {ModelProperty}*/ Tasa_Cambio = { type: 'number', hiddenFilter: true, disabled: true, require: false };
+   /**@type {ModelProperty}*/ Tasa_Cambio = { type: 'money', hiddenFilter: true, disabled: true, require: false };
    /**@type {ModelProperty}*/ Sub_Total = { type: 'operation', hiddenFilter: true, hidden: true };
    /**@type {ModelProperty}*/ Iva = { type: 'number', hiddenFilter: true, hidden: true };
-   /**@type {ModelProperty}*/ Total = { type: 'number', hiddenFilter: true, hidden: true };
+   /**@type {ModelProperty}*/ Total = { type: 'money', hiddenFilter: true, hidden: true };
    /**@type {ModelProperty}*/ Estado = { type: 'select', Dataset: ["ACTIVO", "INACTIVO"], hidden: true };
    /**@type {ModelProperty}*/ Cat_Proveedor = { type: 'WSELECT', ModelObject: () => new Cat_Proveedor_ModelComponent() };
    /**@type {ModelProperty}*/ Moneda = { type: "radio", Dataset: ["CORDOBAS", "DOLARES"] };

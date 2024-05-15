@@ -12,33 +12,33 @@ namespace API.Controllers
         //Recibos
         [HttpPost]
         [AuthController(Permissions.GESTION_RECIBOS)]
-        public List<Recibos> GetRecibos(Recibos Inst)
+        public List<Recibos_Transactions> GetRecibos(Recibos_Transactions Inst)
         {
-            return Inst.Get<Recibos>();
+            return Inst.Get<Recibos_Transactions>();
         }
         [HttpPost]
         [AuthController(Permissions.GESTION_RECIBOS)]
-        public object saveRecibos(Recibos inst)
+        public object saveRecibos(Recibos_Transactions inst)
         {            
             return inst.SaveRecibos(HttpContext.Session.GetString("seassonKey"));
         }
         [HttpPost]
         [AuthController(Permissions.GESTION_RECIBOS)]
-        public object? updateRecibos(Recibos inst)
+        public object? updateRecibos(Recibos_Transactions inst)
         {
             return true;
             //return inst.Update();
         }
         [HttpPost]
         [AuthController(Permissions.GESTION_RECIBOS)]
-        public object? anularRecibo(Recibos inst)
+        public object? anularRecibo(Recibos_Transactions inst)
         {            
             return inst.AnularFactura(HttpContext.Session.GetString("seassonKey"));
         }
 
         [HttpPost]
         [AuthController(Permissions.GESTION_RECIBOS)]
-        public Object? printRecibo(Recibos inst)
+        public Object? printRecibo(Recibos_Transactions inst)
         {            
             return inst.PrintRecibo(HttpContext.Session.GetString("seassonKey"));
         }

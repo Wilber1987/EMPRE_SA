@@ -22,6 +22,7 @@ import { Cat_Marca } from "../Facturacion/FrontModel/Cat_Marca.js";
 import { Cat_Categorias } from "../Facturacion/FrontModel/Cat_Categorias.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { ComprasComponent } from "../Facturacion/Views/CompraComponent.js";
+import { Permissions, WSecurity } from "../WDevCore/Security/WSecurity.js";
 class Transaction_Valoraciones_View extends HTMLElement {
     // @ts-ignore
     constructor(props) {
@@ -139,7 +140,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
 
         this.CuotasTable = new WTableComponent({
             Dataset: [],
-            ModelObject: new Tbl_Cuotas_ModelComponent({Estado: undefined}),
+            ModelObject: new Tbl_Cuotas_ModelComponent({ Estado: undefined }),
             paginate: false,
             AddItemsFromApi: false,
             AutoSave: false,
@@ -225,7 +226,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
      * @returns {string}
      */
     valoracionResumen(Valoracion_compra_cordobas, Valoracion_compra_dolares, Valoracion_empeño_cordobas, Valoracion_empeño_dolares) {
-        return `Compra C$: ${Valoracion_compra_cordobas} - Compra $: ${Valoracion_compra_dolares} - Empeño C$: ${Valoracion_empeño_cordobas} - Empeño $: ${Valoracion_empeño_dolares}`;
+        return `Compra C$: ${ConvertToMoneyString(Valoracion_compra_cordobas)} - Compra $: ${ConvertToMoneyString(Valoracion_compra_dolares)} - Empeño C$: ${ConvertToMoneyString(Valoracion_empeño_cordobas)} - Empeño $: ${ConvertToMoneyString(Valoracion_empeño_dolares)}`;
     }
     buildValoresModel(tasasCambio) {
         this.valoresModel = {
@@ -491,12 +492,15 @@ class Transaction_Valoraciones_View extends HTMLElement {
                 }
             }
         }))
-        this.OptionContainer.append(WRender.Create({
-            tagName: 'button', className: 'Block-Success', innerText: 'Facturar',
-            onclick: async () => {
-                const Compra = this.GenerateCompra();
-            }
-        }))
+        if (WSecurity.HavePermission(Permissions.GESTION_COMPRAS)) {
+            this.OptionContainer.append(WRender.Create({
+                tagName: 'button', className: 'Block-Success', innerText: 'Facturar',
+                onclick: async () => {
+                    const Compra = this.GenerateCompra();
+                }
+            }))
+        }
+
     }
     GenerateCompra() {
         if (this.Cliente.codigo_cliente == undefined) {
@@ -518,12 +522,13 @@ class Transaction_Valoraciones_View extends HTMLElement {
             Datos_Proveedor: this.Cliente
         });
         nuevaCompra.Datos_Compra = { RUC: this.Cliente.identificacion }
+        nuevaCompra.Moneda = "DOLARES";
         const IvaPercent = 0;
         nuevaCompra.Detalle_Compra = this.valoracionesTable?.Dataset.map((/**@type {Transactional_Valoracion} */ element) => {
             const detalleCompra = new Detalle_Compra();
             detalleCompra.Cantidad = 1;
             const beneficioVentaC = this.Beneficios?.find(b => b.Nombre == "BENEFICIO_VENTA_ARTICULO_COMPRADO")
-            
+
             // @ts-ignore
             detalleCompra.Precio_Unitario = element.Valoracion_compra_dolares;
             // @ts-ignore
@@ -548,15 +553,20 @@ class Transaction_Valoraciones_View extends HTMLElement {
             });
             return detalleCompra;
         }) ?? [];
-        this.append(new WModalForm({
+        const modal = new WModalForm({
             title: "REGISTRAR COMPRA",
             ObjectModal: new ComprasComponent({
                 Entity: nuevaCompra,
                 TasaCambio: nuevaCompra.Tasa_Cambio,
                 IvaPercent: IvaPercent,
-                WithTemplate: true
+                WithTemplate: true,
+                action: async (object, response) => {
+                    this.append(ModalMessege(response.message));
+                    modal.close();
+                }
             })
-        }));
+        })
+        this.append(modal);
     }
     selectCliente = (/**@type {Catalogo_Clientes} */ selectCliente) => {
         this.Cliente = selectCliente;
@@ -595,6 +605,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
             for (const prop in this.valoracionesForm?.FormObject) {
                 if (prop == "Detail_Valores") continue;
                 if (prop == "Tasa_interes") continue;
+                if (prop == "Serie") continue;
                 if (prop == "id_valoracion" && valoracion.requireReValoracion()) continue;
                 this.valoracionesForm.FormObject[prop] = valoracion[prop]
             }
@@ -636,13 +647,10 @@ class Transaction_Valoraciones_View extends HTMLElement {
         const beneficioVentaC = this.Beneficios?.find(b => b.Nombre == "BENEFICIO_VENTA_ARTICULO_COMPRADO");
         const beneficioVentaE = this.Beneficios?.find(b => b.Nombre == "BENEFICIO_VENTA_ARTICULO_EMPENO");
         const mora = detail.Tasa_interes * 2 / 100;
-        const precio_venta_empeño = ((parseFloat(detail.Valoracion_empeño_cordobas) * (mora + 1)) * (beneficioVentaE.Valor / 100 + 1));
+        const precio_venta_empeño = ((parseFloat(detail.Valoracion_empeño_dolares) * (mora + 1)) * (beneficioVentaE.Valor / 100 + 1));
         //console.log(precio_venta_empeño);
-
-
         // @ts-ignore
         this.valoracionesForm.FormObject.Precio_venta_empeño_cordobas = (precio_venta_empeño);
-
         // @ts-ignore
         this.valoracionesForm.FormObject.Precio_venta_empeño_dolares = (precio_venta_empeño / this.tasasCambio[0].Valor_de_venta)
         // @ts-ignore
@@ -657,11 +665,11 @@ class Transaction_Valoraciones_View extends HTMLElement {
             <div class="column-venta">
                 <label>VENTA DE EMPEÑO</label>
                 <span>C$ ${precio_venta_empeño.toString() == "NaN" ? "0.00"
-                : precio_venta_empeño.toFixed(3)}</span>
-                <span>$ ${precio_venta_empeño.toString() == "NaN" ? "0.00"
-                : (precio_venta_empeño /
+                : (precio_venta_empeño *
                     // @ts-ignore
                     this.tasasCambio[0].Valor_de_venta).toFixed(3)}</span>
+                <span>$ ${precio_venta_empeño.toString() == "NaN" ? "0.00"
+                : precio_venta_empeño .toFixed(3)}</span>
             </div>
         </div>`);
         this.multiSelectEstadosArticulos?.SetOperationValues();
