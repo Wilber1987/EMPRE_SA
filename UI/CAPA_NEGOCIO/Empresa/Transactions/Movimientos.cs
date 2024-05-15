@@ -83,8 +83,13 @@ namespace Transactions
 				filterData = this.filterData
 			}.Get<Transaction_Movimiento>().Select(z =>
 			{
-				var constOrigen = z.Detail_Movimiento?.Find(x => x.credito == 0);
-				var constDestino = z.Detail_Movimiento?.Find(x => x.debito == 0);
+				var constOrigen = z.moneda == "DOLARES" ?
+					z.Detail_Movimiento?.Find(x => x.credito_dolares == 0) :
+					z.Detail_Movimiento?.Find(x => x.credito == 0);
+				var constDestino = z.moneda == "DOLARES" ?
+				 	z.Detail_Movimiento?.Find(x => x.debito_dolares == 0) :
+				 	z.Detail_Movimiento?.Find(x => x.debito == 0);
+
 				return new Movimientos_Cuentas()
 				{
 					id_movimiento = z.id_movimiento,
@@ -264,7 +269,7 @@ namespace Transactions
 		{
 			try
 			{
-				
+
 				var dbUser = new CatalogDataBaseModel.Security_Users { Id_User = item.id_usuario_crea }.Find<CatalogDataBaseModel.Security_Users>();
 				var constOrigen = item.Detail_Movimiento?.Find(x => x.credito == 0);
 				var constDestino = item.Detail_Movimiento?.Find(x => x.debito == 0);
