@@ -10,8 +10,12 @@ class Movimientos_Cuentas extends EntityClass {
 		}
 	}
 	/**@type {ModelProperty} */ id_movimiento = { type: "number", primary: true }
-	/**@type {ModelProperty} */ Catalogo_Cuentas_Origen = { type: 'WSELECT', ModelObject: () => new Catalogo_Cuentas() };
-	/**@type {ModelProperty} */ Catalogo_Cuentas_Destino = { type: 'WSELECT', ModelObject: () => new Catalogo_Cuentas() };
+	/**@type {ModelProperty} */ Id_cuenta_origen = { type: "number", hidden: true }
+	/**@type {ModelProperty} */ Id_cuenta_destino = { type: "number", hidden: true }
+	/**@type {ModelProperty} */ Catalogo_Cuentas_Origen = { type: 'WSELECT', 
+		ModelObject: () => new Catalogo_Cuentas() , ForeignKeyColumn: "Id_cuenta_origen" };
+	/**@type {ModelProperty} */ Catalogo_Cuentas_Destino = { type: 'WSELECT', 
+		ModelObject: () => new Catalogo_Cuentas(), ForeignKeyColumn: "Id_cuenta_destino" };
 	//moneda = { type: 'select', Dataset: ["C$", "$"], hiddenInTable: false,hidden:true, disabled: true, require: false, };
 	/**@type {ModelProperty} */ moneda = { type: "radio", Dataset: ["CORDOBAS", "DOLARES"] };
 	/**@type {ModelProperty} */ monto = { type: "money", hiddenFilter: true };

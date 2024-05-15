@@ -25,3 +25,8 @@ ADD CONSTRAINT FK_Tbl_Transaccion_Tbl_Lotes
 FOREIGN KEY (Id_Lote)
 REFERENCES facturacion.Tbl_Lotes(Id_Lote);
 
+ALTER TABLE EMPRE_SA.dbo.Transaction_Movimiento ADD id_sucursal int NULL;
+ALTER TABLE EMPRE_SA.dbo.Transaction_Movimiento ADD Id_cuenta_origen int NULL;
+ALTER TABLE EMPRE_SA.dbo.Transaction_Movimiento ADD Id_cuenta_destino int NULL;
+
+

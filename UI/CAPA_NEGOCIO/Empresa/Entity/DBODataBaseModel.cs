@@ -213,6 +213,10 @@ namespace DataBaseModel
 		public bool? correo_enviado { get; set; }
 		public double? tasa_cambio_compra { get; set; }
 		public bool? is_transaction { get; set; }
+		public int? id_sucursal { get; set; } 
+		public int? Id_cuenta_origen { get; set; }
+		public int? Id_cuenta_destino { get; set; }
+
 
 		[OneToMany(TableName = "Detail_Movimiento", KeyColumn = "id_movimiento", ForeignKeyColumn = "id_movimiento")]
 		public List<Detail_Movimiento>? Detail_Movimiento { get; set; }
