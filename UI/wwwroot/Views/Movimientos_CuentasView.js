@@ -99,6 +99,7 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
                 modelExterno.Catalogo_Cuentas_Origen.action = (entity, form) => {
                     modelExterno.Catalogo_Cuentas_Destino.Dataset = this.Cuentas?.filter(x => x.tipo_cuenta == "PROPIA"
                         && x.id_cuentas != entity.Catalogo_Cuentas_Origen.id_cuentas);
+                    entity.Fecha = new Date();
                     form.DrawComponent();
                 }
                 const cuentaPrimaria = this.Cuentas?.find(x => x.tipo_cuenta == "PROPIA"
