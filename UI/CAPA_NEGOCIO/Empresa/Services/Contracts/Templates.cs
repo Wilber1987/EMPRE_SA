@@ -411,8 +411,7 @@ public class ContractsTemplates
 			<div style='font-size: 10px;'>
 				{{tabla_articulos}}
 			</div>
-			<p style='text-align: left; font-weight:bold;margin-top:10px;font-size:10px;'>Observaciones:</p>
-			<p style='font-size:10px;'>{{observaciones}}</p>}
+			<p style='text-align: left; font-weight:bold;margin-top:10px;font-size:10px;'>Observaciones: {{observaciones}}</p>
 
 			<p style='text-align: justify; font-size:9.5px;'>
 				<u>3. TERCERA (INSPECCIÓN DEL VEHÍCULO):</u> El deudor cede los derechos para que el acreedor realice una inspección al estado físico del
@@ -581,9 +580,7 @@ public class ContractsTemplates
 			{{tabla_articulos}}
 		</div>
 
-		<p style='text-align: left; font-weight:bold;margin-top:10px;font-size:10px;'>Observaciones:</p>
-
-		<p style='font-size:10px;'>{{observaciones}}</p>
+		<p style='text-align: left; font-weight:bold;margin-top:10px;font-size:10px;'>Observaciones: {{observaciones}}</p>
 
 		<p style='text-align: justify; font-size:9.5px;'> <u>3. TERCERA (RESPONSABILIDAD LIMITADA DEL ACREEDOR):</u> El
 			acreedor no se responsabiliza por deterioros de los bienes empeñados por consecuencias de terremotos,
@@ -706,7 +703,7 @@ public class ContractsTemplates
 			 la ilegitimidad del origen de los bienes acá descritos.
 		</p>
 		<p style='text-align: justify; font-size:9.5px;'>
-			<u>14. DECIMA CUARTA (ACEPACCIÓN):</u> Los comparecientes declaran expresamente que aceptan el presente contrato
+			<u>14. DECIMA CUARTA (ACEPTACIÓN):</u> Los comparecientes declaran expresamente que aceptan el presente contrato
 			con los términos relacionados, Y leído el presente contrato por las partes lo encontramos conforme, aprobamos,
 			ratificamos y firmamos, en la ciudad de San Marcos a los {{dias}} dias del mes de {{mes}} del año {{anio}}.
 		</p><br></br>
@@ -729,7 +726,7 @@ public class ContractsTemplates
 			</td>       
 			<td style='font-size: 9.5px; text-align: right !important;  width: 70%; border: none !important'>
 				<p style='text-align:right; font-size:10px; margin-top:0px; padding-bottom:0px; margin-bottom:0px;'>
-					<img style='heigth:100px; width:140px;' src='{{firma}}'/>
+					<img style='height:80px; width:140px;' src='{{firma}}'/>
 				</p>
 				<p style='text-align:right; font-size:10px; margin-top:0px; padding-bottom:0px; margin-bottom:0px; border-top: none !important; width: 100% !important; padding-top:10px'>
 					{{datos_apoderado}}

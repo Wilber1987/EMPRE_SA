@@ -46,8 +46,14 @@ namespace Transactions
 		public double? reestructurar_value { get; set; }
 		public double? total_apagar_dolares { get; set; }
 		public string? moneda { get; set; }
+		public string? motivo_anulacion { get; set; }
 		public bool? perdida_de_documento { get; set; }
-
+		public double? monto_dolares { get; set; }
+		public double? monto_cordobas { get; set; }
+		public double? cambio_dolares { get; set; }
+		public double? cambio_cordobas { get; set; }
+		public bool? is_cambio_cordobas { get; set; }
+		public List<Tbl_Cuotas>? CuotasReestructuradas { get; private set; }
 
 		public object SaveRecibos(string token)
 		{
@@ -170,7 +176,22 @@ namespace Transactions
 						id_cliente = contrato.codigo_cliente,
 						id_sucursal = dbUser?.Id_Sucursal,
 						reestructuracion = this.reestructurar == true ? 1 : 0,
-						total_pagado = this.total_apagar_dolares
+						total_pagado = this.total_apagar_dolares,
+						cancel_with_perdida = this.cancelar == true && this.perdida_de_documento == true,
+						Datos_Reestructuracion = new Datos_Reestructuracion
+						{
+							Cuotas_reestructuradas = CuotasReestructuradas,
+							Cuota_Anterior = contrato.cuotafija_dolares,
+							Cuota_Anterior_Cordobas = contrato.cuotafija_dolares,
+							Nuevo_Cuota = CuotasReestructuradas[0].total,
+							Nueva_Cuota_Cordobas = CuotasReestructuradas[0].total * tasa_cambio,
+
+							Monto_Anterior = contrato.monto,
+							Nuevo_Monto = contrato.saldo,
+							Monto_Anterior_Cordobas = contrato.Valoracion_empeño_cordobas,
+							Nuevo_Monto_Cordobas = contrato.saldo * tasa_cambio
+						},
+						Solo_Interes_Mora = solo_interes_mora
 					},
 					Detalle_Factura_Recibo = DetallesFacturaRecibos
 				};
@@ -405,7 +426,7 @@ namespace Transactions
 			if (this.reestructurar == true)
 			{
 				monto = monto - 1;
-				contrato.Reestructurar(this.reestructurar_value);
+				CuotasReestructuradas = contrato?.Reestructurar(this.reestructurar_value);
 				DetallesFacturaRecibos?.Add(
 					new Detalle_Factura_Recibo()
 					{
@@ -459,6 +480,7 @@ namespace Transactions
 					};
 				}
 				factura.estado = EstadoEnum.ANULADO.ToString();
+				factura.Motivo_Anulacion = motivo_anulacion;
 				BeginGlobalTransaction();
 				factura.Update();
 				var contrato = new Transaction_Contratos() { numero_contrato = factura.Factura_contrato.numero_contrato }.Find<Transaction_Contratos>();
@@ -607,20 +629,36 @@ namespace Transactions
 		{
 			try
 			{
-
-
 				//var recibota = new Recibos() { id_recibo = this.id_recibo }.Find<Recibos>();
 				Transaccion_Factura? factura = new Transaccion_Factura() { id_factura = this.id_recibo }.Find<Transaccion_Factura>();
+				string? templateContent = null;
+				bool isRecibo = (factura?.Factura_contrato?.reestructuracion == 0)
+				&& (factura?.Factura_contrato?.perdida_de_documento == 0);
 
-				string templateContent = GenerateReciboHtmlTemplate(factura);
+				if (factura?.Factura_contrato?.reestructuracion != 0)
+				{
+					templateContent = GenerateReestructureTable(factura);
+				}
+				else if (factura?.Factura_contrato?.cancel_with_perdida == true || factura?.Factura_contrato?.Solo_Interes_Mora == true)
+				{
 
+				}
+				else
+				{
+					templateContent = GenerateReciboHtmlTemplate(factura);
+				}
 				return new ResponseService()
 				{
 					status = 200,
-					message = templateContent
+					message = templateContent,
+					body = new
+					{
+						isRecibo = isRecibo,
+						isReestrutured = factura?.Factura_contrato?.reestructuracion != 0,
+						isCancelledWithLostDocument = factura?.Factura_contrato?.cancel_with_perdida
+
+					}
 				};
-
-
 			}
 			catch (System.Exception ex)
 			{
@@ -630,6 +668,92 @@ namespace Transactions
 					message = "Error, intentelo nuevamente " + ex.Message
 				};
 			}
+		}
+
+		private string? GenerateReestructureTable(Transaccion_Factura? factura)
+		{
+			string templateContent = RecibosTemplates.ReestructureTable;
+			Transaction_Contratos? model = new Transaction_Contratos() { numero_contrato = factura?.Factura_contrato?.numero_contrato }.Find<Transaction_Contratos>();
+            List<Transactional_Configuraciones> configuraciones_theme = new Transactional_Configuraciones().GetTheme();
+			var configuraciones_generales = new Transactional_Configuraciones().GetGeneralData();
+			Catalogo_Clientes? cliente = model?.Catalogo_Clientes?.Find<Catalogo_Clientes>();
+			double valorInteres = model?.DesgloseIntereses?.GetPorcentageInteresesSGC() ?? 0;
+
+			Datos_Reestructuracion? datos_Reestructuracion = factura?.Factura_contrato?.Datos_Reestructuracion;
+
+			templateContent = templateContent
+				.Replace("{{cuotafija}}", NumberUtility.ConvertToMoneyString(model?.cuotafija))
+				.Replace("{{numero_contrato}}", model.numero_contrato?.ToString("D9"))
+				.Replace("{{logo}}", "data:image/png;base64," + configuraciones_theme.Find(c => c.Nombre.Equals(ConfiguracionesThemeEnum.LOGO.ToString()))?.Valor)
+
+				.Replace("{{Valoracion_empeño_cordobas}}", NumberUtility.ConvertToMoneyString(datos_Reestructuracion?.Nuevo_Monto_Cordobas))
+				.Replace("{{Valoracion_empeño_dolares}}", NumberUtility.ConvertToMoneyString(datos_Reestructuracion?.Nuevo_Monto))
+				.Replace("{{cuotafija}}", NumberUtility.ConvertToMoneyString(datos_Reestructuracion?.Nueva_Cuota_Cordobas))
+				.Replace("{{cuotafija_dolares}}", NumberUtility.ConvertToMoneyString(datos_Reestructuracion?.Nuevo_Cuota))
+				.Replace("{{plazo}}", NumberUtility.ConvertToMoneyString(datos_Reestructuracion?.Nuevo_Plazo))
+
+				.Replace("{{interes_inicial}}", model.DesgloseIntereses.INTERES_NETO_CORRIENTE.ToString())
+				.Replace("{{sum_intereses}}", (valorInteres + Convert.ToDouble(cliente.Catalogo_Clasificacion_Interes?.porcentaje - 1)).ToString())
+
+				.Replace("{{datos_apoderado_vicepresidente}}", configuraciones_generales.Find(c => c.Nombre.Equals(GeneralDataEnum.APODERADO_VICEPRESIDENTE.ToString()))?.Valor)
+				.Replace("{{resumen_datos_apoderado_vicepresidente}}", configuraciones_generales.Find(c => c.Nombre.Equals(GeneralDataEnum.DATOS_APODERADO_VICEPRESIDENTE.ToString()))?.Valor)
+				.Replace("{{firma_vicepresidente}}", configuraciones_generales.Find(c => c.Nombre.Equals(GeneralDataEnum.FIRMA_DIGITAL_APODERADO_VICEPRESIDENTE.ToString()))?.Valor)
+				.Replace("{{cedula_apoderado_vicepresidente}}", configuraciones_generales.Find(c => c.Nombre.Equals(GeneralDataEnum.CEDULA_APODERADO_VICEPRESIDENTE.ToString()))?.Valor)
+
+				.Replace("{{datos_apoderado}}", configuraciones_generales.Find(c => c.Nombre.Equals(GeneralDataEnum.APODERADO.ToString()))?.Valor)
+				.Replace("{{resumen_datos_apoderado}}", configuraciones_generales.Find(c => c.Nombre.Equals(GeneralDataEnum.DATOS_APODERADO.ToString()))?.Valor)
+				.Replace("{{firma}}", configuraciones_generales.Find(c => c.Nombre.Equals(GeneralDataEnum.FIRMA_DIGITAL_APODERADO.ToString()))?.Valor)
+				.Replace("{{cedula_apoderado}}", configuraciones_generales.Find(c => c.Nombre.Equals(GeneralDataEnum.CEDULA_APODERADO.ToString()))?.Valor)
+
+				.Replace("{{fecha_restructuracion}}", factura?.fecha?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy"))
+				.Replace("{{tabla_articulos}}", ContractTemplateService.GeneratePrendasTableHtml(model.Detail_Prendas,
+					model?.tipo?.Equals(Contratos_Type.EMPENO_VEHICULO.ToString()) == true))
+				.Replace("{{tbody_amortizacion}}", ContractTemplateService.GenerateCuotesTableHtml(factura?.Factura_contrato?.Datos_Reestructuracion?.Cuotas_reestructuradas,
+					cliente, model));
+
+
+
+
+			/*INTERESES*/
+			/*.Replace("{{interes_demas_cargos}}", model.gestion_crediticia.ToString() ?? "6")
+			.Replace("{{interes_demas_cargos_label}}", NumberUtility.NumeroALetras(
+				Convert.ToDecimal(model.gestion_crediticia.ToString() ?? "")))
+
+			.Replace("{{interes_gastos_administrativos}}",
+				model.DesgloseIntereses.GASTOS_ADMINISTRATIVOS.ToString())
+			.Replace("{{interes_gastos_administrativos_label}}", NumberUtility.NumeroALetras(
+					Convert.ToDecimal(model.DesgloseIntereses.GASTOS_ADMINISTRATIVOS.ToString())))
+
+			.Replace("{{interes_gastos_legales}}",
+				model.DesgloseIntereses.GASTOS_LEGALES.ToString())
+			.Replace("{{interes_gastos_legales_label}}", NumberUtility.NumeroALetras(
+				Convert.ToDecimal(model.DesgloseIntereses.GASTOS_LEGALES.ToString())))
+
+			.Replace("{{interes_comisiones_label}}", NumberUtility.NumeroALetras(
+				Convert.ToDecimal(model.DesgloseIntereses.COMISIONES.ToString())))
+			.Replace("{{interes_comisiones}}",
+				model.DesgloseIntereses.COMISIONES.ToString())
+
+			.Replace("{{interes_mantenimiento_valor_label}}", NumberUtility.NumeroALetras(
+				Convert.ToDecimal(model.DesgloseIntereses.MANTENIMIENTO_VALOR.ToString())))
+			.Replace("{{interes_mantenimiento_valor}}",
+				model.DesgloseIntereses.MANTENIMIENTO_VALOR.ToString())
+
+			.Replace("{{interes_inicial_label}}", NumberUtility.NumeroALetras(
+				Convert.ToDecimal(model.DesgloseIntereses.INTERES_NETO_CORRIENTE.ToString())))
+
+			.Replace("{{dias}}", DateTime.Now.Day.ToString())
+			.Replace("{{mes}}", DateTime.Now.ToString("MMMM"))
+			.Replace("{{anio}}", DateTime.Now.Year.ToString())
+			.Replace("{{plazo}}", factura?.Factura_contrato?.Datos_Reestructuracion?.Cuotas_reestructuradas?.Count.ToString())
+
+			.Replace("{{tabla_articulos}}", ContractTemplateService.GeneratePrendasTableHtml(model.Detail_Prendas,
+				model.tipo.Equals(Contratos_Type.EMPENO_VEHICULO.ToString())))
+			.Replace("{{tbody_amortizacion}}", ContractTemplateService.GenerateCuotesTableHtml(factura?.Factura_contrato?.Datos_Reestructuracion?.Cuotas_reestructuradas,
+				cliente, model));*/
+
+
+			return ContractTemplateService.RenderTemplate(templateContent, cliente);
 		}
 
 		private string GenerateReciboHtmlTemplate(Transaccion_Factura? factura)
@@ -648,8 +772,6 @@ namespace Transactions
 			var detalleIds = factura?.Detalle_Factura_Recibo?.Select(d => d.id_cuota.ToString()).ToArray();
 
 			List<Tbl_Cuotas?>? cuotas = factura?.Detalle_Factura_Recibo?.Select(r => r.Tbl_Cuotas).ToList();
-
-
 
 			double sumaInteres = cuotas.Where(c => c.interes.HasValue).Sum(c => c.interes.Value);
 
@@ -731,13 +853,13 @@ namespace Transactions
 				//int diasDeDiferencia = diferencia.Days;
 				//if (cuota.fecha < DateTime.Now)
 				//{
-					var montoMora = cuota.total * ((cuota.Transaction_Contratos?.mora / 100) ?? 0.005) * 1;//como el cronjob es diario se va cargando mora cada dia
-					if (montoMora > 0)
-					{
-						cuota.mora += montoMora;
-						//cuota.total += cuota.total + montoMora;
-						cuota.Update();
-					}
+				var montoMora = cuota.total * ((cuota.Transaction_Contratos?.mora / 100) ?? 0.005) * 1;//como el cronjob es diario se va cargando mora cada dia
+				if (montoMora > 0)
+				{
+					cuota.mora += montoMora;
+					//cuota.total += cuota.total + montoMora;
+					cuota.Update();
+				}
 				//}
 
 			}

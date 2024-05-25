@@ -95,7 +95,7 @@ namespace CAPA_NEGOCIO.Services
 				renderedHtml = RenderTemplate(renderedHtml, cliente)
 					.Replace("{{municipio}}", cliente.Catalogo_Municipio?.nombre)
 					.Replace("{{departamento}}", cliente.Catalogo_Departamento?.nombre)
-					.Replace("{{tabla_articulos}}", GenerateTableHtml(model.Detail_Prendas, model.tipo.Equals(Contratos_Type.EMPENO_VEHICULO.ToString())))
+					.Replace("{{tabla_articulos}}", GeneratePrendasTableHtml(model.Detail_Prendas, model.tipo.Equals(Contratos_Type.EMPENO_VEHICULO.ToString())))
 					//MORA                
 					.Replace("{{valor_mora}}", "C$ " + NumberUtility.ConvertToMoneyString(model.cuotafija_dolares * mora * model.taza_cambio))
 					.Replace("{{valor_mora_label}}", NumberUtility.NumeroALetras(model.cuotafija_dolares * mora * model.taza_cambio, "córdobas"))
@@ -134,7 +134,7 @@ namespace CAPA_NEGOCIO.Services
 					.Replace("{{dias}}", DateTime.Now.Day.ToString())
 					.Replace("{{mes}}", DateTime.Now.ToString("MMMM"))
 					.Replace("{{anio}}", DateTime.Now.Year.ToString())
-					.Replace("{{tbody_amortizacion}}", GenerateTableHtml(model.Tbl_Cuotas, cliente, model));
+					.Replace("{{tbody_amortizacion}}", GenerateCuotesTableHtml(model.Tbl_Cuotas, cliente, model));
 				LoggerServices.AddMessageInfo("FIN DE RENDER 2");
 				// Generar el PDF
 				var pdfFilePath = Path.Combine(System.IO.Path.GetFullPath("./wwwroot/Contracts"), "output.pdf");
@@ -234,16 +234,16 @@ namespace CAPA_NEGOCIO.Services
 			}
 		}
 
-		static string GenerateTableHtml(List<Detail_Prendas> listaDatos, bool isVehiculo)
+		public static string GeneratePrendasTableHtml(List<Detail_Prendas> listaDatos, bool isVehiculo)
 		{
 			if (isVehiculo)
 			{
-				return vehiculoTable(listaDatos);
+				return VehiculosPrendasTable(listaDatos);
 			}
-			return basicTable(listaDatos);
+			return BasicPrendasTable(listaDatos);
 		}
 
-		private static string vehiculoTable(List<Detail_Prendas> listaDatos)
+		public static string VehiculosPrendasTable(List<Detail_Prendas> listaDatos)
 		{
 			StringBuilder htmlBuilder = new StringBuilder();
 			// Abrir la etiqueta de la tabla con atributos de estilo para bordes y ancho 100%
@@ -289,7 +289,7 @@ namespace CAPA_NEGOCIO.Services
 			return htmlBuilder.ToString();
 		}
 
-		private static string basicTable(List<Detail_Prendas> listaDatos)
+		public static string BasicPrendasTable(List<Detail_Prendas> listaDatos)
 		{
 			StringBuilder htmlBuilder = new StringBuilder();
 			// Abrir la etiqueta de la tabla con atributos de estilo para bordes y ancho 100%
@@ -321,7 +321,7 @@ namespace CAPA_NEGOCIO.Services
 			return htmlBuilder.ToString();
 		}
 
-		static string GenerateTableHtml(List<Tbl_Cuotas> listaDatos, Catalogo_Clientes cliente, Transaction_Contratos contrato)
+		public static string GenerateCuotesTableHtml(List<Tbl_Cuotas> listaDatos, Catalogo_Clientes cliente, Transaction_Contratos contrato)
 		{
 			List<Tbl_Cuotas>? objListOrder = listaDatos?.OrderBy(order => order.fecha).ToList();
 			StringBuilder htmlBuilder = new StringBuilder();

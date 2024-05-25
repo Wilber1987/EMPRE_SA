@@ -1,7 +1,206 @@
 namespace CAPA_NEGOCIO.Services;
 public class RecibosTemplates
 {
+	public static string ContractStyle = @"<style>
+				.table td {
+					border: 1px black solid;
+					padding: 5px;
+					width: 7.14% !important;
+				}
 
+				td.col2 {
+					width: 14.28% !important;
+				}
+
+				td.col6 {
+					width: 42.85% !important;
+				}
+
+				td.val {
+					text-align: right;
+				}
+				span.sombrear {
+					color: #000 !important;
+					border: none !important;
+					background-color:#FFFF00 !important;
+				}
+			</style>
+	";
+	public static string ContractHeader = @"
+		<p style='font-size:9.5px; margin-top:0px; margin-bottom:0px; text-align:center; padding-bottom:0px'>
+					<img class='img-container' style='margin:auto' src='{{logo}}' width='100'>
+					<br/>
+					EMPEÑOS Y PRÉSTAMOS S.A 'EMPRE SA'
+					<br/>
+					Carazo - Nicaragua
+					 <br/>
+					“Tu Prosperidad, Es Nuestro Éxito….”
+					  <br/>
+					 RUC J0310000300895
+		</p>
+					  
+	   
+		<p style='font-size:9.5px; margin-top:0px; margin-bottom:0px; font-weight: bold; text-align:center; padding-bottom:0px'>Oficina Central
+					82572062 (Mov); 57199497 (Cl), 25353613 (Planta)</p>
+		<p style='font-size:9.5px; margin-top:0px; margin-bottom:0px; text-align:center; padding-bottom:0px'>TABLA DE PAGO POR REESTRUCTURACIÓN 
+			CONTRATO <br/> Nº {{numero_contrato}} 
+		</p>
+	";
+	public static string Footer = @"<table style='margin-top: 0px; margin-bottom: 0px;  width: 100%'>
+	 <tbody>
+		<tr style='margin-top: 0px; margin-bottom: 0px;  width: 100%'> 
+			<td style='font-size: 9.5px; text-align: left;   width: 33% !important; border: none !important;'>
+				<p style='text-align: center !important; font-size:10px;width: 200px !important; margin-top:100px; border-top: solid 1px #000 !important; padding-bottom:0px; margin-bottom:0px; ; padding-top:10px'>
+					Deudor: {{primer_nombre}} {{segundo_nombre}} {{primer_apellido}} {{segundo_apellidio}}
+				</p>
+				<p style='text-align: center !important; font-size:10px; margin-top:0px; padding-bottom:0px; margin-bottom:0px;'>Cédula:
+					{{identificacion}}
+				</p>
+				<p style='text-align: center !important; font-size:10px; margin-top:0px; padding-bottom:0px; margin-bottom:0px;'>Cel:{{telefono}}
+				</p>
+			</td>     
+			<td style='font-size: 9.5px; text-align: center !important;   width: 33% !important; border: none !important'>
+				<p style='text-align: center !important; font-size:10px; margin-top:0px; padding-bottom:0px; margin-bottom:0px;'>
+					<img style='height:80px; width:140px;' src='{{firma_vicepesiente}}'/>
+				</p>
+				<p style='text-align: center !important; font-size:10px; margin-top:0px; padding-bottom:0px; margin-bottom:0px; border-top: none !important; width: 100% !important; padding-top:10px'>
+					{{datos_apoderado_vicepresidente}}<br/>
+					Vicepresidente de junta directiva<br/>	
+					{{cedula_apoderado_vicepresidente}}
+				</p>
+			</td>    
+			<td style='font-size: 9.5px; text-align: right !important;   width: 33% !important; border: none !important'>
+				<p style='text-align: center !important;  font-size:10px; margin-top:0px; padding-bottom:0px; margin-bottom:0px;'>
+					<img style='height:80px; width:140px;' src='{{firma}}'/>
+				</p>
+				<p style='text-align: center !important; font-size:10px; margin-top:0px; padding-bottom:0px; margin-bottom:0px; border-top: none !important; width: 100% !important; padding-top:10px'>
+					{{datos_apoderado}}<br/>
+					Presidente de junta directiva<br/>
+					{{cedula_apoderado}}
+				</p>
+			</td>   
+		</tr> 
+		</tbody>
+		</table>  
+	";
+	public static string ReestructureTable = @"
+	<!DOCTYPE html>
+		<html>
+		<head>" + ContractStyle + @"</head>
+		<body>" + ContractHeader + @"<style>
+				td {
+					border: 1px black solid;
+					padding: 5px;
+					width: 7.14% !important;
+				}
+
+				td.col2 {
+					width: 14.28% !important;
+				}
+
+				td.col6 {
+					width: 42.85% !important;
+				}
+
+				td.val {
+					text-align: right;
+				}
+				span.sombrear {
+					 border: 1px black solid;
+					color:#FFFF00;
+					background-color:#FFFF00;
+				}
+			</style>
+			<br/>
+			<div style='font-size: 10px;'>
+				{{tabla_articulos}}
+			</div>			
+			<br/><br/>
+			<table class='table' style='width: 100%;font-size:9px !important; border-collapse: collapse;'>
+				<thead>
+					<tr>
+						<td colspan='2' class='col2'><span lang='ES-NI'>CAPITAL PRESTADO C$</span></td>
+						<td colspan='2' class='col2'> <span lang='ES-NI'>C$ {{Valoracion_empeño_cordobas}}</span></td>
+						<td colspan='6' class='col6' rowspan='2'>
+						<span lang='ES-NI'>TABLA DE AMORTIZACION DE DEUDA POR GARANTIA PRENDARIA</span>
+						</td>
+						<td colspan='2' class='col2'><span lang='ES-NI'>CUOTA C$</span></td>
+						<td colspan='2' class='col2'> <span lang='ES-NI'>C$ {{cuotafija}}</span></td>
+					</tr>
+					<tr>
+						<td colspan='2' class='col2'> CAPITAL PRESTADO $</td>
+						<td colspan='2' class='col2'> $ {{Valoracion_empeño_dolares}}</td>
+						<td colspan='2' class='col2'><span lang='ES-NI'>CUOTA FIJA<br>$</br></span> </td>
+						<td colspan='2' class='col2'>$ {{cuotafija_dolares}}</td>
+					</tr>
+					<tr>
+						<td colspan='2' class='col2'>
+						<span lang='ES-NI'>PLAZO PARA CANCELAR: {{plazo}} mes(es)</span>
+						</td>
+						<td colspan='2' class='col2'>
+						<p style='margin-bottom:0cm;text-align:center;line-height:normal'>
+							<span lang='ES-NI'>INTERÉS NETO CORRIENTE(a): {{interes_inicial}}%</span>
+						</p>
+						</td>
+						<td colspan='2' class='col2'>
+						<span lang='ES-NI'>Demás cargos a
+							pagar en relación con lo pactado(b): {{sum_intereses}}%</span>
+						</td>
+						<td colspan='2' class='col2'>
+						<span lang='ES-NI'> (a) + (b)</span>
+						</td>
+						<td colspan='2' class='col2'>
+						<span lang='ES-NI'>ABONO AL
+							CAPITAL</span>
+						</td>
+						<td colspan='2' class='col2'>
+						<span lang='ES-NI'>TOTAL A
+							PAGAR</span>
+						</td>
+						<td colspan='2' class='col2'>
+						<span lang='ES-NI'>MONTO
+							RESTANTE</span>
+						</td>
+					</tr>
+					<tr>
+						<td colspan='2' class='col2'><span lang='ES-NI'>FECHAS DE PAGO</span></td>
+						<td><span lang='ES-NI'>C$</span></td>
+						<td><span lang='ES-NI'>$</span></td>
+						<td><span lang='ES-NI'>C$</span></td>
+						<td><span lang='ES-NI'>$</span></td>
+						<td><span lang='ES-NI'>C$</span></td>
+						<td><span lang='ES-NI'>$</span></td>
+						<td><span lang='ES-NI'>C$</span></td>
+						<td><span lang='ES-NI'>$</span></td>
+						<td><span lang='ES-NI'>C$</span></td>
+						<td><span lang='ES-NI'>$</span></td>
+						<td><span lang='ES-NI'>C$</span></td>
+						<td><span lang='ES-NI'>$</span></td>
+					</tr>
+				</thead>
+				{{tbody_amortizacion}}
+			</table>
+			<p>
+			<u>Modificación a cláusula 4  y 6 del contrato:</u> La presente “Tabla de pago por reestructuración de contrato” 
+			sustituye las fechas de pago que se indican en la cláusula 4 del contrato; así como el monto de pago en 
+			caso que el capital reestructurado sea menor que el capital prestado. La cláusula 6 del contrato que hace 
+			referencia a la mora, queda sujeta a cambios, en caso que la cuota por pagar en la reestructuración no sea 
+			la misma del contrato.
+			
+			 <br/>
+			 
+			<u>Obligación del Deudor:</u> En caso de no entregar esta tabla de pago por reestructuración al momento de cancelar
+			 su deuda, el deudor deberá pagar el monto de $1.00 un dólar o su equivalente en córdobas por pérdida de documento.
+			
+			</p>
+			<p style='text-align: center'>
+			Este contrato se ha reestructurado {{fecha_restructuracion}}
+			</p>
+			" + Footer + @"
+			</body>
+			</html>
+	";
+	
 	public static string recibo = @"
 		<!DOCTYPE html>
 		<html>
@@ -42,7 +241,7 @@ public class RecibosTemplates
 		</head>
 		<body>
 			<img class='img-container' style='margin:auto' src='{{logo}}' width='100'>
-            <br/>
+			<br/>
 			<p class='text-center'>EMPEÑOS Y PRESTAMOS SOCIEDAD ANONIMA.</p>
 			<div class='content-center f-10'>
 				<p>RUC J0310000300895</p>
@@ -119,7 +318,6 @@ public class RecibosTemplates
 				<p class='w-50 '><strong>Saldo Actual:</strong> $ {{saldo_actual_dolares}}</p>
 			</div>        
 			
-			<br><br>
 			<p><strong>Próximo Pago:</strong>  {{proximo_pago}}</p>
 
 
@@ -130,5 +328,6 @@ public class RecibosTemplates
 		</html>
 
 	";
+
 
 }

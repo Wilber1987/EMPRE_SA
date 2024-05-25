@@ -37,7 +37,9 @@ class Gestion_RecibosView extends HTMLElement {
             min: 0,
             max: 0
         }
+        this.diasMora = 0;
         this.Draw();
+
     }
     Draw = async () => {
         this.valoracionesContainer.innerHTML = "";
@@ -178,8 +180,16 @@ class Gestion_RecibosView extends HTMLElement {
 
     DefineMaxAndMin(selectContrato) {
         //TODO BORRAR CICLO DE MORA FORZADA 
+
         this.Contrato.Tbl_Cuotas?.filter(cuota => cuota.Estado == "PENDIENTE")?.forEach(cuota => {
             cuota.mora = this.forceMora(cuota, selectContrato);
+            // @ts-ignore
+            const fechaInicio = new Date(cuota.fecha).toStartDate().getTime();
+            const fechaFin = new Date().getTime();
+            const diasMora = (fechaFin - fechaInicio) / (1000 * 60 * 60 * 24);
+            if (diasMora > 0) {
+                this.diasMora = diasMora;
+            }
         });
         const cuotasPendientes = this.Contrato.Tbl_Cuotas.sort((a, b) => a.id_cuota - b.id_cuota).filter(c => c.Estado?.toUpperCase() == "PENDIENTE");
         const CuotaActual = cuotasPendientes[0];
@@ -189,6 +199,7 @@ class Gestion_RecibosView extends HTMLElement {
         const perdida_de_documento = this.reciboForm?.FormObject?.perdida_de_documento_monto ?? 0;
         const reestructuracion = this.reciboForm?.FormObject?.reestructurar_monto ?? 0;
         const total_capital_restante = mora + saldo_pendiente + interesCuota + perdida_de_documento + reestructuracion;
+        console.log(mora, saldo_pendiente, interesCuota, perdida_de_documento, reestructuracion);
         if (this.reciboForm?.FormObject?.cancelar == true) {
             this.pagoMinimoDolares = total_capital_restante;
             this.pagoMaximoDolares = total_capital_restante;
@@ -216,7 +227,6 @@ class Gestion_RecibosView extends HTMLElement {
         this.pagoMinimoCordobas = this.pagoMinimoDolares * this.tasasCambio[0].Valor_de_venta;
         this.pagoMaximoCordobas = this.pagoMaximoDolares * this.tasasCambio[0].Valor_de_venta;
         this.pagoActualCordobas = this.pagoActual * this.tasasCambio[0].Valor_de_venta;
-        console.log(this.pagoActualCordobas, this.pagoMaximoCordobas);
     }
 
     BuildRecibosModel() {
@@ -235,14 +245,17 @@ class Gestion_RecibosView extends HTMLElement {
                 type: "checkbox", hiddenInTable: true, require: false, action: (recibo, form) => {
                     recibo.solo = false;
                     recibo.reestructurar = false;
+                    recibo.reestructurar_monto = 0;
                     recibo.solo_interes_mora = false;
                     recibo.solo_abono = false;
                     if (recibo.cancelar == true) {
                         form.ModelObject.paga_dolares.disabled = true;
+                        form.ModelObject.reestructurar.disabled = true;
                         form.ModelObject.paga_cordobas.disabled = true;
                     } else {
                         form.ModelObject.paga_dolares.disabled = false;
                         form.ModelObject.paga_cordobas.disabled = false;
+                        form.ModelObject.reestructurar.disabled = false;
                     }
                     this.DefineMaxAndMinInForm(form);
                 }
@@ -282,7 +295,7 @@ class Gestion_RecibosView extends HTMLElement {
                     this.DefineMaxAndMinInForm(form);
                 }
             }, paga_cordobas: {
-                type: 'MONEY', max: this.pagoMaximoCordobas?.toFixed(3), default: this.pagoActualCordobas,
+                type: 'MONEY', max: this.pagoMaximoCordobas?.toFixed(3), default: this.pagoActualCordobas,  disabled: true, 
                 min: this.pagoMinimoCordobas?.toFixed(3), action: (/**@type {Recibos}*/ ObjectF, form, control) => {
                     if (parseFloat(control.value) == parseFloat(control.max)) {
                         //control.value =  parseFloat(control.max).toFixed(3);
@@ -337,6 +350,9 @@ class Gestion_RecibosView extends HTMLElement {
                     ObjectF.monto_cordobas = (ObjectF.monto_dolares * ObjectF.tasa_cambio).toFixed(3);
                     ObjectF.cambio_dolares = (ObjectF.monto_dolares - ObjectF.paga_dolares).toFixed(3);
                     ObjectF.cambio_cordobas = (ObjectF.monto_cordobas - ObjectF.paga_cordobas).toFixed(3);
+                    if (ObjectF.moneda == "DOLARES") {
+                        ObjectF.cambio_cordobas = ((ObjectF.monto_dolares - ObjectF.paga_dolares) * this.tasasCambio[0].Valor_de_compra).toFixed(3);
+                    }
                     this.reciboForm?.DrawComponent();
                 }
             }, monto_cordobas: {
@@ -344,23 +360,52 @@ class Gestion_RecibosView extends HTMLElement {
                     ObjectF.monto_dolares = (ObjectF.monto_cordobas * ObjectF.tasa_cambio).toFixed(3);
                     ObjectF.cambio_dolares = (ObjectF.monto_dolares - ObjectF.paga_dolares).toFixed(3);
                     ObjectF.cambio_cordobas = (ObjectF.monto_cordobas - ObjectF.paga_cordobas).toFixed(3);
+                    if (ObjectF.moneda == "DOLARES") {
+                        ObjectF.cambio_cordobas = ((ObjectF.monto_dolares - ObjectF.paga_dolares) * this.tasasCambio[0].Valor_de_compra).toFixed(3);
+                    }
                     this.reciboForm?.DrawComponent();
                 }
             }, cambio_dolares: {
                 type: 'MONEY', disabled: true, require: false, defaultValue: 0, action: (/**@type {Recibos}*/ ObjectF, form) => {
-                    return ConvertToMoneyString(ObjectF.cambio_dolares = ObjectF.monto_dolares - ObjectF.paga_dolares);
+                    //console.log(ObjectF.monto_dolares);
+                    //return ConvertToMoneyString(ObjectF.cambio_dolares = ObjectF.monto_dolares - ObjectF.paga_dolares);
                 }
             }, cambio_cordobas: {
                 type: 'MONEY', disabled: true, require: false, defaultValue: 0, action: (/**@type {Recibos}*/ ObjectF, form) => {
-                    return ConvertToMoneyString(ObjectF.cambio_cordobas = ObjectF.monto_cordobas - ObjectF.paga_cordobas);
+                    //return ConvertToMoneyString(ObjectF.cambio_cordobas = ObjectF.monto_cordobas - ObjectF.paga_cordobas);
                 }
-            }
+            }, moneda : { type: "radio", Dataset: ["DOLARES","CORDOBAS"], action: (/**@type {Recibos}*/ ObjectF, form) => {
+                if (ObjectF.moneda == "DOLARES") {
+                    form.ModelObject.monto_dolares.hidden = false;
+                    form.ModelObject.monto_cordobas.hidden = true;
+
+                    form.ModelObject.paga_cordobas.disabled = true;
+                    form.ModelObject.paga_dolares.disabled = false;
+
+                    form.ModelObject.is_cambio_cordobas.hidden = false;
+                    ObjectF.is_cambio_cordobas = false;
+                    ObjectF.cambio_cordobas = ((ObjectF.monto_dolares - ObjectF.paga_dolares) * this.tasasCambio[0].Valor_de_compra).toFixed(3);
+                    this.reciboForm?.DrawComponent();
+                } else {
+                    form.ModelObject.monto_dolares.hidden = true;
+                    form.ModelObject.monto_cordobas.hidden = false;
+
+                    form.ModelObject.paga_cordobas.disabled = false;
+                    form.ModelObject.paga_dolares.disabled = true;
+                    
+                    form.ModelObject.is_cambio_cordobas.hidden = true;
+                    ObjectF.is_cambio_cordobas = false;
+                    ObjectF.cambio_cordobas = (ObjectF.monto_cordobas - ObjectF.paga_cordobas).toFixed(3);
+                    this.reciboForm?.DrawComponent();
+                }
+            }}
         });
     }
 
     DefineMaxAndMinInForm(form) {
         this.DefineMaxAndMin(this.SelectedContrato);
         this.reciboForm.FormObject.paga_dolares = this.pagoActual?.toFixed(3);
+        this.reciboForm.FormObject.total_apagar_dolares = this.pagoActual?.toFixed(3);
         this.reciboForm.FormObject.paga_cordobas = this.pagoActualCordobas?.toFixed(3);
         this.reciboForm.FormObject.monto_dolares = this.pagoActual?.toFixed(3);
         this.reciboForm.FormObject.monto_cordobas = this.pagoActualCordobas?.toFixed(3);
@@ -652,7 +697,7 @@ class Gestion_RecibosView extends HTMLElement {
             formObject["monto_dolares"] = formObject["paga_dolares"]
             formObject["solo_abono"] = false;
             formObject["cancelar"] = false;
-            formObject["total_apagar_dolares"] = primeraCuotaConCapitalMayorACero;
+            formObject["total_apagar_dolares"] = this.pagoActual.toFixed(3);;
         }
 
     }
@@ -668,7 +713,7 @@ class Gestion_RecibosView extends HTMLElement {
         }      
         .column-venta{
             display: grid;
-            grid-template-columns: 20% 20% 20% 20% 20%;
+            grid-template-columns: repeat(6, 16%);
             gap: 10px;
             margin-bottom: 5px;
             font-size: 12px;
@@ -719,12 +764,15 @@ class Gestion_RecibosView extends HTMLElement {
             justify-content: space-between;
             flex-wrap: wrap;    
             overflow: hidden;
-            border-right: 8px solid #d9d9d9;
+            border-left: 8px solid #d9d9d9;
             border-radius: 8px;
             transition: all .5s;
         }
         .DataContainer:hover {           
-            border-right: 8px solid #575757;
+            border-left: 8px solid #575757;
+        }
+        .diasMora {
+            color: red;
         }
         .proyeccion-container-detail {
             padding: 20px;
@@ -755,6 +803,7 @@ class Gestion_RecibosView extends HTMLElement {
         const diasDeDiferencia = (diferencia / (1000 * 60 * 60 * 24)) >= 0 ? (diferencia / (1000 * 60 * 60 * 24)) : 0;
         //console.log(diasDeDiferencia, (diferencia / (1000 * 60 * 60 * 24)) < 0);
         const montoMora = cuota.total * ((contrato?.mora / 100) ?? 0.005) * diasDeDiferencia;
+        this.diasMora = diasDeDiferencia
         console.log(diasDeDiferencia);
         return montoMora;
     }
@@ -831,6 +880,10 @@ class Gestion_RecibosView extends HTMLElement {
         <div class="DataContainer">
             <span>Tipo de articulo:</span>
             <label>${WOrtograficValidation.es(this.GetCategoriaContrato(this.Contrato.Detail_Prendas))}</label>
+        </div>
+        <div class="DataContainer ${this.diasMora > 0 ? "diasMora" : ""}">
+            <span>Días en mora:</span>
+            <label class="">${this.diasMora ?? 0}</label>
         </div>
     </div>
     <div>
