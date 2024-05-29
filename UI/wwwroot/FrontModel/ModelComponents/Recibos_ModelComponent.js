@@ -86,7 +86,7 @@ class Recibos_ModelComponent extends EntityClass {
     };
 
     /**@type {ModelProperty} */ moneda = { type: "radio", Dataset: ["DOLARES","CORDOBAS"] };
-    /**@type {ModelProperty} */ reestructurar_value = { type: "number", label: "meses a reestructurar", placeholder: "número de meses ejm. 1", hidden: true, min: 1, require: false };
+    /**@type {ModelProperty} */ reestructurar_value = { type: "number", label: "meses a reestructurar", placeholder: "número de meses ejm. 1", hidden: true, min: 1, require: true };
     /**@type {ModelProperty} */ is_cambio_cordobas = { type: "checkbox", require: false, label: "dar cambio en córdobas" , hidden: false};
 
 

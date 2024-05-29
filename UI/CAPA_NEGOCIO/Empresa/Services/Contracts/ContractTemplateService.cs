@@ -334,7 +334,7 @@ namespace CAPA_NEGOCIO.Services
 				htmlBuilder.Append("<tr>");
 				htmlBuilder.Append($"<td class=\"desc\" colspan=\"2\">{dato.fecha?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy")}</td>");
 
-				var interesNeto = dato.interes * (contrato.DesgloseIntereses?.INTERES_NETO_CORRIENTE / 100);
+				var interesNeto = dato.interes / contrato.tasas_interes * (contrato.DesgloseIntereses?.INTERES_NETO_CORRIENTE / 100);
 				var demasCargos = dato.interes - interesNeto;
 
 				htmlBuilder.Append($"<td class=\"val\">{NumberUtility.ConvertToMoneyString(interesNeto * dato.tasa_cambio)}</td>");

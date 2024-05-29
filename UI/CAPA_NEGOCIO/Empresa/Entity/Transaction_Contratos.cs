@@ -134,7 +134,7 @@ namespace DataBaseModel
 			this.cuotafija_dolares = this.GetPago(monto, plazo);
 			this.cuotafija = this.cuotafija_dolares * this.taza_cambio;
 			var capital = this.Valoracion_empeño_dolares;
-			 List<Tbl_Cuotas> cuotas = new List<Tbl_Cuotas>();
+			List<Tbl_Cuotas> cuotas = new List<Tbl_Cuotas>();
 
 			for (var index = 0; index < plazo; index++)
 			{

@@ -119,7 +119,7 @@ public class RecibosTemplates
 			<table class='table' style='width: 100%;font-size:9px !important; border-collapse: collapse;'>
 				<thead>
 					<tr>
-						<td colspan='2' class='col2'><span lang='ES-NI'>CAPITAL PRESTADO C$</span></td>
+						<td colspan='2' class='col2'><span lang='ES-NI'>CAPITAL REESTRUCTURADO C$</span></td>
 						<td colspan='2' class='col2'> <span lang='ES-NI'>C$ {{Valoracion_empeño_cordobas}}</span></td>
 						<td colspan='6' class='col6' rowspan='2'>
 						<span lang='ES-NI'>TABLA DE AMORTIZACION DE DEUDA POR GARANTIA PRENDARIA</span>
@@ -128,7 +128,7 @@ public class RecibosTemplates
 						<td colspan='2' class='col2'> <span lang='ES-NI'>C$ {{cuotafija}}</span></td>
 					</tr>
 					<tr>
-						<td colspan='2' class='col2'> CAPITAL PRESTADO $</td>
+						<td colspan='2' class='col2'> CAPITAL REESTRUCTURADO $</td>
 						<td colspan='2' class='col2'> $ {{Valoracion_empeño_dolares}}</td>
 						<td colspan='2' class='col2'><span lang='ES-NI'>CUOTA FIJA<br>$</br></span> </td>
 						<td colspan='2' class='col2'>$ {{cuotafija_dolares}}</td>
@@ -150,12 +150,10 @@ public class RecibosTemplates
 						<span lang='ES-NI'> (a) + (b)</span>
 						</td>
 						<td colspan='2' class='col2'>
-						<span lang='ES-NI'>ABONO AL
-							CAPITAL</span>
+						<span lang='ES-NI'>ABONO AL	CAPITAL</span>
 						</td>
 						<td colspan='2' class='col2'>
-						<span lang='ES-NI'>TOTAL A
-							PAGAR</span>
+						<span lang='ES-NI'>TOTAL A PAGAR</span>
 						</td>
 						<td colspan='2' class='col2'>
 						<span lang='ES-NI'>MONTO

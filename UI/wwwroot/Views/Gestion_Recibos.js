@@ -795,7 +795,7 @@ class Gestion_RecibosView extends HTMLElement {
     forceMora(cuota, contrato) {
         const fechaOriginal = new Date(cuota.fecha);
         // @ts-ignore
-        const fechaActual = new Date().addDays(32);
+        const fechaActual = new Date().addDays(33);
         fechaOriginal.setHours(0, 0, 0, 0);
         fechaActual.setHours(0, 0, 0, 0);
         // @ts-ignore
@@ -804,6 +804,7 @@ class Gestion_RecibosView extends HTMLElement {
         //console.log(diasDeDiferencia, (diferencia / (1000 * 60 * 60 * 24)) < 0);
         const montoMora = cuota.total * ((contrato?.mora / 100) ?? 0.005) * diasDeDiferencia;
         this.diasMora = diasDeDiferencia
+        console.log(this.diasMora, fechaActual, fechaOriginal);
         console.log(diasDeDiferencia);
         return montoMora;
     }
