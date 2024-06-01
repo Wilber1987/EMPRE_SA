@@ -2,6 +2,7 @@ using CAPA_DATOS.Security;
 using Microsoft.AspNetCore.Mvc;
 using System.Text;
 using Transactions;
+using UI.CAPA_NEGOCIO.Empresa.Services.Recibos;
 
 namespace API.Controllers
 {
@@ -38,7 +39,7 @@ namespace API.Controllers
 
         [HttpPost]
         [AuthController(Permissions.GESTION_RECIBOS)]
-        public Object? printRecibo(Recibos_Transactions inst)
+        public Object? printRecibo(RecibosTemplateServices inst)
         {            
             return inst.PrintRecibo(HttpContext.Session.GetString("seassonKey"));
         }

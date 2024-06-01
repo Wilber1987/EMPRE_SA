@@ -10,6 +10,7 @@ class Recibos extends EntityClass {
         this.cambio_dolares = undefined;
         this.cambio_cordobas = undefined;
         this.is_cambio_cordobas = undefined;
+        this.pago_parcial = undefined;
     }
     /**@type {Number}*/ id_recibo;
     /**@type {Number}*/ consecutivo;

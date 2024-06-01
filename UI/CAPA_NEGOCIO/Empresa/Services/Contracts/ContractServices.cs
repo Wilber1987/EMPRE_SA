@@ -193,5 +193,32 @@ namespace Model
 				}
 			});
 		}
+
+		internal object GetParcialesData(ParcialesData data)
+		{
+			List<Transaccion_Factura> transaccion_Facturas = new Transaccion_Factura
+			{
+				numero_contrato = data.numero_contrato
+			}.Get<Transaccion_Factura>();
+			List<Detalle_Factura_Recibo> detalle_Factura_Recibos = transaccion_Facturas.Where(t => t.Detalle_Factura_Recibo != null).ToList()
+				.SelectMany(t => t.Detalle_Factura_Recibo).ToList();
+			List<Detalle_Factura_Recibo> detalle_Factura_Recibos_Parciales = detalle_Factura_Recibos
+					.Where(r => r.id_cuota == data.id_cuota && r.concepto.ToUpper().Contains("PAGO PARCIAL")).ToList();
+
+			double pagoParciales = 0;
+			if (detalle_Factura_Recibos_Parciales.Count != 0)
+			{
+				pagoParciales = detalle_Factura_Recibos_Parciales.Select(c => Convert.ToDouble(c.monto_pagado)).ToList().Sum();
+			}
+			return new
+			{
+				pagoParciales
+			};
+		}
+		public class ParcialesData
+		{
+			public int? numero_contrato { get; set; }
+			public int? id_cuota { get; set; }
+		}
 	}
 }
