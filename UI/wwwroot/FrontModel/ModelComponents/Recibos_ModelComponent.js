@@ -80,16 +80,14 @@ class Recibos_ModelComponent extends EntityClass {
         }
     };
     /**@type {ModelProperty} */ total_apagar_dolares = {
-        type: "operation", action: (recibo, form) => {
-            const val = parseFloat(recibo.paga_dolares ?? 0)
-                + parseFloat(recibo.mora_dolares ?? 0)
-                + parseFloat(recibo.reestructurar_monto ?? 0)
-            return val.toFixed(3);
+        type: "text", disabled: true, action: (recibo, form) => {
+           
         }
     };
 
     /**@type {ModelProperty} */ moneda = { type: "radio", Dataset: ["DOLARES","CORDOBAS"] };
-    /**@type {ModelProperty} */ reestructurar_value = { type: "number", label: "meses a reestructurar", placeholder: "número de meses ejm. 1", hidden: true, min: 1, require: false };
+    /**@type {ModelProperty} */ reestructurar_value = { type: "number", label: "meses a reestructurar", placeholder: "número de meses ejm. 1", hidden: true, min: 1, require: true };
+    /**@type {ModelProperty} */ is_cambio_cordobas = { type: "checkbox", require: false, label: "dar cambio en córdobas" , hidden: false};
 
 
     VerRecibo = async () => {
