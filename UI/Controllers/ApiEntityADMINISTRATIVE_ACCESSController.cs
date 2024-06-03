@@ -38,7 +38,7 @@ namespace API.Controllers
         [AuthController(Permissions.ADMIN_ACCESS)]
         public object saveTransactional_Configuraciones(Transactional_Configuraciones inst)
         {
-            return inst.Save();
+            return inst?.Save();
         }
         [HttpPost]
         [AuthController(Permissions.ADMIN_ACCESS)]

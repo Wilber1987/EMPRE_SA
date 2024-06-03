@@ -256,13 +256,13 @@ class Transaction_Contratos_ModelComponent extends EntityClass {
     numero_contrato = { type: "number", primary: true };
     fecha_contrato = { type: "date", hiddenFilter: true };
     fecha_cancelar = { type: "date", hiddenInTable: true, hiddenFilter: true };
-    monto = { type: "MONEY", hiddenInTable: true, hiddenFilter: true };
+    monto = { type: "MONEY", label: "saldo $",  hiddenInTable: true, hiddenFilter: true };
     interes = { type: "MONEY", hiddenInTable: true, hiddenFilter: true, label: "interés $"  };
     mora = { type: "PERCENTAGE", hiddenInTable: true, hiddenFilter: true };
     estado = { type: "Select", Dataset: ["ACTIVO", "CANCELADO", "ANULADO"] };
     fecha_vencimiento = { type: "date", hiddenFilter: true };
     codigo_cliente = { type: "number", hiddenInTable: true, hiddenFilter: true };
-    saldo = { type: "MONEY", hiddenFilter: true, hiddenInTable: true };
+    saldo = { type: "MONEY", label: "saldo $", hiddenFilter: true, hiddenInTable: true };
     abonos = { type: "number", hiddenInTable: true, hiddenFilter: true };
     tipo = { type: "text", hiddenInTable: true, hiddenFilter: true };
     entregado = { type: "text", hiddenInTable: true, hiddenFilter: true };

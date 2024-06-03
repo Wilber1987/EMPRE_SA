@@ -265,6 +265,7 @@ namespace DataBaseModel
 		public double? iva { get; set; }
 		public double? total_cordobas { get; set; }
 		public string? Moneda { get; set; }
+		public string? Motivo_Anulacion { get; set; }
 		public string? Consecutivo { get;  set; }
 
 		[JsonProp]
@@ -295,7 +296,30 @@ namespace DataBaseModel
 		public double? reestructuracion { get; set; }
 		public double? perdida_de_documento { get; set; }
 		public double? total_pagado { get; set; }
-	}
+		public bool? cancel_with_perdida { get; set; }
+	
+		public bool? Solo_Interes_Mora { get;  set; }
+		public Datos_Reestructuracion? Datos_Reestructuracion { get; set; }
+        public double? mora_pagado { get;  set; }
+        public double? interes_pagado { get;  set; }
+        public double? abono_capital { get; internal set; }
+    }
+	
+	public class Datos_Reestructuracion 
+	{
+		
+		public int? Plazo_Anterior { get; set; }
+		public int? Nuevo_Plazo { get; set; }
+		public double? Monto_Anterior { get; set; }
+		public double? Nuevo_Monto { get; set; }		
+		public double? Cuota_Anterior { get; set; }
+		public double? Nuevo_Cuota { get; set; }
+		public List<Tbl_Cuotas>? Cuotas_reestructuradas  { get; set; }
+        public double? Cuota_Anterior_Cordobas { get;  set; }
+        public double? Nueva_Cuota_Cordobas { get;  set; }
+        public double? Monto_Anterior_Cordobas { get;  set; }
+        public double? Nuevo_Monto_Cordobas { get;  set; }
+    }
 
 
 	public class Catalogo_Producto : EntityClass

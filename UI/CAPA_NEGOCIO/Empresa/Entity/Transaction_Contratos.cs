@@ -117,7 +117,7 @@ namespace DataBaseModel
 			}
 		}
 
-		public void Reestructurar(double? reestructuracion_value)
+		public List<Tbl_Cuotas> Reestructurar(double? reestructuracion_value)
 		{
 			if (this.reestructurado == null)
 			{
@@ -126,20 +126,22 @@ namespace DataBaseModel
 			this.plazo += Convert.ToInt32(reestructuracion_value);
 			this.reestructurado += 1;
 			this.Update();
-			CrearCuotas(this.saldo, reestructuracion_value);
+			return CrearCuotas(this.saldo, reestructuracion_value);
 		}
-		public void CrearCuotas(double? monto, double? plazo)
+		public List<Tbl_Cuotas> CrearCuotas(double? monto, double? plazo)
 		{
 			var tasasCambio = new Catalogo_Cambio_Divisa().Get<Catalogo_Cambio_Divisa>()[0].Valor_de_venta;
 			this.cuotafija_dolares = this.GetPago(monto, plazo);
 			this.cuotafija = this.cuotafija_dolares * this.taza_cambio;
 			var capital = this.Valoracion_empeño_dolares;
+			List<Tbl_Cuotas> cuotas = new List<Tbl_Cuotas>();
 
 			for (var index = 0; index < plazo; index++)
 			{
 				var abono_capital = this.cuotafija_dolares - (capital * this.tasas_interes);
 				var cuota = new Tbl_Cuotas
 				{
+					Estado = EstadoEnum.PENDIENTE.ToString(),
 					fecha = this.fecha?.AddMonths(1),
 					total = this.cuotafija_dolares,
 					interes = capital * this.tasas_interes,
@@ -150,7 +152,9 @@ namespace DataBaseModel
 				};
 				capital -= abono_capital;
 				cuota.Save();
+				cuotas.Add(cuota);
 			}
+			return cuotas;
 		}
 		private double? GetPago(double? monto, double? cuotas)
 		{

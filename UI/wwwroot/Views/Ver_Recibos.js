@@ -24,16 +24,33 @@ class Ver_RecibosView extends HTMLElement {
                 UserActions: [
                     {
                         name: "Anular", action: (factura) => {
-                            const modal = ModalVericateAction(async () => {
-                                const response =
-                                    await WAjaxTools.PostRequest("../api/ApiRecibos/anularRecibo",
-                                        { id_recibo: factura.id_factura, tasa_cambio: tasa[0].Valor_de_venta, tasa_cambio_compra: tasa[0].Valor_de_compra });
+                            factura.motivo_anulacion = null
+                            const modal = new WModalForm({
+                                ModelObject: {
+                                    motivo_anulacion: { type: "TEXTAREA" }
+                                }, EditObject: factura,
+                                title: "ANULACIÓN",
+                                ObjectOptions: {                                  
+                                    SaveFunction: async () => {
+                                        if (factura.estado == "ANULADO") {
+                                            this.append(ModalMessege("Recibo ya esta anulado"));
+                                            return;
+                                        }
+                                        this.append(ModalVericateAction(async (editObject) => {
+                                            const response =
+                                                await WAjaxTools.PostRequest("../api/ApiRecibos/anularRecibo",
+                                                    { id_recibo: factura.id_factura, 
+                                                        tasa_cambio: tasa[0].Valor_de_venta, 
+                                                        tasa_cambio_compra: tasa[0].Valor_de_compra,
+                                                        motivo_anulacion: factura.motivo_anulacion });
 
-                                this.append(ModalMessege(response.message));
-
-                                modal.close();
-                            }, "¿Esta seguro que desea anular este recibo?")
-                            this.append(modal)
+                                            this.append(ModalMessege(response.message, null, true));
+                                            modal.close();
+                                        }, "Esta seguro que desea anular este contrato"))
+                                    }
+                                }
+                            });
+                            this.append(modal);
                         }
                     }, {
                         name: "Imprimir", action: async (factura) => {
@@ -74,7 +91,7 @@ class Ver_RecibosView extends HTMLElement {
     async printRecibo(id_factura, tasa) {
         const response = await WAjaxTools.PostRequest("../api/ApiRecibos/printRecibo",
             { id_recibo: id_factura, tasa_cambio: tasa[0].Valor_de_compra });
-        if (response.status == 200) {
+        if (response.status == 200 && response.message != null) {
             const objFra = WRender.Create({
                 tagName: "iframe",
                 style: { minHeight: "700px" },
@@ -88,7 +105,7 @@ class Ver_RecibosView extends HTMLElement {
             btn.onclick = print
             this.append(new WModalForm({
                 ObjectModal: WRender.Create({
-                    class: "print-container", children: [this.PrintIconStyle(), [btn],
+                    class: "print-container", children: [this.PrintIconStyle(response.body), [btn],
 
                     WRender.Create({ className: "print-container-iframe", children: [objFra] })]
                 })
@@ -106,7 +123,7 @@ class Ver_RecibosView extends HTMLElement {
     }
 
 
-    PrintIconStyle() {
+    PrintIconStyle(responseBody) {
         return css`
            .print {
             width: 30px;
@@ -127,12 +144,10 @@ class Ver_RecibosView extends HTMLElement {
            border: solid 1px #bdbcbc; 
            margin-bottom: 5px;
         } .print-container-iframe {
-            overflow-y: auto;  
-            max-height: 650px;
             background-color: #bdbcbc;  
         }  .print-container iframe { 
-            width: 320px;
-            max-width: 320px;
+            width: ${ responseBody.isReestrutured ? "95%" : "320px"} ;
+            max-width: ${ responseBody.isReestrutured ? "1100px" : "320px"} ;
             margin: 10px auto;
             display: block;
             background-color: #fff;

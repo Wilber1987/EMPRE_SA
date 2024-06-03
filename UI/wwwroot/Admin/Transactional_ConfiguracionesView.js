@@ -2,7 +2,7 @@ import { WRender, ComponentsManager, WAjaxTools } from "../WDevCore/WModules/WCo
 import { StylesControlsV2, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js"
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
 import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js"
-import { Transactional_Configuraciones } from "../FrontModel/ADMINISTRATIVE_ACCESSDataBaseModel.js"
+import { Transactional_Configuraciones } from "./ADMINISTRATIVE_ACCESSDataBaseModel.js"
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 class Transactional_ConfiguracionesView extends HTMLElement {
     constructor(props) {
@@ -63,10 +63,13 @@ class Transactional_ConfiguracionesView extends HTMLElement {
     }
 
     IsNumber(element) {
-        return element.Tipo_Configuracion == "INTERESES" || element.Tipo_Configuracion == "BENEFICIOS" || element.Tipo_Configuracion == "NUMBER";
+        return element.Tipo_Configuracion == "INTERESES" ||
+            element.Tipo_Configuracion == "BENEFICIOS" ||
+            element.Tipo_Configuracion == "NUMBER";
     }
     IsDrawImage(element) {
-        return element.Nombre == "FIRMA_DIGITAL_APODERADO"
+        return element.Nombre == "FIRMA_DIGITAL_APODERADO" ||
+            element.Nombre == "FIRMA_DIGITAL_APODERADO_VICEPRESIDENTE"
     }
     IsImage(element) {
         return element.Nombre == "LOGO"
