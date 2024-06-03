@@ -141,6 +141,7 @@ namespace DataBaseModel
 				var abono_capital = this.cuotafija_dolares - (capital * this.tasas_interes);
 				var cuota = new Tbl_Cuotas
 				{
+					Estado = EstadoEnum.PENDIENTE.ToString(),
 					fecha = this.fecha?.AddMonths(1),
 					total = this.cuotafija_dolares,
 					interes = capital * this.tasas_interes,
