@@ -1,24 +1,17 @@
 //@ts-check
 // @ts-ignore
-import { WRender, ComponentsManager, WAjaxTools, WArrayF, html, type } from "../WDevCore/WModules/WComponentsTools.js";
-import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js"
+import { ComponentsManager, WRender, html } from "../WDevCore/WModules/WComponentsTools.js";
 // @ts-ignore
-import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
+import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js";
 //import {  Catalogo_Cambio_Dolar, Catalogo_Clientes,  Detail_Prendas_Vehiculos_ModelComponent, Transaction_Contratos_ModelComponent } from "../FrontModel/DBODataBaseModel.js"
 //import {  Detalle_Factura, Tbl_Factura, Detail_Factura_ModelComponent, Cat_Proveedor  } from "../FrontModel/FacturacionModel.js"
 // @ts-ignore
-import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
-import { Detail_Prendas, Detail_Prendas_Vehiculos, Transaction_Contratos, ValoracionesTransaction } from "../FrontModel/Model.js";
-import { css } from "../WDevCore/WModules/WStyledRender.js";
-import { ValoracionesSearch, clientSearcher, contratosSearcher } from "../modules/SerchersModules.js";
-import { ModalMessege, ModalVericateAction, WForm } from "../WDevCore/WComponents/WForm.js";
-import { AmoritizationModule } from "../modules/AmortizacionModule.js";
-import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
-import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
-import { Transactional_Configuraciones } from "../FrontModel/ADMINISTRATIVE_ACCESSDataBaseModel.js";
-import { Tbl_Compra } from "../Facturacion/FrontModel/Tbl_Compra.js";
 import { Tbl_Compra_ModelComponent } from "../Facturacion/FrontModel/ModelComponent/Tbl_Compra_ModelComponent.js";
-import {  Catalogo_Cambio_Divisa_ModelComponent, Transactional_Valoracion } from "../FrontModel/DBODataBaseModel.js";
+import { Tbl_Compra } from "../Facturacion/FrontModel/Tbl_Compra.js";
+import { Catalogo_Cambio_Divisa_ModelComponent } from "../FrontModel/DBODataBaseModel.js";
+import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
+import { ModalMessege, WForm } from "../WDevCore/WComponents/WForm.js";
+import { css } from "../WDevCore/WModules/WStyledRender.js";
 
 /**
  * @typedef {Object} facturaconfig
@@ -222,7 +215,7 @@ class MainFactura extends HTMLElement {
 `
 }
 customElements.define('w-main-contract', MainFactura);
-export { MainFactura }
+export { MainFactura };
 
 window.addEventListener('load', async () => {
     //const contrato = await new Tbl_Compra().Get();

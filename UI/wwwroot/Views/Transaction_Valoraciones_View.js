@@ -6,23 +6,24 @@ import { ComponentsManager, ConvertToMoneyString, html, WArrayF, WRender } from 
 // @ts-ignore
 import { Catalogo_Cambio_Divisa_ModelComponent, Catalogo_Categoria_ModelComponent, Catalogo_Clientes, Catalogo_Estados_Articulos, Transactional_Valoracion } from "../FrontModel/DBODataBaseModel.js";
 import { ModalMessege, WForm } from "../WDevCore/WComponents/WForm.js";
-// @ts-ignore
-import { Transactional_Configuraciones } from "../FrontModel/ADMINISTRATIVE_ACCESSDataBaseModel.js";
-import { Detail_Prendas, Transaction_Contratos, ValoracionesTransaction } from "../FrontModel/Model.js";
-import { Tbl_Cuotas_ModelComponent } from "../FrontModel/ModelComponents.js";
-import { AmoritizationModule } from "../modules/AmortizacionModule.js";
-import { clientSearcher, ValoracionesSearch } from "../modules/SerchersModules.js";
-import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
-import { css } from "../WDevCore/WModules/WStyledRender.js";
-import { Tbl_Compra } from "../Facturacion/FrontModel/Tbl_Compra.js";
+
+
+import { Transactional_Configuraciones } from "../Admin/ADMINISTRATIVE_ACCESSDataBaseModel.js";
+import { Cat_Categorias } from "../Facturacion/FrontModel/Cat_Categorias.js";
+import { Cat_Marca } from "../Facturacion/FrontModel/Cat_Marca.js";
 import { Cat_Producto } from "../Facturacion/FrontModel/Cat_Producto.js";
 import { Cat_Proveedor } from "../Facturacion/FrontModel/Cat_Proveedor.js";
 import { Detalle_Compra } from "../Facturacion/FrontModel/Detalle_Compra.js";
-import { Cat_Marca } from "../Facturacion/FrontModel/Cat_Marca.js";
-import { Cat_Categorias } from "../Facturacion/FrontModel/Cat_Categorias.js";
-import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
+import { Tbl_Compra } from "../Facturacion/FrontModel/Tbl_Compra.js";
 import { ComprasComponent } from "../Facturacion/Views/CompraComponent.js";
+import { Transaction_Contratos, ValoracionesTransaction } from "../FrontModel/Model.js";
+import { Tbl_Cuotas_ModelComponent } from "../FrontModel/ModelComponents.js";
+import { AmoritizationModule } from "../modules/AmortizacionModule.js";
+import { clientSearcher, ValoracionesSearch } from "../modules/SerchersModules.js";
 import { Permissions, WSecurity } from "../WDevCore/Security/WSecurity.js";
+import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
+import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
+import { css } from "../WDevCore/WModules/WStyledRender.js";
 class Transaction_Valoraciones_View extends HTMLElement {
     // @ts-ignore
     constructor(props) {
