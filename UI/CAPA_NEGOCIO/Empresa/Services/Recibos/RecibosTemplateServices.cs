@@ -9,10 +9,10 @@ using DataBaseModel;
 
 namespace UI.CAPA_NEGOCIO.Empresa.Services.Recibos
 {
-	
+
 	public class RecibosTemplateServices
 	{
-		public int? id_recibo { get;  set; }
+		public int? id_recibo { get; set; }
 
 		public object? PrintRecibo(string token)
 		{
@@ -34,28 +34,36 @@ namespace UI.CAPA_NEGOCIO.Empresa.Services.Recibos
 						}
 					};
 				}
-				string? templateContent = null;
+
 				bool isRecibo = (factura?.Factura_contrato?.reestructuracion == 0)
 				&& (factura?.Factura_contrato?.perdida_de_documento == 0);
-
+				//templateContent.Add(GenerateReciboHtmlTemplate(factura));
+				List<object> templateContent = [ new
+				{
+					type= DocType.RECIBO.ToString(),
+					body= GenerateReciboHtmlTemplate(factura)
+				}];
 				if (factura?.Factura_contrato?.reestructuracion != 0)
 				{
-					templateContent = GenerateReestructureTable(factura);
+					templateContent.Add(new
+					{
+						type = DocType.REESTRUCTURE_TABLE.ToString(),
+						body = GenerateReestructureTable(factura)
+					});
 				}
-				else
-				{
-					templateContent = GenerateReciboHtmlTemplate(factura);
-				}
+
+
+
 				return new ResponseService()
 				{
 					status = 200,
-					message = templateContent,
+					message = "Success",
 					body = new
 					{
 						isRecibo = isRecibo,
 						isReestrutured = factura?.Factura_contrato?.reestructuracion != 0,
-						isCancelledWithLostDocument = factura?.Factura_contrato?.cancel_with_perdida
-
+						isCancelledWithLostDocument = factura?.Factura_contrato?.cancel_with_perdida,
+						documents = templateContent
 					}
 				};
 			}
@@ -68,7 +76,7 @@ namespace UI.CAPA_NEGOCIO.Empresa.Services.Recibos
 				};
 			}
 		}
-		
+
 		public string? GenerateReestructureTable(Transaccion_Factura? factura)
 		{
 			string templateContent = RecibosTemplates.ReestructureTable;
@@ -132,13 +140,14 @@ namespace UI.CAPA_NEGOCIO.Empresa.Services.Recibos
 
 			var cuotasPendiente = new Tbl_Cuotas { numero_contrato = factura?.Factura_contrato?.numero_contrato }
 				.Where<Tbl_Cuotas>(FilterData.NotIn("id_cuota", detalleIds)).OrderBy(c => c.id_cuota).ToList();
-				
+
 			var configuraciones_theme = new Transactional_Configuraciones().GetTheme();
 
 			templateContent = templateContent.Replace("{{recibo_num}}", factura?.Consecutivo)
 			.Replace("{{logo}}", "data:image/png;base64," + configuraciones_theme.Find(c => c.Nombre == ConfiguracionesThemeEnum.LOGO.ToString())?.Valor)
 			.Replace("{{cambio}}", NumberUtility.ConvertToMoneyString(factura?.tasa_cambio))
-			.Replace("{{fecha}}", factura?.fecha?.ToString("dd/MM/yyyy"))
+			.Replace("{{fecha}}", factura?.fecha?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy \"a las\" h:mm tt"))
+			.Replace("{{tipo}}", getTipo(factura.concepto))
 			.Replace("{{sucursal}}", sucursal?.Nombre)
 			.Replace("{{cajero}}", dbUser?.Nombres)
 			.Replace("{{cliente}}", contrato?.Catalogo_Clientes?.primer_nombre + " " + contrato?.Catalogo_Clientes?.primer_apellido + " " + contrato?.Catalogo_Clientes?.segundo_apellidio)
@@ -147,7 +156,8 @@ namespace UI.CAPA_NEGOCIO.Empresa.Services.Recibos
 			.Replace("{{cuotas}}", contrato.plazo.ToString())
 			.Replace("{{cuotas_pendientes}}", cuotasPendiente.Count.ToString())
 			.Replace("{{saldo_anterior}}", NumberUtility.ConvertToMoneyString(factura?.Factura_contrato?.saldo_anterior))
-			.Replace("{{saldo_actual}}", NumberUtility.ConvertToMoneyString(factura?.Factura_contrato?.saldo_actual))
+
+			.Replace("{{saldo_anterior_cordobas}}", NumberUtility.ConvertToMoneyString(factura?.Factura_contrato?.saldo_anterior * factura?.tasa_cambio))
 			.Replace("{{total_pagado}}", NumberUtility.ConvertToMoneyString(factura?.total * factura?.tasa_cambio))
 			.Replace("{{total_pagado_dolares}}", NumberUtility.ConvertToMoneyString(factura?.total))
 			.Replace("{{reestructuracion}}", NumberUtility.ConvertToMoneyString((factura?.Factura_contrato?.reestructuracion ?? 0) * factura?.tasa_cambio))
@@ -165,7 +175,34 @@ namespace UI.CAPA_NEGOCIO.Empresa.Services.Recibos
 			.Replace("{{proximo_pago}}", cuotasPendiente.Count != 0 ? cuotasPendiente.First()?.fecha?.ToString("dd/MM/yyyy") : "-");
 			return templateContent;
 		}
-			public string? GetTipoArticulo(List<Detail_Prendas> Detail_Prendas)
+
+		private string getTipo(string? concepto)
+		{
+			if (concepto?.ToLower().Contains("reestructuración") == true)
+			{
+				return "REESTRUCTURACIÓN";
+			} else if (concepto?.ToLower().Contains("interés + mora") == true)
+			{
+				return "INTERES + MORA";
+			} else if (concepto?.ToLower().Contains("abono al capital") == true)
+			{
+				return "ABONO AL CAPITAL";
+			} else if (concepto?.ToLower().Contains("cancelación") == true)
+			{
+				return "CANCELACIÓN";
+			} else if (concepto?.ToLower().Contains("pago de cuota") == true)
+			{
+				return "PAGO CUOTA";
+			} else if (concepto?.ToLower().Contains("parcial") == true)
+			{
+				return "PARCIAL";
+			} else 
+			{
+				return "";
+			}
+		}
+
+		public string? GetTipoArticulo(List<Detail_Prendas> Detail_Prendas)
 		{
 			var isVehiculo = Detail_Prendas.Find(p => p.Catalogo_Categoria?.descripcion == "vehiculos");
 			if (isVehiculo != null) return isVehiculo?.Catalogo_Categoria?.descripcion;
@@ -175,6 +212,12 @@ namespace UI.CAPA_NEGOCIO.Empresa.Services.Recibos
 
 			return Detail_Prendas[0].Catalogo_Categoria?.descripcion;
 		}
+
+		private enum DocType
+		{
+			RECIBO,
+			REESTRUCTURE_TABLE
+		}
 	}
-	
+
 }

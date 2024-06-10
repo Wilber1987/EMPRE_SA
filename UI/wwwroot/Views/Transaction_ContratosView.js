@@ -57,7 +57,7 @@ class Transaction_ContratosView extends HTMLElement {
     }
     Draw = async () => {
         this.tasasCambio = await new Catalogo_Cambio_Divisa_ModelComponent().Get();
-        this.Intereses = await new Transactional_Configuraciones().getTransactional_Configuraciones_Intereses();
+        this.Intereses = await new Transactional_Configuraciones().getConfiguraciones_Intereses();
         this.InteresBase = WArrayF.SumValAtt(this.Intereses, "Valor");
         this.entity.Transaction_Contratos.taza_interes_cargos = this.InteresBase;
         AmoritizationModule.calculoAmortizacion(this.entity);

@@ -61,7 +61,7 @@ public class RecibosTemplates
 			</td>     
 			<td style='font-size: 9.5px; text-align: center !important;   width: 33% !important; border: none !important'>
 				<p style='text-align: center !important; font-size:10px; margin-top:0px; padding-bottom:0px; margin-bottom:0px;'>
-					<img style='height:80px; width:140px;' src='{{firma_vicepesiente}}'/>
+					<img style='height:80px; width:140px;' src='{{firma_vicepresidente}}'/>
 				</p>
 				<p style='text-align: center !important; font-size:10px; margin-top:0px; padding-bottom:0px; margin-bottom:0px; border-top: none !important; width: 100% !important; padding-top:10px'>
 					{{datos_apoderado_vicepresidente}}<br/>
@@ -249,13 +249,14 @@ public class RecibosTemplates
 			<p class='content-center'>RECIBO OFICIAL DE CAJA</p>
 
 			<div class='w-50'  style='margin-top: 30px;'>
-				<p class='w-50'><strong>Recibo Num:</strong> {{recibo_num}}</p>
-			
+				<p class='w-50'><strong>Recibo Num:</strong> {{recibo_num}}</p>			
 				<p class='w-50'><strong>Cambio de C$ A $:</strong> {{cambio}}</p>
-			</div>
-
+			</div>	
 			<p class='w-100'><strong>Fecha:</strong> {{fecha}}</p>
-			<p><strong>Sucursal:</strong> {{sucursal}}</p>
+			<div class='w-50' >
+				<p class='w-50'><strong>Sucursal:</strong> {{sucursal}}</p>			
+				<p class='w-50'><strong>Tipo:</strong> {{tipo}}</p>
+			</div>
 			<p><strong>Cajero:</strong> {{cajero}}</p>
 
 			<p style='margin-top: 20px;'><strong>Generales del Contrato</strong></p>
@@ -272,8 +273,8 @@ public class RecibosTemplates
 			</div>
 
 			<div class='w-50 ' >
-				<p class='w-50 '><strong>Saldo Anterior:</strong> $ {{saldo_anterior}}</p>    
-				<p class='w-50 '><strong>Saldo Actual:</strong> $ {{saldo_actual}}</p>
+				<p class='w-50 '><strong>Saldo Anterior:</strong> C$ {{saldo_anterior_cordobas}}</p>
+				<p class='w-50 '><strong>Saldo Anterior:</strong> $ {{saldo_anterior}}</p>  
 			</div>
 
 

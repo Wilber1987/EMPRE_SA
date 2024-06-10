@@ -69,7 +69,7 @@ class Gestion_ClientesView extends HTMLElement {
                         Transaction_Contratos:
                             { type: "MASTERDETAIL", ModelObject: () => new Transaction_Contratos_ModelComponent(), Dataset: response },
                         Transaction_Factura:
-                            { type: "MASTERDETAIL", ModelObject: () => new Transaccion_Factura({ Catalogo_Clientes: undefined }), Dataset: responseFactura }
+                            { type: "MASTERDETAIL", label: "Recibos", ModelObject: () => new Transaccion_Factura({ Catalogo_Clientes: undefined }), Dataset: responseFactura }
                     }),
                     ObjectDetail: cliente
                 }))

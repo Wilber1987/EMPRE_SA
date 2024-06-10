@@ -30,7 +30,7 @@ class Ver_RecibosView extends HTMLElement {
                                     motivo_anulacion: { type: "TEXTAREA" }
                                 }, EditObject: factura,
                                 title: "ANULACIÓN",
-                                ObjectOptions: {                                  
+                                ObjectOptions: {
                                     SaveFunction: async () => {
                                         if (factura.estado == "ANULADO") {
                                             this.append(ModalMessege("Recibo ya esta anulado"));
@@ -39,10 +39,12 @@ class Ver_RecibosView extends HTMLElement {
                                         this.append(ModalVericateAction(async (editObject) => {
                                             const response =
                                                 await WAjaxTools.PostRequest("../api/ApiRecibos/anularRecibo",
-                                                    { id_recibo: factura.id_factura, 
-                                                        tasa_cambio: tasa[0].Valor_de_venta, 
+                                                    {
+                                                        id_recibo: factura.id_factura,
+                                                        tasa_cambio: tasa[0].Valor_de_venta,
                                                         tasa_cambio_compra: tasa[0].Valor_de_compra,
-                                                        motivo_anulacion: factura.motivo_anulacion });
+                                                        motivo_anulacion: factura.motivo_anulacion
+                                                    });
 
                                             this.append(ModalMessege(response.message, null, true));
                                             modal.close();
@@ -56,6 +58,11 @@ class Ver_RecibosView extends HTMLElement {
                         name: "Imprimir", action: async (factura) => {
                             //this.append(ModalVericateAction(async () => {
                             const id_factura = factura.id_factura
+                            if (factura.estado == "ANULADO") {
+                                alert("RECIBO ANULADO")
+                                return;
+                            }
+
                             await this.printRecibo(id_factura, tasa);
                             // }, "¿Esta seguro que desea imprimir este recibo?"))
                         }
@@ -92,25 +99,38 @@ class Ver_RecibosView extends HTMLElement {
         const response = await WAjaxTools.PostRequest("../api/ApiRecibos/printRecibo",
             { id_recibo: id_factura, tasa_cambio: tasa[0].Valor_de_compra });
         if (response.status == 200 && response.message != null) {
-            const objFra = WRender.Create({
-                tagName: "iframe",
-                style: { minHeight: "700px" },
-                srcdoc: response.message
-            })
-            const print = function () {
-                objFra.contentWindow.focus(); // Set focus.
-                objFra.contentWindow.print(); // Print it  
-            };
-            const btn = html`<img class="print" src="../WDevCore/Media/print.png"/>`
-            btn.onclick = print
+            const docs = [];
+            response.body.documents.forEach(element => {
+                const objFra = WRender.Create({
+                    tagName: "iframe", srcdoc: element.body,
+                    style: {
+                        minHeight: "700px",
+                        width: element.type == "REESTRUCTURE_TABLE" ? "95%" : "320px",
+                        maxWidth: element.type == "REESTRUCTURE_TABLE" ? "1100px" : "320px"
+
+                    }
+                })
+                console.log(objFra.srcdoc);
+                const print = function () {
+                    objFra.contentWindow.focus(); // Set focus.
+                    objFra.contentWindow.print(); // Print it  
+                };
+                const btn = html`<img class="print" src="../WDevCore/Media/print.png"/>`
+                btn.onclick = print
+                docs.push(WRender.Create({
+                    className: "doc-container", children: [
+                        this.PrintIconStyle(response.body),
+                        [btn],
+                        WRender.Create({ className: "print-container-iframe", children: objFra })]
+                }));
+            });
+
             this.append(new WModalForm({
                 ObjectModal: WRender.Create({
-                    class: "print-container", children: [this.PrintIconStyle(response.body), [btn],
-
-                    WRender.Create({ className: "print-container-iframe", children: [objFra] })]
+                    class: "print-container", children: docs
                 })
             }))
-            objFra.onload = print
+            // objFra.onload = print
             //document.body.appendChild(objFra); 
             // const ventimp = window.open(' ', 'popimpr');
             // ventimp?.document.write(response.message);
@@ -135,19 +155,18 @@ class Ver_RecibosView extends HTMLElement {
         } .print-container {
             width: 98%;   
             margin: auto;          
-        } .print-container div{
+        } .print-container .doc-container{
             width: 100%; 
-           display: flex;
-           justify-content: flex-end;
-           padding: 5px;
-           border-radius: 5px;
-           border: solid 1px #bdbcbc; 
-           margin-bottom: 5px;
-        } .print-container-iframe {
+            display: flex;
+            justify-content: flex-end;
+            padding: 5px;
+            border-radius: 5px;
+            border: solid 1px #bdbcbc; 
+            margin-bottom: 5px;
+            flex-direction: column;
+        }.print-container-iframe {
             background-color: #bdbcbc;  
-        }  .print-container iframe { 
-            width: ${ responseBody.isReestrutured ? "95%" : "320px"} ;
-            max-width: ${ responseBody.isReestrutured ? "1100px" : "320px"} ;
+        }  .print-container iframe {            
             margin: 10px auto;
             display: block;
             background-color: #fff;
