@@ -32,23 +32,24 @@ class DBOCatalogosManagerView extends HTMLElement {
             Options: {
                 Add: true,
                 Edit: true,
-                Search: true
+                Filter: true,
+                FilterDisplay: true
             }
         })
 
-        const filterOptions = new WFilterOptions({
+       /*const filterOptions = new WFilterOptions({
             Dataset: data,
             ModelObject: Model,
             FilterFunction: (DFilt) => {
                 mainComponent.DrawTable(DFilt);
             }
         });
-        WRender.SetStyle(filterOptions, { marginBottom: "20px", display: "block" })
+        WRender.SetStyle(filterOptions, { marginBottom: "20px", display: "block" })*/
         this.TabManager.NavigateFunction(Model.constructor.name, WRender.Create({
             className: "catalogo-container",
             children: [
                 html`<h2>${WOrtograficValidation.es(Model.constructor.name)}</h2>`,
-                filterOptions,
+                //filterOptions,
                 mainComponent]
         }));
     }

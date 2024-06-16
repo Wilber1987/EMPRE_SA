@@ -365,7 +365,7 @@ class Catalogo_Cambio_Divisa_ModelComponent extends EntityClass {
             this[prop] = props[prop];
         }
     }
-    /**@type {ModelProperty}*/ Id_cambio = { type: 'number', primary: true };
+    /**@type {ModelProperty}*/ Id_cambio = { type: 'number', primary: true, hiddenFilter: true  };
     /**@type {ModelProperty}*/ Fecha = { type: 'date' };
     /**@type {ModelProperty}*/ Valor_de_compra = { type: 'number', hiddenFilter: true };
     /**@type {ModelProperty}*/ Valor_de_venta = { type: 'number', hiddenFilter: true };

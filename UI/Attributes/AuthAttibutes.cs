@@ -19,7 +19,7 @@ namespace API.Controllers
 			string? token = filterContext.HttpContext.Session.GetString("seassonKey");
 
 			//LICENCIA
-			if (DateTime.Now > new DateTime(2024, 08, 01))
+			if (DateTime.Now > new DateTime(2026, 08, 01))
 			{
 				Authenticate Aut = new Authenticate();
 				Aut.AuthVal = false;
@@ -42,14 +42,6 @@ namespace API.Controllers
 					Message = "Inaccessible resource"
 				};
 				filterContext.Result = new ObjectResult(Aut) { StatusCode =  401 };
-			}
-			{
-				Authenticate Aut = new Authenticate
-				{
-					AuthVal = false,
-					Message = "Inaccessible resource"
-				};
-				filterContext.Result = new ObjectResult(Aut);
 			}
 		}
 	}
