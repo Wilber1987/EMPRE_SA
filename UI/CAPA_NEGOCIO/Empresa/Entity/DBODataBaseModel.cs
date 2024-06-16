@@ -303,6 +303,7 @@ namespace DataBaseModel
         public double? mora_pagado { get;  set; }
         public double? interes_pagado { get;  set; }
         public double? abono_capital { get; internal set; }
+        public int? reestructurado_anterior { get;  set; }
     }
 	
 	public class Datos_Reestructuracion 

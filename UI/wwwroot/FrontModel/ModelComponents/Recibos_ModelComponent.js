@@ -19,21 +19,22 @@ class Recibos_ModelComponent extends EntityClass {
     /**@type {ModelProperty} */ id_recibo = { type: "number", primary: true };
     /**@type {ModelProperty} */ consecutivo = { type: "number", hidden: true, require: false };
 
-    /**@type {ModelProperty} */ interes_demas_cargos_pagar_cordobas = { type: "number", hiddenInTable: true, disabled: true, label: "Interes C$" };
-    /**@type {ModelProperty} */ abono_capital_cordobas = { type: "number", hiddenInTable: true, disabled: true };
-    /**@type {ModelProperty} */ cuota_pagar_cordobas = { type: "number", hiddenInTable: true, disabled: true };
-    /**@type {ModelProperty} */ mora_cordobas = { type: "number", hiddenInTable: true, disabled: true };
-    /**@type {ModelProperty} */ mora_interes_cordobas = { type: "number", hiddenInTable: true, disabled: true, label: "Interes + Mora C$" };
-    /**@type {ModelProperty} */ total_cordobas = { type: "number", hiddenInTable: true, disabled: true };
-    /**@type {ModelProperty} */ perdida_de_documento_monto = { type: "number", disabled: true, defaultValue: 0, require: false };
+     
+    /**@type {ModelProperty} */ mora_cordobas = { type: "MONEY", hiddenInTable: true, disabled: true };
+    /**@type {ModelProperty} */ interes_demas_cargos_pagar_cordobas = { type: "MONEY", hiddenInTable: true, disabled: true, label: "Interes C$" };
+    /**@type {ModelProperty} */ mora_interes_cordobas = { type: "MONEY", hiddenInTable: true, disabled: true, label: "Interes + Mora C$" };    
+    /**@type {ModelProperty} */ abono_capital_cordobas = { type: "MONEY", hiddenInTable: true, disabled: true };
+    /**@type {ModelProperty} */ cuota_pagar_cordobas = { type: "MONEY", hiddenInTable: true, disabled: true };   
+    /**@type {ModelProperty} */ total_cordobas = { type: "MONEY", hiddenInTable: true, disabled: true };
+    /**@type {ModelProperty} */ perdida_de_documento_monto = { type: "MONEY", disabled: true, defaultValue: 0, require: false };
 
-    /**@type {ModelProperty} */ interes_demas_cargos_pagar_dolares = { type: "number", hiddenInTable: true, disabled: true, label: "Interes $" };
-    /**@type {ModelProperty} */ abono_capital_dolares = { type: "number", hiddenInTable: true, disabled: true };
-    /**@type {ModelProperty} */ cuota_pagar_dolares = { type: "number", hiddenInTable: true, disabled: true };
-    /**@type {ModelProperty} */ mora_dolares = { type: "number", hiddenInTable: true, disabled: true };
-    /**@type {ModelProperty} */ mora_interes_dolares = { type: "number", hiddenInTable: true, disabled: true, label: "Interes + Mora $" };
-    /**@type {ModelProperty} */ total_dolares = { type: "number", hiddenInTable: true, disabled: true };
-    /**@type {ModelProperty} */ reestructurar_monto = { type: "number", disabled: true, defaultValue: 0, require: false };
+    /**@type {ModelProperty} */ mora_dolares = { type: "MONEY", hiddenInTable: true, disabled: true };
+    /**@type {ModelProperty} */ interes_demas_cargos_pagar_dolares = { type: "MONEY", hiddenInTable: true, disabled: true, label: "Interes $" };
+    /**@type {ModelProperty} */ mora_interes_dolares = { type: "MONEY", hiddenInTable: true, disabled: true, label: "Interes + Mora $" };
+    /**@type {ModelProperty} */ abono_capital_dolares = { type: "MONEY", hiddenInTable: true, disabled: true };
+    /**@type {ModelProperty} */ cuota_pagar_dolares = { type: "MONEY", hiddenInTable: true, disabled: true };  
+    /**@type {ModelProperty} */ total_dolares = { type: "MONEY", hiddenInTable: true, disabled: true };
+    /**@type {ModelProperty} */ reestructurar_monto = { type: "MONEY", disabled: true, defaultValue: 0, require: false };
 
     /**@type {ModelProperty} */ //total_parciales = { type: "number", hiddenInTable: true, disabled: true };
 
@@ -62,6 +63,7 @@ class Recibos_ModelComponent extends EntityClass {
 
     /**@type {ModelProperty} */ solo_interes_mora = {
         type: "checkbox", require: false,
+        label: "Solo interés+mora",
         action: (recibo, form) => { }
     };
     /**@type {ModelProperty} */ reestructurar = {

@@ -14,8 +14,8 @@ import { ModalMessege, ModalVericateAction } from "../WDevCore/WComponents/WForm
 import { AmoritizationModule } from "../modules/AmortizacionModule.js";
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
-import { Transactional_Configuraciones } from "../FrontModel/ADMINISTRATIVE_ACCESSDataBaseModel.js";
 import { Tbl_Cuotas_ModelComponent } from "../FrontModel/ModelComponents.js";
+import { Transactional_Configuraciones } from "../Admin/ADMINISTRATIVE_ACCESSDataBaseModel.js";
 
 /**
  * @typedef {Object} ContratosConfig
@@ -57,7 +57,7 @@ class Transaction_ContratosView extends HTMLElement {
     }
     Draw = async () => {
         this.tasasCambio = await new Catalogo_Cambio_Divisa_ModelComponent().Get();
-        this.Intereses = await new Transactional_Configuraciones().getTransactional_Configuraciones_Intereses();
+        this.Intereses = await new Transactional_Configuraciones().getConfiguraciones_Intereses();
         this.InteresBase = WArrayF.SumValAtt(this.Intereses, "Valor");
         this.entity.Transaction_Contratos.taza_interes_cargos = this.InteresBase;
         AmoritizationModule.calculoAmortizacion(this.entity);

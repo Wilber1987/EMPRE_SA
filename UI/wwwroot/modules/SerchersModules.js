@@ -111,6 +111,25 @@ const contratosSearcher = (action, anularAction) => {
             }
         }}
     });
+    const actions = []
+    if (action) {
+        actions.push({
+            name: "Seleccionar",
+            action: async (cliente) => {
+                // @ts-ignore
+                await action(cliente);
+            }
+        })
+    }
+    if (anularAction) {
+        actions.push( {
+            name: "Anular",
+            action: async (cliente) => {
+                // @ts-ignore
+                await anularAction(cliente);
+            }
+        })
+    }
     const TableComponent = new WTableComponent({
         EntityModel: model,
         ModelObject: new Transaction_Contratos_ModelComponent({
@@ -119,19 +138,7 @@ const contratosSearcher = (action, anularAction) => {
         AddItemsFromApi: true,
         Options: {
             Show: true,
-            UserActions: [{
-                name: "Seleccionar",
-                action: async (cliente) => {
-                    // @ts-ignore
-                    await action(cliente);
-                }
-            }, {
-                name: "Anular",
-                action: async (cliente) => {
-                    // @ts-ignore
-                    await anularAction(cliente);
-                }
-            }]
+            UserActions: actions
         }
     })
     const FilterOptions = new WFilterOptions({

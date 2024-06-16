@@ -1,19 +1,12 @@
 //@ts-check
 // @ts-ignore
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js";
-import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js";
-import { ComponentsManager, WArrayF, WRender } from "../WDevCore/WModules/WComponentsTools.js";
+import { ComponentsManager, WRender } from "../WDevCore/WModules/WComponentsTools.js";
 // @ts-ignore
-import { Catalogo_Cambio_Divisa_ModelComponent, Catalogo_Categoria, Catalogo_Clientes, Catalogo_Estados_Articulos, Transactional_Valoracion, Transaction_Facturas_ModelComponent } from "../FrontModel/DBODataBaseModel.js";
-import { ModalMessege, WForm } from "../WDevCore/WComponents/WForm.js";
+import { Catalogo_Clientes, Transaction_Facturas_ModelComponent } from "../FrontModel/DBODataBaseModel.js";
 // @ts-ignore
-import { Transactional_Configuraciones } from "../FrontModel/ADMINISTRATIVE_ACCESSDataBaseModel.js";
-import { Detail_Prendas, Transaction_Facturas, ValoracionesTransaction } from "../FrontModel/Model.js";
-import { Tbl_Cuotas_ModelComponent } from "../FrontModel/ModelComponents.js";
-import { AmoritizationModule } from "../modules/AmortizacionModule.js";
-import { clientSearcher, ValoracionesSearch } from "../modules/SerchersModules.js";
-import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
-import { css } from "../WDevCore/WModules/WStyledRender.js";
+import { Transaction_Facturas } from "../FrontModel/Model.js";
+import { clientSearcher } from "../modules/SerchersModules.js";
 import { WDetailObject } from "../WDevCore/WComponents/WDetailObject.js";
 class Facturacion_Facturacion_View extends HTMLElement {
     constructor(props) {

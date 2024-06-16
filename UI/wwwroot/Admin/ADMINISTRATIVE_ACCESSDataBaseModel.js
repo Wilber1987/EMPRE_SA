@@ -12,11 +12,14 @@ class Transactional_Configuraciones extends EntityClass {
     Descripcion = { type: 'text', disabled: true };
     Valor = { type: 'text' };
     Tipo_Configuracion = { type: 'text' , disabled: true };
-    getTransactional_Configuraciones_Intereses =  async () => {
-        return await this.GetData("ApiEntityADMINISTRATIVE_ACCESS/getTransactional_Configuraciones_Intereses");
+    getConfiguraciones_Intereses =  async () => {
+        return await this.GetData("ApiEntityADMINISTRATIVE_ACCESS/getConfiguraciones_Intereses");
     }
-    getTransactional_Configuraciones_Beneficios =  async () => {
-        return await this.GetData("ApiEntityADMINISTRATIVE_ACCESS/getTransactional_Configuraciones_Beneficios");
+    getConfiguraciones_Beneficios =  async () => {
+        return await this.GetData("ApiEntityADMINISTRATIVE_ACCESS/getConfiguraciones_Beneficios");
+    }
+    getConfiguraciones_Configs =  async () => {
+        return await this.GetData("ApiEntityADMINISTRATIVE_ACCESS/getConfiguraciones_Configs");
     }
 }
 export { Transactional_Configuraciones }

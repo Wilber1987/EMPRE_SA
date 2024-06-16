@@ -640,7 +640,7 @@ class Transaccion_Factura extends EntityClass {
     id_cliente = { type: "number", hidden: true };
     id_sucursal = { type: "number", hidden: true };
     fecha = { type: "date" };    
-    Detalle_Factura_Recibo = { type: 'MasterDetail', label: "Cuotas Pagadas", ModelObject: () => new Detalle_Factura_Recibo(), hiddenFilter: true };
+    Detalle_Factura_Recibo = { type: 'MasterDetail', label: "Cuotas Pagadas", label: "Detalle recibos", ModelObject: () => new Detalle_Factura_Recibo(), hiddenFilter: true };
     Factura_contrato = { type: 'model', label: "Datos del contrato al momento del pago", ModelObject: () => new Factura_contrato(), hidden: true };
 
 }
@@ -675,12 +675,13 @@ class Detalle_Factura_Recibo extends EntityClass {
         }
     }
     id = { type: "number", primary: true };
-    id_factura = { type: "number" };
-    id_cuota = { type: "number" };
-    total_cuota = { type: "money" };
-    monto_pagado = { type: "money" };
-    capital_restante = { type: "money" };
+    id_factura = { type: "number", hidden: true };
+    id_cuota = { type: "number" , hidden: true };
     concepto = { type: "text" };
+    total_cuota = { type: "money" };
+    monto_pagado = { type: "money", hidden: true  };
+    capital_restante = { type: "money" , hidden: true };
+    
     tasa_cambio = { type: "money" };
 }
 export { Detalle_Factura_Recibo }
