@@ -18,7 +18,7 @@ import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { Transactional_Configuraciones } from "../FrontModel/ADMINISTRATIVE_ACCESSDataBaseModel.js";
 import { Tbl_Compra } from "../Facturacion/FrontModel/Tbl_Compra.js";
 import { Tbl_Compra_ModelComponent } from "../Facturacion/FrontModel/ModelComponent/Tbl_Compra_ModelComponent.js";
-import {  Catalogo_Cambio_Divisa_ModelComponent, Transactional_Valoracion } from "../FrontModel/DBODataBaseModel.js";
+import { Catalogo_Cambio_Divisa_ModelComponent, Transactional_Valoracion } from "../FrontModel/DBODataBaseModel.js";
 
 /**
  * @typedef {Object} facturaconfig
