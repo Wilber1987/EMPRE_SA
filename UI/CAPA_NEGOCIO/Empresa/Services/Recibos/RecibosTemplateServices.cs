@@ -87,12 +87,13 @@ namespace UI.CAPA_NEGOCIO.Empresa.Services.Recibos
 			double valorInteres = model?.DesgloseIntereses?.GetPorcentageInteresesSGC() ?? 0;
 
 			Datos_Reestructuracion? datos_Reestructuracion = factura?.Factura_contrato?.Datos_Reestructuracion;
-
 			templateContent = templateContent
 				.Replace("{{cuotafija}}", NumberUtility.ConvertToMoneyString(model?.cuotafija))
 				.Replace("{{numero_contrato}}", model?.numero_contrato?.ToString("D9"))
 				.Replace("{{logo}}", "data:image/png;base64," + configuraciones_theme.Find(c => c.Nombre == ConfiguracionesThemeEnum.LOGO.ToString())?.Valor)
-
+				.Replace("{{titulo}}", configuraciones_theme.Find(c => c.Nombre == ConfiguracionesThemeEnum.TITULO.ToString())?.Valor)
+				.Replace("{{subtitulo}}", configuraciones_theme.Find(c => c.Nombre == ConfiguracionesThemeEnum.SUB_TITULO.ToString())?.Valor)
+				.Replace("{{info_tel}}", configuraciones_theme.Find(c => c.Nombre == ConfiguracionesThemeEnum.INFO_TEL.ToString())?.Valor)
 				.Replace("{{Valoracion_empeño_cordobas}}", NumberUtility.ConvertToMoneyString(datos_Reestructuracion?.Nuevo_Monto_Cordobas))
 				.Replace("{{Valoracion_empeño_dolares}}", NumberUtility.ConvertToMoneyString(datos_Reestructuracion?.Nuevo_Monto))
 				.Replace("{{cuotafija}}", NumberUtility.ConvertToMoneyString(datos_Reestructuracion?.Nueva_Cuota_Cordobas))
@@ -134,7 +135,9 @@ namespace UI.CAPA_NEGOCIO.Empresa.Services.Recibos
 			string templateContent = RecibosTemplates.recibo;
 
 			var ultimoDetalle = factura?.Detalle_Factura_Recibo?.OrderByDescending(d => d.id).FirstOrDefault();
-			var detalleIds = factura?.Detalle_Factura_Recibo?.Select(d => d.id_cuota.ToString()).ToArray();
+			var detalleIds = factura?.Detalle_Factura_Recibo?
+				.Where(d => d.id_cuota != null).ToList()
+				.Select(d => d.id_cuota.ToString()).ToArray();
 
 			List<Tbl_Cuotas?>? cuotas = factura?.Detalle_Factura_Recibo?.Select(r => r.Tbl_Cuotas).ToList();
 
@@ -181,22 +184,28 @@ namespace UI.CAPA_NEGOCIO.Empresa.Services.Recibos
 			if (concepto?.ToLower().Contains("reestructuración") == true)
 			{
 				return "REESTRUCTURACIÓN";
-			} else if (concepto?.ToLower().Contains("interés + mora") == true)
+			}
+			else if (concepto?.ToLower().Contains("interés + mora") == true)
 			{
 				return "INTERES + MORA";
-			} else if (concepto?.ToLower().Contains("abono al capital") == true)
+			}
+			else if (concepto?.ToLower().Contains("abono al capital") == true)
 			{
 				return "ABONO AL CAPITAL";
-			} else if (concepto?.ToLower().Contains("cancelación") == true)
+			}
+			else if (concepto?.ToLower().Contains("cancelación") == true)
 			{
 				return "CANCELACIÓN";
-			} else if (concepto?.ToLower().Contains("pago de cuota") == true)
+			}
+			else if (concepto?.ToLower().Contains("pago de cuota") == true)
 			{
 				return "PAGO CUOTA";
-			} else if (concepto?.ToLower().Contains("parcial") == true)
+			}
+			else if (concepto?.ToLower().Contains("parcial") == true)
 			{
 				return "PARCIAL";
-			} else 
+			}
+			else
 			{
 				return "";
 			}

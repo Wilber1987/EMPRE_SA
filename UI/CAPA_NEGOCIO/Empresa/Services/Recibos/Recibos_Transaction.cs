@@ -146,6 +146,7 @@ namespace Transactions
 				}
 				else if (solo_abono == true) //PAGA ABONO AL CAPITAL
 				{
+					contrato.saldo -= monto;
 					monto = AbonoCapital(contrato, monto, DetallesFacturaRecibos, cuotasPendientes, null);
 				}
 				else if (reestructurar == true) //PAGA ABONO AL CAPITAL
@@ -396,7 +397,7 @@ namespace Transactions
 			CuotaActual?.Update();
 
 			Tbl_Cuotas? CuotaFinal = cuotasPendientes.First();//DADO QUE LAS CUOTAS VIENEN EN ORDEN DESC SE TOMA LA PRIMERA
-			EstadoAnteriorCuota estadoAnteriorCuotaFinal = CloneCuota(CuotaActual);
+			EstadoAnteriorCuota estadoAnteriorCuotaFinal = CloneCuota(CuotaFinal);
 			CuotaFinal.abono_capital += CuotaActual?.abono_capital;
 			CuotaFinal.interes = CuotaFinal.abono_capital * contrato.tasas_interes;
 			CuotaFinal.total = CuotaFinal.interes + CuotaFinal.abono_capital;

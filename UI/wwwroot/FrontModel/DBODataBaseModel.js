@@ -256,7 +256,7 @@ class Transaction_Contratos_ModelComponent extends EntityClass {
     numero_contrato = { type: "number", primary: true };
     fecha_contrato = { type: "date", hiddenFilter: true };
     fecha_cancelar = { type: "date", hiddenInTable: true, hiddenFilter: true };
-    monto = { type: "MONEY", label: "saldo $",  hiddenInTable: true, hiddenFilter: true };
+    monto = { type: "MONEY", label: "monto $",  hiddenInTable: true, hiddenFilter: true };
     interes = { type: "MONEY", hiddenInTable: true, hiddenFilter: true, label: "interés $"  };
     mora = { type: "PERCENTAGE", hiddenInTable: true, hiddenFilter: true };
     estado = { type: "Select", Dataset: ["ACTIVO", "CANCELADO", "ANULADO"] };
@@ -274,7 +274,8 @@ class Transaction_Contratos_ModelComponent extends EntityClass {
     taza_cambio_compra = { type: "MONEY", hiddenInTable: true, hiddenFilter: true , label: "tasa cambio compra C$" };
     id_agente = { type: "number", hiddenInTable: true, hiddenFilter: true };
     plazo = { type: "number", hiddenInTable: true, hiddenFilter: true };
-    cuotafija = { type: "MONEY", hiddenInTable: true, hiddenFilter: true ,  label: "cuota fija $" };
+    cuotafija = { type: "MONEY", hiddenInTable: true, hiddenFilter: true ,  label: "cuota fija C$" };
+    cuotafija_dolares = { type: "MONEY", hiddenInTable: true, hiddenFilter: true };
     tasa_hoy = { type: "number", hiddenInTable: true, hiddenFilter: true };
     motivo_anulacion = { type: "text", hiddenInTable: true, hiddenFilter: true };
     Valoracion_compra_dolares = { type: "MONEY", hiddenInTable: true, hiddenFilter: true };
@@ -283,7 +284,7 @@ class Transaction_Contratos_ModelComponent extends EntityClass {
     Valoracion_empeño_dolares = { type: "MONEY", hiddenInTable: true, hiddenFilter: true };
     tasas_interes = { type: "number", hiddenInTable: true, hiddenFilter: true };
     gestion_crediticia = { type: "PERCENTAGE", hiddenInTable: true, hiddenFilter: true };
-    cuotafija_dolares = { type: "MONEY", hiddenInTable: true, hiddenFilter: true };
+    
     fecha = { type: "date", hidden: true, hiddenFilter: true };
     total_pagar_cordobas = { type: "MONEY", hiddenInTable: true, hiddenFilter: true };
     total_pagar_dolares = { type: "MONEY", hiddenInTable: true, hiddenFilter: true };

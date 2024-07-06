@@ -30,18 +30,18 @@ public class RecibosTemplates
 		<p style='font-size:9.5px; margin-top:0px; margin-bottom:0px; text-align:center; padding-bottom:0px'>
 					<img class='img-container' style='margin:auto' src='{{logo}}' width='100'>
 					<br/>
-					EMPEÑOS Y PRÉSTAMOS S.A 'EMPRE SA'
+					{{titulo}}
 					<br/>
 					Carazo - Nicaragua
 					 <br/>
-					“Tu Prosperidad, Es Nuestro Éxito….”
+					{{subtitulo}}
 					  <br/>
 					 RUC J0310000300895
 		</p>
 					  
 	   
 		<p style='font-size:9.5px; margin-top:0px; margin-bottom:0px; font-weight: bold; text-align:center; padding-bottom:0px'>Oficina Central
-					82572062 (Mov); 57199497 (Cl), 25353613 (Planta)</p>
+					{{info_cel}}</p>
 		<p style='font-size:9.5px; margin-top:0px; margin-bottom:0px; text-align:center; padding-bottom:0px'>TABLA DE PAGO POR REESTRUCTURACIÓN 
 			CONTRATO <br/> Nº {{numero_contrato}} 
 		</p>

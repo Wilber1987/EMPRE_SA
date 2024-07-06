@@ -14,6 +14,10 @@ class Ver_RecibosView extends HTMLElement {
         const tasa = await new Catalogo_Cambio_Divisa_ModelComponent().Get();
         this.OptionContainer = WRender.Create({ className: "OptionContainer" });
         this.TabContainer = WRender.createElement({ type: 'div', props: { class: 'TabContainer', id: 'TabContainer' } })
+        const id_Recibo = new URLSearchParams(window.location.search).get('id_Recibo');
+        if (id_Recibo != null) {
+            await this.printRecibo(id_Recibo, tasa);
+        }
         this.MainComponent = new WTableComponent({
             EntityModel: new Transaccion_Factura({ Factura_contrato: {} }),
             ModelObject: new Transaccion_Factura(),
@@ -79,10 +83,7 @@ class Ver_RecibosView extends HTMLElement {
             this.OptionContainer,
             this.TabContainer
         );
-        const id_Recibo = new URLSearchParams(window.location.search).get('id_Recibo');
-        if (id_Recibo != null) {
-            await this.printRecibo(id_Recibo, tasa);
-        }
+       
 
     }
     SetOption() {
@@ -98,7 +99,7 @@ class Ver_RecibosView extends HTMLElement {
     async printRecibo(id_factura, tasa) {
         const response = await WAjaxTools.PostRequest("../api/ApiRecibos/printRecibo",
             { id_recibo: id_factura, tasa_cambio: tasa[0].Valor_de_compra });
-        if (response.status == 200 && response.message != null) {
+        if (response.status == 200 && response.body.documents != null && response.body.documents != undefined) {
             const docs = [];
             response.body.documents.forEach(element => {
                 const objFra = WRender.Create({
@@ -139,6 +140,8 @@ class Ver_RecibosView extends HTMLElement {
             //     ventimp?.print();
             //     ventimp?.close();
             // }, 100);
+        } else if  (response.status == 200 && response.message != null) {   
+            this.append(ModalMessege(response.message))
         }
     }
 

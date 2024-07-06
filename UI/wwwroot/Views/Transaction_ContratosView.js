@@ -11,7 +11,7 @@ import { Detail_Prendas, Detail_Prendas_Vehiculos, Transaction_Contratos, Valora
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 import { ValoracionesSearch, clientSearcher, contratosSearcher } from "../modules/SerchersModules.js";
 import { ModalMessege, ModalVericateAction } from "../WDevCore/WComponents/WForm.js";
-import { AmoritizationModule } from "../modules/AmortizacionModule.js";
+import { FinancialModule } from "../modules/FinancialModule.js";
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { Tbl_Cuotas_ModelComponent } from "../FrontModel/ModelComponents.js";
@@ -60,7 +60,7 @@ class Transaction_ContratosView extends HTMLElement {
         this.Intereses = await new Transactional_Configuraciones().getConfiguraciones_Intereses();
         this.InteresBase = WArrayF.SumValAtt(this.Intereses, "Valor");
         this.entity.Transaction_Contratos.taza_interes_cargos = this.InteresBase;
-        AmoritizationModule.calculoAmortizacion(this.entity);
+        FinancialModule.calculoAmortizacion(this.entity);
         /**@type  {Catalogo_Cambio_Divisa_ModelComponent}*/
         this.tasaActual = this.tasasCambio[0];
         // @ts-ignore
@@ -376,7 +376,7 @@ class Transaction_ContratosView extends HTMLElement {
     }
     update() {
 
-        AmoritizationModule.calculoAmortizacion(this.entity);
+        FinancialModule.calculoAmortizacion(this.entity);
         if (this.prendasTable != undefined && this.entity.Transaction_Contratos.Detail_Prendas != undefined) {
             this.entity.Transaction_Contratos?.Detail_Prendas.forEach(detalle => {
                 detalle.monto_aprobado_dolares = detalle.Transactional_Valoracion.Valoracion_empeño_dolares
@@ -445,9 +445,9 @@ export { Transaction_ContratosView }
 class MainContract extends HTMLElement {
     constructor(contrato) {
         super();
-        // AmoritizationModule.calculoAmortizacion(contrato);     
+        // FinancialModule.calculoAmortizacion(contrato);     
         if (contrato.Transaction_Contratos != null) {
-            // AmoritizationModule.calculoAmortizacion(contrato);
+            // FinancialModule.calculoAmortizacion(contrato);
             this.ElementsNav.unshift({
                 name: "Contrato valorado", action: () => this.Manager.NavigateFunction("contrato-valorado", new Transaction_ContratosView({ Entity: contrato }))
             });

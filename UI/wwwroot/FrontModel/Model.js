@@ -35,7 +35,7 @@ export { ValoracionesTransaction }
 class Tbl_Cuotas extends EntityClass {
     /**
      * 
-     * @param {Tbl_Cuotas} props 
+     * @param {Tbl_Cuotas} [props] 
      */
     constructor(props) {
         super();
@@ -74,57 +74,46 @@ class Tbl_Cuotas extends EntityClass {
 export { Tbl_Cuotas }
 
 class Transaction_Contratos extends EntityClass {
-
+    /**
+    * @param {Partial<Transaction_Contratos>} [props] 
+    */
     constructor(props) {
         super(props, 'EntityDBO');
         for (const prop in props) {
             this[prop] = props[prop];
         }
+        this.Tbl_Cuotas = this.Tbl_Cuotas?.map(c => new Tbl_Cuotas(c));
     }
     numero_contrato;
     fecha_contrato;
     fecha_cancelar;
-    /**@type {Number} */
-    monto;
-    /**@type {Number} */
-    interes;
-    /**@type {Number} */
-    interes_dolares;
-    /**@type {Number} */
-    mora;
+    /**@type {Number} */ monto;
+    /**@type {Number} */ interes;
+    /**@type {Number} */ interes_dolares;
+    /**@type {Number} */ mora;
     estado;
     fecha_vencimiento;
-    /**@type {Number} */
-    saldo;
+    /**@type {Number} */ saldo;
     dias_mora;
-    /**@type {Number} */
-    saldo_mora;
+    /**@type {Number} */ saldo_mora;
     fecha_baja;
-    /**@type {Number} */
-    abonos;
+    /**@type {Number} */ abonos;
     ultima_visita;
     tipo;
     entregado;
-    /**@type {Number} */
-    interes_actual;
+    /**@type {Number} */ interes_actual;
     observaciones;
-    /**@type {Number} */
-    iva;
-    /**@type {Number} */
-    margen;
-    /**@type {Number} */
-    descuento;
-    /**@type {Number} */
-    util;
-    /**@type {Number} */
-    taza_interes_cargos;
+    /**@type {Number} */ iva;
+    /**@type {Number} */ margen;
+    /**@type {Number} */ descuento;
+    /**@type {Number} */ util;
+    /**@type {Number} */ taza_interes_cargos;
     taza_mora;
     fecha_mora;
     fecha_interes;
     taza_gestion_crediticia;
     Id_User_OLD;
-    /**@type {Number} cuota del abono*/
-    taza_cambio;
+    /**@type {Number} */ taza_cambio;
     taza_cambio_compra;
     dkm;
     gasolinamonto;
@@ -143,46 +132,25 @@ class Transaction_Contratos extends EntityClass {
     fecha_cancelar_inicial;
     plazo_inicial;
     dias_para_baja;
-    /**@type {Catalogo_Clientes} */
-    Catalogo_Clientes;
-    /**@type {Array<Tbl_Cuotas>} */
-    Tbl_Cuotas;
-    /**@type {Array<Transaction_Facturas>} */
-    Transaction_Facturas;
-    /**@type {Array<Detail_Prendas>} */
-    Detail_Prendas;
-
+    /**@type {Catalogo_Clientes} */ Catalogo_Clientes;
+    /**@type {Array<Tbl_Cuotas>} */ Tbl_Cuotas;
+    /**@type {Array<Transaction_Facturas>} */ Transaction_Facturas;
+    /**@type {Array<Detail_Prendas>} */ Detail_Prendas;
     //nuevas
-    /**@type {Number} */
-    Valoracion_compra_cordobas;
-    /**@type {Number} */
-    Valoracion_compra_dolares;
-    /**@type {Number} */
-    Valoracion_empeño_cordobas;
-    /**@type {Number} */
-    Valoracion_empeño_dolares;
-    /**@type {Number} */
-    taza_interes_cargos;
+    /**@type {Number} */ Valoracion_compra_cordobas;
+    /**@type {Number} */ Valoracion_compra_dolares;
+    /**@type {Number} */ Valoracion_empeño_cordobas;
+    /**@type {Number} */ Valoracion_empeño_dolares;
+    /**@type {Number} */ taza_interes_cargos;
 
-    /**@type {Number} */
-    cuotafija;
-    /**@type {Number} */
-    cuotafija_dolares;
-    /**@type {Number} */
-    gestion_crediticia;
-    /**@type {Number} */
-    tasas_interes;
-    /**@type {Number} */
-    plazo;
-    /**@type {Date} */
-    fecha;
-
-
-
-    /**@type {Number} */
-    total_pagar_cordobas;
-    /**@type {Number} */
-    total_pagar_dolares;
+    /**@type {Number} */ cuotafija;
+    /**@type {Number} */ cuotafija_dolares;
+    /**@type {Number} */ gestion_crediticia;
+    /**@type {Number} */ tasas_interes;
+    /**@type {Number} */ plazo;
+    /**@type {Date} */ fecha;
+    /**@type {Number} */ total_pagar_cordobas;
+    /**@type {Number} */ total_pagar_dolares;
     Anular = async () => {
         return await this.SaveData("Transactional_Contrato/AnularContract", this)
     }
@@ -220,11 +188,6 @@ class Detail_Prendas extends EntityClass {
     /**@type {Number} */ precio_venta;
     /**@type {String} */ en_manos_de;
     /**@type {String} */ color;
-    // /**@type {Number} */ factura;
-    // /**@type {Number} */ tipo_movimiento;
-    // /**@type {Number} */ uso;
-    // /**@type {Number} */ servicio;
-    // /**@type {Number} */ v_porcentage_etiqueta;
     /**@type {Number} */ Detail_Prendas_Vehiculos;
     /**@type {Catalogo_Categoria} */ Catalogo_Categoria;
     /**@type {Transactional_Valoracion} */ Transactional_Valoracion;
