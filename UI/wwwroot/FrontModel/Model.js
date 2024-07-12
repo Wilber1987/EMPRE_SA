@@ -83,6 +83,7 @@ class Transaction_Contratos extends EntityClass {
             this[prop] = props[prop];
         }
         this.Tbl_Cuotas = this.Tbl_Cuotas?.map(c => new Tbl_Cuotas(c));
+       
     }
     numero_contrato;
     fecha_contrato;
@@ -151,6 +152,7 @@ class Transaction_Contratos extends EntityClass {
     /**@type {Date} */ fecha;
     /**@type {Number} */ total_pagar_cordobas;
     /**@type {Number} */ total_pagar_dolares;
+    /**@type {Number} */ reestructurado;
     Anular = async () => {
         return await this.SaveData("Transactional_Contrato/AnularContract", this)
     }

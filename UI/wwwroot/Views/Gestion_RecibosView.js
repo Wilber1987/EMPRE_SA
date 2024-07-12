@@ -344,7 +344,7 @@ class Gestion_RecibosView extends HTMLElement {
             let fecha = new Date();
             let mora_interes_cordobas = 0;
 
-            
+
             //console.log(contrato.Tbl_Cuotas, cuota);
             if (cuota != null) {
                 fecha = cuota.fecha;
@@ -518,6 +518,9 @@ class Gestion_RecibosView extends HTMLElement {
         return montoMora;
     }
 
+    /**
+     * @param {Transaction_Contratos} selectContrato
+     */
     selectContratosDetail(selectContrato) {
         return html`<div>
             <div class="column-venta">
@@ -545,7 +548,8 @@ class Gestion_RecibosView extends HTMLElement {
                 </div>
                 <div class="DataContainer">
                     <span>Fecha de contrato:</span>
-                    <label>${selectContrato.fecha?.toDateFormatEs() ?? "-"}</label>
+                    <label>${// @ts-ignore
+            selectContrato.fecha?.toDateFormatEs() ?? "-"}</label>
                 </div>
                 <div class="DataContainer">
                     <span>F/Último pago:</span>
@@ -560,7 +564,7 @@ class Gestion_RecibosView extends HTMLElement {
                 <div class="DataContainer">
                     <span>Fecha de cancelación:</span>
                     <label>${// @ts-ignore
-                    this.ContractData.ultimaCuota?.fecha?.toDateFormatEs() ?? "-" }</label>
+            this.ContractData.ultimaCuota?.fecha?.toDateFormatEs() ?? "-"}</label>
                 </div>
                 <div class="DataContainer">
                     <span>Saldo actual C$:</span>
@@ -572,7 +576,11 @@ class Gestion_RecibosView extends HTMLElement {
                 </div>
                 <div class="DataContainer">
                     <span>Plazo:</span>
-                    <label>${selectContrato.plazo}</label>
+                    <label>${selectContrato.Tbl_Cuotas.filter(c => c.Estado != "INACTIVO").length}</label>
+                </div>
+                <div class="DataContainer">
+                    <span>Reestructuraciones:</span>
+                    <label>${selectContrato.reestructurado}</label>
                 </div>
                 <div class="DataContainer">
                     <span>Intereses y demás cargos:</span>
