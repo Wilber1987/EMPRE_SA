@@ -52,7 +52,7 @@ public class ContractsTemplates
 		</table>              
 	   
 		<p style='font-size:9.5px; margin-top:0px; margin-bottom:0px; text-align:center; padding-bottom:0px'>Oficina Central
-					{{info_cel}}</p>
+					{{info_tel}}</p>
 		<p style='font-size:9.5px; margin-top:0px; margin-bottom:0px; text-align:center; padding-bottom:0px'>CONTRATO DE
 				MUTUO GARANTIZADO CON PRENDA COMERCIAL</p>
 	";

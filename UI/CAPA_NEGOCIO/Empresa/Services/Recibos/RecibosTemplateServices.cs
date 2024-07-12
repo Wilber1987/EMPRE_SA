@@ -146,17 +146,21 @@ namespace UI.CAPA_NEGOCIO.Empresa.Services.Recibos
 
 			var configuraciones_theme = new Transactional_Configuraciones().GetTheme();
 
+			var detallePerdidaDoc = factura?.Detalle_Factura_Recibo?.Find(d => d.concepto != null
+				&& d.concepto.Contains("Pago por tramite de perdida de documentos"));
+
 			templateContent = templateContent.Replace("{{recibo_num}}", factura?.Consecutivo)
 			.Replace("{{logo}}", "data:image/png;base64," + configuraciones_theme.Find(c => c.Nombre == ConfiguracionesThemeEnum.LOGO.ToString())?.Valor)
 			.Replace("{{cambio}}", NumberUtility.ConvertToMoneyString(factura?.tasa_cambio))
 			.Replace("{{fecha}}", factura?.fecha?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy \"a las\" h:mm tt"))
-			.Replace("{{tipo}}", getTipo(factura.concepto))
+			.Replace("{{tipo}}", getTipo(factura?.concepto))
 			.Replace("{{sucursal}}", sucursal?.Nombre)
+			.Replace("{{info_tel}}", configuraciones_theme.Find(c => c.Nombre == ConfiguracionesThemeEnum.INFO_TEL.ToString())?.Valor)
 			.Replace("{{cajero}}", dbUser?.Nombres)
 			.Replace("{{cliente}}", contrato?.Catalogo_Clientes?.primer_nombre + " " + contrato?.Catalogo_Clientes?.primer_apellido + " " + contrato?.Catalogo_Clientes?.segundo_apellidio)
 			.Replace("{{clasificacion}}", cliente?.Catalogo_Clasificacion_Interes?.porcentaje.ToString() ?? "")
 			.Replace("{{categoria}}", GetTipoArticulo(contrato?.Detail_Prendas))
-			.Replace("{{cuotas}}", contrato.plazo.ToString())
+			.Replace("{{cuotas}}", contrato.Tbl_Cuotas.Where(Cuota => Cuota.Estado != EstadoEnum.INACTIVO.ToString()).ToList().Count.ToString())
 			.Replace("{{cuotas_pendientes}}", cuotasPendiente.Count.ToString())
 			.Replace("{{saldo_anterior}}", NumberUtility.ConvertToMoneyString(factura?.Factura_contrato?.saldo_anterior))
 
@@ -165,8 +169,8 @@ namespace UI.CAPA_NEGOCIO.Empresa.Services.Recibos
 			.Replace("{{total_pagado_dolares}}", NumberUtility.ConvertToMoneyString(factura?.total))
 			.Replace("{{reestructuracion}}", NumberUtility.ConvertToMoneyString((factura?.Factura_contrato?.reestructuracion ?? 0) * factura?.tasa_cambio))
 			.Replace("{{reestructuracion_dolares}}", NumberUtility.ConvertToMoneyString(factura?.Factura_contrato?.reestructuracion ?? 0))
-			.Replace("{{perdida_doc}}", NumberUtility.ConvertToMoneyString((factura?.Factura_contrato?.perdida_de_documento ?? 0) * factura?.tasa_cambio))
-			.Replace("{{perdida_doc_dolares}}", NumberUtility.ConvertToMoneyString(factura?.Factura_contrato?.perdida_de_documento ?? 0))
+			.Replace("{{perdida_doc}}", NumberUtility.ConvertToMoneyString((detallePerdidaDoc?.monto_pagado ?? 0) * factura?.tasa_cambio))
+			.Replace("{{perdida_doc_dolares}}", NumberUtility.ConvertToMoneyString(detallePerdidaDoc?.monto_pagado ?? 0))
 			.Replace("{{mora}}", NumberUtility.ConvertToMoneyString(factura?.Factura_contrato?.mora_pagado * factura?.tasa_cambio))
 			.Replace("{{mora_dolares}}", NumberUtility.ConvertToMoneyString(factura?.Factura_contrato?.mora_pagado))
 			.Replace("{{idcp}}", NumberUtility.ConvertToMoneyString(factura?.Factura_contrato?.interes_pagado * factura?.tasa_cambio))

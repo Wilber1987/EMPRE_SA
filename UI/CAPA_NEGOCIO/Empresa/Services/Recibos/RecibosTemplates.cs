@@ -41,7 +41,7 @@ public class RecibosTemplates
 					  
 	   
 		<p style='font-size:9.5px; margin-top:0px; margin-bottom:0px; font-weight: bold; text-align:center; padding-bottom:0px'>Oficina Central
-					{{info_cel}}</p>
+					{{info_tel}}</p>
 		<p style='font-size:9.5px; margin-top:0px; margin-bottom:0px; text-align:center; padding-bottom:0px'>TABLA DE PAGO POR REESTRUCTURACIÓN 
 			CONTRATO <br/> Nº {{numero_contrato}} 
 		</p>
@@ -244,7 +244,7 @@ public class RecibosTemplates
 			<div class='content-center f-10'>
 				<p>RUC J0310000300895</p>
 				<p>ASFC 06/0003/10/2020/1</p>
-				<p>San Marcos-8257-2062 (Tigo)-5719-9497 (Claro)-2535-3613(Linea Fija)</p>
+				<p>{{info_tel}}</p>
 			</div>
 			<p class='content-center'>RECIBO OFICIAL DE CAJA</p>
 
@@ -322,7 +322,7 @@ public class RecibosTemplates
 
 			<p class='text-center' style='margin-top: 50px;'>Recibí Conforme</p>
 			<br><br>
-			<P class='text-center'>HAGA SUS PAGOS PUNTUALES Y EVITESE ACCIONES ADMINISTRATIVAS Y PERJUDICABLES</P>
+			<P class='text-center'>HAGA SUS PAGOS PUNTUALES Y EVITESE ACCIONES ADMINISTRATIVAS Y PREJUDICIAL</P>
 		</body>
 		</html>
 

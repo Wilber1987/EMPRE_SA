@@ -198,42 +198,47 @@ class Recibos_ModelComponent extends EntityClass {
                 }
             }, paga_cordobas: {
                 type: 'MONEY', max: contractData.pagoMaximoCordobas?.toFixed(3), default: contractData.pagoActualCordobas, disabled: true,
-                min: contractData.pagoMinimoCordobas?.toFixed(3), action: (/**@type {Recibos}*/ ObjectF, form, control) => {
+                min: contractData.pagoMinimoCordobas?.toFixed(3), action: (/**@type {Recibos}*/ ObjectF, form, control) => {                    
+                    ObjectF.paga_dolares = Number((control.value / ObjectF.tasa_cambio).toFixed(3));
                     if (parseFloat(control.value) >= contractData.cancelacionValueCordobas) {
                         control.value = contractData.cancelacionValueCordobas?.toFixed(3);
                         ObjectF.solo_abono = false;
                         ObjectF.cancelar = true;
-                        ObjectF.paga_cordobas = contractData.cancelacionValueCordobas;
-                        ObjectF.paga_dolares = contractData.cancelacionValue;
+                        ObjectF.paga_cordobas = Number((contractData.cancelacionValueCordobas).toFixed(3));
+                        ObjectF.paga_dolares = Number((contractData.cancelacionValue).toFixed(3));
                     }
                     if (parseFloat(control.value) < parseFloat(control.min)) {
                         control.value = parseFloat(control.min).toFixed(3);
                         ObjectF.solo_abono = true;
                         ObjectF.cancelar = false;
-                        ObjectF.paga_dolares = contractData.pagoMinimoDolares;
-                        ObjectF.paga_cordobas = contractData.pagoMinimoCordobas;
+                        ObjectF.paga_cordobas = Number(contractData.pagoMinimoCordobas.toFixed(3));
+                        ObjectF.paga_dolares = Number(contractData.pagoMinimoCordobas.toFixed(3));
                     }
-                    form?.DrawComponent();
+                    form.ModelObject.monto_dolares.action(ObjectF, form);
                 }
             }, paga_dolares: {
                 type: 'MONEY', max: contractData.pagoMaximoDolares?.toFixed(3), default: contractData.pagoActual,
-                min: contractData.pagoMinimoDolares?.toFixed(3), action: (/**@type {Recibos}*/ ObjectF, form, control) => {
+                min: contractData.pagoMinimoDolares?.toFixed(3), action: (/**@type {Recibos}*/ ObjectF,/**@type {WForm}*/ form, control) => {
                     //console.log(contractData.cancelacionValue);
+                    //console.trace()
+                    ObjectF.paga_cordobas =  Number((control.value * ObjectF.tasa_cambio).toFixed(3));
                     if (parseFloat(control.value) >= contractData.cancelacionValue) {
                         control.value = contractData.cancelacionValue?.toFixed(3);
                         ObjectF.solo_abono = false;
                         ObjectF.cancelar = true;
-                        ObjectF.paga_cordobas = contractData.cancelacionValueCordobas;
-                        ObjectF.paga_dolares = contractData.cancelacionValue;
+                        ObjectF.reestructurar = false;
+                        ObjectF.paga_cordobas = Number((contractData.cancelacionValueCordobas).toFixed(3));
+                        ObjectF.paga_dolares = Number((contractData.cancelacionValue).toFixed(3));
                     }
                     if (parseFloat(control.value) < parseFloat(control.min)) {
                         control.value = parseFloat(control.min).toFixed(3);
                         ObjectF.solo_abono = true;
                         ObjectF.cancelar = false;
-                        ObjectF.paga_dolares = contractData.pagoMinimoDolares;
-                        ObjectF.paga_cordobas = contractData.pagoMinimoCordobas;
+                        ObjectF.paga_cordobas = Number(contractData.pagoMinimoCordobas.toFixed(3));
+                        ObjectF.paga_dolares = Number(contractData.pagoMinimoCordobas.toFixed(3));
                     }
-                    form?.DrawComponent();
+                    form.ModelObject.monto_dolares.action(ObjectF, form);
+                    //form?.DrawComponent();
                 }
             }, monto_dolares: {
                 type: 'MONEY', defaultValue: 0, action: (/**@type {Recibos}*/ ObjectF, form) => {

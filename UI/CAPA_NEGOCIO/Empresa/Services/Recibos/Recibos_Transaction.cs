@@ -220,6 +220,7 @@ namespace Transactions
 						id_cliente = contrato.codigo_cliente,
 						id_sucursal = dbUser?.Id_Sucursal,
 						reestructuracion = this.reestructurar == true ? 1 : 0,
+						perdida_de_documento = this.perdida_de_documento == true ? 1 : 0,
 						total_pagado = this.total_apagar_dolares,
 						cancel_with_perdida = this.cancelar == true && this.perdida_de_documento == true,
 						Datos_Reestructuracion = this.reestructurar == true ? new Datos_Reestructuracion
