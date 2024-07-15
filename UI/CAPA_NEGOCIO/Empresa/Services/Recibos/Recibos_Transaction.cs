@@ -696,6 +696,21 @@ namespace Transactions
 
 		public double InteresCorriente(Tbl_Cuotas cuota, Transaction_Contratos Contrato)
 		{
+			var cuotasPendientes = Contrato.Tbl_Cuotas
+				.Where(c => c.Estado == "PENDIENTE").ToList().Count;
+			var cuotasPagadas = Contrato.Tbl_Cuotas
+				.Where(c => c.Estado == "CANCELADO").ToList().Count;
+
+			bool fechaPagoMayorFechaActual = cuota?.fecha > DateTime.Now;
+
+			bool cancelarAntesDelPrimerMes = cuotasPagadas == 0
+						&& fechaPagoMayorFechaActual
+						&& (this.cancelar == true || cuotasPendientes == 1);
+
+			if (cuota != null && cancelarAntesDelPrimerMes == true) {
+				return cuota.interes.GetValueOrDefault();
+			}
+
 			double saldo_actual_dolares = Contrato.saldo.GetValueOrDefault();
 			DateTime fecha = cuota?.fecha.GetValueOrDefault().AddMonths(-1) ?? DateTime.MinValue;
 			DateTime fechaActual = DateTime.Now;

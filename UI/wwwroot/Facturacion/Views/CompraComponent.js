@@ -1,10 +1,7 @@
 //@ts-check
 // @ts-ignore
-import { ComponentsManager, ConvertToMoneyString, html, WArrayF, WRender } from "../../WDevCore/WModules/WComponentsTools.js";
+import { ConvertToMoneyString, html, WArrayF, WRender } from "../../WDevCore/WModules/WComponentsTools.js";
 // @ts-ignore
-import { WTableComponent } from "../../WDevCore/WComponents/WTableComponent.js";
-// @ts-ignore
-import { WAppNavigator } from "../../WDevCore/WComponents/WAppNavigator.js";
 import { ModalMessege, ModalVericateAction, WForm } from "../../WDevCore/WComponents/WForm.js";
 import { css } from "../../WDevCore/WModules/WStyledRender.js";
 import { Detalle_Compra } from "../FrontModel/Detalle_Compra.js";
@@ -255,3 +252,4 @@ class ComprasComponent extends HTMLElement {
 }
 customElements.define('w-main-compras', ComprasComponent);
 export { ComprasComponent };
+
