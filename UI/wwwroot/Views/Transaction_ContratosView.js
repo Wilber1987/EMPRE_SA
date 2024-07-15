@@ -194,7 +194,9 @@ class Transaction_ContratosView extends HTMLElement {
                     this.shadowRoot?.append(ModalMessege("Debe ingresar prendas para realizar el contrato!"));
                     return;
                 }
+
                 let isVehiculoValidation = true;
+                let isSerieValidation = true;
                 this.entity.Transaction_Contratos.Detail_Prendas.forEach(element => {
                     // @ts-ignore
                     if (element.Catalogo_Categoria.tipo == "Vehículos" &&
@@ -202,7 +204,15 @@ class Transaction_ContratosView extends HTMLElement {
                             || element.Detail_Prendas_Vehiculos == null)) {
                         isVehiculoValidation = false;
                     }
+                    // @ts-ignore
+                    if (element.serie == null || element.serie == undefined || element.serie.replaceAll(" ", "") == "") {
+                        isSerieValidation = false;
+                    }
                 });
+                if (!isSerieValidation) {
+                    this.shadowRoot?.append(ModalMessege("Debe ingresar la información requerida de las prendas, serie incompleta!"));
+                    return;
+                }
                 if (!isVehiculoValidation) {
                     this.shadowRoot?.append(ModalMessege("Debe ingresar la información requerida del vehículos!"));
                     return;

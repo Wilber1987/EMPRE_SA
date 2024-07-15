@@ -214,46 +214,7 @@ class Gestion_RecibosView extends HTMLElement {
         const reciboModel = Recibos_ModelComponent.BuildRecibosModel(proyeccionContractData);
 
         FinancialModule.UpdateContractData(proyeccionContractData.Contrato, proyeccionContractData)
-        reciboModel.fecha.hidden = false;
-        reciboModel.fecha.action = (/**@type {Recibos} */ recibo,/**@type {WForm} */ form, InputControl) => {
-            // @ts-ignore
-            const fechaInicio = new Date(recibo.fecha_original).toStartDate().getTime();
-            const fechaFin = new Date(InputControl.value).getTime();
-            const diasMora = Math.ceil((fechaFin - fechaInicio) / (24 * 60 * 60 * 1000));
-            proyeccionContractData.Fecha = new Date(InputControl.value);
-            if (diasMora + proyeccionContractData.diasMora > 20) {
-                this.proyeccionDetail.appendChild(html`<div class="proyeccion-container-detail">
-                    <label class="value-container">NO ES POSIBLE PROYECTAR A MAS DE 20 DÍAS</label></div>`
-                );
-            }
-            //console.log("dias:", diasMora);
-            const montoMora = recibo.total_dolares * ((proyeccionContractData.Contrato?.mora / 100) ?? 0.005) * (diasMora + proyeccionContractData.diasMora);
-            //console.log("monto:", montoMora);
-            // @ts-ignore
-            recibo.mora_dolares = (montoMora).toFixed(3);
-            // @ts-ignore
-            recibo.mora_cordobas = (recibo.tasa_cambio * recibo.mora_dolares).toFixed(3);
-            // @ts-ignore
-            recibo.total_cordobas = (recibo.tasa_cambio * recibo.total_dolares).toFixed(3);
-            proyeccionContractData.cuotasPendientes[0].mora = montoMora
-            Recibos_ModelComponent.DefineMaxAndMinInForm(form, proyeccionContractData);
-
-            this.proyeccionDetail.innerHTML = "";
-            this.proyeccionDetail.appendChild(html`<div class="proyeccion-container-detail">
-                    <label class="value-container">
-                        DÍAS DE MORA:
-                        <span>${diasMora + proyeccionContractData.diasMora}</span>
-                    </label>
-                    <label class="value-container">
-                        MORA C$:
-                        <span>${ConvertToMoneyString(recibo.mora_cordobas)}</span>
-                    </label>
-                    <label class="value-container">
-                        MORA $:
-                        <span>${ConvertToMoneyString(recibo.mora_dolares)}</span>
-                    </label>
-                </div>`);
-        };
+        //reciboModel.fecha.hidden = false;
         reciboModel.temporal.hidden = true;
         reciboModel.reestructurar.hidden = true;
         reciboModel.reestructurar_monto.hidden = true;
@@ -288,17 +249,113 @@ class Gestion_RecibosView extends HTMLElement {
                 .titleContainer{
                     display: none;
                 }
-                .ModalElement:nth-child(2) {
+                /* .ModalElement:nth-child(2) {
                     grid-column: span 6;
 
                 }
                 .ModalElement:nth-child(2) input{
                    max-width: 500px;
-                }
+                } */
             `
         });
         this.calculoRecibo(proyeccionContractData.Contrato, this.tasasCambio, proyeccionForm, proyeccionContractData);
-        this.proyeccion.append(this.selectContratosDetail(proyeccionContractData.Contrato), this.proyeccionDetail, proyeccionForm);
+        const inputDate = WRender.Create({
+            // @ts-ignore
+            tagName: "input", type: "date", value: new Date(proyeccionForm.FormObject.fecha_original).toISO(), onchange: (ev) => {
+                /**@type {Recibos} */
+                const recibo = proyeccionForm.FormObject
+                /**@type {WForm} */
+                const form = proyeccionForm
+                const InputControl = ev.target
+
+                // @ts-ignore
+                const fechaInicio = new Date(recibo.fecha_original.toISO()).toStartDate().getTime();
+                const fechaFin = new Date(InputControl.value).getTime();
+                console.log(fechaInicio, fechaFin);
+                const diasMora = Math.ceil((fechaFin - fechaInicio) / (24 * 60 * 60 * 1000));
+                console.log(fechaInicio, fechaFin, diasMora, recibo.fecha_original, InputControl.value, new Date(recibo.fecha_original).toStartDate());
+                proyeccionContractData.Fecha = new Date(InputControl.value);
+                if (diasMora + proyeccionContractData.diasMora > 20) {
+                    this.proyeccionDetail.appendChild(html`<div class="proyeccion-container-detail">
+                    <label class="value-container">NO ES POSIBLE PROYECTAR A MAS DE 20 DÍAS</label></div>`
+                    );
+                }
+                //recibo.fecha = InputControl.value
+                //console.log("dias:", diasMora);
+                const montoMora = recibo.total_dolares * ((proyeccionContractData.Contrato?.mora / 100) ?? 0.005) * (diasMora + proyeccionContractData.diasMora);
+                //console.log("monto:", montoMora);
+                // @ts-ignore
+                recibo.mora_dolares = (montoMora).toFixed(3);
+                // @ts-ignore
+                recibo.mora_cordobas = (recibo.tasa_cambio * recibo.mora_dolares).toFixed(3);
+                // @ts-ignore
+                recibo.total_cordobas = (recibo.tasa_cambio * recibo.total_dolares).toFixed(3);
+                proyeccionContractData.cuotasPendientes[0].mora = montoMora
+                Recibos_ModelComponent.DefineMaxAndMinInForm(form, proyeccionContractData);
+
+                this.proyeccionDetail.innerHTML = "";
+                this.proyeccionDetail.appendChild(html`<div class="proyeccion-container-detail">
+                    <label class="value-container">
+                        DÍAS DE MORA:
+                        <span>${diasMora + proyeccionContractData.diasMora}</span>
+                    </label>
+                    <label class="value-container">
+                        MORA C$:
+                        <span>${ConvertToMoneyString(recibo.mora_cordobas)}</span>
+                    </label>
+                    <label class="value-container">
+                        MORA $:
+                        <span>${ConvertToMoneyString(recibo.mora_dolares)}</span>
+                    </label>
+                </div>`);
+
+            }
+        });
+        reciboModel.fecha.action = (/**@type {Recibos} */ recibo,/**@type {WForm} */ form, InputControl) => {
+
+            // @ts-ignore
+            const fechaInicio = new Date(recibo.fecha_original).toStartDate().getTime();
+            const fechaFin = new Date(InputControl.value).getTime();
+            console.log(fechaInicio, fechaFin);
+            const diasMora = Math.ceil((fechaFin - fechaInicio) / (24 * 60 * 60 * 1000));
+            console.log(fechaInicio, fechaFin, diasMora, recibo.fecha_original, InputControl.value, new Date(recibo.fecha_original).toStartDate());
+            proyeccionContractData.Fecha = new Date(InputControl.value);
+            if (diasMora + proyeccionContractData.diasMora > 20) {
+                this.proyeccionDetail.appendChild(html`<div class="proyeccion-container-detail">
+                    <label class="value-container">NO ES POSIBLE PROYECTAR A MAS DE 20 DÍAS</label></div>`
+                );
+            }
+            //recibo.fecha = InputControl.value
+            //console.log("dias:", diasMora);
+            const montoMora = recibo.total_dolares * ((proyeccionContractData.Contrato?.mora / 100) ?? 0.005) * (diasMora + proyeccionContractData.diasMora);
+            //console.log("monto:", montoMora);
+            // @ts-ignore
+            recibo.mora_dolares = (montoMora).toFixed(3);
+            // @ts-ignore
+            recibo.mora_cordobas = (recibo.tasa_cambio * recibo.mora_dolares).toFixed(3);
+            // @ts-ignore
+            recibo.total_cordobas = (recibo.tasa_cambio * recibo.total_dolares).toFixed(3);
+            proyeccionContractData.cuotasPendientes[0].mora = montoMora
+            Recibos_ModelComponent.DefineMaxAndMinInForm(form, proyeccionContractData);
+
+            this.proyeccionDetail.innerHTML = "";
+            this.proyeccionDetail.appendChild(html`<div class="proyeccion-container-detail">
+                    <label class="value-container">
+                        DÍAS DE MORA:
+                        <span>${diasMora + proyeccionContractData.diasMora}</span>
+                    </label>
+                    <label class="value-container">
+                        MORA C$:
+                        <span>${ConvertToMoneyString(recibo.mora_cordobas)}</span>
+                    </label>
+                    <label class="value-container">
+                        MORA $:
+                        <span>${ConvertToMoneyString(recibo.mora_dolares)}</span>
+                    </label>
+                </div>`);
+        };
+
+        this.proyeccion.append(this.selectContratosDetail(proyeccionContractData.Contrato), inputDate, this.proyeccionDetail, proyeccionForm);
     }
     selectContrato = async (/**@type {Transaction_Contratos} */ selectContrato) => {
         if (selectContrato.estado != "ACTIVO") {

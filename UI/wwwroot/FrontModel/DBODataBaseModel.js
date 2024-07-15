@@ -309,7 +309,7 @@ class Detail_Prendas_ModelComponent extends EntityClass {
     Descripcion = { type: 'text' };
     Tipo = { type: 'text', hidden: true };
     marca = { type: 'text' };
-    serie = { type: 'text', require : false };
+    serie = { type: 'text', require : true };
     modelo = { type: 'text' };
     monto_aprobado_cordobas = { type: 'money', label: "Monto aprob. cordobas", disabled: true };
     monto_aprobado_dolares = { type: 'money', label: "Monto aprob. dolares", disabled: true };
