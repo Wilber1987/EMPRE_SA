@@ -631,12 +631,12 @@ class Transaccion_Factura extends EntityClass {
     }
     /**@type {ModelProperty}*/
     Catalogo_Clientes = { type: 'WSELECT', ModelObject: () => new Catalogo_Clientes(), ForeignKeyColumn: "id_cliente", hiddenInTable: true };
-    id_factura = { type: "number", primary: true };
+    id_factura = { type: "number", primary: true, label: "Número recibo" };
     tipo = { type: "text", hidden: true };
     concepto = { type: "text", hiddenFilter: true };
-    tasa_cambio = { type: "money", label: "tasa_cambio C$" };
-    Moneda = { type: "text", label : "Moneda" };
-    total = { type: "money" };    
+    tasa_cambio = { type: "money", label: "tasa_cambio C$", hiddenFilter: true };
+    Moneda = { type: "text", label : "Moneda",hiddenFilter: true };
+    total = { type: "money" , hiddenFilter: true};    
     estado = { type: "select", Dataset: ["ANULADO", "ACTIVO"] };
     id_cliente = { type: "number", hidden: true };
     id_sucursal = { type: "number", hidden: true };

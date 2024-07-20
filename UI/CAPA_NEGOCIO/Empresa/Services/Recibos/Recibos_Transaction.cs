@@ -94,6 +94,7 @@ namespace Transactions
 				var Monto_Anterior = contrato.monto;
 				var Monto_Anterior_Cordobas = contrato.Valoracion_empeño_cordobas;
 				var Plazo_Anterior = contrato.plazo;
+				var id_clasificacion_interes_anterior = contrato.Catalogo_Clientes?.id_clasificacion_interes;
 
 				var cuotasPendientes = contrato.Tbl_Cuotas.Where(c => c.Estado?.ToUpper() == EstadoEnum.PENDIENTE.ToString()).ToList();
 				Tbl_Cuotas CuotaActual = cuotasPendientes.Last();
@@ -119,6 +120,14 @@ namespace Transactions
 				{
 					contrato.saldo = 0;
 					contrato.estado = Contratos_State.CANCELADO.ToString();
+					var contartosActivos = new Transaction_Contratos{codigo_cliente = contrato.codigo_cliente}.Where<Transaction_Contratos>(
+						FilterData.Equal("estado", Contratos_State.ACTIVO.ToString()),
+						FilterData.Distinc("numero_contrato", contrato.numero_contrato)
+					);
+					if (contartosActivos.Count == 0)
+					{
+						contrato.Catalogo_Clientes?.ActualizarClasificacionInteres();
+					}
 				}
 
 				if (this.cancelar == true && monto == total_capital_restante)
@@ -208,6 +217,7 @@ namespace Transactions
 						abono_capital = abonoCapital,
 						interes_pagado = interesPagado,
 						mora_pagado = moraPagado,
+						id_clasificacion_interes_anterior = id_clasificacion_interes_anterior,
 						reestructurado_anterior = reestructuradoRespaldo,
 						mora = this.mora_dolares,
 						interes_demas_cargos_pagar = this.interes_demas_cargos_pagar_dolares,
@@ -623,6 +633,12 @@ namespace Transactions
 						cuota.Update();
 					}
 				});
+				
+				if (contrato?.Catalogo_Clientes?.id_clasificacion_interes != factura?.Factura_contrato?.id_clasificacion_interes_anterior)
+				{
+					contrato.Catalogo_Clientes.id_clasificacion_interes = factura?.Factura_contrato?.id_clasificacion_interes_anterior;
+					contrato.Catalogo_Clientes.Update();
+				}
 
 				var cuentaOrigen = Catalogo_Cuentas.GetCuentaEgresoRecibos(dbUser);
 				var cuentaDestino = Catalogo_Cuentas.GetCuentaIngresoRecibos(dbUser);
