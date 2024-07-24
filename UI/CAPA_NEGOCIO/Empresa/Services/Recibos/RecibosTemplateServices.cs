@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using CAPA_DATOS;
@@ -113,7 +114,7 @@ namespace UI.CAPA_NEGOCIO.Empresa.Services.Recibos
 				.Replace("{{firma}}", configuraciones_generales.Find(c => c.Nombre == GeneralDataEnum.FIRMA_DIGITAL_APODERADO.ToString())?.Valor)
 				.Replace("{{cedula_apoderado}}", configuraciones_generales.Find(c => c.Nombre == GeneralDataEnum.CEDULA_APODERADO.ToString())?.Valor)
 
-				.Replace("{{fecha_restructuracion}}", factura?.fecha?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy"))
+				.Replace("{{fecha_restructuracion}}", factura?.fecha?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy", new CultureInfo("es-ES")))
 				.Replace("{{tabla_articulos}}", ContractTemplateService.GeneratePrendasTableHtml(model?.Detail_Prendas,
 					model?.tipo?.Equals(Contratos_Type.EMPENO_VEHICULO.ToString()) == true))
 				.Replace("{{tbody_amortizacion}}", ContractTemplateService.GenerateCuotesTableHtml(factura?.Factura_contrato?.Datos_Reestructuracion?.Cuotas_reestructuradas,
@@ -142,7 +143,7 @@ namespace UI.CAPA_NEGOCIO.Empresa.Services.Recibos
 			List<Tbl_Cuotas?>? cuotas = factura?.Detalle_Factura_Recibo?.Select(r => r.Tbl_Cuotas).ToList();
 
 			var cuotasPendiente = new Tbl_Cuotas { numero_contrato = factura?.Factura_contrato?.numero_contrato }
-				.Where<Tbl_Cuotas>(FilterData.NotIn("id_cuota", detalleIds)).OrderBy(c => c.id_cuota).ToList();
+				.Where<Tbl_Cuotas>(FilterData.Equal("Estado", EstadoEnum.PENDIENTE)).OrderBy(c => c.id_cuota).ToList();
 
 			var configuraciones_theme = new Transactional_Configuraciones().GetTheme();
 
@@ -152,7 +153,7 @@ namespace UI.CAPA_NEGOCIO.Empresa.Services.Recibos
 			templateContent = templateContent.Replace("{{recibo_num}}", factura?.Consecutivo)
 			.Replace("{{logo}}", "data:image/png;base64," + configuraciones_theme.Find(c => c.Nombre == ConfiguracionesThemeEnum.LOGO.ToString())?.Valor)
 			.Replace("{{cambio}}", NumberUtility.ConvertToMoneyString(factura?.tasa_cambio))
-			.Replace("{{fecha}}", factura?.fecha?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy \"a las\" h:mm tt"))
+			.Replace("{{fecha}}", factura?.fecha?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy \"a las\" h:mm tt", new CultureInfo("es-ES")))
 			.Replace("{{tipo}}", getTipo(factura?.concepto))
 			.Replace("{{sucursal}}", sucursal?.Nombre)
 			.Replace("{{info_tel}}", configuraciones_theme.Find(c => c.Nombre == ConfiguracionesThemeEnum.INFO_TEL.ToString())?.Valor)

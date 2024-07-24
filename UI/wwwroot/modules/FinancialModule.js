@@ -230,6 +230,9 @@ class FinancialModule {
         }
         /**@type {Date} */ // @ts-ignore
         const fechaEnQueIniciaPeriodo = new Date(cuota?.fecha).modifyMonth(-1);
+        if (fechaActual < fechaEnQueIniciaPeriodo) {
+            return 0;
+        }
         // @ts-ignore
         const diferencia = fechaActual - fechaEnQueIniciaPeriodo;
 
