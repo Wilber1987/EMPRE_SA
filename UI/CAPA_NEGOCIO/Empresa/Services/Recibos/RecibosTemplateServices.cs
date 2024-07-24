@@ -164,7 +164,7 @@ namespace UI.CAPA_NEGOCIO.Empresa.Services.Recibos
 			.Replace("{{cuotas}}", contrato.Tbl_Cuotas.Where(Cuota => Cuota.Estado != EstadoEnum.INACTIVO.ToString()).ToList().Count.ToString())
 			.Replace("{{cuotas_pendientes}}", cuotasPendiente.Count.ToString())
 			.Replace("{{saldo_anterior}}", NumberUtility.ConvertToMoneyString(factura?.Factura_contrato?.saldo_anterior))
-
+			.Replace("{{numero_contrato}}", contrato.numero_contrato?.ToString("D9"))
 			.Replace("{{saldo_anterior_cordobas}}", NumberUtility.ConvertToMoneyString(factura?.Factura_contrato?.saldo_anterior * factura?.tasa_cambio))
 			.Replace("{{total_pagado}}", NumberUtility.ConvertToMoneyString(factura?.total * factura?.tasa_cambio))
 			.Replace("{{total_pagado_dolares}}", NumberUtility.ConvertToMoneyString(factura?.total))
