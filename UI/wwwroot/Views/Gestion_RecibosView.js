@@ -273,8 +273,8 @@ class Gestion_RecibosView extends HTMLElement {
                 const fechaInicio = new Date(recibo.fecha_original.toISO()).toStartDate().getTime();
                 const fechaFin = new Date(InputControl.value).getTime();
                 console.log(fechaInicio, fechaFin);
-                const diasMora = Math.ceil((fechaFin - fechaInicio) / (24 * 60 * 60 * 1000));
-                console.log(fechaInicio, fechaFin, diasMora, recibo.fecha_original, InputControl.value, new Date(recibo.fecha_original).toStartDate());
+                const diasMora = Math.ceil((fechaFin - fechaInicio) / (24 * 60 * 60 * 1000));               
+                //console.log(fechaInicio, fechaFin, diasMora, recibo.fecha_original, InputControl.value, new Date(recibo.fecha_original).toStartDate());
                 proyeccionContractData.Fecha = new Date(InputControl.value);
                 if (diasMora + proyeccionContractData.diasMora > 20) {
                     this.proyeccionDetail.appendChild(html`<div class="proyeccion-container-detail">
@@ -319,7 +319,7 @@ class Gestion_RecibosView extends HTMLElement {
             const fechaFin = new Date(InputControl.value).getTime();
             console.log(fechaInicio, fechaFin);
             const diasMora = Math.ceil((fechaFin - fechaInicio) / (24 * 60 * 60 * 1000));
-            console.log(fechaInicio, fechaFin, diasMora, recibo.fecha_original, InputControl.value, new Date(recibo.fecha_original).toStartDate());
+           //console.log(fechaInicio, fechaFin, diasMora, recibo.fecha_original, InputControl.value, new Date(recibo.fecha_original).toStartDate());
             proyeccionContractData.Fecha = new Date(InputControl.value);
             if (diasMora + proyeccionContractData.diasMora > 20) {
                 this.proyeccionDetail.appendChild(html`<div class="proyeccion-container-detail">
@@ -642,7 +642,7 @@ class Gestion_RecibosView extends HTMLElement {
                 </div>
                 <div class="DataContainer">
                     <span>Intereses y demás cargos:</span>
-                    <label>${selectContrato.tasas_interes * 100} %</label>
+                    <label>${(selectContrato.tasas_interes * 100).toFixed(0)} %</label>
                 </div>
 
                 <div class="DataContainer">
