@@ -2,9 +2,9 @@ import { Catalogo_Tipo_Identificacion } from "../ClientModule/FrontModel/Catalog
 import { WForm } from "../WDevCore/WComponents/WForm.js";
 import { ModelProperty } from "../WDevCore/WModules/CommonModel.js";
 import { EntityClass } from "../WDevCore/WModules/EntityClass.js";
-import { WAjaxTools } from "../WDevCore/WModules/WComponentsTools.js";
 import { Detail_Prendas_Vehiculos, Tbl_Cuotas } from "./Model.js";
 import { Tbl_Cuotas_ModelComponent } from "./ModelComponents.js";
+import {WAjaxTools} from "../WDevCore/WModules/WAjaxTools.js";
 class Catalogo_Estados_Articulos extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
@@ -256,7 +256,7 @@ class Transaction_Contratos_ModelComponent extends EntityClass {
     numero_contrato = { type: "number", primary: true };
     fecha_contrato = { type: "date", hiddenFilter: true };
     fecha_cancelar = { type: "date", hiddenInTable: true, hiddenFilter: true };
-    monto = { type: "MONEY", label: "saldo $",  hiddenInTable: true, hiddenFilter: true };
+    monto = { type: "MONEY", label: "monto $",  hiddenInTable: true, hiddenFilter: true };
     interes = { type: "MONEY", hiddenInTable: true, hiddenFilter: true, label: "interés $"  };
     mora = { type: "PERCENTAGE", hiddenInTable: true, hiddenFilter: true };
     estado = { type: "Select", Dataset: ["ACTIVO", "CANCELADO", "ANULADO"] };
@@ -274,7 +274,8 @@ class Transaction_Contratos_ModelComponent extends EntityClass {
     taza_cambio_compra = { type: "MONEY", hiddenInTable: true, hiddenFilter: true , label: "tasa cambio compra C$" };
     id_agente = { type: "number", hiddenInTable: true, hiddenFilter: true };
     plazo = { type: "number", hiddenInTable: true, hiddenFilter: true };
-    cuotafija = { type: "MONEY", hiddenInTable: true, hiddenFilter: true ,  label: "cuota fija $" };
+    cuotafija = { type: "MONEY", hiddenInTable: true, hiddenFilter: true ,  label: "cuota fija C$" };
+    cuotafija_dolares = { type: "MONEY", hiddenInTable: true, hiddenFilter: true };
     tasa_hoy = { type: "number", hiddenInTable: true, hiddenFilter: true };
     motivo_anulacion = { type: "text", hiddenInTable: true, hiddenFilter: true };
     Valoracion_compra_dolares = { type: "MONEY", hiddenInTable: true, hiddenFilter: true };
@@ -283,7 +284,7 @@ class Transaction_Contratos_ModelComponent extends EntityClass {
     Valoracion_empeño_dolares = { type: "MONEY", hiddenInTable: true, hiddenFilter: true };
     tasas_interes = { type: "number", hiddenInTable: true, hiddenFilter: true };
     gestion_crediticia = { type: "PERCENTAGE", hiddenInTable: true, hiddenFilter: true };
-    cuotafija_dolares = { type: "MONEY", hiddenInTable: true, hiddenFilter: true };
+    
     fecha = { type: "date", hidden: true, hiddenFilter: true };
     total_pagar_cordobas = { type: "MONEY", hiddenInTable: true, hiddenFilter: true };
     total_pagar_dolares = { type: "MONEY", hiddenInTable: true, hiddenFilter: true };
@@ -308,7 +309,7 @@ class Detail_Prendas_ModelComponent extends EntityClass {
     Descripcion = { type: 'text' };
     Tipo = { type: 'text', hidden: true };
     marca = { type: 'text' };
-    serie = { type: 'text', require : false };
+    serie = { type: 'text', require : true };
     modelo = { type: 'text' };
     monto_aprobado_cordobas = { type: 'money', label: "Monto aprob. cordobas", disabled: true };
     monto_aprobado_dolares = { type: 'money', label: "Monto aprob. dolares", disabled: true };
@@ -365,7 +366,7 @@ class Catalogo_Cambio_Divisa_ModelComponent extends EntityClass {
             this[prop] = props[prop];
         }
     }
-    /**@type {ModelProperty}*/ Id_cambio = { type: 'number', primary: true };
+    /**@type {ModelProperty}*/ Id_cambio = { type: 'number', primary: true, hiddenFilter: true  };
     /**@type {ModelProperty}*/ Fecha = { type: 'date' };
     /**@type {ModelProperty}*/ Valor_de_compra = { type: 'number', hiddenFilter: true };
     /**@type {ModelProperty}*/ Valor_de_venta = { type: 'number', hiddenFilter: true };
@@ -630,17 +631,17 @@ class Transaccion_Factura extends EntityClass {
     }
     /**@type {ModelProperty}*/
     Catalogo_Clientes = { type: 'WSELECT', ModelObject: () => new Catalogo_Clientes(), ForeignKeyColumn: "id_cliente", hiddenInTable: true };
-    id_factura = { type: "number", primary: true };
+    id_factura = { type: "number", primary: true, label: "Número recibo" };
     tipo = { type: "text", hidden: true };
     concepto = { type: "text", hiddenFilter: true };
-    tasa_cambio = { type: "money", label: "tasa_cambio C$" };
-    Moneda = { type: "text", label : "Moneda" };
-    total = { type: "money" };    
+    tasa_cambio = { type: "money", label: "tasa_cambio C$", hiddenFilter: true };
+    Moneda = { type: "text", label : "Moneda",hiddenFilter: true };
+    total = { type: "money" , hiddenFilter: true};    
     estado = { type: "select", Dataset: ["ANULADO", "ACTIVO"] };
     id_cliente = { type: "number", hidden: true };
     id_sucursal = { type: "number", hidden: true };
     fecha = { type: "date" };    
-    Detalle_Factura_Recibo = { type: 'MasterDetail', label: "Cuotas Pagadas", ModelObject: () => new Detalle_Factura_Recibo(), hiddenFilter: true };
+    Detalle_Factura_Recibo = { type: 'MasterDetail', label: "Cuotas Pagadas", label: "Detalle recibos", ModelObject: () => new Detalle_Factura_Recibo(), hiddenFilter: true };
     Factura_contrato = { type: 'model', label: "Datos del contrato al momento del pago", ModelObject: () => new Factura_contrato(), hidden: true };
 
 }
@@ -675,12 +676,13 @@ class Detalle_Factura_Recibo extends EntityClass {
         }
     }
     id = { type: "number", primary: true };
-    id_factura = { type: "number" };
-    id_cuota = { type: "number" };
-    total_cuota = { type: "money" };
-    monto_pagado = { type: "money" };
-    capital_restante = { type: "money" };
+    id_factura = { type: "number", hidden: true };
+    id_cuota = { type: "number" , hidden: true };
     concepto = { type: "text" };
+    total_cuota = { type: "money" };
+    monto_pagado = { type: "money", hidden: true  };
+    capital_restante = { type: "money" , hidden: true };
+    
     tasa_cambio = { type: "money" };
 }
 export { Detalle_Factura_Recibo }

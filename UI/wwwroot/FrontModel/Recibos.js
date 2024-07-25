@@ -2,15 +2,19 @@ import { EntityClass } from "../WDevCore/WModules/EntityClass.js";
 class Recibos extends EntityClass {
     constructor(props) {
         super(props, 'Recibos');   
-        for (const prop in props) {
-            this[prop] = props[prop];
-        };
         this.monto_dolares = undefined;
         this.monto_cordobas = undefined;
         this.cambio_dolares = undefined;
         this.cambio_cordobas = undefined;
         this.is_cambio_cordobas = undefined;
         this.pago_parcial = undefined;
+        this.reestructurar = undefined;
+        this.solo_interes_mora = undefined;
+        this.perdida_de_documento_monto = undefined;
+        this.fecha_original = undefined;
+        for (const prop in props) {
+            this[prop] = props[prop];
+        };        
     }
     /**@type {Number}*/ id_recibo;
     /**@type {Number}*/ consecutivo;

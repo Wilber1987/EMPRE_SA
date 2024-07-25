@@ -1,14 +1,15 @@
 //@ts-check
-import { WRender, ComponentsManager, WAjaxTools, html } from "../WDevCore/WModules/WComponentsTools.js";
+import { WRender, ComponentsManager, html } from "../WDevCore/WModules/WComponentsTools.js";
 import { WOrtograficValidation } from "../WDevCore/WModules/WOrtograficValidation.js";
 import { StylesControlsV2, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js"
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
 import { WFilterOptions } from '../WDevCore/WComponents/WFilterControls.js';
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js"
-import { Catalogo_Agentes, Catalogo_Clasificacion_Cliente, Catalogo_Clientes, Catalogo_Tipo_Agente, Catalogo_Cambio_Divisa_ModelComponent, Catalogo_Cuentas, Catalogo_Departamento, Catalogo_Inversores, Catalogo_Municipio, Catalogo_Nacionalidad, Catalogo_Profesiones, Catalogo_Sucursales, Catalogo_Estados_Articulos, Catalogo_Categoria_ModelComponent, Permisos_Cuentas } from "../FrontModel/DBODataBaseModel.js"
+import { Catalogo_Agentes, Catalogo_Clasificacion_Cliente, Catalogo_Clientes, Catalogo_Tipo_Agente, Catalogo_Cambio_Divisa_ModelComponent, Catalogo_Cuentas, Catalogo_Departamento, Catalogo_Inversores, Catalogo_Municipio, Catalogo_Nacionalidad, Catalogo_Profesiones, Catalogo_Sucursales, Catalogo_Estados_Articulos, Catalogo_Categoria_ModelComponent, Permisos_Cuentas, Catalogo_Clasificacion_Interes } from "../FrontModel/DBODataBaseModel.js"
 import { EntityClass } from "../WDevCore/WModules/EntityClass.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 import { Catalogo_Tipo_Identificacion } from "../ClientModule/FrontModel/Catalogo_Clientes.js";
+import {WAjaxTools} from "../WDevCore/WModules/WAjaxTools.js";
 class DBOCatalogosManagerView extends HTMLElement {
     constructor() {
         super();
@@ -32,23 +33,24 @@ class DBOCatalogosManagerView extends HTMLElement {
             Options: {
                 Add: true,
                 Edit: true,
-                Search: true
+                Filter: true,
+                FilterDisplay: true
             }
         })
 
-        const filterOptions = new WFilterOptions({
+       /*const filterOptions = new WFilterOptions({
             Dataset: data,
             ModelObject: Model,
             FilterFunction: (DFilt) => {
                 mainComponent.DrawTable(DFilt);
             }
         });
-        WRender.SetStyle(filterOptions, { marginBottom: "20px", display: "block" })
+        WRender.SetStyle(filterOptions, { marginBottom: "20px", display: "block" })*/
         this.TabManager.NavigateFunction(Model.constructor.name, WRender.Create({
             className: "catalogo-container",
             children: [
                 html`<h2>${WOrtograficValidation.es(Model.constructor.name)}</h2>`,
-                filterOptions,
+                //filterOptions,
                 mainComponent]
         }));
     }
@@ -73,12 +75,16 @@ class DBOCatalogosManagerView extends HTMLElement {
                 name: WOrtograficValidation.es('Permisos_Cuentas'), action: async () => {
                     this.NavigateFunction(new Permisos_Cuentas())
                 }
-            }, {
+            },{
+                name: WOrtograficValidation.es('Catalogo_Clasificacion_Interes'), action: async () => {
+                    this.NavigateFunction(new Catalogo_Clasificacion_Interes())
+                }
+            },/*//TODO ELIMINAR A POSTERIOR LO DE LOS AGENTES { {
                 name: WOrtograficValidation.es('Catalogo_Tipo_Agente'), action: async () => {
                     this.NavigateFunction(new Catalogo_Tipo_Agente())
                 }
-            },//TODO ELIMINAR A POSTERIOR LO DE LOS AGENTES
-            /* {
+            },
+            
                 name: WOrtograficValidation.es('Catalogo_Agentes'), action: async () => {
                     this.NavigateFunction(new Catalogo_Agentes())
                 }

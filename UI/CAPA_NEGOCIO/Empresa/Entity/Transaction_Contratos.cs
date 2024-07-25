@@ -133,15 +133,18 @@ namespace DataBaseModel
 			var tasasCambio = new Catalogo_Cambio_Divisa().Get<Catalogo_Cambio_Divisa>()[0].Valor_de_venta;
 			this.cuotafija_dolares = this.GetPago(monto, plazo);
 			this.cuotafija = this.cuotafija_dolares * this.taza_cambio;
-			var capital = this.Valoracion_empeño_dolares;
+			var capital = monto;
 			List<Tbl_Cuotas> cuotas = new List<Tbl_Cuotas>();
+			DateTime fechaC = fecha.GetValueOrDefault();
 
 			for (var index = 0; index < plazo; index++)
 			{
+				fechaC = fechaC.AddMonths(1);
 				var abono_capital = this.cuotafija_dolares - (capital * this.tasas_interes);
 				var cuota = new Tbl_Cuotas
 				{
-					fecha = this.fecha?.AddMonths(1),
+					Estado = EstadoEnum.PENDIENTE.ToString(),
+					fecha = fechaC,
 					total = this.cuotafija_dolares,
 					interes = capital * this.tasas_interes,
 					abono_capital = abono_capital,
@@ -232,6 +235,32 @@ namespace DataBaseModel
 				Id_Almacen = new Cat_Almacenes().GetAlmacen(dbUser?.Id_Sucursal ?? 0),
 				Lote = Tbl_Lotes.GenerarLote()
 			}.Save();
+		}
+
+		internal Transaction_Contratos? FindAndUpdateContract()
+		{
+			Transaction_Contratos? contrato = Find<Transaction_Contratos>();
+			var cuotas = new Tbl_Cuotas()
+			{
+				numero_contrato = contrato?.numero_contrato
+			}.Where<Tbl_Cuotas>(
+				FilterData.Equal("Estado", EstadoEnum.PENDIENTE),
+				FilterData.Less("fecha", DateTime.Now)
+			);
+			foreach (var cuota in cuotas)
+			{
+				TimeSpan diferencia = DateTime.Now.Subtract(cuota.fecha.GetValueOrDefault());
+				int diasEnMora = (int)Math.Ceiling(diferencia.TotalDays);
+				// Si 'diasEnMora' es negativo, significa que la fecha de pago aún no ha llegado, entonces ajustamos a cero
+				diasEnMora = Math.Max(diasEnMora, 0);
+				var montoMora = cuota.total * ((cuota.Transaction_Contratos?.mora / 100) ?? 0.005) * diasEnMora;				
+				if (montoMora > 0)
+				{
+					cuota.mora = montoMora;
+					cuota.Update();
+				}
+			}			
+			return Find<Transaction_Contratos>();
 		}
 	}
 	public class Tbl_Cuotas : EntityClass

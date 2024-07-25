@@ -292,6 +292,7 @@ namespace DataBaseModel
 		public double? total { get; set; }
 		public double? tasa_cambio { get; set; }
 		public int? id_cliente { get; set; }
+		public int? id_clasificacion_interes_anterior { get; set; }
 		public int? id_sucursal { get; set; }
 		public double? reestructuracion { get; set; }
 		public double? perdida_de_documento { get; set; }
@@ -300,10 +301,11 @@ namespace DataBaseModel
 	
 		public bool? Solo_Interes_Mora { get;  set; }
 		public Datos_Reestructuracion? Datos_Reestructuracion { get; set; }
-        public double? mora_pagado { get;  set; }
-        public double? interes_pagado { get;  set; }
-        public double? abono_capital { get; internal set; }
-    }
+		public double? mora_pagado { get;  set; }
+		public double? interes_pagado { get;  set; }
+		public double? abono_capital { get; set; }
+		public int? reestructurado_anterior { get;  set; }
+	}
 	
 	public class Datos_Reestructuracion 
 	{
@@ -315,11 +317,11 @@ namespace DataBaseModel
 		public double? Cuota_Anterior { get; set; }
 		public double? Nuevo_Cuota { get; set; }
 		public List<Tbl_Cuotas>? Cuotas_reestructuradas  { get; set; }
-        public double? Cuota_Anterior_Cordobas { get;  set; }
-        public double? Nueva_Cuota_Cordobas { get;  set; }
-        public double? Monto_Anterior_Cordobas { get;  set; }
-        public double? Nuevo_Monto_Cordobas { get;  set; }
-    }
+		public double? Cuota_Anterior_Cordobas { get;  set; }
+		public double? Nueva_Cuota_Cordobas { get;  set; }
+		public double? Monto_Anterior_Cordobas { get;  set; }
+		public double? Nuevo_Monto_Cordobas { get;  set; }
+	}
 
 
 	public class Catalogo_Producto : EntityClass

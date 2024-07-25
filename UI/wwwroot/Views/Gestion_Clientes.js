@@ -1,5 +1,5 @@
 //@ts-check
-import { WRender, ComponentsManager, WAjaxTools } from "../WDevCore/WModules/WComponentsTools.js";
+import { WRender, ComponentsManager } from "../WDevCore/WModules/WComponentsTools.js";
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js"
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
 import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
@@ -13,6 +13,7 @@ import { clientSearcher } from "../modules/SerchersModules.js";
 import { Transaction_Contratos } from "../FrontModel/Model.js";
 import { WDetailObject } from "../WDevCore/WComponents/WDetailObject.js";
 import { ClientComponentView } from "./ClientComponentView.js";
+import {WAjaxTools} from "../WDevCore/WModules/WAjaxTools.js";
 
 class Gestion_ClientesView extends HTMLElement {
     constructor(props) {
@@ -69,7 +70,7 @@ class Gestion_ClientesView extends HTMLElement {
                         Transaction_Contratos:
                             { type: "MASTERDETAIL", ModelObject: () => new Transaction_Contratos_ModelComponent(), Dataset: response },
                         Transaction_Factura:
-                            { type: "MASTERDETAIL", ModelObject: () => new Transaccion_Factura({ Catalogo_Clientes: undefined }), Dataset: responseFactura }
+                            { type: "MASTERDETAIL", label: "Recibos", ModelObject: () => new Transaccion_Factura({ Catalogo_Clientes: undefined }), Dataset: responseFactura }
                     }),
                     ObjectDetail: cliente
                 }))

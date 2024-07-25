@@ -30,18 +30,18 @@ public class RecibosTemplates
 		<p style='font-size:9.5px; margin-top:0px; margin-bottom:0px; text-align:center; padding-bottom:0px'>
 					<img class='img-container' style='margin:auto' src='{{logo}}' width='100'>
 					<br/>
-					EMPEÑOS Y PRÉSTAMOS S.A 'EMPRE SA'
+					{{titulo}}
 					<br/>
 					Carazo - Nicaragua
 					 <br/>
-					“Tu Prosperidad, Es Nuestro Éxito….”
+					{{subtitulo}}
 					  <br/>
 					 RUC J0310000300895
 		</p>
 					  
 	   
 		<p style='font-size:9.5px; margin-top:0px; margin-bottom:0px; font-weight: bold; text-align:center; padding-bottom:0px'>Oficina Central
-					82572062 (Mov); 57199497 (Cl), 25353613 (Planta)</p>
+					{{info_tel}}</p>
 		<p style='font-size:9.5px; margin-top:0px; margin-bottom:0px; text-align:center; padding-bottom:0px'>TABLA DE PAGO POR REESTRUCTURACIÓN 
 			CONTRATO <br/> Nº {{numero_contrato}} 
 		</p>
@@ -61,7 +61,7 @@ public class RecibosTemplates
 			</td>     
 			<td style='font-size: 9.5px; text-align: center !important;   width: 33% !important; border: none !important'>
 				<p style='text-align: center !important; font-size:10px; margin-top:0px; padding-bottom:0px; margin-bottom:0px;'>
-					<img style='height:80px; width:140px;' src='{{firma_vicepesiente}}'/>
+					<img style='height:80px; width:140px;' src='{{firma_vicepresidente}}'/>
 				</p>
 				<p style='text-align: center !important; font-size:10px; margin-top:0px; padding-bottom:0px; margin-bottom:0px; border-top: none !important; width: 100% !important; padding-top:10px'>
 					{{datos_apoderado_vicepresidente}}<br/>
@@ -244,19 +244,23 @@ public class RecibosTemplates
 			<div class='content-center f-10'>
 				<p>RUC J0310000300895</p>
 				<p>ASFC 06/0003/10/2020/1</p>
-				<p>San Marcos-8257-2062 (Tigo)-5719-9497 (Claro)-2535-3613(Linea Fija)</p>
+				<p>{{info_tel}}</p>
 			</div>
 			<p class='content-center'>RECIBO OFICIAL DE CAJA</p>
 
 			<div class='w-50'  style='margin-top: 30px;'>
-				<p class='w-50'><strong>Recibo Num:</strong> {{recibo_num}}</p>
-			
+				<p class='w-50'><strong>Contrato #:</strong> {{numero_contrato}}</p>		
+				<p class='w-50'><strong>Recibo Num:</strong> {{recibo_num}}</p>	
+			</div>	
+			<p class='w-100'><strong>Fecha:</strong> {{fecha}}</p>
+			<div class='w-50' >
+				<p class='w-50'><strong>Sucursal:</strong> {{sucursal}}</p>
 				<p class='w-50'><strong>Cambio de C$ A $:</strong> {{cambio}}</p>
 			</div>
-
-			<p class='w-100'><strong>Fecha:</strong> {{fecha}}</p>
-			<p><strong>Sucursal:</strong> {{sucursal}}</p>
-			<p><strong>Cajero:</strong> {{cajero}}</p>
+			<div class='w-50' >
+				<p class='w-50'><strong>Cajero:</strong> {{cajero}}</p>
+				<p class='w-50'><strong>Tipo:</strong> {{tipo}}</p>
+			</div>
 
 			<p style='margin-top: 20px;'><strong>Generales del Contrato</strong></p>
 			<p><strong>Cliente:</strong> {{cliente}}</p>
@@ -272,8 +276,8 @@ public class RecibosTemplates
 			</div>
 
 			<div class='w-50 ' >
-				<p class='w-50 '><strong>Saldo Anterior:</strong> $ {{saldo_anterior}}</p>    
-				<p class='w-50 '><strong>Saldo Actual:</strong> $ {{saldo_actual}}</p>
+				<p class='w-50 '><strong>Saldo Anterior:</strong> C$ {{saldo_anterior_cordobas}}</p>
+				<p class='w-50 '><strong>Saldo Anterior:</strong> $ {{saldo_anterior}}</p>  
 			</div>
 
 
@@ -321,7 +325,7 @@ public class RecibosTemplates
 
 			<p class='text-center' style='margin-top: 50px;'>Recibí Conforme</p>
 			<br><br>
-			<P class='text-center'>HAGA SUS PAGOS PUNTUALES Y EVITESE ACCIONES ADMINISTRATIVAS Y PERJUDICABLES</P>
+			<P class='text-center'>HAGA SUS PAGOS PUNTUALES Y EVITESE ACCIONES ADMINISTRATIVAS Y PREJUDICIAL</P>
 		</body>
 		</html>
 

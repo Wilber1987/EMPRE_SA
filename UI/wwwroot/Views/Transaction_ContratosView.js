@@ -1,6 +1,6 @@
 //@ts-check
 // @ts-ignore
-import { WRender, ComponentsManager, WAjaxTools, WArrayF, html, ConvertToMoneyString } from "../WDevCore/WModules/WComponentsTools.js";
+import { WRender, ComponentsManager, html, ConvertToMoneyString } from "../WDevCore/WModules/WComponentsTools.js";
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js"
 // @ts-ignore
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
@@ -11,11 +11,13 @@ import { Detail_Prendas, Detail_Prendas_Vehiculos, Transaction_Contratos, Valora
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 import { ValoracionesSearch, clientSearcher, contratosSearcher } from "../modules/SerchersModules.js";
 import { ModalMessege, ModalVericateAction } from "../WDevCore/WComponents/WForm.js";
-import { AmoritizationModule } from "../modules/AmortizacionModule.js";
+import { FinancialModule } from "../modules/FinancialModule.js";
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
-import { Transactional_Configuraciones } from "../FrontModel/ADMINISTRATIVE_ACCESSDataBaseModel.js";
 import { Tbl_Cuotas_ModelComponent } from "../FrontModel/ModelComponents.js";
+import { Transactional_Configuraciones } from "../Admin/ADMINISTRATIVE_ACCESSDataBaseModel.js";
+import {WAjaxTools} from "../WDevCore/WModules/WAjaxTools.js";
+import {WArrayF} from "../WDevCore/WModules/WArrayF.js";
 
 /**
  * @typedef {Object} ContratosConfig
@@ -57,10 +59,10 @@ class Transaction_ContratosView extends HTMLElement {
     }
     Draw = async () => {
         this.tasasCambio = await new Catalogo_Cambio_Divisa_ModelComponent().Get();
-        this.Intereses = await new Transactional_Configuraciones().getTransactional_Configuraciones_Intereses();
+        this.Intereses = await new Transactional_Configuraciones().getConfiguraciones_Intereses();
         this.InteresBase = WArrayF.SumValAtt(this.Intereses, "Valor");
         this.entity.Transaction_Contratos.taza_interes_cargos = this.InteresBase;
-        AmoritizationModule.calculoAmortizacion(this.entity);
+        FinancialModule.calculoAmortizacion(this.entity);
         /**@type  {Catalogo_Cambio_Divisa_ModelComponent}*/
         this.tasaActual = this.tasasCambio[0];
         // @ts-ignore
@@ -194,7 +196,9 @@ class Transaction_ContratosView extends HTMLElement {
                     this.shadowRoot?.append(ModalMessege("Debe ingresar prendas para realizar el contrato!"));
                     return;
                 }
+
                 let isVehiculoValidation = true;
+                let isSerieValidation = true;
                 this.entity.Transaction_Contratos.Detail_Prendas.forEach(element => {
                     // @ts-ignore
                     if (element.Catalogo_Categoria.tipo == "Vehículos" &&
@@ -202,7 +206,15 @@ class Transaction_ContratosView extends HTMLElement {
                             || element.Detail_Prendas_Vehiculos == null)) {
                         isVehiculoValidation = false;
                     }
+                    // @ts-ignore
+                    if (element.serie == null || element.serie == undefined || element.serie.replaceAll(" ", "") == "") {
+                        isSerieValidation = false;
+                    }
                 });
+                if (!isSerieValidation) {
+                    this.shadowRoot?.append(ModalMessege("Debe ingresar la información requerida de las prendas, serie incompleta!"));
+                    return;
+                }
                 if (!isVehiculoValidation) {
                     this.shadowRoot?.append(ModalMessege("Debe ingresar la información requerida del vehículos!"));
                     return;
@@ -376,7 +388,7 @@ class Transaction_ContratosView extends HTMLElement {
     }
     update() {
 
-        AmoritizationModule.calculoAmortizacion(this.entity);
+        FinancialModule.calculoAmortizacion(this.entity);
         if (this.prendasTable != undefined && this.entity.Transaction_Contratos.Detail_Prendas != undefined) {
             this.entity.Transaction_Contratos?.Detail_Prendas.forEach(detalle => {
                 detalle.monto_aprobado_dolares = detalle.Transactional_Valoracion.Valoracion_empeño_dolares
@@ -445,9 +457,9 @@ export { Transaction_ContratosView }
 class MainContract extends HTMLElement {
     constructor(contrato) {
         super();
-        // AmoritizationModule.calculoAmortizacion(contrato);     
+        // FinancialModule.calculoAmortizacion(contrato);     
         if (contrato.Transaction_Contratos != null) {
-            // AmoritizationModule.calculoAmortizacion(contrato);
+            // FinancialModule.calculoAmortizacion(contrato);
             this.ElementsNav.unshift({
                 name: "Contrato valorado", action: () => this.Manager.NavigateFunction("contrato-valorado", new Transaction_ContratosView({ Entity: contrato }))
             });

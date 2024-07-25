@@ -1,8 +1,10 @@
 //@ts-check
-import { WRender, ComponentsManager, WAjaxTools, WArrayF } from "../WDevCore/WModules/WComponentsTools.js";
+import { WRender, ComponentsManager } from "../WDevCore/WModules/WComponentsTools.js";
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js"
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 import { Recibos } from "../FrontModel/Recibos.js";
+import {WAjaxTools} from "../WDevCore/WModules/WAjaxTools.js";
+import {WArrayF} from "../WDevCore/WModules/WArrayF.js";
 
 class Print_Recibo  extends HTMLElement {
     /**
