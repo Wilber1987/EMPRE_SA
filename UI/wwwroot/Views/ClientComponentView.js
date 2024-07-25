@@ -12,7 +12,7 @@ import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
 import { clientSearcher } from "../modules/SerchersModules.js";
 import { Transaction_Contratos } from "../FrontModel/Model.js";
 import { WDetailObject } from "../WDevCore/WComponents/WDetailObject.js";
-import {WAjaxTools} from "../WDevCore/WModules/WAjaxTools";
+import {WAjaxTools} from "../WDevCore/WModules/WAjaxTools.js";
 class ClientComponentView extends HTMLElement {
     constructor(cliente) {
         super();

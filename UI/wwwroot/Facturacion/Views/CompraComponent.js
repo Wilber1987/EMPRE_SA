@@ -10,7 +10,7 @@ import { Tbl_Compra } from "../FrontModel/Tbl_Compra.js";
 // @ts-ignore
 import { ModelProperty } from "../../WDevCore/WModules/CommonModel.js";
 import { WOrtograficValidation } from "../../WDevCore/WModules/WOrtograficValidation.js";
-import {WArrayF} from "../../WDevCore/WModules/WArrayF";
+import {WArrayF} from "../../WDevCore/WModules/WArrayF.js";
 
 /**
  * @typedef {Object} ComprasConfig

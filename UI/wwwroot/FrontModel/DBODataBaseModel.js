@@ -4,7 +4,7 @@ import { ModelProperty } from "../WDevCore/WModules/CommonModel.js";
 import { EntityClass } from "../WDevCore/WModules/EntityClass.js";
 import { Detail_Prendas_Vehiculos, Tbl_Cuotas } from "./Model.js";
 import { Tbl_Cuotas_ModelComponent } from "./ModelComponents.js";
-import {WAjaxTools} from "../WDevCore/WModules/WAjaxTools";
+import {WAjaxTools} from "../WDevCore/WModules/WAjaxTools.js";
 class Catalogo_Estados_Articulos extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');

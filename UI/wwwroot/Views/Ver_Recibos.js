@@ -5,7 +5,7 @@ import { Transaccion_Factura, Catalogo_Cambio_Divisa_ModelComponent } from "../F
 import { ModalMessege, ModalVericateAction } from "../WDevCore/WComponents/WForm.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
-import {WAjaxTools} from "../WDevCore/WModules/WAjaxTools";
+import {WAjaxTools} from "../WDevCore/WModules/WAjaxTools.js";
 class Ver_RecibosView extends HTMLElement {
     constructor(props) {
         super();

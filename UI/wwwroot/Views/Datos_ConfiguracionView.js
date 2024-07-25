@@ -3,7 +3,7 @@ import { StylesControlsV2, StyleScrolls } from "../WDevCore/StyleModules/WStyleC
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
 import { Datos_Configuracion } from "../FrontModel/DBODataBaseModel.js"
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
-import {WAjaxTools} from "../WDevCore/WModules/WAjaxTools";
+import {WAjaxTools} from "../WDevCore/WModules/WAjaxTools.js";
 class Datos_ConfiguracionView extends HTMLElement {
     constructor(props) {
         super();

@@ -24,7 +24,7 @@ import { Permissions, WSecurity } from "../WDevCore/Security/WSecurity.js";
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
-import {WArrayF} from "../WDevCore/WModules/WArrayF";
+import {WArrayF} from "../WDevCore/WModules/WArrayF.js";
 class Transaction_Valoraciones_View extends HTMLElement {
     // @ts-ignore
     constructor(props) {

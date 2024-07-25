@@ -9,7 +9,7 @@ import { Cat_Proveedor, Tbl_Factura } from "../FrontModel/FacturacionModel.js"
 import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 import { Tbl_Cuotas_ModelComponent } from "../FrontModel/ModelComponents.js";
-import {WAjaxTools} from "../WDevCore/WModules/WAjaxTools";
+import {WAjaxTools} from "../WDevCore/WModules/WAjaxTools.js";
 class FacturasSearch extends HTMLElement {
     constructor(/** @type {Function} */ action,/** @type {Function} */ secondAction) {
         super();

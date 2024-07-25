@@ -3,7 +3,7 @@ import { StylesControlsV2, StyleScrolls } from "../WDevCore/StyleModules/WStyleC
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
 import { Transaction_Ingresos_Egresos } from "../FrontModel/DBODataBaseModel.js"
 import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
-import {WAjaxTools} from "../WDevCore/WModules/WAjaxTools";
+import {WAjaxTools} from "../WDevCore/WModules/WAjaxTools.js";
 class Transaction_Ingresos_EgresosView extends HTMLElement {
     constructor(props) {
         super();

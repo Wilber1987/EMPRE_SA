@@ -16,8 +16,8 @@ import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { Tbl_Cuotas_ModelComponent } from "../FrontModel/ModelComponents.js";
 import { Transactional_Configuraciones } from "../Admin/ADMINISTRATIVE_ACCESSDataBaseModel.js";
-import {WAjaxTools} from "../WDevCore/WModules/WAjaxTools";
-import {WArrayF} from "../WDevCore/WModules/WArrayF";
+import {WAjaxTools} from "../WDevCore/WModules/WAjaxTools.js";
+import {WArrayF} from "../WDevCore/WModules/WArrayF.js";
 
 /**
  * @typedef {Object} ContratosConfig

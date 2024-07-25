@@ -15,7 +15,7 @@ import { ContractData, FinancialModule } from "../modules/FinancialModule.js";
 import { Detail_Prendas, Tbl_Cuotas } from "../FrontModel/Model.js";
 import { Catalogo_Cambio_Divisa } from "../FrontModel/Catalogo_Cambio_Divisa.js";
 import { ParcialesData } from "../FrontModel/ParcialData.js";
-import {WArrayF} from "../WDevCore/WModules/WArrayF";
+import {WArrayF} from "../WDevCore/WModules/WArrayF.js";
 
 class Gestion_RecibosView extends HTMLElement {
     // @ts-ignore

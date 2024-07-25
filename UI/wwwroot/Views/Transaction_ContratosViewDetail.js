@@ -4,8 +4,8 @@ import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/St
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { Transaction_Contratos, ValoracionesTransaction } from "../FrontModel/Model.js";
-import {WAjaxTools} from "../WDevCore/WModules/WAjaxTools";
-import {WArrayF} from "../WDevCore/WModules/WArrayF";
+import {WAjaxTools} from "../WDevCore/WModules/WAjaxTools.js";
+import {WArrayF} from "../WDevCore/WModules/WArrayF.js";
 
 class Transaction_ContratosViewDetail extends HTMLElement {
     /**

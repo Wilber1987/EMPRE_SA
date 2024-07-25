@@ -4,7 +4,7 @@ import { Detail_Prendas, Tbl_Cuotas, Transaction_Contratos, ValoracionesTransact
 import { ParcialesData } from "../FrontModel/ParcialData.js";
 import { Recibos } from "../FrontModel/Recibos.js";
 
-import {WArrayF} from "../WDevCore/WModules/WArrayF";
+import {WArrayF} from "../WDevCore/WModules/WArrayF.js";
 
 
 class FinancialModule {

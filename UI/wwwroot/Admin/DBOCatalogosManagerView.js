@@ -9,7 +9,7 @@ import { Catalogo_Agentes, Catalogo_Clasificacion_Cliente, Catalogo_Clientes, Ca
 import { EntityClass } from "../WDevCore/WModules/EntityClass.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 import { Catalogo_Tipo_Identificacion } from "../ClientModule/FrontModel/Catalogo_Clientes.js";
-import {WAjaxTools} from "../WDevCore/WModules/WAjaxTools";
+import {WAjaxTools} from "../WDevCore/WModules/WAjaxTools.js";
 class DBOCatalogosManagerView extends HTMLElement {
     constructor() {
         super();

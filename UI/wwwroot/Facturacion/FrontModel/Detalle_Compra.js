@@ -3,7 +3,7 @@ import { EntityClass } from "../../WDevCore/WModules/EntityClass.js";
 import { Cat_Producto }  from './Cat_Producto.js'
 import { Tbl_Compra }  from './Tbl_Compra.js'
 import { Tbl_Lotes }  from './Tbl_Lotes.js'
-import {WAjaxTools} from "../../WDevCore/WModules/WAjaxTools";
+import {WAjaxTools} from "../../WDevCore/WModules/WAjaxTools.js";
 class Detalle_Compra extends EntityClass {
    constructor(props) {
        super(props, 'EntityFacturacion');

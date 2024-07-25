@@ -10,7 +10,7 @@ import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
 import { Tbl_Cuotas, Transaction_Contratos, ValoracionesTransaction } from "../FrontModel/Model.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 import { Tbl_Cuotas_ModelComponent } from "../FrontModel/ModelComponents.js";
-import {WAjaxTools} from "../WDevCore/WModules/WAjaxTools";
+import {WAjaxTools} from "../WDevCore/WModules/WAjaxTools.js";
 class ValoracionesSearch extends HTMLElement {
     constructor(/** @type {Function} */ action,/** @type {Function|undefined} */ secondAction,/** @type {Boolean} */ onlyValids = false) {
         super();

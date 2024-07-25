@@ -8,7 +8,7 @@ import { ModalMessege, WForm } from "../WDevCore/WComponents/WForm.js";
 import { Catalogo_Inversores } from "../FrontModel/DBODataBaseModel.js";
 import { WOrtograficValidation } from "../WDevCore/WModules/WOrtograficValidation.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
-import {WAjaxTools} from "../WDevCore/WModules/WAjaxTools";
+import {WAjaxTools} from "../WDevCore/WModules/WAjaxTools.js";
 class Gestion_InversionistaView extends HTMLElement {
     constructor(props) {
         super();

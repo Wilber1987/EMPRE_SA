@@ -13,7 +13,7 @@ import { clientSearcher } from "../modules/SerchersModules.js";
 import { Transaction_Contratos } from "../FrontModel/Model.js";
 import { WDetailObject } from "../WDevCore/WComponents/WDetailObject.js";
 import { ClientComponentView } from "./ClientComponentView.js";
-import {WAjaxTools} from "../WDevCore/WModules/WAjaxTools";
+import {WAjaxTools} from "../WDevCore/WModules/WAjaxTools.js";
 
 class Gestion_ClientesView extends HTMLElement {
     constructor(props) {

@@ -7,7 +7,7 @@ import { ColumChart } from "../WDevCore/WComponents/WChartJSComponents.js";
 import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
 import { ComponentsManager, ConvertToMoneyString, WRender } from "../WDevCore/WModules/WComponentsTools.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
-import {WArrayF} from "../WDevCore/WModules/WArrayF";
+import {WArrayF} from "../WDevCore/WModules/WArrayF.js";
 
 /**
  * @typedef {Object} ComponentConfig
