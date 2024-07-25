@@ -2,9 +2,9 @@ import { Catalogo_Tipo_Identificacion } from "../ClientModule/FrontModel/Catalog
 import { WForm } from "../WDevCore/WComponents/WForm.js";
 import { ModelProperty } from "../WDevCore/WModules/CommonModel.js";
 import { EntityClass } from "../WDevCore/WModules/EntityClass.js";
-import { WAjaxTools } from "../WDevCore/WModules/WComponentsTools.js";
 import { Detail_Prendas_Vehiculos, Tbl_Cuotas } from "./Model.js";
 import { Tbl_Cuotas_ModelComponent } from "./ModelComponents.js";
+import {WAjaxTools} from "../WDevCore/WModules/WAjaxTools";
 class Catalogo_Estados_Articulos extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');

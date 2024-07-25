@@ -3,7 +3,8 @@ import { Catalogo_Cambio_Divisa } from "../FrontModel/Catalogo_Cambio_Divisa.js"
 import { Detail_Prendas, Tbl_Cuotas, Transaction_Contratos, ValoracionesTransaction } from "../FrontModel/Model.js";
 import { ParcialesData } from "../FrontModel/ParcialData.js";
 import { Recibos } from "../FrontModel/Recibos.js";
-import { WArrayF } from "../WDevCore/WModules/WComponentsTools.js";
+
+import {WArrayF} from "../WDevCore/WModules/WArrayF";
 
 
 class FinancialModule {

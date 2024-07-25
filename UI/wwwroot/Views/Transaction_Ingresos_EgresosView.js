@@ -1,8 +1,9 @@
-import { WRender, ComponentsManager, WAjaxTools } from "../WDevCore/WModules/WComponentsTools.js";
+import { WRender, ComponentsManager } from "../WDevCore/WModules/WComponentsTools.js";
 import { StylesControlsV2, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js"
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
 import { Transaction_Ingresos_Egresos } from "../FrontModel/DBODataBaseModel.js"
 import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
+import {WAjaxTools} from "../WDevCore/WModules/WAjaxTools";
 class Transaction_Ingresos_EgresosView extends HTMLElement {
     constructor(props) {
         super();

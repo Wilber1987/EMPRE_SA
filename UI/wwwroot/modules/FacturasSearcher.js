@@ -1,6 +1,6 @@
 //@ts-check
 // @ts-ignore
-import { WRender, ComponentsManager, WAjaxTools } from "../WDevCore/WModules/WComponentsTools.js";
+import { WRender, ComponentsManager } from "../WDevCore/WModules/WComponentsTools.js";
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js"
 // @ts-ignore
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
@@ -9,6 +9,7 @@ import { Cat_Proveedor, Tbl_Factura } from "../FrontModel/FacturacionModel.js"
 import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 import { Tbl_Cuotas_ModelComponent } from "../FrontModel/ModelComponents.js";
+import {WAjaxTools} from "../WDevCore/WModules/WAjaxTools";
 class FacturasSearch extends HTMLElement {
     constructor(/** @type {Function} */ action,/** @type {Function} */ secondAction) {
         super();

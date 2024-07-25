@@ -1,7 +1,7 @@
 //@ts-check
 import { EntityClass } from "../../WDevCore/WModules/EntityClass.js";
-import { WAjaxTools } from "../../WDevCore/WModules/WComponentsTools.js";
 import { Cat_Producto }  from './Cat_Producto.js'
+import {WAjaxTools} from "../../WDevCore/WModules/WAjaxTools";
 class Cat_Marca extends EntityClass {
    constructor(props) {
        super(props, 'EntityFacturacion');

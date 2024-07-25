@@ -1,9 +1,10 @@
-import { WRender, ComponentsManager, WAjaxTools } from "../WDevCore/WModules/WComponentsTools.js";
+import { WRender, ComponentsManager } from "../WDevCore/WModules/WComponentsTools.js";
 import { StylesControlsV2, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js"
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
 import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js"
 import { Transactional_Configuraciones } from "./ADMINISTRATIVE_ACCESSDataBaseModel.js"
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
+import {WAjaxTools} from "../WDevCore/WModules/WAjaxTools";
 class Transactional_ConfiguracionesView extends HTMLElement {
     constructor(props) {
         super();

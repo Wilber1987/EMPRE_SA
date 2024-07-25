@@ -1,10 +1,11 @@
-import { WRender, ComponentsManager, WAjaxTools, html } from "../WDevCore/WModules/WComponentsTools.js";
+import { WRender, ComponentsManager, html } from "../WDevCore/WModules/WComponentsTools.js";
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js"
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
 import { Transaccion_Factura, Catalogo_Cambio_Divisa_ModelComponent } from "../FrontModel/DBODataBaseModel.js"
 import { ModalMessege, ModalVericateAction } from "../WDevCore/WComponents/WForm.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
+import {WAjaxTools} from "../WDevCore/WModules/WAjaxTools";
 class Ver_RecibosView extends HTMLElement {
     constructor(props) {
         super();

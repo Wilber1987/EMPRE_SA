@@ -1,8 +1,9 @@
-import { WRender, ComponentsManager, WAjaxTools } from "../WDevCore/WModules/WComponentsTools.js";
+import { WRender, ComponentsManager } from "../WDevCore/WModules/WComponentsTools.js";
 import { StylesControlsV2, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js"
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
 import { Datos_Configuracion } from "../FrontModel/DBODataBaseModel.js"
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
+import {WAjaxTools} from "../WDevCore/WModules/WAjaxTools";
 class Datos_ConfiguracionView extends HTMLElement {
     constructor(props) {
         super();

@@ -5,8 +5,9 @@ import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/St
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
 import { ColumChart } from "../WDevCore/WComponents/WChartJSComponents.js";
 import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
-import { ComponentsManager, ConvertToMoneyString, WArrayF, WRender } from "../WDevCore/WModules/WComponentsTools.js";
+import { ComponentsManager, ConvertToMoneyString, WRender } from "../WDevCore/WModules/WComponentsTools.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
+import {WArrayF} from "../WDevCore/WModules/WArrayF";
 
 /**
  * @typedef {Object} ComponentConfig
