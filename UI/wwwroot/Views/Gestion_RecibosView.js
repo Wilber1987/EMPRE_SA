@@ -638,7 +638,7 @@ class Gestion_RecibosView extends HTMLElement {
                 </div>
                 <div class="DataContainer">
                     <span>Reestructuraciones:</span>
-                    <label>${selectContrato.reestructurado}</label>
+                    <label>${selectContrato.reestructurado ?? "-" }</label>
                 </div>
                 <div class="DataContainer">
                     <span>Intereses y demás cargos:</span>
