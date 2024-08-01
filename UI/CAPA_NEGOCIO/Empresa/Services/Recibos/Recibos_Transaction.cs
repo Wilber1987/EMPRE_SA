@@ -12,6 +12,7 @@ namespace Transactions
 {
 	public class Recibos_Transactions : EntityClass
 	{
+		#region
 		[PrimaryKey(Identity = true)]
 		public int? id_recibo { get; set; }
 		public int? consecutivo { get; set; }
@@ -56,6 +57,7 @@ namespace Transactions
 		public bool? is_cambio_cordobas { get; set; }
 		public bool? pago_parcial { get; set; }
 		public List<Tbl_Cuotas>? CuotasReestructuradas { get; private set; }
+		#endregion
 
 		public object SaveRecibos(string token)
 		{
@@ -100,7 +102,7 @@ namespace Transactions
 				Tbl_Cuotas CuotaActual = cuotasPendientes.Last();
 				double? mora = cuotasPendientes?.Select(c => c.mora).ToList().Sum();
 				double? saldo_pendiente = contrato.saldo;
-				double? interesCorriente = this.cancelar == true ? InteresCorriente(CuotaActual, contrato) : CuotaActual?.interes;
+				double? interesCorriente = InteresCorriente(CuotaActual, contrato);
 				double? perdida_de_documento_monto = this.perdida_de_documento == true ? 1 : 0;
 				double? reestructuracion_monto = reestructurar_value ?? 0;
 				double? total_capital_restante = mora
@@ -120,7 +122,7 @@ namespace Transactions
 				{
 					contrato.saldo = 0;
 					contrato.estado = Contratos_State.CANCELADO.ToString();
-					var contartosActivos = new Transaction_Contratos{codigo_cliente = contrato.codigo_cliente}.Where<Transaction_Contratos>(
+					var contartosActivos = new Transaction_Contratos { codigo_cliente = contrato.codigo_cliente }.Where<Transaction_Contratos>(
 						FilterData.Equal("estado", Contratos_State.ACTIVO.ToString()),
 						FilterData.Distinc("numero_contrato", contrato.numero_contrato)
 					);
@@ -132,12 +134,10 @@ namespace Transactions
 
 				if (this.cancelar == true && monto == total_capital_restante)
 				{
-					monto = CancelarCuotaActual(monto, CuotaActual, DetallesFacturaRecibos);
 					contrato.saldo = 0;
 					contrato.estado = Contratos_State.CANCELADO.ToString();
 					cuotasPendientes?.ForEach(cuota =>
 					{
-						if (cuota.id_cuota == CuotaActual.id_cuota) return;
 						EstadoAnteriorCuota estadoAnterior = CloneCuota(cuota);
 						cuota.pago_contado = cuota.abono_capital;
 						AgregarCuotaDetalle(cuota, DetallesFacturaRecibos, estadoAnterior,
@@ -574,6 +574,22 @@ namespace Transactions
 				var user = AuthNetCore.User(token);
 				var dbUser = new Security_Users { Id_User = user.UserId }.Find<Security_Users>();
 				var factura = new Transaccion_Factura() { id_factura = this.id_recibo }.Find<Transaccion_Factura>();
+				var contrato = new Transaction_Contratos() { numero_contrato = factura?.Factura_contrato?.numero_contrato }.Find<Transaction_Contratos>();
+				var FacturasActivas = new Transaccion_Factura()
+				{
+					numero_contrato = factura?.Factura_contrato?.numero_contrato
+				}.Where<Transaccion_Factura>(
+					FilterData.Equal("estado", EstadoEnum.ACTIVO),
+					FilterData.Greater("id_factura", this.id_recibo  )
+				);
+				if (FacturasActivas.Count > 0)
+				{
+					return new ResponseService()
+					{
+						status = 400,
+						message = "Recibo no se puede anular, debido a que hay recibos posteriores activos"
+					};
+				}
 
 				if (factura == null)
 				{
@@ -595,8 +611,6 @@ namespace Transactions
 				factura.Motivo_Anulacion = motivo_anulacion;
 				BeginGlobalTransaction();
 				factura.Update();
-				var contrato = new Transaction_Contratos() { numero_contrato = factura?.Factura_contrato?.numero_contrato }.Find<Transaction_Contratos>();
-
 
 				if (contrato != null)
 				{
@@ -633,7 +647,7 @@ namespace Transactions
 						cuota.Update();
 					}
 				});
-				
+
 				if (contrato?.Catalogo_Clientes?.id_clasificacion_interes != factura?.Factura_contrato?.id_clasificacion_interes_anterior)
 				{
 					contrato.Catalogo_Clientes.id_clasificacion_interes = factura?.Factura_contrato?.id_clasificacion_interes_anterior;
@@ -723,7 +737,10 @@ namespace Transactions
 						&& fechaPagoMayorFechaActual
 						&& (this.cancelar == true || cuotasPendientes == 1);
 
-			if (cuota != null && cancelarAntesDelPrimerMes == true) {
+			if (cuota != null && ((cancelarAntesDelPrimerMes == true)
+				|| (this.reestructurar == true && fechaPagoMayorFechaActual)
+				|| (cuotasPendientes > 1 && this.cancelar != true && this.reestructurar != true)))
+			{
 				return cuota.interes.GetValueOrDefault();
 			}
 

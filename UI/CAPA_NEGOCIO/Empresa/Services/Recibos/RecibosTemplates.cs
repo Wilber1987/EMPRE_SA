@@ -249,15 +249,18 @@ public class RecibosTemplates
 			<p class='content-center'>RECIBO OFICIAL DE CAJA</p>
 
 			<div class='w-50'  style='margin-top: 30px;'>
-				<p class='w-50'><strong>Recibo Num:</strong> {{recibo_num}}</p>			
-				<p class='w-50'><strong>Cambio de C$ A $:</strong> {{cambio}}</p>
+				<p class='w-50'><strong>Contrato #:</strong> {{numero_contrato}}</p>		
+				<p class='w-50'><strong>Recibo Num:</strong> {{recibo_num}}</p>	
 			</div>	
 			<p class='w-100'><strong>Fecha:</strong> {{fecha}}</p>
 			<div class='w-50' >
-				<p class='w-50'><strong>Sucursal:</strong> {{sucursal}}</p>			
+				<p class='w-50'><strong>Sucursal:</strong> {{sucursal}}</p>
+				<p class='w-50'><strong>Cambio de C$ A $:</strong> {{cambio}}</p>
+			</div>
+			<div class='w-50' >
+				<p class='w-50'><strong>Cajero:</strong> {{cajero}}</p>
 				<p class='w-50'><strong>Tipo:</strong> {{tipo}}</p>
 			</div>
-			<p><strong>Cajero:</strong> {{cajero}}</p>
 
 			<p style='margin-top: 20px;'><strong>Generales del Contrato</strong></p>
 			<p><strong>Cliente:</strong> {{cliente}}</p>

@@ -69,10 +69,10 @@ namespace CAPA_NEGOCIO.Services
 					.Replace("{{titulo}}", configuraciones_theme.Find(c => c.Nombre == ConfiguracionesThemeEnum.TITULO.ToString())?.Valor)
 					.Replace("{{subtitulo}}", configuraciones_theme.Find(c => c.Nombre == ConfiguracionesThemeEnum.SUB_TITULO.ToString())?.Valor)
 					.Replace("{{info_tel}}", configuraciones_theme.Find(c => c.Nombre == ConfiguracionesThemeEnum.INFO_TEL.ToString())?.Valor)
-					.Replace("{{fecha_contrato_label}}", model.fecha_contrato?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy \"a las\" h:mm tt"))
-					.Replace("{{fecha_contrato_label_corta}}", model.fecha_contrato?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy"))
-					.Replace("{{fecha_primera_cuota}}", fechaPrimeraCuota?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy"))
-					.Replace("{{fecha_ultima_cuota}}", fechaUltimaCuota?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy"))
+					.Replace("{{fecha_contrato_label}}", model.fecha_contrato?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy \"a las\" h:mm tt", new CultureInfo("es-ES")))
+					.Replace("{{fecha_contrato_label_corta}}", model.fecha_contrato?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy", new CultureInfo("es-ES")))
+					.Replace("{{fecha_primera_cuota}}", fechaPrimeraCuota?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy", new CultureInfo("es-ES")))
+					.Replace("{{fecha_ultima_cuota}}", fechaUltimaCuota?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy", new CultureInfo("es-ES")))
 					.Replace("{{cuotafija_label}}", NumberUtility.NumeroALetras(model.cuotafija, "córdobas"))
 					.Replace("{{cuotafija_dolares}}", NumberUtility.ConvertToMoneyString(model.cuotafija_dolares))
 					.Replace("{{cuotafija_dolares_label}}", NumberUtility.NumeroALetras(model.cuotafija_dolares, "dólares"))
@@ -334,7 +334,7 @@ namespace CAPA_NEGOCIO.Services
 			objListOrder?.ForEach(dato =>
 			{
 				htmlBuilder.Append("<tr>");
-				htmlBuilder.Append($"<td class=\"desc\" colspan=\"2\">{dato.fecha?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy")}</td>");
+				htmlBuilder.Append($"<td class=\"desc\" colspan=\"2\">{dato.fecha?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy", new CultureInfo("es-ES"))}</td>");
 
 				var interesNeto = dato.interes / contrato.tasas_interes * (contrato.DesgloseIntereses?.INTERES_NETO_CORRIENTE / 100);
 				var demasCargos = dato.interes - interesNeto;

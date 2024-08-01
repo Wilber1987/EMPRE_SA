@@ -1,11 +1,11 @@
 //@ts-check
 
-import { WAjaxTools } from "../../../WDevCore/WModules/WComponentsTools.js";
 // @ts-ignore
 import { ModelProperty } from "../../../WDevCore/WModules/CommonModel.js";
 import { Cat_Proveedor_ModelComponent } from './Cat_Proveedor_ModelComponent.js'
 import { Detalle_Compra_ModelComponent } from './Detalle_Compra_ModelComponent.js'
 import { EntityClass } from "../../../WDevCore/WModules/EntityClass.js";
+import {WAjaxTools} from "../../../WDevCore/WModules/WAjaxTools.js";
 class Tbl_Compra_ModelComponent extends EntityClass {
     constructor(props) {
         super(props, 'EntityFacturacion');

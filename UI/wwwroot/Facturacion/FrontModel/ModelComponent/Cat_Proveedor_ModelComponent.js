@@ -1,9 +1,9 @@
 //@ts-check
 import { EntityClass } from "../../../WDevCore/WModules/EntityClass.js";
-import { WAjaxTools } from "../../../WDevCore/WModules/WComponentsTools.js";
 // @ts-ignore
 import { ModelProperty } from "../../../WDevCore/WModules/CommonModel.js";
 import { Tbl_Compra_ModelComponent } from './Tbl_Compra_ModelComponent.js'
+import {WAjaxTools} from "../../../WDevCore/WModules/WAjaxTools.js";
 class Cat_Proveedor_ModelComponent extends EntityClass {
     constructor(props) {
         super(props, 'EntityFacturacion');

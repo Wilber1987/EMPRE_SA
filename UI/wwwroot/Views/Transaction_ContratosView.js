@@ -1,6 +1,6 @@
 //@ts-check
 // @ts-ignore
-import { WRender, ComponentsManager, WAjaxTools, WArrayF, html, ConvertToMoneyString } from "../WDevCore/WModules/WComponentsTools.js";
+import { WRender, ComponentsManager, html, ConvertToMoneyString } from "../WDevCore/WModules/WComponentsTools.js";
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js"
 // @ts-ignore
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
@@ -16,6 +16,8 @@ import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { Tbl_Cuotas_ModelComponent } from "../FrontModel/ModelComponents.js";
 import { Transactional_Configuraciones } from "../Admin/ADMINISTRATIVE_ACCESSDataBaseModel.js";
+import {WAjaxTools} from "../WDevCore/WModules/WAjaxTools.js";
+import {WArrayF} from "../WDevCore/WModules/WArrayF.js";
 
 /**
  * @typedef {Object} ContratosConfig

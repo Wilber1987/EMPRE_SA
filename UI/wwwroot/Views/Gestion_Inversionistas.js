@@ -1,5 +1,5 @@
 //@ts-check
-import { WRender, ComponentsManager, WAjaxTools } from "../WDevCore/WModules/WComponentsTools.js";
+import { WRender, ComponentsManager } from "../WDevCore/WModules/WComponentsTools.js";
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js"
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
 import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
@@ -8,6 +8,7 @@ import { ModalMessege, WForm } from "../WDevCore/WComponents/WForm.js";
 import { Catalogo_Inversores } from "../FrontModel/DBODataBaseModel.js";
 import { WOrtograficValidation } from "../WDevCore/WModules/WOrtograficValidation.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
+import {WAjaxTools} from "../WDevCore/WModules/WAjaxTools.js";
 class Gestion_InversionistaView extends HTMLElement {
     constructor(props) {
         super();

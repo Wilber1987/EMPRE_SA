@@ -1,6 +1,6 @@
 //@ts-check
 // @ts-ignore
-import { ConvertToMoneyString, html, WArrayF, WRender } from "../../WDevCore/WModules/WComponentsTools.js";
+import { ConvertToMoneyString, html, WRender } from "../../WDevCore/WModules/WComponentsTools.js";
 // @ts-ignore
 import { ModalMessege, ModalVericateAction, WForm } from "../../WDevCore/WComponents/WForm.js";
 import { css } from "../../WDevCore/WModules/WStyledRender.js";
@@ -10,6 +10,7 @@ import { Tbl_Compra } from "../FrontModel/Tbl_Compra.js";
 // @ts-ignore
 import { ModelProperty } from "../../WDevCore/WModules/CommonModel.js";
 import { WOrtograficValidation } from "../../WDevCore/WModules/WOrtograficValidation.js";
+import {WArrayF} from "../../WDevCore/WModules/WArrayF.js";
 
 /**
  * @typedef {Object} ComprasConfig

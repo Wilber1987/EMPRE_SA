@@ -3,7 +3,7 @@ import { Catalogo_Cambio_Divisa_ModelComponent } from "../FrontModel/DBODataBase
 import { Transaction_Contratos } from "../FrontModel/Model.js";
 import { StyleScrolls, StylesControlsV2, StylesControlsV3 } from "../WDevCore/StyleModules/WStyleComponents.js";
 import { ModalMessege, ModalVericateAction, WForm } from "../WDevCore/WComponents/WForm.js";
-import { ComponentsManager, ConvertToMoneyString, html, WArrayF, WRender } from "../WDevCore/WModules/WComponentsTools.js";
+import { ComponentsManager, ConvertToMoneyString, html, WRender } from "../WDevCore/WModules/WComponentsTools.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 import { contratosSearcher } from "../modules/SerchersModules.js";
 import { Recibos_ModelComponent } from "../FrontModel/ModelComponents/Recibos_ModelComponent.js";
@@ -15,6 +15,7 @@ import { ContractData, FinancialModule } from "../modules/FinancialModule.js";
 import { Detail_Prendas, Tbl_Cuotas } from "../FrontModel/Model.js";
 import { Catalogo_Cambio_Divisa } from "../FrontModel/Catalogo_Cambio_Divisa.js";
 import { ParcialesData } from "../FrontModel/ParcialData.js";
+import {WArrayF} from "../WDevCore/WModules/WArrayF.js";
 
 class Gestion_RecibosView extends HTMLElement {
     // @ts-ignore
@@ -272,8 +273,8 @@ class Gestion_RecibosView extends HTMLElement {
                 const fechaInicio = new Date(recibo.fecha_original.toISO()).toStartDate().getTime();
                 const fechaFin = new Date(InputControl.value).getTime();
                 console.log(fechaInicio, fechaFin);
-                const diasMora = Math.ceil((fechaFin - fechaInicio) / (24 * 60 * 60 * 1000));
-                console.log(fechaInicio, fechaFin, diasMora, recibo.fecha_original, InputControl.value, new Date(recibo.fecha_original).toStartDate());
+                const diasMora = Math.ceil((fechaFin - fechaInicio) / (24 * 60 * 60 * 1000));               
+                //console.log(fechaInicio, fechaFin, diasMora, recibo.fecha_original, InputControl.value, new Date(recibo.fecha_original).toStartDate());
                 proyeccionContractData.Fecha = new Date(InputControl.value);
                 if (diasMora + proyeccionContractData.diasMora > 20) {
                     this.proyeccionDetail.appendChild(html`<div class="proyeccion-container-detail">
@@ -318,7 +319,7 @@ class Gestion_RecibosView extends HTMLElement {
             const fechaFin = new Date(InputControl.value).getTime();
             console.log(fechaInicio, fechaFin);
             const diasMora = Math.ceil((fechaFin - fechaInicio) / (24 * 60 * 60 * 1000));
-            console.log(fechaInicio, fechaFin, diasMora, recibo.fecha_original, InputControl.value, new Date(recibo.fecha_original).toStartDate());
+           //console.log(fechaInicio, fechaFin, diasMora, recibo.fecha_original, InputControl.value, new Date(recibo.fecha_original).toStartDate());
             proyeccionContractData.Fecha = new Date(InputControl.value);
             if (diasMora + proyeccionContractData.diasMora > 20) {
                 this.proyeccionDetail.appendChild(html`<div class="proyeccion-container-detail">
@@ -641,7 +642,7 @@ class Gestion_RecibosView extends HTMLElement {
                 </div>
                 <div class="DataContainer">
                     <span>Intereses y demás cargos:</span>
-                    <label>${selectContrato.tasas_interes * 100} %</label>
+                    <label>${(selectContrato.tasas_interes * 100).toFixed(0)} %</label>
                 </div>
 
                 <div class="DataContainer">
