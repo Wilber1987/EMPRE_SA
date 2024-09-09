@@ -1,23 +1,21 @@
 //@ts-check
 // @ts-ignore
-import { WRender, ComponentsManager, html, ConvertToMoneyString } from "../WDevCore/WModules/WComponentsTools.js";
-import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js"
+import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js";
+import { ComponentsManager, ConvertToMoneyString, html, WRender } from "../WDevCore/WModules/WComponentsTools.js";
 // @ts-ignore
-import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
-import { Catalogo_Cambio_Divisa_ModelComponent, Catalogo_Clientes, Detail_Prendas_ModelComponent, Detail_Prendas_Vehiculos_ModelComponent, Transaction_Contratos_ModelComponent } from "../FrontModel/DBODataBaseModel.js"
+import { Catalogo_Cambio_Divisa_ModelComponent, Catalogo_Clientes, Detail_Prendas_ModelComponent, Detail_Prendas_Vehiculos_ModelComponent, Transaction_Contratos_ModelComponent } from "../FrontModel/DBODataBaseModel.js";
+import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js";
 // @ts-ignore
-import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
-import { Detail_Prendas, Detail_Prendas_Vehiculos, Transaction_Contratos, ValoracionesTransaction } from "../FrontModel/Model.js";
-import { css } from "../WDevCore/WModules/WStyledRender.js";
-import { ValoracionesSearch, clientSearcher, contratosSearcher } from "../modules/SerchersModules.js";
-import { ModalMessege, ModalVericateAction } from "../WDevCore/WComponents/WForm.js";
-import { FinancialModule } from "../modules/FinancialModule.js";
-import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
-import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
-import { Tbl_Cuotas_ModelComponent } from "../FrontModel/ModelComponents.js";
 import { Transactional_Configuraciones } from "../Admin/ADMINISTRATIVE_ACCESSDataBaseModel.js";
-import {WAjaxTools} from "../WDevCore/WModules/WAjaxTools.js";
-import {WArrayF} from "../WDevCore/WModules/WArrayF.js";
+import { Detail_Prendas, Transaction_Contratos, ValoracionesTransaction } from "../FrontModel/Model.js";
+import { Tbl_Cuotas_ModelComponent } from "../FrontModel/ModelComponents.js";
+import { FinancialModule } from "../modules/FinancialModule.js";
+import { clientSearcher, contratosSearcher, ValoracionesSearch } from "../modules/SerchersModules.js";
+import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
+import { ModalMessege, ModalVericateAction } from "../WDevCore/WComponents/WForm.js";
+import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
+import { WArrayF } from "../WDevCore/WModules/WArrayF.js";
+import { css } from "../WDevCore/WModules/WStyledRender.js";
 
 /**
  * @typedef {Object} ContratosConfig
@@ -452,7 +450,7 @@ class Transaction_ContratosView extends HTMLElement {
     `
 }
 customElements.define('w-transaction_contratos', Transaction_ContratosView);
-export { Transaction_ContratosView }
+export { Transaction_ContratosView };
 
 class MainContract extends HTMLElement {
     constructor(contrato) {
@@ -513,7 +511,7 @@ class MainContract extends HTMLElement {
     CustomStyle = css``
 }
 customElements.define('w-main-contract', MainContract);
-export { MainContract }
+export { MainContract };
 
 window.addEventListener('load', async () => {
     const contrato = await new ValoracionesTransaction().GetValoracionContrato();

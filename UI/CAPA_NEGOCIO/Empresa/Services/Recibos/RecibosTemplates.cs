@@ -198,6 +198,7 @@ public class RecibosTemplates
 			</body>
 			</html>
 	";
+	//TODO AGREGAR ESTO EN RECIBO ACREEDOR <p class='w-50'><strong>Clasificacion:</strong> {{clasificacion}}</p>    
 	
 	public static string recibo = @"
 		<!DOCTYPE html>
@@ -266,7 +267,7 @@ public class RecibosTemplates
 			<p><strong>Cliente:</strong> {{cliente}}</p>
 
 			<div class='w-50' >
-				<p class='w-50'><strong>Clasificacion:</strong> {{clasificacion}}</p>    
+				
 				<p class='w-50'><strong>Categoria:</strong> {{categoria}}</p>
 			</div>
 

@@ -4,9 +4,6 @@ import { EntityClass } from "../../../WDevCore/WModules/EntityClass.js";
 import { ModelProperty } from "../../../WDevCore/WModules/CommonModel.js";
 import { Cat_Marca_ModelComponent }  from './Cat_Marca_ModelComponent.js'
 import { Cat_Categorias_ModelComponent }  from './Cat_Categorias_ModelComponent.js'
-import { Detalle_Compra_ModelComponent }  from './Detalle_Compra_ModelComponent.js'
-import { Detalle_Factura_ModelComponent }  from './Detalle_Factura_ModelComponent.js'
-import {WAjaxTools} from "../../../WDevCore/WModules/WAjaxTools.js";
 class Cat_Producto_ModelComponent extends EntityClass {
    constructor(props) {
        super(props, 'EntityFacturacion');

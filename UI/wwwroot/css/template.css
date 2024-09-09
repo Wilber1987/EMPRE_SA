@@ -34,7 +34,6 @@ body {
 
 #Header,
 #AdminHeader {
-    background-color: var(--tertiary-color);
     color: var(--font-tertiary-color);
     display: flex;
     justify-content: right;

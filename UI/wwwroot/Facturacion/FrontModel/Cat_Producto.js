@@ -4,7 +4,6 @@ import { Cat_Marca } from './Cat_Marca.js'
 import { Cat_Categorias } from './Cat_Categorias.js'
 import { Detalle_Compra } from './Detalle_Compra.js'
 import { Detalle_Factura } from './Detalle_Factura.js'
-import {WAjaxTools} from "../../WDevCore/WModules/WAjaxTools.js";
 class Cat_Producto extends EntityClass {
     constructor(props) {
         super(props, 'EntityFacturacion');
