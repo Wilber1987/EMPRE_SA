@@ -42,6 +42,7 @@ class Gestion_RecibosView extends HTMLElement {
     }
     Draw = async () => {
         this.Configs = await new Transactional_Configuraciones().getConfiguraciones_Configs();
+        this.vencimientoConfig = parseInt(this.Configs?.find(c => c.Nombre == "VENCIMIENTO_CONTRATO").Valor);
         this.valoracionesContainer.innerHTML = "";
         this.tasasCambio = await new Catalogo_Cambio_Divisa_ModelComponent().Get();
         this.ContractData.tasasCambio = this.tasasCambio
@@ -277,16 +278,21 @@ class Gestion_RecibosView extends HTMLElement {
                 const fechaFin = new Date(InputControl.value).getTime();
                 const diferencia = fechaFin - fechaInicio;
                 /**@type {Number} */
-                const diasMora = (diferencia / (1000 * 60 * 60 * 24)) >= 0 ? Math.floor(diferencia / (1000 * 60 * 60 * 24)) + 1 : 1;
+                //const diasMora = (diferencia / (1000 * 60 * 60 * 24)) >= 0 ? Math.floor(diferencia / (1000 * 60 * 60 * 24)) + 1 : 1;
                 //console.log(fechaInicio, fechaFin);
-                ///const diasMora = Math.ceil((fechaFin - fechaInicio) / (24 * 60 * 60 * 1000)); 
+                const diasMora = Math.ceil((fechaFin - fechaInicio) / (24 * 60 * 60 * 1000)); 
                 //console.log(diasMora);
 
                 //console.log(fechaInicio, fechaFin, diasMora, recibo.fecha_original, InputControl.value, new Date(recibo.fecha_original).toStartDate());
                 proyeccionContractData.Fecha = new Date(InputControl.value);
-                if (diasMora > 20) {
+                console.log(diasMora);
+                this.proyeccionDetail.innerHTML = "";
+                // @ts-ignore
+                if (diasMora >  this.vencimientoConfig ?? 0) {
                     this.proyeccionDetail.appendChild(html`<div class="proyeccion-container-detail">
-                    <label class="value-container">NO ES POSIBLE PROYECTAR A MAS DE 20 DÍAS</label></div>`);
+                        <label class="value-container">NO ES POSIBLE PROYECTAR A MAS DE ${ this.vencimientoConfig} DÍAS</label>
+                    </div>`);
+                    return;
                 }
                 //recibo.fecha = InputControl.value
                 //console.log("dias:", diasMora);
@@ -303,7 +309,7 @@ class Gestion_RecibosView extends HTMLElement {
                 proyeccionContractData.cuotasPendientes[0].mora = montoMora
                 Recibos_ModelComponent.DefineMaxAndMinInForm(form, proyeccionContractData);
 
-                this.proyeccionDetail.innerHTML = "";
+                
                 this.proyeccionDetail.appendChild(html`<div class="proyeccion-container-detail">
                     <label class="value-container">
                         DÍAS DE MORA:
