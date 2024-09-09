@@ -236,12 +236,13 @@ class FinancialModule {
         }
         // @ts-ignore
         const diferencia = fechaActual - fechaEnQueIniciaPeriodo;
-
+        //console.log(diferencia);
+        
         /**@type {Number} */
         const diasDeDiferencia = (diferencia / (1000 * 60 * 60 * 24)) >= 0 ? Math.floor(diferencia / (1000 * 60 * 60 * 24)) + 1 : 1;
         /**@type {Number} */
         const porcentajeInteres = contractData.Contrato.tasas_interes;
-
+        //console.log(diasDeDiferencia, porcentajeInteres);
         // @ts-ignore
         //const diferenciaEntreFechaCreacion = new Date(cuota?.fecha) - fechaEnQueIniciaPeriodo;
         ///**@type {Number} */

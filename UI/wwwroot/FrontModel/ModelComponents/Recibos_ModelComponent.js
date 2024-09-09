@@ -312,6 +312,7 @@ class Recibos_ModelComponent extends EntityClass {
         form.FormObject.monto_cordobas = contractData.pagoActualCordobas?.toFixed(3);
         form.FormObject.interes_demas_cargos_pagar_dolares = contractData.InteresCorriente?.toFixed(3);
         form.FormObject.interes_demas_cargos_pagar_cordobas = contractData.InteresCorriente_Cordobas.toFixed(3);
+        
         form.FormObject.mora_interes_cordobas = (parseFloat(form.FormObject.mora_cordobas) + contractData.InteresCorriente_Cordobas).toFixed(3);
         form.FormObject.mora_interes_dolares = (parseFloat(form.FormObject.mora_dolares) + contractData.InteresCorriente).toFixed(3);
         //model

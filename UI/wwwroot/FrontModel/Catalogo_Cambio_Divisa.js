@@ -1,7 +1,6 @@
 //@ts-check
 import { EntityClass } from "../WDevCore/WModules/EntityClass.js";
 
-import {WAjaxTools} from "../WDevCore/WModules/WAjaxTools.js";
 class Catalogo_Cambio_Divisa extends EntityClass {
     constructor(props) {
         super(props, 'EntityDbo');

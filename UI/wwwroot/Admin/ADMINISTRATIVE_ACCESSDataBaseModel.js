@@ -1,6 +1,4 @@
 import { EntityClass } from "../WDevCore/WModules/EntityClass.js";
-
-import {WAjaxTools} from "../WDevCore/WModules/WAjaxTools.js";
 class Transactional_Configuraciones extends EntityClass {
     constructor(props) {
         super(props, 'EntityADMINISTRATIVE_ACCESS');

@@ -12,7 +12,7 @@ namespace Transactions
 {
 	public class Recibos_Transactions : EntityClass
 	{
-		#region
+		#region propiedades
 		[PrimaryKey(Identity = true)]
 		public int? id_recibo { get; set; }
 		public int? consecutivo { get; set; }
@@ -749,7 +749,7 @@ namespace Transactions
 			DateTime fechaActual = DateTime.Now;
 
 			TimeSpan diferencia = fechaActual - fecha;
-			double diasDeDiferencia = (diferencia.TotalDays >= 0) ? diferencia.TotalDays : 0;
+			double diasDeDiferencia = ((int)Math.Ceiling(diferencia.TotalDays) >= 0) ? (int)Math.Ceiling(diferencia.TotalDays) : 0;
 			double porcentajeInteres = Contrato.tasas_interes.GetValueOrDefault();
 
 			TimeSpan? diferenciaEntreFechaCreacion = cuota?.fecha.GetValueOrDefault() - fecha;
@@ -757,7 +757,7 @@ namespace Transactions
 			? diferenciaEntreFechaCreacion.GetValueOrDefault().TotalDays : 0;
 
 			double interesCorriente = saldo_actual_dolares
-				* (double)(porcentajeInteres / (diasDelMes > 0 ? diasDelMes : 1) * diasDeDiferencia);
+				* (double)(porcentajeInteres / 30) * diasDeDiferencia;
 
 			return interesCorriente;
 		}

@@ -1,10 +1,10 @@
+
 import { Catalogo_Tipo_Identificacion } from "../ClientModule/FrontModel/Catalogo_Clientes.js";
 import { WForm } from "../WDevCore/WComponents/WForm.js";
 import { ModelProperty } from "../WDevCore/WModules/CommonModel.js";
 import { EntityClass } from "../WDevCore/WModules/EntityClass.js";
 import { Detail_Prendas_Vehiculos, Tbl_Cuotas } from "./Model.js";
 import { Tbl_Cuotas_ModelComponent } from "./ModelComponents.js";
-import {WAjaxTools} from "../WDevCore/WModules/WAjaxTools.js";
 class Catalogo_Estados_Articulos extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
@@ -324,8 +324,10 @@ class Detail_Prendas_ModelComponent extends EntityClass {
 
         }
     };
+    /**@type {ModelProperty} */
     Detail_Prendas_Vehiculos = {
         type: 'Model',
+        hidden: (element)=> { return element.Detail_Prendas_Vehiculos == null  || element.Detail_Prendas_Vehiculos == undefined },
         ModelObject: () => new Detail_Prendas_Vehiculos_ModelComponent(),
         EntityModel: () => new Detail_Prendas_Vehiculos()
     };
