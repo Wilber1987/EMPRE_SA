@@ -83,10 +83,10 @@ namespace CAPA_NEGOCIO.Services
 
 				var renderedHtml = RenderTemplate(templateContent, model);
 
-				//LoggerServices.AddMessageInfo("FIN DE RENDER");
+				////LoggerServices.AddMessageInfo("FIN DE RENDER");
 
 				//var interes = configuraciones.Select(i => Convert.ToInt32(i.Valor)).ToArray().Sum();
-				//LoggerServices.AddMessageInfo("FIN DE GET INTERESE");
+				////LoggerServices.AddMessageInfo("FIN DE GET INTERESE");
 				Catalogo_Clientes? cliente = model.Catalogo_Clientes?.Find<Catalogo_Clientes>();
 				double valorInteres = model.DesgloseIntereses.GetPorcentageInteresesSGC();
 
@@ -137,18 +137,18 @@ namespace CAPA_NEGOCIO.Services
 					.Replace("{{mes}}", DateTime.Now.ToString("MMMM"))
 					.Replace("{{anio}}", DateTime.Now.Year.ToString())
 					.Replace("{{tbody_amortizacion}}", GenerateCuotesTableHtml(model.Tbl_Cuotas, cliente, model));
-				LoggerServices.AddMessageInfo("FIN DE RENDER 2");
+				//LoggerServices.AddMessageInfo("FIN DE RENDER 2");
 				// Generar el PDF
 				var pdfFilePath = Path.Combine(System.IO.Path.GetFullPath("./wwwroot/Contracts"), "output.pdf");
 				GeneratePdfFromHtml(renderedHtml, pdfFilePath);
-				LoggerServices.AddMessageInfo("FIN DE GENERATE");
+				//LoggerServices.AddMessageInfo("FIN DE GENERATE");
 			}
 			catch (System.Exception ex)
 			{
-				LoggerServices.AddMessageInfo("FIN DE GENERATE:" + ex);
+				//LoggerServices.AddMessageInfo("FIN DE GENERATE:" + ex);
 				throw;
 			}
-			/*LoggerServices.AddMessageInfo("INICIO DE LECTURA");
+			/*//LoggerServices.AddMessageInfo("INICIO DE LECTURA");
 			string rutaArchivo = "contrato_empeno.cshtml";
 			if (model.tipo.Equals(Contratos_Type.EMPENO_VEHICULO.ToString()))
 			{
@@ -158,13 +158,13 @@ namespace CAPA_NEGOCIO.Services
 			{
 				rutaArchivo = "contrato_prestamo.cshtml";
 			}
-			LoggerServices.AddMessageInfo("FIN SELECCION DE PATH");
+			//LoggerServices.AddMessageInfo("FIN SELECCION DE PATH");
 			var templatePath = Path.Combine(System.IO.Path.GetFullPath("./Pages/Contracts"), rutaArchivo);
-			LoggerServices.AddMessageInfo("COMBINACION DE PATH");
-			 LoggerServices.AddMessageInfo($"FIN SELECCION DE PATH ::{templatePath}" );
+			//LoggerServices.AddMessageInfo("COMBINACION DE PATH");
+			 //LoggerServices.AddMessageInfo($"FIN SELECCION DE PATH ::{templatePath}" );
 			var templateContent = File.ReadAllText(templatePath);
-			LoggerServices.AddMessageInfo("LECTURA DE PATH");
-			LoggerServices.AddMessageInfo("FIN DE LECTURA");
+			//LoggerServices.AddMessageInfo("LECTURA DE PATH");
+			//LoggerServices.AddMessageInfo("FIN DE LECTURA");
 			*/
 
 
@@ -191,7 +191,7 @@ namespace CAPA_NEGOCIO.Services
 					renderedTemplate = renderedTemplate.Replace(placeholder, "");
 				}
 			}
-			LoggerServices.AddMessageInfo("FIN DE RENDER PROPS");
+			//LoggerServices.AddMessageInfo("FIN DE RENDER PROPS");
 			return renderedTemplate;
 		}
 
