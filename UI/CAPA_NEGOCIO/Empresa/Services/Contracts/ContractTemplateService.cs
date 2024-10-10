@@ -73,13 +73,13 @@ namespace CAPA_NEGOCIO.Services
 					.Replace("{{fecha_contrato_label_corta}}", model.fecha_contrato?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy", new CultureInfo("es-ES")))
 					.Replace("{{fecha_primera_cuota}}", fechaPrimeraCuota?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy", new CultureInfo("es-ES")))
 					.Replace("{{fecha_ultima_cuota}}", fechaUltimaCuota?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy", new CultureInfo("es-ES")))
-					.Replace("{{cuotafija_label}}", NumberUtility.NumeroALetras(model.cuotafija, "córdobas"))
+					.Replace("{{cuotafija_label}}", NumberUtility.NumeroALetras(model.cuotafija, true, "córdobas"))
 					.Replace("{{cuotafija_dolares}}", NumberUtility.ConvertToMoneyString(model.cuotafija_dolares))
-					.Replace("{{cuotafija_dolares_label}}", NumberUtility.NumeroALetras(model.cuotafija_dolares, "dólares"))
+					.Replace("{{cuotafija_dolares_label}}", NumberUtility.NumeroALetras(model.cuotafija_dolares, true, "dólares"))
 					.Replace("{{Valoracion_empeño_cordobas}}", NumberUtility.ConvertToMoneyString(model.Valoracion_empeño_cordobas))
-					.Replace("{{Valoracion_empeño_cordobas_label}}", NumberUtility.NumeroALetras(model.Valoracion_empeño_cordobas, "córdobas"))
+					.Replace("{{Valoracion_empeño_cordobas_label}}", NumberUtility.NumeroALetras(model.Valoracion_empeño_cordobas,  true,"córdobas"))
 					.Replace("{{Valoracion_empeño_dolares}}", NumberUtility.ConvertToMoneyString(model.Valoracion_empeño_dolares))
-					.Replace("{{Valoracion_empeño_dolares_label}}", NumberUtility.NumeroALetras(model.Valoracion_empeño_dolares, "dólares"));
+					.Replace("{{Valoracion_empeño_dolares_label}}", NumberUtility.NumeroALetras(model.Valoracion_empeño_dolares, true, "dólares"));
 
 				var renderedHtml = RenderTemplate(templateContent, model);
 
@@ -100,7 +100,7 @@ namespace CAPA_NEGOCIO.Services
 					.Replace("{{tabla_articulos}}", GeneratePrendasTableHtml(model.Detail_Prendas, model.tipo.Equals(Contratos_Type.EMPENO_VEHICULO.ToString())))
 					//MORA                
 					.Replace("{{valor_mora}}", "C$ " + NumberUtility.ConvertToMoneyString(model.cuotafija_dolares * mora * model.taza_cambio))
-					.Replace("{{valor_mora_label}}", NumberUtility.NumeroALetras(model.cuotafija_dolares * mora * model.taza_cambio, "córdobas"))
+					.Replace("{{valor_mora_label}}", NumberUtility.NumeroALetras(model.cuotafija_dolares * mora * model.taza_cambio, true, "córdobas"))
 
 					/*INTERESES*/
 					.Replace("{{interes_demas_cargos}}", model.gestion_crediticia.ToString() ?? "6")
