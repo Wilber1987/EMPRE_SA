@@ -4,12 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using CAPA_NEGOCIO.Services;
 using CAPA_DATOS;
-using iText.IO.Source;
-using iText.Kernel.Pdf;
-using iText.Html2pdf;
-using iText.Kernel.Geom;
 using System.Text;
-using iText.Layout;
 using CAPA_DATOS.Security;
 
 namespace API.Controllers

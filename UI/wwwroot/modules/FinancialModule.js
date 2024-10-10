@@ -4,7 +4,7 @@ import { Detail_Prendas, Tbl_Cuotas, Transaction_Contratos, ValoracionesTransact
 import { ParcialesData } from "../FrontModel/ParcialData.js";
 import { Recibos } from "../FrontModel/Recibos.js";
 
-import {WArrayF} from "../WDevCore/WModules/WArrayF.js";
+import { WArrayF } from "../WDevCore/WModules/WArrayF.js";
 
 
 class FinancialModule {
@@ -142,21 +142,24 @@ class FinancialModule {
 
         //TODO BORRAR CICLO DE MORA FORZADA 
         selectContrato.Tbl_Cuotas?.filter(cuota => cuota.Estado == "PENDIENTE")?.forEach(cuota => {
-            // Obtenemos la fecha de pago como un objeto Date
+            // Obtenemos la fecha de pago
             const fechaPago = new Date(cuota.fecha);
-            // Obtenemos la fecha y hora actuales
+            
+            // Obtenemos la fecha actual
             const ahora = new Date();
-            // Calculamos la diferencia en milisegundos
+        
+            // Calculamos la diferencia en días calendario usando los componentes de la fecha
             // @ts-ignore
-            const diferencia = ahora - fechaPago;
-            // Convertimos la diferencia de milisegundos a días (1 día = 24 * 60 * 60 * 1000 ms)
-            const diasEnMora = Math.ceil(diferencia / (24 * 60 * 60 * 1000));
-            // Si 'diasEnMora' es negativo, significa que la fecha de pago aún no ha llegado, entonces ajustamos a cero
-            const diasEnMoraFinal = Math.max(diasEnMora, 0);
+            const diferenciaDias = Math.floor((ahora - fechaPago) / (1000 * 60 * 60 * 24));
+        
+            // Si la diferencia es negativa, ajustamos a cero
+            const diasEnMoraFinal = Math.max(diferenciaDias, 0);
+            
             if (diasEnMoraFinal > 0) {
                 contractData.diasMora = diasEnMoraFinal;
             }
         });
+        
         // @ts-ignore
         const CuotaActual = contractData.cuotasPendientes[0];
         const mora = WArrayF.SumValAtt(contractData.cuotasPendientes, "mora");
@@ -198,6 +201,8 @@ class FinancialModule {
         contractData.pagoMinimoCordobas = contractData.pagoMinimoDolares * contractData.tasasCambio[0].Valor_de_venta;
         contractData.pagoMaximoCordobas = contractData.pagoMaximoDolares * contractData.tasasCambio[0].Valor_de_venta;
         contractData.pagoActualCordobas = contractData.pagoActual * contractData.tasasCambio[0].Valor_de_venta;
+        console.log(contractData);
+
     }
     /**
    * @param {Tbl_Cuotas} cuota 
@@ -230,16 +235,19 @@ class FinancialModule {
             return cuota.interes;
         }
         /**@type {Date} */ // @ts-ignore
-        const fechaEnQueIniciaPeriodo = new Date(cuota?.fecha).modifyMonth(-1);
+        const fechaEnQueIniciaPeriodo = new Date(cuota?.fecha);
         if (fechaActual < fechaEnQueIniciaPeriodo) {
             return 0;
         }
         // @ts-ignore
-        const diferencia = fechaActual - fechaEnQueIniciaPeriodo;
+        //const diferencia = fechaActual - fechaEnQueIniciaPeriodo;
+        // Calculamos la diferencia en días calendario usando los componentes de la fecha
+        const diferenciaDias = Math.floor((fechaActual - fechaEnQueIniciaPeriodo) / (1000 * 60 * 60 * 24));
         //console.log(diferencia);
-        
+        const diasDeInteresesFinal = Math.max(diferenciaDias, 0);
+
         /**@type {Number} */
-        const diasDeDiferencia = (diferencia / (1000 * 60 * 60 * 24)) >= 0 ? Math.ceil(diferencia / (1000 * 60 * 60 * 24)) : 1;
+       // const diasDeDiferencia = Math.floor(diferencia / (1000 * 60 * 60 * 24));
         /**@type {Number} */
         const porcentajeInteres = contractData.Contrato.tasas_interes;
         //console.log(diasDeDiferencia, porcentajeInteres);
@@ -252,7 +260,7 @@ class FinancialModule {
         const procentageDiario = porcentajeInteres / 30;
         //console.log(saldo_actual_dolares, procentageDiario, porcentajeInteres, diasDelMes, saldo_actual_dolares * procentageDiario, diasDeDiferencia);
         /**@type {Number} */
-        const interesCorriente = saldo_actual_dolares * procentageDiario * diasDeDiferencia;
+        const interesCorriente = (saldo_actual_dolares * procentageDiario * diasDeInteresesFinal) + cuota.interes;
         //console.log(interesCorriente);
         /**@type {Number} */
         const parciales = contractData.parciales?.pagoParciales != undefined && contractData.parciales?.pagoParciales > 0 ? contractData.parciales?.pagoParciales : 0;

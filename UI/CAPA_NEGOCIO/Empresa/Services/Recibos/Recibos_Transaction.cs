@@ -4,7 +4,6 @@ using CAPA_DATOS.BDCore;
 using CAPA_DATOS.Services;
 using CAPA_NEGOCIO.Services;
 using DataBaseModel;
-using iText.Kernel.Pdf.Annot.DA;
 using Model;
 using UI.CAPA_NEGOCIO.Empresa.Services.Recibos;
 
@@ -346,7 +345,7 @@ namespace Transactions
 			CuotaActual?.Update();
 			DetallesFacturaRecibos.Add(new Detalle_Factura_Recibo()
 			{
-				id_cuota = CuotaActual.id_cuota,
+				id_cuota = CuotaActual!.id_cuota,
 				total_cuota = montoPago,
 				monto_pagado = montoPago,
 				capital_restante = CuotaActual.capital_restante,
@@ -580,7 +579,7 @@ namespace Transactions
 					numero_contrato = factura?.Factura_contrato?.numero_contrato
 				}.Where<Transaccion_Factura>(
 					FilterData.Equal("estado", EstadoEnum.ACTIVO),
-					FilterData.Greater("id_factura", this.id_recibo  )
+					FilterData.Greater("id_factura", this.id_recibo)
 				);
 				if (FacturasActivas.Count > 0)
 				{
@@ -650,7 +649,7 @@ namespace Transactions
 
 				if (contrato?.Catalogo_Clientes?.id_clasificacion_interes != factura?.Factura_contrato?.id_clasificacion_interes_anterior)
 				{
-					contrato.Catalogo_Clientes.id_clasificacion_interes = factura?.Factura_contrato?.id_clasificacion_interes_anterior;
+					contrato!.Catalogo_Clientes!.id_clasificacion_interes = factura?.Factura_contrato?.id_clasificacion_interes_anterior;
 					contrato.Catalogo_Clientes.Update();
 				}
 
@@ -665,7 +664,8 @@ namespace Transactions
 						status = 400,
 						message = "Cuentas para anulación de factura no configuradas correctamente"
 					};
-				}
+				}				
+				contrato?.EstablecerComoVencido();
 				ResponseService response = new Movimientos_Cuentas
 				{
 					Catalogo_Cuentas_Destino = cuentaDestino,
@@ -745,11 +745,11 @@ namespace Transactions
 			}
 
 			double saldo_actual_dolares = Contrato.saldo.GetValueOrDefault();
-			DateTime fecha = cuota?.fecha.GetValueOrDefault().AddMonths(-1) ?? DateTime.MinValue;
+			DateTime fecha = cuota?.fecha.GetValueOrDefault() ?? DateTime.MinValue;
 			DateTime fechaActual = DateTime.Now;
 
 			TimeSpan diferencia = fechaActual - fecha;
-			double diasDeDiferencia = ((int)Math.Ceiling(diferencia.TotalDays) >= 0) ? (int)Math.Ceiling(diferencia.TotalDays) : 0;
+			double diasDeDiferencia = (int)Math.Floor(diferencia.TotalDays);
 			double porcentajeInteres = Contrato.tasas_interes.GetValueOrDefault();
 
 			TimeSpan? diferenciaEntreFechaCreacion = cuota?.fecha.GetValueOrDefault() - fecha;
@@ -757,7 +757,7 @@ namespace Transactions
 			? diferenciaEntreFechaCreacion.GetValueOrDefault().TotalDays : 0;
 
 			double interesCorriente = saldo_actual_dolares
-				* (double)(porcentajeInteres / 30) * diasDeDiferencia;
+				* (double)(porcentajeInteres / 30) * diasDeDiferencia + cuota!.interes.GetValueOrDefault();
 
 			return interesCorriente;
 		}

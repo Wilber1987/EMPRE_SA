@@ -3,8 +3,9 @@ import { Catalogo_Tipo_Identificacion } from "../ClientModule/FrontModel/Catalog
 import { WForm } from "../WDevCore/WComponents/WForm.js";
 import { ModelProperty } from "../WDevCore/WModules/CommonModel.js";
 import { EntityClass } from "../WDevCore/WModules/EntityClass.js";
-import { Detail_Prendas_Vehiculos, Tbl_Cuotas } from "./Model.js";
+import { Detail_Prendas_Vehiculos } from "./Model.js";
 import { Tbl_Cuotas_ModelComponent } from "./ModelComponents.js";
+import { Recibos } from "./Recibos.js";
 class Catalogo_Estados_Articulos extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
@@ -259,7 +260,7 @@ class Transaction_Contratos_ModelComponent extends EntityClass {
     monto = { type: "MONEY", label: "monto $",  hiddenInTable: true, hiddenFilter: true };
     interes = { type: "MONEY", hiddenInTable: true, hiddenFilter: true, label: "interés $"  };
     mora = { type: "PERCENTAGE", hiddenInTable: true, hiddenFilter: true };
-    estado = { type: "Select", Dataset: ["ACTIVO", "CANCELADO", "ANULADO"] };
+    estado = { type: "Select", Dataset: ["ACTIVO", "CANCELADO", "ANULADO", "VENCIDO"] };
     fecha_vencimiento = { type: "date", hiddenFilter: true };
     codigo_cliente = { type: "number", hiddenInTable: true, hiddenFilter: true };
     saldo = { type: "MONEY", label: "saldo $", hiddenFilter: true, hiddenInTable: true };
@@ -294,6 +295,7 @@ class Transaction_Contratos_ModelComponent extends EntityClass {
     //Catalogo_Agentes = { type: 'WSELECT', ModelObject: () => new Catalogo_Agentes(), hiddenInTable: true, hiddenFilter: true };
     Detail_Prendas = { type: 'MasterDetail', ModelObject: () => new Detail_Prendas_ModelComponent(), hiddenFilter: true };
     Tbl_Cuotas = { type: 'MasterDetail', ModelObject: () => new Tbl_Cuotas_ModelComponent(), hiddenFilter: true };
+    Recibos = { type: 'MasterDetail', ModelObject: () => new Transaccion_Factura(), hiddenFilter: true };
 }
 export { Transaction_Contratos_ModelComponent }
 
@@ -644,7 +646,7 @@ class Transaccion_Factura extends EntityClass {
     id_sucursal = { type: "number", hidden: true };
     fecha = { type: "date" };    
     Detalle_Factura_Recibo = { type: 'MasterDetail', label: "Cuotas Pagadas", label: "Detalle recibos", ModelObject: () => new Detalle_Factura_Recibo(), hiddenFilter: true };
-    Factura_contrato = { type: 'model', label: "Datos del contrato al momento del pago", ModelObject: () => new Factura_contrato(), hidden: true };
+    Factura_contrato = { type: 'model', label: "Datos del contrato al momento del pago", ModelObject: () => new Factura_contrato() };
 
 }
 export { Transaccion_Factura }
@@ -657,16 +659,20 @@ class Factura_contrato {
     }
     numero_contrato = { type: "number" };
     cuotas_pendientes = { type: "number" };
-    saldo_anterior = { type: "number" };
-    saldo_actual = { type: "number" };
-    mora = { type: "number" };
-    interes_demas_cargos_pagar = { type: "number" };
+    saldo_anterior = { type: "money" };
+    saldo_actual = { type: "money" };
+    mora = { type: "money" };
+    interes_demas_cargos_pagar = { type: "money" };
+    abono_capital = { type: "money" };
     proximo_pago_pactado = { type: "date" };
-    total_parciales = { type: "number" };
-    tipo = { type: "number" };
-    tipo_cuenta = { type: "number" };
-    total = { type: "number" };
+    total_parciales = { type: "money" };
+    //tipo = { type: "number" };
+    //tipo_cuenta = { type: "number" };
+    total = { type: "money" };
     tasa_cambio = { type: "number" };
+    reestructuracion = { type: "number" }
+    Solo_Interes_Mora = { type: "text" }
+
 }
 export { Factura_contrato }
 

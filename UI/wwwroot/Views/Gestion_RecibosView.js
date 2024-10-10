@@ -272,20 +272,15 @@ class Gestion_RecibosView extends HTMLElement {
                 /**@type {WForm} */
                 const form = proyeccionForm
                 const InputControl = ev.target
-
                 // @ts-ignore
-                const fechaInicio = new Date(recibo.fecha_original.toISO()).toStartDate().getTime();
-                const fechaFin = new Date(InputControl.value).getTime();
-                const diferencia = fechaFin - fechaInicio;
+                const fechaInicio = new Date(recibo.fecha_original);
+                const fechaFin = new Date(InputControl.value);
                 /**@type {Number} */
-                //const diasMora = (diferencia / (1000 * 60 * 60 * 24)) >= 0 ? Math.floor(diferencia / (1000 * 60 * 60 * 24)) + 1 : 1;
-                //console.log(fechaInicio, fechaFin);
-                const diasMora = Math.ceil((fechaFin - fechaInicio) / (24 * 60 * 60 * 1000)); 
-                //console.log(diasMora);
-
+                // @ts-ignore
+                const diasMora = Math.floor((fechaFin - fechaInicio) / (1000 * 60 * 60 * 24));
                 //console.log(fechaInicio, fechaFin, diasMora, recibo.fecha_original, InputControl.value, new Date(recibo.fecha_original).toStartDate());
                 proyeccionContractData.Fecha = new Date(InputControl.value);
-                console.log(diasMora);
+                //console.log(diasMora);
                 this.proyeccionDetail.innerHTML = "";
                 // @ts-ignore
                 if (diasMora >  this.vencimientoConfig ?? 0) {
@@ -294,12 +289,7 @@ class Gestion_RecibosView extends HTMLElement {
                     </div>`);
                     return;
                 }
-                //recibo.fecha = InputControl.value
-                //console.log("dias:", diasMora);
                 const montoMora = proyeccionContractData.cuotasPendientes[0].total * ((proyeccionContractData.Contrato?.mora / 100) ?? 0.005) * (diasMora);
-                //console.log("total:", recibo.total_dolares);
-                //console.log(proyeccionContractData.cuotasPendientes[0]);
-                
                 // @ts-ignore
                 recibo.mora_dolares = (montoMora).toFixed(3);
                 // @ts-ignore
@@ -308,7 +298,6 @@ class Gestion_RecibosView extends HTMLElement {
                 recibo.total_cordobas = (recibo.tasa_cambio * recibo.total_dolares).toFixed(3);
                 proyeccionContractData.cuotasPendientes[0].mora = montoMora
                 Recibos_ModelComponent.DefineMaxAndMinInForm(form, proyeccionContractData);
-
                 
                 this.proyeccionDetail.appendChild(html`<div class="proyeccion-container-detail">
                     <label class="value-container">
@@ -594,6 +583,14 @@ class Gestion_RecibosView extends HTMLElement {
                     <span>Fecha de cancelación:</span>
                     <label>${// @ts-ignore
             this.ContractData.ultimaCuota?.fecha?.toDateFormatEs() ?? "-"}</label>
+                </div>
+                <div class="DataContainer">
+                    <span>Monto C$:</span>
+                    <label>${ConvertToMoneyString(selectContrato.total_pagar_cordobas)}</label>
+                </div>
+                <div class="DataContainer">
+                    <span>Monto $:</span>
+                    <label>${ConvertToMoneyString(selectContrato.total_pagar_dolares)}</label>
                 </div>
                 <div class="DataContainer">
                     <span>Saldo actual C$:</span>

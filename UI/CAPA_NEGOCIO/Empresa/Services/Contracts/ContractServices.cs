@@ -189,7 +189,18 @@ namespace Model
 				int diasDeDiferencia = diferencia.Days;
 				if (diasDeDiferencia > Convert.ToInt32(VencimientoConfig.Valor))
 				{
-					contrato.EstablecerComoVencido();
+					try
+					{
+						BeginGlobalTransaction();
+						contrato.EstablecerComoVencido();
+						CommitGlobalTransaction();
+					}
+					catch (System.Exception)
+					{
+						RollBackGlobalTransaction();
+						throw;
+					}
+					
 				}
 			});
 		}

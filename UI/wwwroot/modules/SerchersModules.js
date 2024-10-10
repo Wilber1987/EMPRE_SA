@@ -9,6 +9,8 @@ import { Catalogo_Clientes, Transaction_Contratos_ModelComponent, Transactional_
 import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
 import { Tbl_Cuotas, Transaction_Contratos, ValoracionesTransaction } from "../FrontModel/Model.js";
 import { Tbl_Cuotas_ModelComponent } from "../FrontModel/ModelComponents.js";
+import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
+import { WDetailObject } from "../WDevCore/WComponents/WDetailObject.js";
 class ValoracionesSearch extends HTMLElement {
     constructor(/** @type {Function} */ action,/** @type {Function|undefined} */ secondAction,/** @type {Boolean} */ onlyValids = false) {
         super();
@@ -133,6 +135,14 @@ const contratosSearcher = (action, anularAction) => {
             }
         })
     }
+    actions.push({
+        name: "Ver detalles",
+        action: async (/** @type { Transaction_Contratos } */ contrato) => {
+            // @ts-ignore
+            const contratoF = await new Transaction_Contratos({ numero_contrato: contrato.numero_contrato }).Find();
+            document.body.append(new WModalForm({ ObjectModal: new  WDetailObject({ ObjectDetail: contratoF , ModelObject: new Transaction_Contratos_ModelComponent()})}));
+        }
+    })
     const TableComponent = new WTableComponent({
         EntityModel: model,
         ModelObject: new Transaction_Contratos_ModelComponent({
@@ -140,7 +150,7 @@ const contratosSearcher = (action, anularAction) => {
         }),
         AddItemsFromApi: true,
         Options: {
-            Show: true,
+            //Show: true,
             Filter: true,
             FilterDisplay: true,
             UserActions: actions

@@ -57,8 +57,10 @@ namespace DataBaseModel
 		public Security_Users? Security_Users { get; set; }
 		[OneToMany(TableName = "Detail_Prendas", KeyColumn = "numero_contrato", ForeignKeyColumn = "numero_contrato")]
 		public List<Detail_Prendas>? Detail_Prendas { get; set; }
-		[OneToMany(TableName = "Transaction_Facturas", KeyColumn = "numero_contrato", ForeignKeyColumn = "numero_contrato")]
+		[OneToMany(TableName = "Tbl_Cuotas", KeyColumn = "numero_contrato", ForeignKeyColumn = "numero_contrato")]
 		public List<Tbl_Cuotas>? Tbl_Cuotas { get; set; }
+		[OneToMany(TableName = "Transaccion_Factura", KeyColumn = "numero_contrato", ForeignKeyColumn = "numero_contrato")]
+		public List<Transaccion_Factura>? Recibos { get; set; }
 		public ResponseService Anular(string seasonKey)
 		{
 			try
@@ -170,30 +172,40 @@ namespace DataBaseModel
 		{
 			try
 			{
-				BeginGlobalTransaction();
-				estado = EstadoEnum.VENCIDO.ToString();
-				Update();
-				Transactional_Configuraciones beneficioVentaE = new Transactional_Configuraciones()
-		   			.GetConfig(ConfiguracionesBeneficiosEnum.BENEFICIO_VENTA_ARTICULO_EMPENO.ToString());
-				var dbUser = new Security_Users { Id_User = Id_User }.Find<Security_Users>();
 
-				Detail_Prendas?.ForEach(prenda =>
+				var VencimientoConfig = new Transactional_Configuraciones().GetConfig(ConfiguracionesVencimientos.VENCIMIENTO_CONTRATO.ToString());
+				var cuotasPendientes = new Tbl_Cuotas{ numero_contrato = numero_contrato, Estado = EstadoEnum.PENDIENTE.ToString() }.Get<Tbl_Cuotas>();
+				if (cuotasPendientes.Count == 0)
 				{
-					if (prenda.en_manos_de == EnManosDe.ACREEDOR.ToString())
+					return;//todo ver el retorno
+				}
+				Tbl_Cuotas CuotaActual = cuotasPendientes.Last();
+				DateTime fechaOriginal = CuotaActual.fecha.GetValueOrDefault();
+				TimeSpan diferencia = DateTime.Now - fechaOriginal;
+				int diasDeDiferencia = diferencia.Days;
+				if (diasDeDiferencia > Convert.ToInt32(VencimientoConfig.Valor))
+				{
+					estado = EstadoEnum.VENCIDO.ToString();
+					Update();
+					Transactional_Configuraciones beneficioVentaE = new Transactional_Configuraciones()
+						   .GetConfig(ConfiguracionesBeneficiosEnum.BENEFICIO_VENTA_ARTICULO_EMPENO.ToString());
+					var dbUser = new Security_Users { Id_User = Id_User }.Find<Security_Users>();
+					Detail_Prendas?.ForEach(prenda =>
 					{
-						GenerarLoteAPartirDePrenda(prenda, beneficioVentaE, dbUser);
-					}
-				});
-				Tbl_Cuotas?.ForEach(Cuota =>
-				{
-					Cuota.Estado = EstadoEnum.VENCIDO.ToString();
-					Cuota.Update();
-				});
-				CommitGlobalTransaction();
+						if (prenda.en_manos_de == EnManosDe.ACREEDOR.ToString())
+						{
+							GenerarLoteAPartirDePrenda(prenda, beneficioVentaE, dbUser);
+						}
+					});
+					Tbl_Cuotas?.ForEach(Cuota =>
+					{
+						Cuota.Estado = EstadoEnum.VENCIDO.ToString();
+						Cuota.Update();
+					});
+				}
 			}
 			catch (System.Exception Exception)
 			{
-				RollBackGlobalTransaction();
 				LoggerServices.AddMessageError("error al vencer contrato", Exception);
 			}
 		}
@@ -250,16 +262,16 @@ namespace DataBaseModel
 			foreach (var cuota in cuotas)
 			{
 				TimeSpan diferencia = DateTime.Now.Subtract(cuota.fecha.GetValueOrDefault());
-				int diasEnMora = (int)Math.Ceiling(diferencia.TotalDays);
+				int diasEnMora = (int)Math.Floor(diferencia.TotalDays);
 				// Si 'diasEnMora' es negativo, significa que la fecha de pago aún no ha llegado, entonces ajustamos a cero
 				diasEnMora = Math.Max(diasEnMora, 0);
-				var montoMora = cuota.total * ((cuota.Transaction_Contratos?.mora / 100) ?? 0.005) * diasEnMora;				
+				var montoMora = cuota.total * ((cuota.Transaction_Contratos?.mora / 100) ?? 0.005) * diasEnMora;
 				if (montoMora > 0)
 				{
 					cuota.mora = montoMora;
 					cuota.Update();
 				}
-			}			
+			}
 			return Find<Transaction_Contratos>();
 		}
 	}

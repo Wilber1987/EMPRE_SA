@@ -6,7 +6,7 @@ using Transactions;
 
 namespace BackgroundJob.Cron.Jobs
 {
-       public class DailyCronJob : CronBackgroundJob
+    public class DailyCronJob : CronBackgroundJob
     {
         private readonly ILogger<DailyCronJob> _log;
 
@@ -27,7 +27,7 @@ namespace BackgroundJob.Cron.Jobs
             {
                 _log.LogInformation(":::::::::::ERROR  CALCULANDO MORA... at {0}", ex);
             }
-             try
+            try
             {
                 new ContractServices().Vencimientos();
             }

@@ -385,7 +385,6 @@ class Transaction_ContratosView extends HTMLElement {
 
     }
     update() {
-
         FinancialModule.calculoAmortizacion(this.entity);
         if (this.prendasTable != undefined && this.entity.Transaction_Contratos.Detail_Prendas != undefined) {
             this.entity.Transaction_Contratos?.Detail_Prendas.forEach(detalle => {

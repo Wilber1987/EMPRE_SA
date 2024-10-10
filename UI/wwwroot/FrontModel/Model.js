@@ -83,11 +83,11 @@ class Transaction_Contratos extends EntityClass {
             this[prop] = props[prop];
         }
         this.Tbl_Cuotas = this.Tbl_Cuotas?.map(c => new Tbl_Cuotas(c));
-       
+
     }
-    numero_contrato;
-    fecha_contrato;
-    fecha_cancelar;
+    /**@type {Number} */numero_contrato;
+    /**@type {Date} */fecha_contrato;
+    /**@type {Date} */fecha_cancelar;
     /**@type {Number} */ monto;
     /**@type {Number} */ interes;
     /**@type {Number} */ interes_dolares;

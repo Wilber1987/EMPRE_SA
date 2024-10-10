@@ -6,7 +6,6 @@ using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using CAPA_DATOS.Services;
-using iText.Forms.Xfdf;
 
 namespace CAPA_NEGOCIO.Services
 {
