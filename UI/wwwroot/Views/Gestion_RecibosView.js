@@ -15,6 +15,7 @@ import { ContractData, FinancialModule } from "../modules/FinancialModule.js";
 import { Detail_Prendas, Tbl_Cuotas } from "../FrontModel/Model.js";
 import { Catalogo_Cambio_Divisa } from "../FrontModel/Catalogo_Cambio_Divisa.js";
 import { ParcialesData } from "../FrontModel/ParcialData.js";
+import { DateTime } from "../WDevCore/WModules/Types/DateTime.js";
 
 class Gestion_RecibosView extends HTMLElement {
     // @ts-ignore
@@ -74,6 +75,11 @@ class Gestion_RecibosView extends HTMLElement {
         this.ContractData.countPendientes = this.ContractData.cuotasPendientes.length;
 
         const CuotaActual = this.ContractData.cuotasPendientes[0];
+        this.CuotaPagada = selectContrato.Tbl_Cuotas?.filter(c => c.Estado?.toUpperCase() == "CANCELADO");
+        this.UltimaCuotaPagada = this.CuotaPagada[this.CuotaPagada.length - 1];
+
+        
+
 
         this.ContractData.parciales = await new ParcialesData({
             numero_contrato: selectContrato.numero_contrato,
@@ -377,7 +383,7 @@ class Gestion_RecibosView extends HTMLElement {
                 cuota_total = cuota.total;
 
                 //this.cuota = cuota;
-                contractData.proximaCuota = cuota;
+                contractData.proximaCuota = contractData.cuotasPendientes[1];
                 contractData.ultimaCuota = contractData.cuotasPendientes[contractData.cuotasPendientes.length - 1];
                 //break;
             }
@@ -529,7 +535,7 @@ class Gestion_RecibosView extends HTMLElement {
         const diferencia = fechaActual - fechaOriginal;
         const diasDeDiferencia = (diferencia / (1000 * 60 * 60 * 24)) >= 0 ? (diferencia / (1000 * 60 * 60 * 24)) : 0;
         //console.log(diasDeDiferencia, (diferencia / (1000 * 60 * 60 * 24)) < 0);
-        const montoMora = cuota.total * ((contrato?.mora / 100) ?? 0.005) * diasDeDiferencia;
+        const montoMora = cuota.total * ((contrato?.mora ?? 0 / 100) ?? 0.005) * diasDeDiferencia;
         this.diasMora = diasDeDiferencia;
         //console.log(this.diasMora, fechaActual, fechaOriginal);
         //console.log(diasDeDiferencia);
@@ -567,17 +573,21 @@ class Gestion_RecibosView extends HTMLElement {
                 <div class="DataContainer">
                     <span>Fecha de contrato:</span>
                     <label>${// @ts-ignore
-            selectContrato.fecha?.toDateFormatEs() ?? "-"}</label>
+                    selectContrato.fecha?.toDateFormatEs() ?? "-"}</label>
                 </div>
                 <div class="DataContainer">
                     <span>F/Último pago:</span>
-                    <label>${ // @ts-ignore
-            this.ContractData.ultimaCuota?.fecha?.toDateFormatEs() ?? "-"}</label>
+                    <label>${ new DateTime().toDateFormatEs() ?? "-"}</label>
+                </div>
+                <div class="DataContainer">
+                    <span>F/Última actualización:</span>
+                    <label>${ // @ts-ignore 
+                    this.UltimaCuotaPagada?.fecha?.toDateFormatEs() ?? "-"}</label>
                 </div>
                 <div class="DataContainer">
                     <span>F/Próximo pago:</span>
                     <label>${ // @ts-ignore
-            this.ContractData.proximaCuota?.fecha?.toDateFormatEs() ?? "-"}</label>
+                    this.ContractData.proximaCuota?.fecha?.toDateFormatEs() ?? "-"}</label>
                 </div>
                 <div class="DataContainer">
                     <span>Fecha de cancelación:</span>
