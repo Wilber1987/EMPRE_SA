@@ -1,5 +1,6 @@
 import { EntityClass } from "../WDevCore/WModules/EntityClass.js";
-import { Catalogo_Clientes } from "./DBODataBaseModel.js";
+import { Catalogo_Clientes, Transaccion_Factura } from "./DBODataBaseModel.js";
+import { Recibos } from "./Recibos.js";
 
 //@ts-check
 class ValoracionesTransaction extends EntityClass {
@@ -82,8 +83,7 @@ class Transaction_Contratos extends EntityClass {
         for (const prop in props) {
             this[prop] = props[prop];
         }
-        this.Tbl_Cuotas = this.Tbl_Cuotas?.map(c => new Tbl_Cuotas(c));
-
+        this.Tbl_Cuotas = this.Tbl_Cuotas?.map(c => new Tbl_Cuotas(c));      
     }
     /**@type {Number} */numero_contrato;
     /**@type {Date} */fecha_contrato;
@@ -153,6 +153,7 @@ class Transaction_Contratos extends EntityClass {
     /**@type {Number} */ total_pagar_cordobas;
     /**@type {Number} */ total_pagar_dolares;
     /**@type {Number} */ reestructurado;
+    /**@type {Array<Transaccion_Factura>} */ Recibos;
     Anular = async () => {
         return await this.SaveData("Transactional_Contrato/AnularContract", this)
     }

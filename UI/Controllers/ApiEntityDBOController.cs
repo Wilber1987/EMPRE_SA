@@ -209,7 +209,7 @@ namespace API.Controllers
 		[AuthController]
 		public List<Transaction_Contratos> getTransaction_Contratos(Transaction_Contratos Inst, [FromQuery] SearchData? pageData)
 		{
-			return Inst.Where<Transaction_Contratos>(FilterData.Limit(30));
+			return Inst.GetContratos();
 		}
 		[HttpPost]
         [AuthController]

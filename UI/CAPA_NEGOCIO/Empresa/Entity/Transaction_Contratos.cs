@@ -59,7 +59,8 @@ namespace DataBaseModel
 		public List<Detail_Prendas>? Detail_Prendas { get; set; }
 		[OneToMany(TableName = "Tbl_Cuotas", KeyColumn = "numero_contrato", ForeignKeyColumn = "numero_contrato")]
 		public List<Tbl_Cuotas>? Tbl_Cuotas { get; set; }
-		[OneToMany(TableName = "Transaccion_Factura", KeyColumn = "numero_contrato", ForeignKeyColumn = "numero_contrato")]
+
+		//[OneToMany(TableName = "Transaccion_Factura", KeyColumn = "numero_contrato", ForeignKeyColumn = "numero_contrato")]
 		public List<Transaccion_Factura>? Recibos { get; set; }
 		public ResponseService Anular(string seasonKey)
 		{
@@ -174,7 +175,7 @@ namespace DataBaseModel
 			{
 
 				var VencimientoConfig = new Transactional_Configuraciones().GetConfig(ConfiguracionesVencimientos.VENCIMIENTO_CONTRATO.ToString());
-				var cuotasPendientes = new Tbl_Cuotas{ numero_contrato = numero_contrato, Estado = EstadoEnum.PENDIENTE.ToString() }.Get<Tbl_Cuotas>();
+				var cuotasPendientes = new Tbl_Cuotas { numero_contrato = numero_contrato, Estado = EstadoEnum.PENDIENTE.ToString() }.Get<Tbl_Cuotas>();
 				if (cuotasPendientes.Count == 0)
 				{
 					return;//todo ver el retorno
@@ -272,7 +273,38 @@ namespace DataBaseModel
 					cuota.Update();
 				}
 			}
-			return Find<Transaction_Contratos>();
+			var contratoActualizado = Find<Transaction_Contratos>();
+			contratoActualizado?.GetRecibos();
+			return contratoActualizado;
+		}
+
+		internal List<Transaction_Contratos> GetContratos()
+		{
+			var contratos = Where<Transaction_Contratos>(FilterData.Limit(30));
+			foreach (var contrato in contratos)
+			{
+				contrato.GetRecibos();
+			}
+			return contratos;
+		}
+
+		private void GetRecibos()
+		{
+			//string searchValue = '"' + "numero_contrato" + '"' + ": " + numero_contrato + ",";
+			//searchValue = @$"\"numero_contrato\": {numero_contrato},";
+			//string searchValue = @$"\"numero_contrato\": {numero_contrato},";
+			string searchValue = $"\"numero_contrato\": {numero_contrato},";
+			searchValue = searchValue.Replace("\\", "");
+			Recibos = new Transaccion_Factura().Where<Transaccion_Factura>(
+				new FilterData
+				{
+					ObjectName = "Factura_contrato",
+					PropName = "numero_contrato",
+					FilterType = "JSONPROP_EQUAL",
+					PropSQLType = "int",
+					Values = new List<string?> { numero_contrato.GetValueOrDefault().ToString() }
+				}
+			);
 		}
 	}
 	public class Tbl_Cuotas : EntityClass

@@ -217,6 +217,7 @@ class FinancialModule {
         const saldo_actual_dolares = contractData.Contrato.saldo;
         /**@type {Date} */
         const fechaActual = contractData.Fecha;
+        fechaActual.setHours(23, 59, 0, 0);
         // @ts-ignore
         //const diasDelMesDePago = new Date(contractData.cuota?.fecha).getDate();
 
@@ -236,6 +237,7 @@ class FinancialModule {
         }
         /**@type {Date} */ // @ts-ignore
         const fechaEnQueIniciaPeriodo = new Date(cuota?.fecha);
+        fechaEnQueIniciaPeriodo.setHours(0, 0, 0, 0);
         if (fechaActual < fechaEnQueIniciaPeriodo) {
             return 0;
         }

@@ -76,9 +76,8 @@ class Gestion_RecibosView extends HTMLElement {
 
         const CuotaActual = this.ContractData.cuotasPendientes[0];
         this.CuotaPagada = selectContrato.Tbl_Cuotas?.filter(c => c.Estado?.toUpperCase() == "CANCELADO");
-        this.UltimaCuotaPagada = this.CuotaPagada[this.CuotaPagada.length - 1];
-
-        
+        this.RecibosPagados = selectContrato.Recibos?.filter(c => c.estado?.toUpperCase() == "CANCELADO") ?? [];
+        this.UltimaReciboPagado = selectContrato.Recibos[0];        
 
 
         this.ContractData.parciales = await new ParcialesData({
@@ -280,12 +279,13 @@ class Gestion_RecibosView extends HTMLElement {
                 const InputControl = ev.target
                 // @ts-ignore
                 const fechaInicio = new Date(recibo.fecha_original);
-                const fechaFin = new Date(InputControl.value);
+                fechaInicio.setHours(0, 0, 0, 0);
+                const fechaFin = new Date(InputControl.value + "T23:59:00");
                 /**@type {Number} */
                 // @ts-ignore
                 const diasMora = Math.floor((fechaFin - fechaInicio) / (1000 * 60 * 60 * 24));
                 //console.log(fechaInicio, fechaFin, diasMora, recibo.fecha_original, InputControl.value, new Date(recibo.fecha_original).toStartDate());
-                proyeccionContractData.Fecha = new Date(InputControl.value);
+                proyeccionContractData.Fecha = fechaFin;
                 //console.log(diasMora);
                 this.proyeccionDetail.innerHTML = "";
                 // @ts-ignore
@@ -295,7 +295,7 @@ class Gestion_RecibosView extends HTMLElement {
                     </div>`);
                     return;
                 }
-                const montoMora = proyeccionContractData.cuotasPendientes[0].total * ((proyeccionContractData.Contrato?.mora / 100) ?? 0.005) * (diasMora);
+                const montoMora = proyeccionContractData.cuotasPendientes[0].total * (proyeccionContractData.Contrato?.mora / 100) * (diasMora);
                 // @ts-ignore
                 recibo.mora_dolares = (montoMora).toFixed(3);
                 // @ts-ignore
@@ -582,7 +582,7 @@ class Gestion_RecibosView extends HTMLElement {
                 <div class="DataContainer">
                     <span>F/Última actualización:</span>
                     <label>${ // @ts-ignore 
-                    this.UltimaCuotaPagada?.fecha?.toDateFormatEs() ?? "-"}</label>
+                    this.UltimaReciboPagado?.fecha?.toDateFormatEs() ?? "-"}</label>
                 </div>
                 <div class="DataContainer">
                     <span>F/Próximo pago:</span>
