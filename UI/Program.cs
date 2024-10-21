@@ -13,7 +13,6 @@ SqlADOConexion.IniciarConexion("empresa", "Wmatus09%", "tcp:empresociedadanonima
 
 //var test = new test{ Parameters = new List<object> {1 , 2}}.Get<test>(true);
 //var testfilter = (from t in test where t.val1 == "1"  select t).ToList();
-//new ContractServices().Vencimientos();
 
 var builder = WebApplication.CreateBuilder(args);
 //AppGenerate.Program.Main(); //generador de codigo
