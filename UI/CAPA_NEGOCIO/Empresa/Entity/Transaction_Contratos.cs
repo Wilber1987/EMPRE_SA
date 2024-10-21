@@ -290,21 +290,17 @@ namespace DataBaseModel
 
 		private void GetRecibos()
 		{
-			//string searchValue = '"' + "numero_contrato" + '"' + ": " + numero_contrato + ",";
-			//searchValue = @$"\"numero_contrato\": {numero_contrato},";
-			//string searchValue = @$"\"numero_contrato\": {numero_contrato},";
-			string searchValue = $"\"numero_contrato\": {numero_contrato},";
-			searchValue = searchValue.Replace("\\", "");
-			Recibos = new Transaccion_Factura().Where<Transaccion_Factura>(
-				new FilterData
+			Recibos = new Transaccion_Factura
+			{
+				filterData = [new FilterData
 				{
 					ObjectName = "Factura_contrato",
 					PropName = "numero_contrato",
 					FilterType = "JSONPROP_EQUAL",
 					PropSQLType = "int",
 					Values = new List<string?> { numero_contrato.GetValueOrDefault().ToString() }
-				}
-			);
+				}]
+			}.SimpleGet<Transaccion_Factura>();
 		}
 	}
 	public class Tbl_Cuotas : EntityClass
