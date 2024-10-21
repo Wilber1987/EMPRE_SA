@@ -596,11 +596,11 @@ class Gestion_RecibosView extends HTMLElement {
                 </div>
                 <div class="DataContainer">
                     <span>Monto C$:</span>
-                    <label>${ConvertToMoneyString(selectContrato.total_pagar_cordobas)}</label>
+                    <label>${ConvertToMoneyString(selectContrato.Valoracion_empeño_cordobas)}</label>
                 </div>
                 <div class="DataContainer">
                     <span>Monto $:</span>
-                    <label>${ConvertToMoneyString(selectContrato.total_pagar_dolares)}</label>
+                    <label>${ConvertToMoneyString(selectContrato.Valoracion_empeño_dolares)}</label>
                 </div>
                 <div class="DataContainer">
                     <span>Saldo actual C$:</span>
