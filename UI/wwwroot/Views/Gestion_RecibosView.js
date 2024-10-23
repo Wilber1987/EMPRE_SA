@@ -74,21 +74,22 @@ class Gestion_RecibosView extends HTMLElement {
         this.ContractData.countPagadas = this.ContractData.cuotasPagadas.length;
         this.ContractData.countPendientes = this.ContractData.cuotasPendientes.length;
 
-        const CuotaActual = this.ContractData.cuotasPendientes[0];
-        this.CuotaPagada = selectContrato.Tbl_Cuotas?.filter(c => c.Estado?.toUpperCase() == "CANCELADO");
+        this.CuotaActual = this.ContractData.cuotasPendientes[0];
+        this.CuotasPagadas = selectContrato.Tbl_Cuotas?.filter(c => c.Estado?.toUpperCase() == "CANCELADO");
         this.RecibosPagados = selectContrato.Recibos?.filter(c => c.estado?.toUpperCase() == "CANCELADO") ?? [];
-        this.UltimaReciboPagado = selectContrato.Recibos[0];        
+        this.UltimaCuotaPagada = this.CuotasPagadas[0];        
+        this.UltimaReciboPagado = selectContrato.Recibos[0];
 
 
         this.ContractData.parciales = await new ParcialesData({
             numero_contrato: selectContrato.numero_contrato,
-            id_cuota: CuotaActual.id_cuota
+            id_cuota: this.CuotaActual.id_cuota
         }).GetParcialesData();
 
         this.ContractData.Contrato = selectContrato;
         // console.log( this.Contrato); 
         FinancialModule.UpdateContractData(selectContrato, this.ContractData);
-        CuotaActual.interes = this.ContractData.InteresCorriente
+        this.CuotaActual.interes = this.ContractData.InteresCorriente
 
         /**@type {Object} */
         const reestructureConfig = this.Configs?.find(c => c.Nombre == "PUEDE_REESTRUCTURAR");
@@ -446,7 +447,7 @@ class Gestion_RecibosView extends HTMLElement {
         }      
         .column-venta{
             display: grid;
-            grid-template-columns: repeat(6, 16%);
+            grid-template-columns: repeat(4, calc(25% - 10px));
             gap: 10px;
             margin-bottom: 5px;
             font-size: 12px;
@@ -547,99 +548,102 @@ class Gestion_RecibosView extends HTMLElement {
      */
     selectContratosDetail(selectContrato) {
         return html`<div>
-            <div class="column-venta">
-                <div class="DataContainer">
-                    <span>Nombre:</span>
-                    <label>
-                    ${selectContrato.Catalogo_Clientes.primer_nombre
-            + ' ' + selectContrato.Catalogo_Clientes.segundo_nombre
-            + ' ' + selectContrato.Catalogo_Clientes.primer_apellido
-            + ' ' + selectContrato.Catalogo_Clientes.segundo_apellidio
-            }
-                </label>
+            <div class="column-venta">           
+                <div>
+                    <div class="DataContainer">
+                        <span>Nombre:</span>
+                        <label>${selectContrato.Catalogo_Clientes.primer_nombre  + ' ' + selectContrato.Catalogo_Clientes.segundo_nombre  + ' ' + selectContrato.Catalogo_Clientes.primer_apellido  + ' ' + selectContrato.Catalogo_Clientes.segundo_apellidio   }
+                    </label>
+                    </div>
+                    <div class="DataContainer">
+                        <span>Dirección:</span>
+                        <label>${selectContrato.Catalogo_Clientes.direccion}</label>
+                    </div>
+                    <div class="DataContainer">
+                        <span>Identificación:</span>
+                        <label>${selectContrato.Catalogo_Clientes.identificacion}</label>
+                    </div>
+                    <div class="DataContainer">
+                        <span>contrato #:</span>
+                        <label>${selectContrato.numero_contrato}</label>
+                    </div>
+                    <div class="DataContainer">
+                            <span>Tipo de articulo:</span>
+                            <label>${WOrtograficValidation.es(this.GetCategoriaContrato(this.ContractData.Contrato.Detail_Prendas))}</label>
+                    </div>
                 </div>
-                <div class="DataContainer">
-                    <span>Dirección:</span>
-                    <label>${selectContrato.Catalogo_Clientes.direccion}</label>
-                </div>
-                <div class="DataContainer">
-                    <span>Identificación:</span>
-                    <label>${selectContrato.Catalogo_Clientes.identificacion}</label>
-                </div>
-                <div class="DataContainer">
-                    <span>contrato #:</span>
-                    <label>${selectContrato.numero_contrato}</label>
-                </div>
-                <div class="DataContainer">
-                    <span>Fecha de contrato:</span>
-                    <label>${// @ts-ignore
-                    selectContrato.fecha?.toDateFormatEs() ?? "-"}</label>
-                </div>
-                <div class="DataContainer">
-                    <span>F/Último pago:</span>
-                    <label>${ new DateTime().toDateFormatEs() ?? "-"}</label>
-                </div>
-                <div class="DataContainer">
-                    <span>F/Última actualización:</span>
-                    <label>${ // @ts-ignore 
-                    this.UltimaReciboPagado?.fecha?.toDateFormatEs() ?? "-"}</label>
-                </div>
-                <div class="DataContainer">
-                    <span>F/Próximo pago:</span>
-                    <label>${ // @ts-ignore
-                    this.ContractData.proximaCuota?.fecha?.toDateFormatEs() ?? "-"}</label>
-                </div>
-                <div class="DataContainer">
-                    <span>Fecha de cancelación:</span>
-                    <label>${// @ts-ignore
-            this.ContractData.ultimaCuota?.fecha?.toDateFormatEs() ?? "-"}</label>
-                </div>
-                <div class="DataContainer">
-                    <span>Monto C$:</span>
-                    <label>${ConvertToMoneyString(selectContrato.Valoracion_empeño_cordobas)}</label>
-                </div>
-                <div class="DataContainer">
-                    <span>Monto $:</span>
-                    <label>${ConvertToMoneyString(selectContrato.Valoracion_empeño_dolares)}</label>
-                </div>
-                <div class="DataContainer">
-                    <span>Saldo actual C$:</span>
-                    <label>${ConvertToMoneyString((selectContrato.saldo) * this.tasasCambio[0].Valor_de_venta)}</label>
-                </div>
-                <div class="DataContainer">
-                    <span>Saldo actual $:</span>
-                    <label>${ConvertToMoneyString(selectContrato.saldo)}</label>
-                </div>
-                <div class="DataContainer">
-                    <span>Plazo:</span>
-                    <label>${selectContrato.Tbl_Cuotas.filter(c => c.Estado != "INACTIVO").length}</label>
-                </div>
-                <div class="DataContainer">
-                    <span>Reestructuraciones:</span>
-                    <label>${selectContrato.reestructurado ?? "-" }</label>
-                </div>
-                <div class="DataContainer">
-                    <span>Intereses y demás cargos:</span>
-                    <label>${(selectContrato.tasas_interes * 100).toFixed(0)} %</label>
-                </div>
-
-                <div class="DataContainer">
-                    <span>Tasa de cambio venta:</span>
-                    <label>${this.tasasCambio[0].Valor_de_venta}</label>
-                </div>
-
-                <div class="DataContainer">
-                    <span>Tasa de cambio compra:</span>
-                    <label>${this.tasasCambio[0].Valor_de_compra}</label>
-                </div>
-                <div class="DataContainer">
-                    <span>Tipo de articulo:</span>
-                    <label>${WOrtograficValidation.es(this.GetCategoriaContrato(this.ContractData.Contrato.Detail_Prendas))}</label>
-                </div>
-                <div class="DataContainer ${this.ContractData.diasMora > 0 ? "diasMora" : ""}">
-                    <span>Días en mora:</span>
-                    <label class="">${this.ContractData.diasMora ?? 0}</label>
-                </div>
+               <div>
+                    <div class="DataContainer">
+                        <span>Fecha de contrato:</span>
+                        <label>${// @ts-ignore
+                            selectContrato.fecha?.toDateFormatEs() ?? "-"}</label>
+                    </div>
+                    <div class="DataContainer">
+                        <span>F/Último pago:</span>
+                        <label>${ // @ts-ignore 
+                        this.UltimaReciboPagado?.fecha?.toDateFormatEs() ?? "-"}</label>
+                    </div>
+                    <div class="DataContainer">
+                        <span>F/Última actualización:</span>
+                        <label>${ // @ts-ignore 
+                        this.UltimaCuotaPagada?.fecha?.toDateFormatEs() ?? "-"}</label>
+                    </div>
+                    <div class="DataContainer">
+                        <span>F/Próximo pago:</span>
+                        <label>${  // @ts-ignore 
+                            this.CuotaActual?.fecha?.toDateFormatEs() ?? "-"}</label>
+                    </div>
+                    <div class="DataContainer">
+                        <span>Fecha de cancelación:</span>
+                        <label>${// @ts-ignore
+                            this.ContractData.ultimaCuota?.fecha?.toDateFormatEs() ?? "-"}</label>
+                    </div>
+               </div>
+               <div>
+                    <div class="DataContainer">
+                        <span>Monto C$:</span>
+                        <label>${ConvertToMoneyString(selectContrato.Valoracion_empeño_cordobas)}</label>
+                    </div>
+                    <div class="DataContainer">
+                        <span>Monto $:</span>
+                        <label>${ConvertToMoneyString(selectContrato.Valoracion_empeño_dolares)}</label>
+                    </div>
+                    <div class="DataContainer">
+                        <span>Saldo actual C$:</span>
+                        <label>${ConvertToMoneyString((selectContrato.saldo) * this.tasasCambio[0].Valor_de_venta)}</label>
+                    </div>
+                    <div class="DataContainer">
+                        <span>Saldo actual $:</span>
+                        <label>${ConvertToMoneyString(selectContrato.saldo)}</label>
+                    </div>
+                    <div class="DataContainer">
+                        <span>Intereses y demás cargos:</span>
+                        <label>${(selectContrato.tasas_interes * 100).toFixed(0)} %</label>
+                    </div>
+                    
+               </div>
+               <div>                   
+                    <div class="DataContainer ${this.ContractData.diasMora > 0 ? "diasMora" : ""}">
+                        <span>Días en mora:</span>
+                        <label class="">${this.ContractData.diasMora ?? 0}</label>
+                    </div>
+                    <div class="DataContainer">
+                        <span>Plazo:</span>
+                        <label>${selectContrato.Tbl_Cuotas.filter(c => c.Estado != "INACTIVO").length}</label>
+                    </div>
+                    <div class="DataContainer">
+                        <span>Reestructuraciones:</span>
+                        <label>${selectContrato.reestructurado ?? "-" }</label>
+                    </div>  
+                    <div class="DataContainer">
+                        <span>Tasa de cambio compra:</span>
+                        <label>${this.tasasCambio[0].Valor_de_compra}</label>
+                    </div>
+                    <div class="DataContainer">
+                        <span>Tasa de cambio venta:</span>
+                        <label>${this.tasasCambio[0].Valor_de_venta}</label>
+                    </div>
+               </div>
             </div>
             <div>
                 <h4 style="text-align:center;">DATOS DEL RECIBO OFICIAL DE CAJA</h4>
