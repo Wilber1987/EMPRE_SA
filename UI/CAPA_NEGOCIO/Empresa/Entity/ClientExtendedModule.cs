@@ -42,6 +42,7 @@ namespace DataBaseModel
 			if (indiceActual >= 0 && indiceActual < clasificacion_Interes.Count - 1)
 			{
 				id_clasificacion_interes = clasificacion_Interes[indiceActual + 1].id_clasificacion_interes;
+				this.Catalogo_Clasificacion_Interes = clasificacion_Interes[indiceActual + 1];
 				Update();
 			}
 		}
