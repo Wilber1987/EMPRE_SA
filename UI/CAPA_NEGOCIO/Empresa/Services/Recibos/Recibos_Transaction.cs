@@ -131,7 +131,7 @@ namespace Transactions
 					}
 				}
 
-				if (this.cancelar == true && monto == total_capital_restante)
+				if (this.cancelar == true && contrato.saldo == 0)
 				{
 					contrato.saldo = 0;
 					contrato.estado = Contratos_State.CANCELADO.ToString();
@@ -185,11 +185,7 @@ namespace Transactions
 				}
 
 				//fecha de proximo pago
-				var cuotasPendiente = new Tbl_Cuotas
-				{
-					numero_contrato = contrato.numero_contrato,
-					Estado = EstadoEnum.PENDIENTE.ToString()
-				}.Get<Tbl_Cuotas>()?.OrderBy(C => C.id_cuota).ToList();
+				var cuotasPendiente = contrato.Tbl_Cuotas.Where(c => c.Estado?.ToUpper() == EstadoEnum.PENDIENTE.ToString()).ToList();
 
 				//guardado de factura
 				var factura = new Transaccion_Factura()
@@ -664,7 +660,7 @@ namespace Transactions
 						status = 400,
 						message = "Cuentas para anulación de factura no configuradas correctamente"
 					};
-				}				
+				}
 				contrato?.EstablecerComoVencido();
 				ResponseService response = new Movimientos_Cuentas
 				{
@@ -755,6 +751,10 @@ namespace Transactions
 			TimeSpan? diferenciaEntreFechaCreacion = cuota?.fecha.GetValueOrDefault() - fecha;
 			double diasDelMes = (diferenciaEntreFechaCreacion.GetValueOrDefault().TotalDays >= 0)
 			? diferenciaEntreFechaCreacion.GetValueOrDefault().TotalDays : 0;
+			if (diasDelMes <= 0)
+			{
+				return 0;
+			}
 
 			double interesCorriente = saldo_actual_dolares
 				* (double)(porcentajeInteres / 30) * diasDeDiferencia + cuota!.interes.GetValueOrDefault();
