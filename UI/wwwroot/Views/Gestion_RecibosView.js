@@ -77,7 +77,7 @@ class Gestion_RecibosView extends HTMLElement {
         this.CuotaActual = this.ContractData.cuotasPendientes[0];
         this.CuotasPagadas = selectContrato.Tbl_Cuotas?.filter(c => c.Estado?.toUpperCase() == "CANCELADO");
         this.RecibosPagados = selectContrato.Recibos?.filter(c => c.estado?.toUpperCase() == "CANCELADO") ?? [];
-        this.UltimaCuotaPagada = this.CuotasPagadas[0];        
+        this.UltimaCuotaPagada = this.CuotasPagadas[this.CuotasPagadas.length - 1];        
         this.UltimaReciboPagado = selectContrato.Recibos[0];
 
 

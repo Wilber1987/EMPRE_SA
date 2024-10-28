@@ -35,8 +35,6 @@ namespace BackgroundJob.Cron.Jobs
             {
                 _log.LogInformation(":::::::::::ERROR  EN VENCIMIENTO DE CONTRATOS... at {0}", ex);
             }
-
-
             return Task.CompletedTask;
         }
 

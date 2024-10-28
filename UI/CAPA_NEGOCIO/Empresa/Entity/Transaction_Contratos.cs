@@ -173,7 +173,6 @@ namespace DataBaseModel
 		{
 			try
 			{
-
 				var VencimientoConfig = new Transactional_Configuraciones().GetConfig(ConfiguracionesVencimientos.VENCIMIENTO_CONTRATO.ToString());
 				var cuotasPendientes = new Tbl_Cuotas { numero_contrato = numero_contrato, Estado = EstadoEnum.PENDIENTE.ToString() }.Get<Tbl_Cuotas>();
 				if (cuotasPendientes.Count == 0)

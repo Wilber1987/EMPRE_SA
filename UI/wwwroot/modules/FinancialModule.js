@@ -144,10 +144,10 @@ class FinancialModule {
         selectContrato.Tbl_Cuotas?.filter(cuota => cuota.Estado == "PENDIENTE")?.forEach(cuota => {
             // Obtenemos la fecha de pago
             const fechaPago = new Date(cuota.fecha);
-            
+            fechaPago.setHours(0, 0, 0, 0);            
             // Obtenemos la fecha actual
             const ahora = new Date();
-        
+            ahora.setHours(23, 59, 0, 0);        
             // Calculamos la diferencia en días calendario usando los componentes de la fecha
             // @ts-ignore
             const diferenciaDias = Math.floor((ahora - fechaPago) / (1000 * 60 * 60 * 24));
@@ -155,7 +155,7 @@ class FinancialModule {
             // Si la diferencia es negativa, ajustamos a cero
             const diasEnMoraFinal = Math.max(diferenciaDias, 0);
             
-            if (diasEnMoraFinal > 0) {
+            if (diasEnMoraFinal > 0 && contractData.diasMora < diasEnMoraFinal) {
                 contractData.diasMora = diasEnMoraFinal;
             }
         });

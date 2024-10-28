@@ -55,7 +55,8 @@ builder.Services.AddCronJob<DailyCronJob>(options =>
 {
 	// Corre cada minuto
 	//options.CronExpression = "0 0 13 1/1 * ? *";//ejecucion diaria a las 1 de la mañana
-	options.CronExpression = "0 12 * * *";
+	options.CronExpression = "0 12 * * *";//12 md
+	//options.CronExpression = "* * * * *";//cada minuto
 	options.TimeZone = TimeZoneInfo.Local;
 });
 

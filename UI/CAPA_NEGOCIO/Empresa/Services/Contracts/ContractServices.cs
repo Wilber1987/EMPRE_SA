@@ -169,39 +169,20 @@ namespace Model
 
 		internal void Vencimientos()
 		{
-			var VencimientoConfig = new Transactional_Configuraciones()
-			.GetConfig(ConfiguracionesVencimientos.VENCIMIENTO_CONTRATO.ToString());
-
-			DateTime fechaActual = DateTime.Now;
+			//var VencimientoConfig = new Transactional_Configuraciones().GetConfig(ConfiguracionesVencimientos.VENCIMIENTO_CONTRATO.ToString());
 			var contratosVencidos = new Transaction_Contratos().Where<Transaction_Contratos>(
 				FilterData.Or(
 					FilterData.Equal("tipo", Contratos_Type.EMPENO.ToString()),
 					FilterData.Equal("tipo", Contratos_Type.EMPENO_VEHICULO.ToString())
 				),
-				FilterData.Equal("estado", EstadoEnum.ACTIVO.ToString()),
-				FilterData.Less("fecha_vencimiento", fechaActual)
+				FilterData.Equal("estado", EstadoEnum.ACTIVO.ToString())
 			);
 
 			contratosVencidos.ForEach(contrato =>
 			{
-				DateTime fechaOriginal = contrato.fecha_cancelar.GetValueOrDefault();
-				TimeSpan diferencia = fechaActual - fechaOriginal;
-				int diasDeDiferencia = diferencia.Days;
-				if (diasDeDiferencia > Convert.ToInt32(VencimientoConfig.Valor))
-				{
-					try
-					{
-						BeginGlobalTransaction();
-						contrato.EstablecerComoVencido();
-						CommitGlobalTransaction();
-					}
-					catch (System.Exception)
-					{
-						RollBackGlobalTransaction();
-						throw;
-					}
-					
-				}
+				BeginGlobalTransaction();
+				contrato.EstablecerComoVencido();
+				CommitGlobalTransaction();
 			});
 		}
 
