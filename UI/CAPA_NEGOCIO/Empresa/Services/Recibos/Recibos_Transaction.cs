@@ -74,7 +74,8 @@ namespace Transactions
 						message = "Nº contrato no encontrado"
 					};
 				}
-				if (this.cancelar.HasValue && this.cancelar.Value && this.paga_dolares < contrato.saldo)
+				if (this.cancelar.HasValue && this.cancelar.Value 
+					&& Math.Round((Decimal)this.paga_dolares.GetValueOrDefault(), 3)  < Math.Round((Decimal)contrato.saldo.GetValueOrDefault(), 3))
 				{
 					return new ResponseService()
 					{
