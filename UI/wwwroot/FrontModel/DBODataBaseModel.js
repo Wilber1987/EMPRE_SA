@@ -636,6 +636,7 @@ class Transaccion_Factura extends EntityClass {
     /**@type {ModelProperty}*/
     Catalogo_Clientes = { type: 'WSELECT', ModelObject: () => new Catalogo_Clientes(), ForeignKeyColumn: "id_cliente", hiddenInTable: true };
     id_factura = { type: "number", primary: true, label: "Número recibo" };
+    Consecutivo = { type: "text" };
     tipo = { type: "text", hidden: true };
     concepto = { type: "text", hiddenFilter: true };
     tasa_cambio = { type: "money", label: "tasa_cambio C$", hiddenFilter: true };
@@ -665,7 +666,7 @@ class Factura_contrato {
     interes_demas_cargos_pagar = { type: "money" };
     abono_capital = { type: "money" };
     proximo_pago_pactado = { type: "date" };
-    total_parciales = { type: "money" };
+    //total_parciales = { type: "money" };//todo revisar por que manda valores
     //tipo = { type: "number" };
     //tipo_cuenta = { type: "number" };
     total = { type: "money" };

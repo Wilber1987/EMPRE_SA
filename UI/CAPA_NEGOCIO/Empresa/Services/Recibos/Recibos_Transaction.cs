@@ -218,7 +218,7 @@ namespace Transactions
 						mora = this.mora_dolares,
 						interes_demas_cargos_pagar = this.interes_demas_cargos_pagar_dolares,
 						proximo_pago_pactado = cuotasPendiente.Count > 0 ? cuotasPendiente[0].fecha : null,
-						total_parciales = this.total_parciales,//todo preguntar a EMPRESA 
+						//total_parciales = this.total_parciales,//todo preguntar a EMPRESA 
 						tipo = null,
 						tipo_cuenta = null,
 						total = this.total_dolares,
