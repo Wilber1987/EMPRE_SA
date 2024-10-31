@@ -723,6 +723,10 @@ namespace Transactions
 
 		public double InteresCorriente(Tbl_Cuotas cuota, Transaction_Contratos Contrato)
 		{
+			if (solo_abono == true)
+			{
+				return 0;
+			}
 			var cuotasPendientes = Contrato.Tbl_Cuotas
 				.Where(c => c.Estado == "PENDIENTE").ToList().Count;
 			var cuotasPagadas = Contrato.Tbl_Cuotas
@@ -740,6 +744,7 @@ namespace Transactions
 			{
 				return cuota.interes.GetValueOrDefault();
 			}
+			
 
 			double saldo_actual_dolares = Contrato.saldo.GetValueOrDefault();
 			DateTime fecha = cuota?.fecha.GetValueOrDefault() ?? DateTime.MinValue;

@@ -119,7 +119,7 @@ const contratosSearcher = (action, anularAction) => {
     const actions = []
     if (action) {
         actions.push({
-            name: "Seleccionar",
+            name: "Imprimir",
             action: async (cliente) => {
                 // @ts-ignore
                 await action(cliente);
@@ -129,6 +129,9 @@ const contratosSearcher = (action, anularAction) => {
     if (anularAction) {
         actions.push({
             name: "Anular",
+            rendered: (/** @type { Transaction_Contratos } */ contrato) => {
+                return contrato.estado != "ANULADO" && contrato.estado != "CANCELADO"
+            }, 
             action: async (cliente) => {
                 // @ts-ignore
                 await anularAction(cliente);

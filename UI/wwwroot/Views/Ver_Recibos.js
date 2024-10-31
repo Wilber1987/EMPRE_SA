@@ -28,7 +28,11 @@ class Ver_RecibosView extends HTMLElement {
                 FilterDisplay: true,
                 UserActions: [
                     {
-                        name: "Anular", action: (factura) => {
+                        name: "Anular", 
+                        rendered: (/** @type { Transaccion_Factura } */ factura) => {
+                            return factura.estado != "ANULADO" 
+                        }, 
+                        action: (factura) => {
                             factura.motivo_anulacion = null
                             const modal = new WModalForm({
                                 ModelObject: {

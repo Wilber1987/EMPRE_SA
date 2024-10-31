@@ -57,16 +57,16 @@
     padding: 10px;
     list-style: none;
     border-radius: 10px;
-    background-color: #eee;
+    background-color: var(--fourth-color);   
     text-decoration: none;
-    color: var(--font-fourth-color);
+    color: var(--font-primary-color);
 }
 .home-menu .title-collapse {
     display: block;
     padding: 10px 20px;
     list-style: none;
     border-radius: 10px;
-    background-color: #193b4e;
+    background-color: var(--tertiary-color);
     color: var(--font-primary-color);
     text-decoration: none;
 }

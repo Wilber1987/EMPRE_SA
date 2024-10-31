@@ -665,14 +665,14 @@ class Factura_contrato {
     mora = { type: "money" };
     interes_demas_cargos_pagar = { type: "money" };
     abono_capital = { type: "money" };
-    proximo_pago_pactado = { type: "date" };
+    //proximo_pago_pactado = { type: "date" };
     //total_parciales = { type: "money" };//todo revisar por que manda valores
     //tipo = { type: "number" };
     //tipo_cuenta = { type: "number" };
     total = { type: "money" };
     tasa_cambio = { type: "number" };
-    reestructuracion = { type: "number" }
-    Solo_Interes_Mora = { type: "text" }
+    //reestructuracion = { type: "number" }
+    //Solo_Interes_Mora = { type: "text" }
 
 }
 export { Factura_contrato }
