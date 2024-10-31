@@ -155,7 +155,6 @@ namespace Transactions
 				}
 				else if (solo_abono == true) //PAGA ABONO AL CAPITAL
 				{
-					contrato.saldo -= monto;
 					monto = AbonoCapital(contrato, monto, DetallesFacturaRecibos, cuotasPendientes, null);
 				}
 				else if (reestructurar == true) //PAGA ABONO AL CAPITAL

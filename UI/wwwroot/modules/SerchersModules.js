@@ -119,7 +119,7 @@ const contratosSearcher = (action, anularAction) => {
     const actions = []
     if (action) {
         actions.push({
-            name: "Imprimir",
+            name: "Seleccionar",
             action: async (cliente) => {
                 // @ts-ignore
                 await action(cliente);
