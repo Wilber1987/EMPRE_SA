@@ -103,8 +103,9 @@ namespace DataBaseModel
 
 	public enum Contratos_State
 	{
-		ACTIVO, CANCELADO, ANULADO
-	}
+		ACTIVO, CANCELADO, ANULADO,
+        CAPITAL_CANCELADO
+    }
 	public enum Contratos_Type
 	{
 		EMPENO, PRESTAMO, EMPENO_VEHICULO

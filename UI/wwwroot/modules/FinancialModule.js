@@ -288,7 +288,7 @@ class FinancialModule {
             canReestructure = true;
         }
         //console.log(Contrato.Tbl_Cuotas);
-        const existeMora = contractData.Contrato.Tbl_Cuotas?.filter(c => c.mora != null && c.mora > 0).length > 0;
+        const existeMora = contractData.Contrato.Tbl_Cuotas?.filter(c => c.Estado == "PENDIENTE" && c.mora != null && c.mora > 0).length > 0;
 
         contractData.canReestructure = canReestructure
         contractData.canPagoParcial = fechaVencida

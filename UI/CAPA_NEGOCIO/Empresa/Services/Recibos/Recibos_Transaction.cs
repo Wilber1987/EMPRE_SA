@@ -452,7 +452,7 @@ namespace Transactions
 						cuota.abono_capital = 0;
 						cuota.total = 0;
 						monto -= cuota.pago_contado.GetValueOrDefault();
-						cuota.Estado = Contratos_State.CANCELADO.ToString();
+						cuota.Estado = Contratos_State.CAPITAL_CANCELADO.ToString();//se usa cuando se cancela una cuota por via de pago adicional de capital 
 						cuota.interes = 0;
 					}
 					else
