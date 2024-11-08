@@ -596,7 +596,7 @@ class Gestion_RecibosView extends HTMLElement {
                     <div class="DataContainer">
                         <span>Fecha de cancelación:</span>
                         <label>${// @ts-ignore
-                            this.ContractData.ultimaCuota?.fecha?.toDateFormatEs() ?? "-"}</label>
+                            this.Contrato?.fecha_cancelar?.toDateFormatEs() ?? "-"}</label>
                     </div>
                </div>
                <div>

@@ -212,7 +212,7 @@ class Recibos_ModelComponent extends EntityClass {
                         ObjectF.solo_abono = true;
                         ObjectF.cancelar = false;
                         ObjectF.paga_cordobas = Number(contractData.pagoMinimoCordobas.toFixed(3));
-                        ObjectF.paga_dolares = Number(contractData.pagoMinimoCordobas.toFixed(3));
+                        ObjectF.paga_dolares = Number(contractData.pagoMinimoDolares.toFixed(3));
                     }
                     form.ModelObject.monto_dolares.action(ObjectF, form);
                 }
@@ -235,7 +235,7 @@ class Recibos_ModelComponent extends EntityClass {
                         ObjectF.solo_abono = true;
                         ObjectF.cancelar = false;
                         ObjectF.paga_cordobas = Number(contractData.pagoMinimoCordobas.toFixed(3));
-                        ObjectF.paga_dolares = Number(contractData.pagoMinimoCordobas.toFixed(3));
+                        ObjectF.paga_dolares = Number(contractData.pagoMinimoDolares.toFixed(3));
                     }
                     form.ModelObject.monto_dolares.action(ObjectF, form);
                     //form?.DrawComponent();

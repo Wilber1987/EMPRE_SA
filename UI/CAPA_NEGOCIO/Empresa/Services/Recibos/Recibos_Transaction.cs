@@ -74,8 +74,8 @@ namespace Transactions
 						message = "Nº contrato no encontrado"
 					};
 				}
-				if (this.cancelar.HasValue && this.cancelar.Value 
-					&& Math.Round((Decimal)this.paga_dolares.GetValueOrDefault(), 3)  < Math.Round((Decimal)contrato.saldo.GetValueOrDefault(), 3))
+				if (this.cancelar.HasValue && this.cancelar.Value
+					&& Math.Round((Decimal)this.paga_dolares.GetValueOrDefault(), 3) < Math.Round((Decimal)contrato.saldo.GetValueOrDefault(), 3))
 				{
 					return new ResponseService()
 					{
@@ -147,7 +147,7 @@ namespace Transactions
 				}
 				else if (solo_interes_mora == true)//PAGA SOLO INTERES + MORA
 				{
-					monto = SoloInteresMora(contrato, monto, DetallesFacturaRecibos, cuotasPendientes, CuotaActual);
+					monto = SoloInteresMora(contrato, monto, DetallesFacturaRecibos, null, CuotaActual);
 				}
 				else if (pago_parcial == true)//PAGA SOLO INTERES + MORA
 				{
@@ -397,6 +397,12 @@ namespace Transactions
 			CuotaActual.pago_contado = monto;
 			monto = 0;
 			CuotaActual.Estado = Contratos_State.CANCELADO.ToString();
+			if (cuotasPendientes == null)//si es solo un recibo de pago de interes mora el estado de las cuotas debe incluir a las cuotas con capital cancelado 
+			{
+				cuotasPendientes = contrato.Tbl_Cuotas.Where(c => c.Estado?.ToUpper() == EstadoEnum.PENDIENTE.ToString()
+						|| c.Estado?.ToUpper() == Contratos_State.CAPITAL_CANCELADO.ToString()).ToList();
+			}
+
 
 			AgregarCuotaDetalle(CuotaActual, DetallesFacturaRecibos, estadoAnteriorCuotaActual,
 			$"Pago de interes + mora de cuota correspondiente a la cuota {CuotaActual?.fecha?.ToString("dd-MM-yyyy")} del contrato No: " + this.numero_contrato);
@@ -407,6 +413,9 @@ namespace Transactions
 			CuotaFinal.abono_capital += CuotaActual?.abono_capital;
 			CuotaFinal.interes = CuotaFinal.abono_capital * contrato.tasas_interes;
 			CuotaFinal.total = CuotaFinal.interes + CuotaFinal.abono_capital;
+			CuotaFinal.Estado = EstadoEnum.PENDIENTE.ToString();
+
+
 
 			Tbl_Cuotas? CuotaAnterior = CuotaActual;
 			cuotasPendientes?.OrderBy(c => c.id_cuota).ToList()?.ForEach(cuota =>
@@ -417,6 +426,7 @@ namespace Transactions
 				cuota.abono_capital = CuotaAnterior?.abono_capital;
 				cuota.interes = CuotaAnterior?.interes;
 				cuota.pago_contado = 0;
+				cuota.Estado = EstadoEnum.PENDIENTE.ToString();
 				AgregarCuotaDetalle(cuota, DetallesFacturaRecibos, estadoAnterior,
 					$"Actualización de datos de pago de la cuota {CuotaActual?.fecha?.ToString("dd-MM-yyyy")} del contrato No: "
 					+ this.numero_contrato);
@@ -743,7 +753,7 @@ namespace Transactions
 			{
 				return cuota.interes.GetValueOrDefault();
 			}
-			
+
 
 			double saldo_actual_dolares = Contrato.saldo.GetValueOrDefault();
 			DateTime fecha = cuota?.fecha.GetValueOrDefault() ?? DateTime.MinValue;
