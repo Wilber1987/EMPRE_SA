@@ -49,7 +49,9 @@ namespace DataBaseModel
 		public int? Id_User { get; set; }
 		public int? reestructurado { get; set; }
 		[JsonProp]
-		public DesgloseIntereses? DesgloseIntereses { get; set; }
+		public DesgloseIntereses? DesgloseIntereses { get; set; }		
+		[JsonProp]
+		public List<Notas_de_contrato>? Notas { get; set; }
 
 		[ManyToOne(TableName = "Catalogo_Clientes", KeyColumn = "codigo_cliente", ForeignKeyColumn = "codigo_cliente")]
 		public Catalogo_Clientes? Catalogo_Clientes { get; set; }
@@ -302,6 +304,13 @@ namespace DataBaseModel
 			}.SimpleGet<Transaccion_Factura>();
 		}
 	}
+
+	public class Notas_de_contrato
+	{
+		public DateTime Fecha { get; set; }
+		public string? Descripcion { get; set; }
+	}
+
 	public class Tbl_Cuotas : EntityClass
 	{
 		[PrimaryKey(Identity = true)]

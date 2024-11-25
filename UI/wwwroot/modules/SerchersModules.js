@@ -4,13 +4,14 @@ import { WRender, ComponentsManager } from "../WDevCore/WModules/WComponentsTool
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js"
 // @ts-ignore
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
-import { Catalogo_Clientes, Transaction_Contratos_ModelComponent, Transactional_Valoracion } from "../FrontModel/DBODataBaseModel.js"
+import { Catalogo_Clientes, Notas_de_contrato, Transaction_Contratos_ModelComponent, Transactional_Valoracion } from "../FrontModel/DBODataBaseModel.js"
 // @ts-ignore
 import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
 import { Tbl_Cuotas, Transaction_Contratos, ValoracionesTransaction } from "../FrontModel/Model.js";
 import { Tbl_Cuotas_ModelComponent } from "../FrontModel/ModelComponents.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { WDetailObject } from "../WDevCore/WComponents/WDetailObject.js";
+import { ModalMessege } from "../WDevCore/WComponents/WForm.js";
 class ValoracionesSearch extends HTMLElement {
     constructor(/** @type {Function} */ action,/** @type {Function|undefined} */ secondAction,/** @type {Boolean} */ onlyValids = false) {
         super();
@@ -103,7 +104,7 @@ export { clientSearcher }
  * @param { Function } [anularAction]
  * @returns { HTMLElement }
  */
-const contratosSearcher = (action, anularAction) => {
+const contratosSearcher = (action, anularAction, withNotas = false) => {
     const model = new Transaction_Contratos_ModelComponent();
     model.Tbl_Cuotas.ModelObject = () => new Tbl_Cuotas_ModelComponent({
         Estado: {
@@ -135,6 +136,29 @@ const contratosSearcher = (action, anularAction) => {
             action: async (cliente) => {
                 // @ts-ignore
                 await anularAction(cliente);
+            }
+        })
+    }
+    if (withNotas) {
+        actions.push({
+            name: "Agregar nota",
+            action: async (cliente) => {
+                document.body.appendChild( new WModalForm({
+                    ModelObject: new Notas_de_contrato(),
+                    title: "Agregar nota",
+                    ObjectOptions: {
+                        SaveFunction: async (nuevaNota) => {
+                            if (cliente.Notas) {
+                                cliente.Notas.push(nuevaNota)
+                            } else {
+                                cliente.Notas = [nuevaNota]
+                            }
+                            const response = await  new Transaction_Contratos(cliente).Update();
+                            document.body.appendChild(ModalMessege(response.message));                            
+                        } 
+                    }
+                }));
+               
             }
         })
     }

@@ -296,8 +296,16 @@ class Transaction_Contratos_ModelComponent extends EntityClass {
     Detail_Prendas = { type: 'MasterDetail', ModelObject: () => new Detail_Prendas_ModelComponent(), hiddenFilter: true };
     Tbl_Cuotas = { type: 'MasterDetail', ModelObject: () => new Tbl_Cuotas_ModelComponent(), hiddenFilter: true };
     Recibos = { type: 'MasterDetail', ModelObject: () => new Transaccion_Factura(), hiddenFilter: true };
+    Notas = { type: 'MasterDetail', ModelObject: () => new Notas_de_contrato(), hiddenFilter: true };
 }
 export { Transaction_Contratos_ModelComponent }
+
+class Notas_de_contrato {
+    Fecha = { type: "date" };
+    Descripcion = { type: "richtext" };
+}
+
+export { Notas_de_contrato }
 
 class Detail_Prendas_ModelComponent extends EntityClass {
     constructor(props) {

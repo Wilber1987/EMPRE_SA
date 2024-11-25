@@ -494,7 +494,7 @@ class MainContract extends HTMLElement {
                         }
                     });
                     this.append(modal);
-                }))
+                }, true))
             }
         }, {
             name: "Nuevo Contrato", action: () => {
