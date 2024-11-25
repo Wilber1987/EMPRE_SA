@@ -6,10 +6,10 @@ using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.ResponseCompression;
 
 //SqlADOConexion.IniciarConexion("sa", "zaxscd", ".", "EMPRE_SA");
-SqlADOConexion.IniciarConexion("sa", "123", ".\\SQLEXPRESS", "EMPRE_SA");
+//SqlADOConexion.IniciarConexion("sa", "123", ".\\SQLEXPRESS", "EMPRE_SA");
 
 //CONEXIONES DE PRODUCCION
-//SqlADOConexion.IniciarConexion("empresa", "Wmatus09%", "tcp:empresociedadanonima.database.windows.net", "EMPRE_SA");
+SqlADOConexion.IniciarConexion("empresa", "Wmatus09%", "tcp:empresociedadanonima.database.windows.net", "EMPRE_SA");
 
 //var test = new test{ Parameters = new List<object> {1 , 2}}.Get<test>(true);
 //var testfilter = (from t in test where t.val1 == "1"  select t).ToList();
