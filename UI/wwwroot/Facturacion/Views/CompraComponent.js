@@ -234,7 +234,7 @@ class ComprasComponent extends HTMLElement {
             justify-content: space-between;
             font-size: 14px;
             font-weight: bold;
-            color: #00238a
+            color: var(--font-secundary-color)
         }        
         .OptionContainer{
             display: flex;

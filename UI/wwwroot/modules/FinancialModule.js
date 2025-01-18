@@ -24,7 +24,7 @@ class FinancialModule {
         if (withValoraciones) {
             contrato.Transaction_Contratos.Detail_Prendas = contrato.valoraciones.map(
             // @ts-ignore
-            /**@type {Transactional_Valoracion}*/valoracion => new Detail_Prendas({
+            /**@type {Transactional_Valoracion_ModelComponent}*/valoracion => new Detail_Prendas({
                 Descripcion: valoracion.Descripcion,
                 modelo: valoracion.Modelo,
                 marca: valoracion.Marca,
@@ -35,14 +35,14 @@ class FinancialModule {
                 en_manos_de: tipo_contrato == "EMPEÑO" ? "ACREEDOR" : "DEUDOR",
                 precio_venta: valoracion.Precio_venta_empeño_dolares,
                 Catalogo_Categoria: valoracion.Catalogo_Categoria,
-                Transactional_Valoracion: valoracion
+                Transactional_Valoracion_ModelComponent: valoracion
             }));
         }
 
-        contrato.Transaction_Contratos.Valoracion_compra_cordobas = FinancialModule.round(WArrayF.SumValAtt(contrato.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion), "Valoracion_compra_cordobas"));
-        contrato.Transaction_Contratos.Valoracion_compra_dolares = FinancialModule.round(WArrayF.SumValAtt(contrato.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion), "Valoracion_compra_dolares"));
-        contrato.Transaction_Contratos.Valoracion_empeño_cordobas = FinancialModule.round(WArrayF.SumValAtt(contrato.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion), "Valoracion_empeño_cordobas"));
-        contrato.Transaction_Contratos.Valoracion_empeño_dolares = FinancialModule.round(WArrayF.SumValAtt(contrato.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion), "Valoracion_empeño_dolares"));
+        contrato.Transaction_Contratos.Valoracion_compra_cordobas = FinancialModule.round(WArrayF.SumValAtt(contrato.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion_ModelComponent), "Valoracion_compra_cordobas"));
+        contrato.Transaction_Contratos.Valoracion_compra_dolares = FinancialModule.round(WArrayF.SumValAtt(contrato.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion_ModelComponent), "Valoracion_compra_dolares"));
+        contrato.Transaction_Contratos.Valoracion_empeño_cordobas = FinancialModule.round(WArrayF.SumValAtt(contrato.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion_ModelComponent), "Valoracion_empeño_cordobas"));
+        contrato.Transaction_Contratos.Valoracion_empeño_dolares = FinancialModule.round(WArrayF.SumValAtt(contrato.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion_ModelComponent), "Valoracion_empeño_dolares"));
         //contrato.Transaction_Contratos.taza_interes_cargos = contrato.Transaction_Contratos.taza_interes_cargos ?? 0.09
         contrato.Transaction_Contratos.tasas_interes =
             (parseFloat(contrato.Transaction_Contratos?.Catalogo_Clientes?.Catalogo_Clasificacion_Interes?.porcentaje)

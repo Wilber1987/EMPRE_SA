@@ -4,7 +4,7 @@ import { WRender, ComponentsManager } from "../WDevCore/WModules/WComponentsTool
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js"
 // @ts-ignore
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
-import { Catalogo_Clientes, Notas_de_contrato, Transaction_Contratos_ModelComponent, Transactional_Valoracion } from "../FrontModel/DBODataBaseModel.js"
+import { Catalogo_Clientes, Notas_de_contrato, Transaction_Contratos_ModelComponent, Transactional_Valoracion_ModelComponent } from "../FrontModel/DBODataBaseModel.js"
 // @ts-ignore
 import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
 import { Tbl_Cuotas, Transaction_Contratos, ValoracionesTransaction } from "../FrontModel/Model.js";
@@ -23,7 +23,7 @@ class ValoracionesSearch extends HTMLElement {
         this.DrawComponent();
     }
     DrawComponent = async () => {
-        const model = new Transactional_Valoracion({ requiere_valoracion: { type: "TEXT", hiddenFilter: true } });
+        const model = new Transactional_Valoracion_ModelComponent({ requiere_valoracion: { type: "TEXT", hiddenFilter: true } });
         if (this.onlyValids) {
             model.FilterData.push({
                 PropName: "Fecha",
@@ -39,7 +39,7 @@ class ValoracionesSearch extends HTMLElement {
         })
         this.MainComponent = new WTableComponent({
             ModelObject: model,
-            Dataset: dataset.map(/**@param {Transactional_Valoracion} x*/ x => {
+            Dataset: dataset.map(/**@param {Transactional_Valoracion_ModelComponent} x*/ x => {
                 // @ts-ignore
                 x.requiere_valoracion = x.requireReValoracion() ? "SI" : "NO";
                 return x;
@@ -47,7 +47,7 @@ class ValoracionesSearch extends HTMLElement {
             Options: {
                 UserActions: [
                     {
-                        name: "Seleccionar", action: (/**@type {Transactional_Valoracion}*/ selected) => {
+                        name: "Seleccionar", action: (/**@type {Transactional_Valoracion_ModelComponent}*/ selected) => {
                             this.action(selected);
                         }
                     }

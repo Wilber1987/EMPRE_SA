@@ -25,7 +25,7 @@
 }
 
 #Aside a.title-collapse {
-    color: var(--font-tertiary-color);
+    color: var(--font-secundary-color);
     padding: 10px;
     margin: 0px;    
     font-size: 10px;
@@ -67,6 +67,6 @@
     list-style: none;
     border-radius: 10px;
     background-color: var(--tertiary-color);
-    color: var(--font-primary-color);
+    color: var(--font-tertiary-color);
     text-decoration: none;
 }

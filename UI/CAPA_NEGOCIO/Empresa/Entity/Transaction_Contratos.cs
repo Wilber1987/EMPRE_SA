@@ -213,45 +213,65 @@ namespace DataBaseModel
 		}
 
 		private void GenerarLoteAPartirDePrenda(Detail_Prendas prenda, Transactional_Configuraciones beneficioVentaE, Security_Users? dbUser)
-		{
-			double? mora = prenda.Transactional_Valoracion?.Tasa_interes * 2 / 100;
-			double? precio_venta_empeño = (prenda.Transactional_Valoracion?.Valoracion_empeño_dolares)
-				* (mora + 1)
-				* (Convert.ToDouble(beneficioVentaE.Valor) / 100 + 1);
-			Cat_Producto producto = new Cat_Producto
-			{
-				Descripcion = prenda.Descripcion,
-				Cat_Marca = new Cat_Marca
-				{
-					Nombre = prenda.marca,
-					Descripcion = prenda.marca,
-					Estado = EstadoEnum.ACTIVO.ToString()
-				},
-				Cat_Categorias = new Cat_Categorias
-				{
-					Descripcion = prenda.Catalogo_Categoria?.descripcion,
-					Estado = EstadoEnum.ACTIVO.ToString()
-				}
-			};
-			Cat_Producto.SetProductData(producto);
-			new Tbl_Lotes()
-			{
-				Cat_Producto = producto,
-				Precio_Venta = precio_venta_empeño,
-				Precio_Compra = prenda.Transactional_Valoracion?.Valoracion_empeño_dolares,
-				Cantidad_Inicial = 1,
-				Cantidad_Existente = 1,
-				Id_Sucursal = dbUser?.Id_Sucursal,
-				Id_User = dbUser?.Id_User,
-				Fecha_Ingreso = DateTime.Now,
-				Datos_Producto = prenda,
-				Detalles = $"Existencia perteneciente a vencimineto de contrato No. {numero_contrato.GetValueOrDefault():D9}",
-				Id_Almacen = new Cat_Almacenes().GetAlmacen(dbUser?.Id_Sucursal ?? 0),
-				Lote = Tbl_Lotes.GenerarLote()
-			}.Save();
-		}
+        {
+            double? mora = prenda.Transactional_Valoracion?.Tasa_interes * 2 / 100;
+            double? precio_venta_empeño = (prenda.Transactional_Valoracion?.Valoracion_empeño_dolares)
+                * (mora + 1)
+                * (Convert.ToDouble(beneficioVentaE.Valor) / 100 + 1);
+            Cat_Producto producto = new Cat_Producto
+            {
+                Descripcion = prenda.Descripcion,
+                Cat_Marca = new Cat_Marca
+                {
+                    Nombre = prenda.marca,
+                    Descripcion = prenda.marca,
+                    Estado = EstadoEnum.ACTIVO.ToString()
+                },
+                Cat_Categorias = new Cat_Categorias
+                {
+                    Descripcion = prenda.Catalogo_Categoria?.descripcion,
+                    Estado = EstadoEnum.ACTIVO.ToString()
+                }
+            };
+            Cat_Producto.SetProductData(producto);
+            SaveLote(prenda, dbUser, precio_venta_empeño, producto);
+        }
 
-		internal Transaction_Contratos? FindAndUpdateContract()
+        private void SaveLote(Detail_Prendas prenda, Security_Users? dbUser, double? precio_venta_empeño, Cat_Producto producto)
+        {
+            string codigo = Tbl_Lotes.GenerarLote();
+            int porcentajesUtilidad = 45;
+            int porcentajesApartado = 60;
+            int? Ncuotas = 4;
+
+            new Tbl_Lotes()
+            {
+                Cat_Producto = producto,
+                Precio_Venta = precio_venta_empeño,
+                Precio_Compra = prenda.Transactional_Valoracion?.Valoracion_empeño_dolares,
+                Cantidad_Inicial = 1,
+                Cantidad_Existente = 1,
+                Id_Sucursal = dbUser?.Id_Sucursal,
+                Id_User = dbUser?.Id_User,
+                Fecha_Ingreso = DateTime.Now,
+                Datos_Producto = prenda.Transactional_Valoracion,
+                Detalles = $"Existencia perteneciente a vencimineto de contrato No. {numero_contrato.GetValueOrDefault():D9}",
+                Id_Almacen = new Cat_Almacenes().GetAlmacen(dbUser?.Id_Sucursal ?? 0),
+                Lote = codigo,
+                EtiquetaLote = new EtiquetaLote
+                {
+                    Tipo = "CV",
+                    Articulo = prenda.Transactional_Valoracion?.Descripcion,
+                    Codigo = codigo,
+                    PorcentajesUtilidad = porcentajesUtilidad,
+                    PorcentajesApartado = porcentajesApartado,
+                    PorcentajeAdicional = 0,
+                    N_Cuotas = Ncuotas
+                }
+            }.Save();
+        }
+
+        internal Transaction_Contratos? FindAndUpdateContract()
 		{
 			Transaction_Contratos? contrato = Find<Transaction_Contratos>();
 			var cuotas = new Tbl_Cuotas()

@@ -21,7 +21,7 @@ namespace DataBaseModel {
         public Double? Total { get; set; }
         public string? Presentacion { get; set; }
         //Datos del producto que se agregara al lote
-        public object? Datos_Producto_Lote { get; set; }
+        public Transactional_Valoracion? Datos_Producto_Lote { get; set; }
         
         [ManyToOne(TableName = "Cat_Producto", KeyColumn = "Id_Producto", ForeignKeyColumn = "Id_Producto")]
         public Cat_Producto? Cat_Producto { get; set; }

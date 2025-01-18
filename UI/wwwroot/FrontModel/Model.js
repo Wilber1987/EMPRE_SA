@@ -11,7 +11,7 @@ class ValoracionesTransaction extends EntityClass {
         };
         this.Moneda = undefined;
     }
-    /**@type {Array<Transactional_Valoracion>} */
+    /**@type {Array<Transactional_Valoracion_ModelComponent>} */
     valoraciones;
 
     /**@type {Transaction_Contratos} */
@@ -193,7 +193,7 @@ class Detail_Prendas extends EntityClass {
     /**@type {String} */ color;
     /**@type {Number} */ Detail_Prendas_Vehiculos;
     /**@type {Catalogo_Categoria} */ Catalogo_Categoria;
-    /**@type {Transactional_Valoracion} */ Transactional_Valoracion;
+    /**@type {Transactional_Valoracion_ModelComponent} */ Transactional_Valoracion_ModelComponent;
 }
 export { Detail_Prendas }
 
@@ -211,7 +211,7 @@ class Catalogo_Categoria extends EntityClass {
     /**@type {Number}*/ prioridad;
     /**@type {Boolean}*/ isEditable;
     /**@type {Array<Detail_Prendas>} OneToMany*/ Detail_Prendas;
-    /**@type {Array<Transactional_Valoracion>} OneToMany*/ Transactional_Valoracion;
+    /**@type {Array<Transactional_Valoracion_ModelComponent>} OneToMany*/ Transactional_Valoracion_ModelComponent;
 }
 export { Catalogo_Categoria }
 

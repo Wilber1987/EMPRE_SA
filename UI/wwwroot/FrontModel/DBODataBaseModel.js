@@ -20,14 +20,14 @@ class Catalogo_Estados_Articulos extends EntityClass {
     porcentaje_empeno = { type: 'number' };
 }
 export { Catalogo_Estados_Articulos }
-class Transactional_Valoracion extends EntityClass {
+class Transactional_Valoracion_ModelComponent extends EntityClass {
     requireReValoracion(dias = 40) {
         console.log("dias: ", new Date().subtractDays(dias) > new Date(this.Fecha));
         return new Date().subtractDays(dias) > new Date(this.Fecha);
     }
     /**
      * 
-     * @param {Transactional_Valoracion | Object} props 
+     * @param {Partial<Transactional_Valoracion_ModelComponent>} props 
      */
     constructor(props) {
         super(props, 'EntityDBO');
@@ -61,16 +61,16 @@ class Transactional_Valoracion extends EntityClass {
     Valoracion_empeño_dolares = { type: 'money', hiddenFilter: true };
     Catalogo_Estados_Articulos = { type: 'WSELECT', hiddenInTable: true, ModelObject: () => new Catalogo_Estados_Articulos(), hiddenFilter: true };
     //TASAS DE INTERES
-    Valoracion_empeño_dolares = { type: 'operation' };
+    //Valoracion_empeño_dolares = { type: 'operation' };
 
     Precio_venta_empeño_cordobas = { type: 'number', hidden: true };
     Precio_venta_empeño_dolares = { type: 'number', hidden: true };
     Detail_Valores = { type: 'MASTERDETAIL', hidden: true }
     GuardarValoraciones = async (valoraciones) => {
-        return await this.SaveData("Transactional_Valoracion/GuardarValoraciones", { valoraciones: valoraciones })
+        return await this.SaveData("Transactional_Valoracion_ModelComponent/GuardarValoraciones", { valoraciones: valoraciones })
     }
 }
-export { Transactional_Valoracion }
+export { Transactional_Valoracion_ModelComponent }
 //TODO ELIMINAR A POSTERIOR LO DE LOS AGENTES
 class Catalogo_Agentes extends EntityClass {
     constructor(props) {

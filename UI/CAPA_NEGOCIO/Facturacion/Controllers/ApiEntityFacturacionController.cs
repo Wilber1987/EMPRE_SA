@@ -25,7 +25,7 @@ namespace API.Controllers
         [AuthController]
         public object? saveTbl_Factura(Tbl_Factura Inst)
         {
-            return Inst?.Save();
+            return Inst?.SaveFactura(HttpContext.Session.GetString("seassonKey"));
         }
         [HttpPost]
         [AuthController]
@@ -220,7 +220,7 @@ namespace API.Controllers
         [AuthController]
         public List<Tbl_Lotes>? getTbl_Lotes(Tbl_Lotes Inst)
         {
-            return Inst?.Get<Tbl_Lotes>();
+            return Inst?.GetLotes(HttpContext.Session.GetString("seassonKey"));
         }
         [HttpPost]
         [AuthController]

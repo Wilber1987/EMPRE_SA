@@ -16,6 +16,7 @@ class Tbl_Lotes_ModelComponent extends EntityClass {
    
     /**@type {ModelProperty}*/ Id_Producto = { type: 'number', hiddenInTable: true, hiddenFilter: true };
     /**@type {ModelProperty}*/ Id_Almacen = { type: 'number', hiddenInTable: true, hiddenFilter: true };
+    /**@type {ModelProperty}*/ Descripcion = { type: 'text' };
     /**@type {ModelProperty}*/ Cat_Producto = { type: 'WSELECT', ModelObject: () => new Cat_Producto_ModelComponent() };
     /**@type {ModelProperty}*/ Cat_Almacenes = { type: 'WSELECT', ModelObject: () => new Cat_Almacenes_ModelComponent() };
     /**@type {ModelProperty}*/ Lote = { type: 'text' };

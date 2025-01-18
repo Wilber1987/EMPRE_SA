@@ -140,9 +140,9 @@ class Transaction_ContratosView extends HTMLElement {
      */
     prioridadEnElPlazo() {
         const prioridad = this.entity.Transaction_Contratos?.Detail_Prendas?.find(p =>
-            p.Transactional_Valoracion.Catalogo_Categoria.prioridad ==
+            p.Transactional_Valoracion_ModelComponent.Catalogo_Categoria.prioridad ==
             WArrayF.MinValue(this.entity.Transaction_Contratos.Detail_Prendas.map(
-                sp => sp.Transactional_Valoracion.Catalogo_Categoria), "prioridad"));
+                sp => sp.Transactional_Valoracion_ModelComponent.Catalogo_Categoria), "prioridad"));
         // @ts-ignore
         return prioridad?.Catalogo_Categoria?.plazo_limite ?? 1
 
@@ -352,7 +352,7 @@ class Transaction_ContratosView extends HTMLElement {
             monto_aprobado_dolares: valoracion.Valoracion_empeño_dolares,
             en_manos_de: undefined,
             Catalogo_Categoria: valoracion.Catalogo_Categoria,
-            Transactional_Valoracion: valoracion
+            Transactional_Valoracion_ModelComponent: valoracion
         }))
         // @ts-ignore
         this.entity.Transaction_Contratos.taza_cambio = this.tasaActual?.Valor_de_venta;
@@ -380,7 +380,7 @@ class Transaction_ContratosView extends HTMLElement {
         // @ts-ignore
         this.CuotasTable.Dataset = undefined;
         // @ts-ignore
-        this.entity.valoraciones = this.entity.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion);
+        this.entity.valoraciones = this.entity.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion_ModelComponent);
         this.update();
 
     }
@@ -388,7 +388,7 @@ class Transaction_ContratosView extends HTMLElement {
         FinancialModule.calculoAmortizacion(this.entity);
         if (this.prendasTable != undefined && this.entity.Transaction_Contratos.Detail_Prendas != undefined) {
             this.entity.Transaction_Contratos?.Detail_Prendas.forEach(detalle => {
-                detalle.monto_aprobado_dolares = detalle.Transactional_Valoracion.Valoracion_empeño_dolares
+                detalle.monto_aprobado_dolares = detalle.Transactional_Valoracion_ModelComponent.Valoracion_empeño_dolares
             })
             this.prendasTable.Dataset = this.entity.Transaction_Contratos.Detail_Prendas;
             this.prendasTable?.DrawTable();
@@ -495,11 +495,6 @@ class MainContract extends HTMLElement {
                     });
                     this.append(modal);
                 }, true))
-            }
-        }, {
-            name: "Nuevo Contrato", action: () => {
-                this.Manager.NavigateFunction("newContrato", new Transaction_ContratosView({}))
-                this.indexContract++;
             }
         }
     ]
