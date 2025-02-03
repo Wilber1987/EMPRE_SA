@@ -156,7 +156,7 @@ class LotesManagerView extends HTMLElement {
             ${lotes.map(lote => this.BuildLoteEtiqueta(lote))}
         </div>`
         tool.Print(fragment);
-        this.append(fragment)
+        //this.append(fragment)
     }
 
     /**
