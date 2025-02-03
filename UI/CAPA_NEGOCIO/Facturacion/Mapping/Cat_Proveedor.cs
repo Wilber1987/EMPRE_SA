@@ -14,7 +14,7 @@ namespace DataBaseModel {
         public string? Estado { get; set; }
         [JsonProp]
         public object? Datos_Proveedor { get; set; }
-        [OneToMany(TableName = "Tbl_Compra", KeyColumn = "Id_Proveedor", ForeignKeyColumn = "Id_Proveedor")]
+        //[OneToMany(TableName = "Tbl_Compra", KeyColumn = "Id_Proveedor", ForeignKeyColumn = "Id_Proveedor")]
         public List<Tbl_Compra>? Tbl_Compra { get; set; }
         
     }

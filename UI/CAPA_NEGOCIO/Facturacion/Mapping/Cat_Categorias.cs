@@ -11,7 +11,7 @@ namespace DataBaseModel {
         public int? Id_Categoria { get; set; }
         public string? Descripcion { get; set; }
         public string? Estado { get; set; }
-        [OneToMany(TableName = "Cat_Producto", KeyColumn = "Id_Categoria", ForeignKeyColumn = "Id_Categoria")]
+        //[OneToMany(TableName = "Cat_Producto", KeyColumn = "Id_Categoria", ForeignKeyColumn = "Id_Categoria")]
         public List<Cat_Producto>? Cat_Producto { get; set; }
     }
 }
