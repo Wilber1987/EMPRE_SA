@@ -34,14 +34,6 @@
         <a class="menu-item" id="Ver_Recibos" asp-area="" asp-page="/PagesViews/Ver_Recibos">Ver Recibos</a>
     </div>
 }
-@if (SecurityController.HavePermission(Permissions.GESTION_LOTES.ToString(), Identify))
-{
-    <a class="title-collapse" id="GestionFacturaMenu" onclick="changeActive(this)">GESTIÓN DE FACTURACIÓN</a>
-    <div class="collapse">
-        <a class="menu-item" id="LotesManager" asp-area="" asp-page="/Facturacion/LotesManager">Ver
-            Existencias</a>
-    </div>
-}
 @if (SecurityController.HavePermission(Identify, Permissions.GESTION_COMPRAS, Permissions.GESTION_VENTAS))
 {
     <a class="title-collapse" id="GestionFacturaMenu" onclick="changeActive(this)">GESTIÓN DE COMPRAS</a>
@@ -53,12 +45,19 @@
                 <a class="menu-item" id="ComprasManager" asp-area="" asp-page="/Facturacion/ComprasManager">
                     Ver Compras</a>*@
             <a class="menu-item" id="ComprasComponentView" asp-area=""
-                asp-page="/PagesViews/Transaction_Valoraciones_View">Compras</a>            
+                asp-page="/PagesViews/Transaction_Valoraciones_View">Nueva Compra</a>
+            <a class="menu-item" id="ComprasComponentView" asp-area=""
+                asp-page="/Facturacion/ComprasManager">Compras realizadas</a>
 
         }
         @if (SecurityController.HavePermission(Identify, Permissions.GESTION_VENTAS))
         {
             <a class="menu-item" id="FacturasVentasView" asp-area="" asp-page="/Facturacion/FacturasComponentView">Ventas</a>
+        }
+        @if (SecurityController.HavePermission(Permissions.GESTION_LOTES.ToString(), Identify))
+        {
+            <a class="menu-item" id="LotesManager" asp-area="" asp-page="/Facturacion/LotesManager">Ver
+                Existencias</a>
         }
     </div>
 }

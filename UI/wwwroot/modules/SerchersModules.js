@@ -12,6 +12,7 @@ import { Tbl_Cuotas_ModelComponent } from "../FrontModel/ModelComponents.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { WDetailObject } from "../WDevCore/WComponents/WDetailObject.js";
 import { ModalMessege } from "../WDevCore/WComponents/WForm.js";
+import { FilterData } from "../WDevCore/WModules/CommonModel.js";
 class ValoracionesSearch extends HTMLElement {
     constructor(/** @type {Function} */ action,/** @type {Function|undefined} */ secondAction,/** @type {Boolean} */ onlyValids = false) {
         super();
@@ -25,12 +26,8 @@ class ValoracionesSearch extends HTMLElement {
     DrawComponent = async () => {
         const model = new Transactional_Valoracion_ModelComponent({ requiere_valoracion: { type: "TEXT", hiddenFilter: true } });
         if (this.onlyValids) {
-            model.FilterData.push({
-                PropName: "Fecha",
-                FilterType: ">",
-                // @ts-ignore
-                Values: [new Date().subtractDays(40)]
-            });
+            // @ts-ignore
+            model.FilterData.push(FilterData.Greater("Fecha",new Date().subtractDays(40) ) );
         }
         let dataset = await model.Get();
 

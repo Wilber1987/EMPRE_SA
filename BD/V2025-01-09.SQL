@@ -18,3 +18,12 @@ VALUES(N'RUC', N'Identificador RUC', N'J0910000000XXXXX', N'GENERAL_DATA');
 INSERT INTO EMPRE_SA.administrative_access.Transactional_Configuraciones
 (Nombre, Descripcion, Valor, Tipo_Configuracion)
 VALUES(N'CORREO', N'CORREO EMPRESA', N'TEST@TEST.ES', N'GENERAL_DATA');
+
+
+
+ALTER TABLE EMPRE_SA.facturacion.Tbl_Factura  ADD Total_Pagado float NULL;
+ALTER TABLE EMPRE_SA.facturacion.Tbl_Factura ADD Total_Financiado float NULL;
+ALTER TABLE EMPRE_SA.facturacion.Tbl_Factura ADD Datos_Financiamiento nvarchar(MAX) NULL;
+
+ALTER TABLE EMPRE_SA.facturacion.Tbl_Compra ADD Observaciones nvarchar(MAX) NULL;
+

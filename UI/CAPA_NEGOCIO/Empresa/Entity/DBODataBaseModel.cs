@@ -87,17 +87,17 @@ namespace DataBaseModel
 		public double? GESTION_CREDITICIA { get; set; }
 		//fin porcentajes de intereses
 
-		public double GetPorcentageInteresesSGC()
+		public double GetPorcentageInteresesSGC(bool aplicaGastosAdministrativos)
 		{
-			return GASTOS_ADMINISTRATIVOS.GetValueOrDefault() +
+			return (aplicaGastosAdministrativos ? GASTOS_ADMINISTRATIVOS.GetValueOrDefault() : 0) +
 					COMISIONES.GetValueOrDefault() +
 					MANTENIMIENTO_VALOR.GetValueOrDefault() +
 					GASTOS_LEGALES.GetValueOrDefault() +
 					INTERES_NETO_CORRIENTE.GetValueOrDefault();
 		}
-		public double GetPorcentageIntereses()
+		public double GetPorcentageIntereses(bool aplicaGastosAdministrativos)
 		{
-			return GetPorcentageInteresesSGC() + GESTION_CREDITICIA.GetValueOrDefault();
+			return GetPorcentageInteresesSGC(aplicaGastosAdministrativos) + GESTION_CREDITICIA.GetValueOrDefault();
 		}
 	}
 
@@ -108,7 +108,7 @@ namespace DataBaseModel
     }
 	public enum Contratos_Type
 	{
-		EMPENO, PRESTAMO, EMPENO_VEHICULO
+		EMPENO, PRESTAMO, EMPENO_VEHICULO, APARTADO_QUINCENAL, APARTADO_MENSUAL
 	}
 	public class Detail_Prendas : EntityClass
 	{

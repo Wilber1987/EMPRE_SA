@@ -1,7 +1,9 @@
 //@ts-check
+import { Catalogo_Clientes } from "../../FrontModel/DBODataBaseModel.js";
 import { EntityClass } from "../../WDevCore/WModules/EntityClass.js";
 import { Detalle_Factura } from './Detalle_Factura.js';
 class Tbl_Factura extends EntityClass {
+   
     /**
      * @param {Partial<Tbl_Factura> } props
      */
@@ -34,16 +36,21 @@ class Tbl_Factura extends EntityClass {
    /**@type {Number}*/ Total;
    /**@type {Array<Detalle_Factura>} OneToMany*/ Detalle_Factura;
    /**@type {DatosFactura}*/ Datos;
+   /**@type {Catalogo_Clientes}*/ Cliente;
 
     /**@type {Boolean}*/ is_cambio_cordobas;
     /**@type {String}*/ Moneda;
-    /**@type {Number}*/ monto_dolares;
+    /**@type {Number}*/ Monto_dolares;
     /**@type {Number}*/ cambio_cordobas;
     /**@type {Number}*/ cambio_dolares;
-    /**@type {Number}*/ monto_cordobas;
+    /**@type {Number}*/ Monto_cordobas;
+    /**@type {Datos_Financiamiento?} */ Datos_Financiamiento;
 
     GetValoracionContrato = async () => {
         return await this.SaveData("Transactional_Contrato/GetDataContract", this)
+    }
+    async GetFacturaContrato() {
+        return await this.SaveData("ApiEntityFacturacion/FindFacturaContrato", this)
     }
 }
 export { Tbl_Factura };
@@ -57,4 +64,14 @@ export class DatosFactura {
     /**@type {String}*/ Nombre_Cliente
     /**@type {String}*/ Direccion_Cliente
     /**@type {String}*/ Telefono_Cliente
+}
+export class Datos_Financiamiento {
+	/**@type {Number} */ Numero_Contrato;
+	/**@type {Number} */ Total_Financiado;
+    /**@type {Number} */ Total_Financiado_Cordobas;
+	/**@type {Number} */ Plazo;
+	/**@type {Number} */ Interes;
+	/**@type {Number} */ Pago_Cuota;
+    /**@type {Number} */Cuota_Fija_Dolares;
+    /**@type {Number} */Cuota_Fija_Cordobas;
 }

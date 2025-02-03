@@ -110,11 +110,16 @@ namespace DataBaseModel
 			var dbUser = new Security_Users { Id_User = User.UserId }.Find<Security_Users>();
 			if (User.isAdmin)
 			{
-				return new Tbl_Lotes { }.Get<Tbl_Lotes>();
+				return new Tbl_Lotes { }.Where<Tbl_Lotes>(
+					FilterData.Greater("Cantidad_Existente", 0)
+				);
 			}
 			else if (AuthNetCore.HavePermission(Identify, CAPA_DATOS.Security.Permissions.GESTION_LOTES))
 			{
-				return new Tbl_Lotes { Id_Sucursal = dbUser?.Id_Sucursal }.Get<Tbl_Lotes>();
+				return new Tbl_Lotes { Id_Sucursal = dbUser?.Id_Sucursal }
+				.Where<Tbl_Lotes>(
+					FilterData.Greater("Cantidad_Existente", 0)
+				);
 			}
 			else
 			{

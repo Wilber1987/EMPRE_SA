@@ -1,6 +1,6 @@
 //@ts-check
 // @ts-ignore
-import { ComponentsManager, WRender } from "../../WDevCore/WModules/WComponentsTools.js";
+import { ComponentsManager, html, WRender } from "../../WDevCore/WModules/WComponentsTools.js";
 // @ts-ignore
 import { WTableComponent } from "../../WDevCore/WComponents/WTableComponent.js";
 // @ts-ignore
@@ -9,6 +9,10 @@ import { ModalMessege, ModalVericateAction } from "../../WDevCore/WComponents/WF
 import { css } from "../../WDevCore/WModules/WStyledRender.js";
 import { Tbl_Compra_ModelComponent } from "../FrontModel/ModelComponent/Tbl_Compra_ModelComponent.js";
 import { Tbl_Compra } from "../FrontModel/Tbl_Compra.js";
+import { WPrintExportToolBar } from "../../WDevCore/WComponents/WPrintExportToolBar.mjs";
+import { FacturasBuilder } from "./Builders/FacturasBuilder.js";
+import { DocumentsData } from "../FrontModel/DocumentsData.js";
+import { WModalForm } from "../../WDevCore/WComponents/WModalForm.js";
 
 /**
  * @typedef {Object} ComprasConfig
@@ -31,15 +35,15 @@ class ComprasManagerView extends HTMLElement {
             subtotal: 0,
             iva: 0,
         }
-    }    
+    }
 
     ElementsNav = [
         {
             name: "Compras Proveedor", action: () => {
-                this.Manager.NavigateFunction("Compras", new WTableComponent({
+                this.Manager.NavigateFunction("Compras", new WTableComponent({                    
                     ModelObject: new Tbl_Compra_ModelComponent, EntityModel: new Tbl_Compra,
                     Options: {
-                        Search: false, Filter: true, Add: false, Edit: false,
+                        Search: false, Filter: true, Add: false, Edit: false, FilterDisplay: true,
                         UserActions: [{
                             name: "Anular",
                             action: async (/**@type {Tbl_Compra}*/compra) => {
@@ -51,13 +55,34 @@ class ComprasManagerView extends HTMLElement {
                                     //modal.close();
                                 }, "¿Esta seguro que desea anular esta compra?"))
                             }
+                        }, {
+                            name: "Ver Compra",
+                            action: async (/**@type {Tbl_Compra}*/compra) => {
+                                /**@type {DocumentsData} */
+                                const documentsData = await new DocumentsData().GetDataFragments();
+                                documentsData.Header.style.width = "100%";
+                                const facturaR = FacturasBuilder.BuildFacturaCompra(documentsData, compra);
+                                const div = html`<div class="contract-response">
+                                    ${new WPrintExportToolBar({
+                                                PrintAction: (toolBar) => {
+                                                    toolBar.Print(facturaR.cloneNode(true))
+                                                }
+                                            })}
+                                    <div class="recibo">${facturaR}</div>         
+                                </div>`;
+                                document.body.append(new WModalForm({
+                                    ShadowRoot: false,
+                                    ObjectModal: div,
+                                    ObjectOptions: {
+                                        SaveFunction: () => {
+                                            location.href = "/Facturacion/ComprasManager"
+                                        }
+                                    }
+                                }))
+                            }
                         }]
                     }
                 }))
-            }
-        }, {
-            name: "Nueva Factura Proveedor", action: () => {
-               window.location.href = "/Facturacion/ComprasComponentView";
             }
         }
     ]
@@ -72,6 +97,28 @@ class ComprasManagerView extends HTMLElement {
         .OptionContainer{
             display: flex;
         }
+        .contract-response {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0px  30px;
+            background-color: #d7d7d7;
+        }
+        .recibo, .contract {
+            width: 210mm; /* A4 width */
+            height: auto; /* A4 height */
+            background-color: white;
+            margin: 10px 0;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            page-break-after: always; /* Ensure each .recibo starts on a new page */
+            & *{
+                color: #000;
+            }
+        }    
+        .recibo {
+            page-break-after: always; /* Ensure each .page-container starts on a new page */
+        }     
     `
 }
 customElements.define('w-main-compras-manager', ComprasManagerView);

@@ -54,8 +54,8 @@ class ComprasComponent extends HTMLElement {
             ModelObject: this.ComprasModel,
             AutoSave: false,
             EditObject: this.ComprasConfig.Entity,
-            limit: 3,
-            DivColumns: "repeat(3, 32%)",
+            limit: 4,
+            //DivColumns: "repeat(3, 32%)",
             //Options: false,
             // @ts-ignore
             SaveFunction: async (/**@type {Tbl_Compra} */ compra) => {

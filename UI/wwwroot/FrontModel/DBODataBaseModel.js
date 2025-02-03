@@ -35,12 +35,12 @@ class Transactional_Valoracion_ModelComponent extends EntityClass {
             this[prop] = props[prop];
         }
     }
-    id_valoracion = { type: 'number', primary: true };
-    Descripcion = { type: 'textarea' };
-    Serie = { type: 'text', require: false };
-    Marca = { type: 'text' };
-    Modelo = { type: 'text' };
-    Catalogo_Categoria = {
+    /**@type {ModelProperty} */ id_valoracion = { type: 'number', primary: true };
+    /**@type {ModelProperty} */ Descripcion = { type: 'textarea' };
+    /**@type {ModelProperty} */ Serie = { type: 'text', require: false };
+    /**@type {ModelProperty} */ Marca = { type: 'text' };
+    /**@type {ModelProperty} */ Modelo = { type: 'text' };
+    /**@type {ModelProperty} */ Catalogo_Categoria = {
         type: 'WSELECT',
         ModelObject: () => new Catalogo_Categoria_ModelComponent(), action: (ObjectF, /**@type {WForm} */ form, InputControl, prop) => {
             // console.log(ObjectF.Catalogo_Categoria.plazo_limite);
@@ -51,21 +51,22 @@ class Transactional_Valoracion_ModelComponent extends EntityClass {
             form.DrawComponent();
         }, hiddenFilter: true
     };
-    Plazo = { type: 'number', hiddenInTable: true, max: 24, min: 1, hiddenFilter: true };
-    Tasa_interes = { type: 'number', hiddenInTable: true, enabled: false, Dataset: [], hiddenFilter: true };
-    Fecha = { type: 'date', hiddenInTable: true, hiddenFilter: true };
-    Tasa_de_cambio = { type: 'money', hiddenInTable: true, hiddenFilter: true };
-    Valoracion_compra_cordobas = { type: 'money', hiddenFilter: true };
-    Valoracion_compra_dolares = { type: 'money', hiddenFilter: true };
-    Valoracion_empeño_cordobas = { type: 'money', hiddenFilter: true };
-    Valoracion_empeño_dolares = { type: 'money', hiddenFilter: true };
-    Catalogo_Estados_Articulos = { type: 'WSELECT', hiddenInTable: true, ModelObject: () => new Catalogo_Estados_Articulos(), hiddenFilter: true };
+    /**@type {ModelProperty} */ Plazo = { type: 'number', hiddenInTable: true, max: 24, min: 1, hiddenFilter: true };
+    /**@type {ModelProperty} */ Tasa_interes = { type: 'number', hiddenInTable: true, enabled: false, Dataset: [], hiddenFilter: true };
+    /**@type {ModelProperty} */ Fecha = { type: 'date', hiddenInTable: true, hiddenFilter: true };
+    /**@type {ModelProperty} */ Tasa_de_cambio = { type: 'money', hiddenInTable: true, hiddenFilter: true };
+    /**@type {ModelProperty} */ Valoracion_compra_cordobas = { type: 'money', hiddenFilter: true };
+    /**@type {ModelProperty} */ Valoracion_compra_dolares = { type: 'money', hiddenFilter: true };
+    /**@type {ModelProperty} */ Valoracion_empeño_cordobas = { type: 'money', hiddenFilter: true };
+    /**@type {ModelProperty} */ Valoracion_empeño_dolares = { type: 'money', hiddenFilter: true };
+    /**@type {ModelProperty} */ Catalogo_Estados_Articulos = { type: 'WSELECT', hiddenInTable: true, ModelObject: () => new Catalogo_Estados_Articulos(), hiddenFilter: true };
     //TASAS DE INTERES
     //Valoracion_empeño_dolares = { type: 'operation' };
 
-    Precio_venta_empeño_cordobas = { type: 'number', hidden: true };
-    Precio_venta_empeño_dolares = { type: 'number', hidden: true };
-    Detail_Valores = { type: 'MASTERDETAIL', hidden: true }
+    /**@type {ModelProperty} */ Precio_venta_empeño_cordobas = { type: 'number', hidden: true };
+    /**@type {ModelProperty} */ Precio_venta_empeño_dolares = { type: 'number', hidden: true };
+    /**@type {ModelProperty} */ Detail_Valores = { type: 'MASTERDETAIL', hidden: true }
+    /**@type {ModelProperty} */ requiere_valoracion;
     GuardarValoraciones = async (valoraciones) => {
         return await this.SaveData("Transactional_Valoracion_ModelComponent/GuardarValoraciones", { valoraciones: valoraciones })
     }
@@ -166,7 +167,7 @@ class Catalogo_Clientes extends EntityClass {
     Catalogo_Profesiones = { type: 'WSELECT', ModelObject: () => new Catalogo_Profesiones(), hiddenInTable: true, hiddenFilter: true };
     Condicion_Laboral_Cliente = { type: 'WSELECT', ModelObject: () => new Condicion_Laboral_Cliente(), hiddenInTable: true, hiddenFilter: true, hidden: true };
     Catalogo_Departamento = {
-        type: 'WSELECT', ModelObject: () => new Catalogo_Departamento(),
+        type: 'WSELECT', ModelObject: () => new Catalogo_Departamento(), hiddenFilter: true,
         action: async (editObject, /** @type {WForm} */ Form) => {
 
             const servicios = await new Catalogo_Municipio({
@@ -183,7 +184,7 @@ class Catalogo_Clientes extends EntityClass {
     };
 
     Catalogo_Municipio = {
-        type: 'WSELECT', ModelObject: () => new Catalogo_Municipio(),
+        type: 'WSELECT', ModelObject: () => new Catalogo_Municipio(), hiddenFilter: true,
         action: async (editObject, /** @type {WForm} */ Form) => {
             const findObject = this.Catalogo_Departamento.Dataset.find(d => d.id_departamento == editObject.Catalogo_Municipio.id_departamento);
             editObject.Catalogo_Departamento = findObject;

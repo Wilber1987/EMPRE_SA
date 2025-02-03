@@ -14,7 +14,7 @@ import { Cat_Marca } from "../Facturacion/FrontModel/Cat_Marca.js";
 import { Cat_Producto } from "../Facturacion/FrontModel/Cat_Producto.js";
 import { Cat_Proveedor } from "../Facturacion/FrontModel/Cat_Proveedor.js";
 import { Detalle_Compra } from "../Facturacion/FrontModel/Detalle_Compra.js";
-import { Tbl_Compra } from "../Facturacion/FrontModel/Tbl_Compra.js";
+import { Datos_Compra, Tbl_Compra } from "../Facturacion/FrontModel/Tbl_Compra.js";
 import { ComprasComponent } from "../Facturacion/Views/CompraComponent.js";
 import { Transaction_Contratos, ValoracionesTransaction } from "../FrontModel/Model.js";
 import { Tbl_Cuotas_ModelComponent } from "../FrontModel/ModelComponents.js";
@@ -24,7 +24,12 @@ import { Permissions, WSecurity } from "../WDevCore/Security/WSecurity.js";
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
-import {WArrayF} from "../WDevCore/WModules/WArrayF.js";
+import { WArrayF } from "../WDevCore/WModules/WArrayF.js";
+import { FacturasBuilder } from "../Facturacion/Views/Builders/FacturasBuilder.js";
+import { DocumentsData } from "../Facturacion/FrontModel/DocumentsData.js";
+import { Catalogo_Cambio_Divisa } from "../FrontModel/Catalogo_Cambio_Divisa.js";
+import { Transactional_Valoracion } from "../Facturacion/FrontModel/Tbl_Lotes.js";
+import { WPrintExportToolBar } from "../WDevCore/WComponents/WPrintExportToolBar.mjs";
 class Transaction_Valoraciones_View extends HTMLElement {
     // @ts-ignore
     constructor(props) {
@@ -51,7 +56,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
     }
     Draw = async () => {
         this.valoracionesContainer.innerHTML = "";
-        /** @type {Array<Catalogo_Cambio_Divisa_ModelComponent>} */
+        /** @type {Array<Catalogo_Cambio_Divisa>} */
         this.tasasCambio = await new Catalogo_Cambio_Divisa_ModelComponent().Get();
         let estadosArticulos = await new Catalogo_Estados_Articulos().Get();
         estadosArticulos = estadosArticulos.sort(((a, b) => a.id_estado_articulo - b.id_estado_articulo));
@@ -496,7 +501,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
                 }
             }))
         }
-        
+
         if (WSecurity.HavePermission(Permissions.GESTION_COMPRAS)) {
             this.OptionContainer.append(WRender.Create({
                 tagName: 'button', className: 'Block-Success', innerText: 'Facturar',
@@ -526,7 +531,8 @@ class Transaction_Valoraciones_View extends HTMLElement {
             Nombre: `${this.Cliente.primer_nombre} ${this.Cliente.segundo_nombre} ${this.Cliente.primer_apellido} ${this.Cliente.segundo_apellidio}`,
             Datos_Proveedor: this.Cliente
         });
-        nuevaCompra.Datos_Compra = { RUC: this.Cliente.identificacion }
+        nuevaCompra.Datos_Compra = new Datos_Compra();
+        nuevaCompra.Datos_Compra.RUC = this.Cliente.identificacion 
         nuevaCompra.Moneda = "DOLARES";
         const IvaPercent = 0;
         nuevaCompra.Detalle_Compra = this.valoracionesTable?.Dataset.map((/**@type {Transactional_Valoracion_ModelComponent} */ element) => {
@@ -552,6 +558,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
                     Estado: "ACTIVO"
                 }),
                 Cat_Categorias: new Cat_Categorias({
+                    // @ts-ignore
                     Descripcion: element.Catalogo_Categoria.descripcion,
                     Estado: "ACTIVO"
                 })
@@ -565,8 +572,28 @@ class Transaction_Valoraciones_View extends HTMLElement {
                 TasaCambio: nuevaCompra.Tasa_Cambio,
                 IvaPercent: IvaPercent,
                 WithTemplate: true,
-                action: async (object, response) => {
-                    this.append(ModalMessege(response.message));
+                action: async ( object, response) => {
+                    //this.append(ModalMessege(response.message));
+                    /**@type {DocumentsData} */
+                    const documentsData = await new DocumentsData().GetDataFragments();
+                    documentsData.Header.style.width = "100%";
+                   // console.log(FacturasBuilder.BuildFacturaCompra(documentsData, response.body));
+                    const facturaR = FacturasBuilder.BuildFacturaCompra(documentsData, response.body);
+                    const div  = html`<div class="contract-response">
+                        ${new WPrintExportToolBar({PrintAction: (toolBar)=> {
+                                toolBar.Print(facturaR.cloneNode(true))
+                        }})}
+                        <div class="recibo">${facturaR}</div>         
+                    </div>`;
+                    document.body.append(new WModalForm({
+                        ShadowRoot: false,
+                        ObjectModal: div,
+                        ObjectOptions: {
+                            SaveFunction: ()=> {
+                                location.href = "/Facturacion/ComprasManager"
+                            }
+                        }
+                    }))
                     modal.close();
                 }
             })
@@ -596,7 +623,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
             return 6 + this.InteresBase;
         }
     }
-    selectValoracion = (/**@type {Transactional_Valoracion_ModelComponent}*/valoracion) => {
+    selectValoracion = (/**@type {Transactional_Valoracion}*/ valoracion) => {
         if (valoracion.id_valoracion != undefined || valoracion.id_valoracion != null) {
             const valoracionAgregada = this.valoracionesTable?.Dataset.find(d => d.id_valoracion == valoracion.id_valoracion);
             if (valoracionAgregada != null) {
@@ -611,6 +638,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
                 if (prop == "Detail_Valores") continue;
                 if (prop == "Tasa_interes") continue;
                 if (prop == "Serie") continue;
+                // @ts-ignore
                 if (prop == "id_valoracion" && valoracion.requireReValoracion()) continue;
                 this.valoracionesForm.FormObject[prop] = valoracion[prop]
             }
@@ -674,7 +702,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
                     // @ts-ignore
                     this.tasasCambio[0].Valor_de_venta).toFixed(3)}</span>
                 <span>$ ${precio_venta_empeño.toString() == "NaN" ? "0.00"
-                : precio_venta_empeño .toFixed(3)}</span>
+                : precio_venta_empeño.toFixed(3)}</span>
             </div>
         </div>`);
         this.multiSelectEstadosArticulos?.SetOperationValues();
@@ -693,7 +721,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
         const contrato = new ValoracionesTransaction();
         // @ts-ignore
         contrato.valoraciones = this.valoracionesTable?.Dataset;
-        
+
         contrato.Transaction_Contratos = new Transaction_Contratos({
             tasas_interes: this.getTasaInteres() / 100,
             fecha: new Date(),
@@ -797,7 +825,29 @@ class Transaction_Valoraciones_View extends HTMLElement {
             font-size: 14px;
             font-weight: bold;
             color: var(--font-secundary-color)
-        }        
+        }   
+        .contract-response {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0px  30px;
+            background-color: #d7d7d7;
+        }
+        .recibo, .contract {
+            width: 210mm; /* A4 width */
+            height: auto; /* A4 height */
+            background-color: white;
+            margin: 10px 0;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            page-break-after: always; /* Ensure each .recibo starts on a new page */
+            & *{
+                color: #000;
+            }
+        }    
+        .recibo {
+            page-break-after: always; /* Ensure each .page-container starts on a new page */
+        }     
         .OptionContainer{
             display: flex;
         } w-filter-option {

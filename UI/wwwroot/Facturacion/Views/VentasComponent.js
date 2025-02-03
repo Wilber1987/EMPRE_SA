@@ -1,5 +1,7 @@
 //@ts-check
+import { Transactional_Configuraciones } from "../../Admin/ADMINISTRATIVE_ACCESSDataBaseModel.js";
 import { Catalogo_Cambio_Divisa } from "../../FrontModel/Catalogo_Cambio_Divisa.js";
+import { Catalogo_Cambio_Divisa_ModelComponent } from "../../FrontModel/DBODataBaseModel.js";
 import { WAppNavigator } from "../../WDevCore/WComponents/WAppNavigator.js";
 import { ModalMessege, ModalVericateAction, WForm } from "../../WDevCore/WComponents/WForm.js";
 import { WArrayF } from "../../WDevCore/WModules/WArrayF.js";
@@ -36,7 +38,7 @@ class VentasComponent extends HTMLElement {
         this.CompraContainer = WRender.Create({ className: "compras-container" });
 
         //this.navigator = new WAppNavigator({ Inicialize: true, Elements: this.ElementsNav })
-        this.append(this.CustomStyle, this.OptionContainer,this.CompraContainer, this.TabContainer);
+        this.append(this.CustomStyle, this.OptionContainer, this.CompraContainer, this.TabContainer);
     }
     connectedCallback() {
         this.Draw();
@@ -44,21 +46,25 @@ class VentasComponent extends HTMLElement {
 
 
     Draw = async () => {
+        this.Intereses = await new Transactional_Configuraciones().getConfiguraciones_Intereses();
+        this.TasasCambioList = await new Catalogo_Cambio_Divisa_ModelComponent().Get();
+        this.TasasCambio = this.TasasCambioList[0];
         this.setComprasContainer();
     }
 
     async setComprasContainer() {
         this.TotalesDetail = WRender.Create({ tagName: "div", className: "resumen-container" });
-        this.TotalesDetailUpdate(0,  0,  0,  0);
+        this.TotalesDetailUpdate(0, 0, 0, 0);
         this.ComprasModel = this.BuildCompraModel()
         this.ComprasForm = new WForm({
             ModelObject: this.ComprasModel,
             AutoSave: false,
-            limit: 3,
-            DivColumns: "repeat(3, 32%)",
+            limit: 5,
+            //DivColumns: "repeat(5, 20%)",
             //Options: false,
             // @ts-ignore
-            SaveFunction: async (/**@type {Tbl_Factura} */ factura) => {
+            SaveFunction: async (/**@type {Tbl_Factura} */ factura) => {           
+                
                 if (!this.ComprasForm?.Validate()) {
                     this.append(ModalMessege("Agregue datos para poder continuar"));
                     return;
@@ -68,7 +74,7 @@ class VentasComponent extends HTMLElement {
                     if (this.VentasConfig?.action != undefined) {
                         this.append(ModalVericateAction(async () => {
                             // @ts-ignore
-                            this.VentasConfig?.action(factura, response);
+                            this.VentasConfig?.action(response.body, response);
                         }, response.message));
                     } else {
                         this.append(ModalMessege(response.message))
@@ -83,12 +89,12 @@ class VentasComponent extends HTMLElement {
             this.TotalesDetail
         );
     }
-     /**
-     * @param {Number} subtotal
-     * @param {Number} iva
-     * @param {Number} total
-     * @param {Number} descuento
-     */
+    /**
+    * @param {Number} subtotal
+    * @param {Number} iva
+    * @param {Number} total
+    * @param {Number} descuento
+    */
     TotalesDetailUpdate(subtotal, iva, total, descuento) {
         // @ts-ignore
         this.VentasConfig.Entity.Moneda = this.VentasConfig.Entity?.Moneda ?? "CORDOBAS"
@@ -105,10 +111,10 @@ class VentasComponent extends HTMLElement {
                 <span>Descuento:</span>
                 <span class="value">${WOrtograficValidation.es(this.VentasConfig.Entity?.Moneda)} ${ConvertToMoneyString(descuento ?? 0)}</span>
             </label>
-            <label class="value-container">
+            <!-- <label class="value-container">
                 <span>Iva:</span>
                 <span class="value">${WOrtograficValidation.es(this.VentasConfig.Entity?.Moneda)} ${ConvertToMoneyString(iva ?? 0)}</span>
-            </label>
+            </label> -->
             <hr/>
             <label class="value-container total">
                 <span>Total:</span>
@@ -118,61 +124,33 @@ class VentasComponent extends HTMLElement {
         );
     }
     BuildCompraModel() {
+        sessionStorage.setItem("Intereses", JSON.stringify(this.Intereses));
+        sessionStorage.setItem("TasasCambio", JSON.stringify(this.TasasCambio));
         const ventasModel = new Tbl_Factura_ModelComponent();
         /**analisa EditObject.Detalle_Factura y el elmento Lote de cada detalle factura y detecta si los lotes (id_lote) estan repetidos analisa si la cantidad_existente del primer lote encontrado es suficiente para la sumatoria de la cantidad de cada detalle, si no es asi retorna false, si es asi fusionalos en un solo detalle, seleccionado el primer lote como lote seleccionado */
-        ventasModel.Detalle_Factura.action =(/**@type {Tbl_Factura} */ EditObject, form, control) => {
-            if (!EditObject.Detalle_Factura || !Array.isArray(EditObject.Detalle_Factura)) {
-                console.error("Detalle_Factura no está definido o no es un array.");
-                return false;
-            }        
-            // Crear un mapa para agrupar detalles por id_lote
-            /**@type {Array<Detalle_Factura>} */
-            const lotesMap = [];
-        
-            for (const detalle of EditObject.Detalle_Factura) {
-                const loteFusionado = lotesMap.find(det => det.Lote.Id_Lote == detalle.Lote.Id_Lote)
-                if (loteFusionado) {
-                    continue;
-                }
-                const detalles = EditObject.Detalle_Factura.filter(det => det.Lote.Id_Lote = detalle.Lote.Id_Lote);
-                const cantidadTotal = WArrayF.SumValAtt(detalles, "Cantidad");
-                if (cantidadTotal > detalle.Lote.Cantidad_Existente ) {
-                    this.append(ModalMessege("El lote seleccionado, supera la cantidad existente"))
-                    return false;
-                }
-                if (!loteFusionado) {
-                    const subtotal = WArrayF.SumValAtt(detalles, "Sub_Total");
-                    const totalDescuento = subtotal * detalle.Descuento;
-                    const totalIva = (subtotal - totalDescuento) * 0.15;
-                    lotesMap.push(new Detalle_Factura({
-                        Lote: detalle.Lote,
-                        Cantidad: cantidadTotal,
-                        Sub_Total: subtotal,
-                        Descuento: detalle.Descuento,
-                        Monto_Descuento: totalDescuento,
-                        Iva: totalIva,
-                        Total: subtotal - totalDescuento - totalIva
-                    }))
-                }
-            }
-            EditObject.Detalle_Factura.length = 0;
-            EditObject.Detalle_Factura.push(...lotesMap);
-            // Calcular los totales actualizados
-            const subtotal = WArrayF.SumValAtt(EditObject.Detalle_Factura, "Sub_Total");
-            const descuento = WArrayF.SumValAtt(EditObject.Detalle_Factura, "Monto_Descuento");
-            const iva = WArrayF.SumValAtt(EditObject.Detalle_Factura, "Iva");
-            const total = WArrayF.SumValAtt(EditObject.Detalle_Factura, "Total");
-            EditObject.Sub_Total = subtotal;
-            EditObject.Descuento = descuento;
-            EditObject.Iva = iva;
-            EditObject.Total = total;
-        
-            this.TotalesDetailUpdate(subtotal ?? 0, iva ?? 0, total ?? 0, descuento ?? 0);
-        
-            return true;
+        ventasModel.Detalle_Factura.action = (/**@type {Tbl_Factura} */ EditObject, form, control) => { this.CalculeTotal(EditObject, form, ventasModel) }
+        ventasModel.Tipo.action = (/**@type {Tbl_Factura} */ EditObject, form, control) => { 
+            ventasModel.TypeAction(EditObject, form);                        
+            this.CalculeTotal(EditObject, form, ventasModel)
         }
-        
         return ventasModel;
+    }
+    /**
+     * @param {Tbl_Factura} EditObject
+     * @param {WForm} form
+     * @param {Tbl_Factura_ModelComponent} ventasModel
+     */
+    CalculeTotal = (EditObject, form, ventasModel) => {
+        try {
+            //ventasModel.TypeAction(EditObject, form);
+            //** @type {Tbl_Factura} */
+            const response = ventasModel.CalculeTotal(EditObject, form);
+            this.TotalesDetailUpdate(EditObject.Sub_Total ?? 0, EditObject.Iva ?? 0, EditObject.Total ?? 0, EditObject.Descuento ?? 0);
+            //form.DrawComponent();
+        } catch (error) {
+            console.error(error);
+            this.append(ModalMessege(error))
+        }
     }
 
     CustomStyle = css`

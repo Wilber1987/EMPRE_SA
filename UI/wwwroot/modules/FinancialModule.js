@@ -39,21 +39,7 @@ class FinancialModule {
             }));
         }
 
-        contrato.Transaction_Contratos.Valoracion_compra_cordobas = FinancialModule.round(WArrayF.SumValAtt(contrato.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion_ModelComponent), "Valoracion_compra_cordobas"));
-        contrato.Transaction_Contratos.Valoracion_compra_dolares = FinancialModule.round(WArrayF.SumValAtt(contrato.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion_ModelComponent), "Valoracion_compra_dolares"));
-        contrato.Transaction_Contratos.Valoracion_empeño_cordobas = FinancialModule.round(WArrayF.SumValAtt(contrato.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion_ModelComponent), "Valoracion_empeño_cordobas"));
-        contrato.Transaction_Contratos.Valoracion_empeño_dolares = FinancialModule.round(WArrayF.SumValAtt(contrato.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion_ModelComponent), "Valoracion_empeño_dolares"));
-        //contrato.Transaction_Contratos.taza_interes_cargos = contrato.Transaction_Contratos.taza_interes_cargos ?? 0.09
-        contrato.Transaction_Contratos.tasas_interes =
-            (parseFloat(contrato.Transaction_Contratos?.Catalogo_Clientes?.Catalogo_Clasificacion_Interes?.porcentaje)
-                + contrato.Transaction_Contratos?.taza_interes_cargos) / 100;
-        contrato.Transaction_Contratos.plazo = contrato.Transaction_Contratos.plazo ?? 1;
-        contrato.Transaction_Contratos.fecha = new Date(contrato.Transaction_Contratos.fecha);
-        contrato.Transaction_Contratos.Catalogo_Clientes = contrato.Transaction_Contratos.Catalogo_Clientes;
-        //contrato.fecha = new Date(contrato.Transaction_Contratos.fecha)
-
-        contrato.Transaction_Contratos.Tbl_Cuotas = new Array();
-        contrato.Transaction_Contratos.gestion_crediticia = contrato.Transaction_Contratos.Catalogo_Clientes?.Catalogo_Clasificacion_Interes?.porcentaje ?? 6;
+        FinancialModule.CalculeTotales(contrato);
 
         FinancialModule.crearCuotas(contrato);
 
@@ -66,13 +52,18 @@ class FinancialModule {
         return contrato;
     }
 
-    static getPago = (contrato) => {
+    static getPago = (contrato) => {        
+
         const monto = contrato.Transaction_Contratos.Valoracion_empeño_dolares;
         //console.log(monto);
         const cuotas = contrato.Transaction_Contratos.plazo;
         const tasa = contrato.Transaction_Contratos.tasas_interes;
+        if (tasa == 0)  {
+            return monto / cuotas;	
+        }
         const payment = ((tasa * Math.pow(1 + tasa, cuotas)) * monto) / (Math.pow(1 + tasa, cuotas) - 1);
         //console.log(monto, cuotas, tasa, payment);
+        
         return payment;
     }
     static getPagoValoracion = (valoracion) => {
@@ -82,6 +73,23 @@ class FinancialModule {
         //console.log(monto, cuotas, tasa);
         const payment = ((tasa * Math.pow(1 + tasa, cuotas)) * monto) / (Math.pow(1 + tasa, cuotas) - 1);
         return payment.toString() == "NaN" ? 0 : payment;
+    }
+
+    static CalculeTotales(contrato) {
+        contrato.Transaction_Contratos.Valoracion_compra_cordobas = contrato.Transaction_Contratos.Valoracion_compra_cordobas ?? FinancialModule.round(WArrayF.SumValAtt(contrato.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion_ModelComponent), "Valoracion_compra_cordobas"));
+        contrato.Transaction_Contratos.Valoracion_compra_dolares = contrato.Transaction_Contratos.Valoracion_compra_dolares ??  FinancialModule.round(WArrayF.SumValAtt(contrato.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion_ModelComponent), "Valoracion_compra_dolares"));
+        contrato.Transaction_Contratos.Valoracion_empeño_cordobas = contrato.Transaction_Contratos.Valoracion_empeño_cordobas ?? FinancialModule.round(WArrayF.SumValAtt(contrato.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion_ModelComponent), "Valoracion_empeño_cordobas"));
+        contrato.Transaction_Contratos.Valoracion_empeño_dolares = contrato.Transaction_Contratos.Valoracion_empeño_dolares ?? FinancialModule.round(WArrayF.SumValAtt(contrato.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion_ModelComponent), "Valoracion_empeño_dolares"));
+        //contrato.Transaction_Contratos.taza_interes_cargos = contrato.Transaction_Contratos.taza_interes_cargos ?? 0.09
+        contrato.Transaction_Contratos.tasas_interes = contrato.Transaction_Contratos.tasas_interes ??
+            (parseFloat(contrato.Transaction_Contratos?.Catalogo_Clientes?.Catalogo_Clasificacion_Interes?.porcentaje)
+                + contrato.Transaction_Contratos?.taza_interes_cargos) / 100;
+        contrato.Transaction_Contratos.plazo = contrato.Transaction_Contratos.plazo ?? 1;
+        contrato.Transaction_Contratos.fecha = new Date(contrato.Transaction_Contratos.fecha);
+        contrato.Transaction_Contratos.Catalogo_Clientes = contrato.Transaction_Contratos.Catalogo_Clientes;
+        //contrato.fecha = new Date(contrato.Transaction_Contratos.fecha)
+        contrato.Transaction_Contratos.Tbl_Cuotas = new Array();
+        contrato.Transaction_Contratos.gestion_crediticia = contrato.Transaction_Contratos.gestion_crediticia ?? contrato.Transaction_Contratos.Catalogo_Clientes?.Catalogo_Clasificacion_Interes?.porcentaje ?? 6;
     }
 
     /**

@@ -39,103 +39,7 @@ namespace Model
 			try
 			{
 				BeginGlobalTransaction();
-				var User = AuthNetCore.User(seasonKey);
-				var dbUser = new Security_Users { Id_User = User.UserId }.Find<Security_Users>();
-				var configuraciones = new Transactional_Configuraciones().GetConfig(ConfiguracionesInteresesEnum.MORA_CONTRATOS_EMP.ToString());
-				if (Transaction_Contratos?.Detail_Prendas?.Count == 0)
-				{
-					return new ResponseService()
-					{
-						status = 403,
-						message = "Prendas Requeridas"
-					};
-				}
-				foreach (var prenda in Transaction_Contratos?.Detail_Prendas ?? [])
-				{
-					if (prenda.serie != null)
-					{
-						List<Detail_Prendas> prendasGuardadas = new Detail_Prendas().Where<Detail_Prendas>(FilterData.Equal("serie", prenda?.serie));
-						foreach (var prendaGuardada in prendasGuardadas)
-						{
-							Transaction_Contratos? contrato = new Transaction_Contratos { numero_contrato = prendaGuardada.numero_contrato }.Find<Transaction_Contratos>();
-							if (contrato?.estado == EstadoEnum.ACTIVO.ToString() || contrato?.estado == EstadoEnum.VENCIDO.ToString())
-							{
-								return new ResponseService()
-								{
-									status = 403,
-									message = $"No es posible guardar el contrato ya que la Prenda con serie '{prenda?.serie}' esta incluida en un contrato {contrato?.estado}"
-								};
-							}
-						}
-					}
-				}
-
-				Transaction_Contratos.fecha_contrato = DateTime.Now;
-				Transaction_Contratos.fecha_cancelar = Transaction_Contratos.Tbl_Cuotas.Select(c => c.fecha).ToList().Max();
-				Transaction_Contratos.fecha_vencimiento = Transaction_Contratos.Tbl_Cuotas.Select(c => c.fecha).ToList().Max();//TODO PREGUNTAR
-				var valoracion = Transaction_Contratos.Detail_Prendas[0];
-				if (valoracion.en_manos_de == EnManosDe.ACREEDOR.ToString()
-				&& valoracion.Catalogo_Categoria.tipo.ToUpper() != "Vehículos".ToUpper())
-				{
-					Transaction_Contratos.tipo = Contratos_Type.EMPENO.ToString();
-				}
-				else if (valoracion.en_manos_de == EnManosDe.ACREEDOR.ToString()
-				 && valoracion.Catalogo_Categoria.tipo.ToUpper() == "Vehículos".ToUpper())
-				{
-
-					Transaction_Contratos.tipo = Contratos_Type.EMPENO_VEHICULO.ToString();
-				}
-				else
-				{
-					Transaction_Contratos.tipo = Contratos_Type.PRESTAMO.ToString();
-				}
-
-				Transaction_Contratos.monto = Transaction_Contratos.Valoracion_empeño_dolares;
-				Transaction_Contratos.saldo = Transaction_Contratos.Valoracion_empeño_dolares;
-				Transaction_Contratos.mora = Convert.ToDouble(configuraciones.Valor);
-				Transaction_Contratos.estado = Contratos_State.ACTIVO.ToString();
-				Transaction_Contratos.Id_User = dbUser?.Id_User;
-				Transaction_Contratos.Tbl_Cuotas?.ForEach(c =>
-				{
-					c.pago_contado = 0;
-					c.Estado = "PENDIENTE";
-				});
-				var Intereses = new Transactional_Configuraciones().GetIntereses();
-				Transaction_Contratos.DesgloseIntereses = new DesgloseIntereses
-				{
-					GASTOS_ADMINISTRATIVOS = Convert.ToDouble(Intereses.Find(c => c.Nombre.Equals(InteresesPrestamosEnum.GASTOS_ADMINISTRATIVOS.ToString()))?.Valor),
-					COMISIONES = Convert.ToDouble(Intereses.Find(c => c.Nombre.Equals(InteresesPrestamosEnum.COMISIONES.ToString()))?.Valor),
-					MANTENIMIENTO_VALOR = Convert.ToDouble(Intereses.Find(c => c.Nombre.Equals(InteresesPrestamosEnum.MANTENIMIENTO_VALOR.ToString()))?.Valor),
-					GASTOS_LEGALES = Convert.ToDouble(Intereses.Find(c => c.Nombre.Equals(InteresesPrestamosEnum.GASTOS_LEGALES.ToString()))?.Valor),
-					INTERES_NETO_CORRIENTE = Convert.ToDouble(Intereses.Find(c => c.Nombre.Equals(InteresesPrestamosEnum.INTERES_NETO_CORRIENTE.ToString()))?.Valor),
-					GESTION_CREDITICIA = Transaction_Contratos.gestion_crediticia,
-				};
-				Transaction_Contratos.Save();
-
-				var cuentaOrigen = Catalogo_Cuentas.GetCuentaEgresoContratos(dbUser);
-
-				var cuentaDestino = Catalogo_Cuentas.GetCuentaRegistoContratos(dbUser);
-
-				if (cuentaDestino == null || cuentaOrigen == null)
-				{
-					return new ResponseService()
-					{
-						status = 400,
-						message = "Cuentas no configuradas correctamente"
-					};
-				}
-				ResponseService response = new Movimientos_Cuentas
-				{
-					Catalogo_Cuentas_Destino = cuentaDestino,
-					Catalogo_Cuentas_Origen = cuentaOrigen,
-					concepto = "Desembolso de monto para, contrato No: " + Transaction_Contratos.numero_contrato,
-					descripcion = "Desembolso de monto para, contrato No: " + Transaction_Contratos.numero_contrato,
-					moneda = Moneda ?? "DOLARES",
-					monto = Moneda == "CORDOBAS" ? Transaction_Contratos.Valoracion_empeño_cordobas : Transaction_Contratos.monto,
-					tasa_cambio = Transaction_Contratos.taza_cambio,
-					tasa_cambio_compra = Transaction_Contratos.taza_cambio_compra,
-					is_transaction = true
-				}.SaveMovimiento(seasonKey);
+				ResponseService response = DoSaveContract(seasonKey);
 				if (response.status != 200)
 				{
 					RollBackGlobalTransaction();
@@ -158,6 +62,113 @@ namespace Model
 					body = ex
 				};
 			}
+		}
+
+		public  ResponseService DoSaveContract(string seasonKey)
+		{
+			var User = AuthNetCore.User(seasonKey);
+			var dbUser = new Security_Users { Id_User = User.UserId }.Find<Security_Users>();
+			var configuraciones = new Transactional_Configuraciones().GetConfig(ConfiguracionesInteresesEnum.MORA_CONTRATOS_EMP.ToString());
+			if (Transaction_Contratos?.Detail_Prendas?.Count == 0)
+			{
+				return new ResponseService()
+				{
+					status = 403,
+					message = "Prendas Requeridas"
+				};
+			}
+			foreach (var prenda in Transaction_Contratos?.Detail_Prendas ?? [])
+			{
+				if (prenda.serie != null)
+				{
+					List<Detail_Prendas> prendasGuardadas = new Detail_Prendas().Where<Detail_Prendas>(FilterData.Equal("serie", prenda?.serie));
+					foreach (var prendaGuardada in prendasGuardadas)
+					{
+						Transaction_Contratos? contrato = new Transaction_Contratos { numero_contrato = prendaGuardada.numero_contrato }.Find<Transaction_Contratos>();
+						if (contrato?.estado == EstadoEnum.ACTIVO.ToString() || contrato?.estado == EstadoEnum.VENCIDO.ToString())
+						{
+							return new ResponseService()
+							{
+								status = 403,
+								message = $"No es posible guardar el contrato ya que la Prenda con serie '{prenda?.serie}' esta incluida en un contrato {contrato?.estado}"
+							};
+						}
+					}
+				}
+			}
+
+			Transaction_Contratos.fecha_contrato = DateTime.Now;
+			Transaction_Contratos.fecha_cancelar = Transaction_Contratos.Tbl_Cuotas.Select(c => c.fecha).ToList().Max();
+			Transaction_Contratos.fecha_vencimiento = Transaction_Contratos.Tbl_Cuotas.Select(c => c.fecha).ToList().Max();//TODO PREGUNTAR
+			var valoracion = Transaction_Contratos.Detail_Prendas[0];
+			if (Transaction_Contratos!.tipo!.ToUpper().Equals(Contratos_Type.APARTADO_QUINCENAL.ToString())
+			|| Transaction_Contratos!.tipo!.ToUpper().Equals(Contratos_Type.APARTADO_MENSUAL.ToString()))
+			{
+				valoracion.Catalogo_Categoria.tipo = valoracion.Catalogo_Categoria.tipo;
+				
+			}else if (valoracion.en_manos_de == EnManosDe.ACREEDOR.ToString()
+			&& valoracion.Catalogo_Categoria.tipo.ToUpper() != "Vehículos".ToUpper())
+			{
+				Transaction_Contratos.tipo = Contratos_Type.EMPENO.ToString();
+			}
+			else if (valoracion.en_manos_de == EnManosDe.ACREEDOR.ToString()
+			 && valoracion.Catalogo_Categoria.tipo.ToUpper() == "Vehículos".ToUpper())
+			{
+
+				Transaction_Contratos.tipo = Contratos_Type.EMPENO_VEHICULO.ToString();
+			}
+			else
+			{
+				Transaction_Contratos.tipo = Contratos_Type.PRESTAMO.ToString();
+			}
+
+			Transaction_Contratos.monto = Transaction_Contratos.Valoracion_empeño_dolares;
+			Transaction_Contratos.saldo = Transaction_Contratos.Valoracion_empeño_dolares;
+			Transaction_Contratos.mora = Convert.ToDouble(configuraciones.Valor);
+			Transaction_Contratos.estado = Contratos_State.ACTIVO.ToString();
+			Transaction_Contratos.Id_User = dbUser?.Id_User;
+			Transaction_Contratos.Tbl_Cuotas?.ForEach(c =>
+			{
+				c.pago_contado = 0;
+				c.Estado = "PENDIENTE";
+			});
+			var Intereses = new Transactional_Configuraciones().GetIntereses();
+			Transaction_Contratos.DesgloseIntereses = new DesgloseIntereses
+			{
+				GASTOS_ADMINISTRATIVOS = Convert.ToDouble(Intereses.Find(c => c.Nombre.Equals(InteresesPrestamosEnum.GASTOS_ADMINISTRATIVOS.ToString()))?.Valor),
+				COMISIONES = Convert.ToDouble(Intereses.Find(c => c.Nombre.Equals(InteresesPrestamosEnum.COMISIONES.ToString()))?.Valor),
+				MANTENIMIENTO_VALOR = Convert.ToDouble(Intereses.Find(c => c.Nombre.Equals(InteresesPrestamosEnum.MANTENIMIENTO_VALOR.ToString()))?.Valor),
+				GASTOS_LEGALES = Convert.ToDouble(Intereses.Find(c => c.Nombre.Equals(InteresesPrestamosEnum.GASTOS_LEGALES.ToString()))?.Valor),
+				INTERES_NETO_CORRIENTE = Convert.ToDouble(Intereses.Find(c => c.Nombre.Equals(InteresesPrestamosEnum.INTERES_NETO_CORRIENTE.ToString()))?.Valor),
+				GESTION_CREDITICIA = Transaction_Contratos.gestion_crediticia,
+			};
+			var newContract = Transaction_Contratos.Save();
+			Transaction_Contratos.numero_contrato = ((Transaction_Contratos)newContract)?.numero_contrato;
+
+			var cuentaOrigen = Catalogo_Cuentas.GetCuentaEgresoContratos(dbUser);
+
+			var cuentaDestino = Catalogo_Cuentas.GetCuentaRegistoContratos(dbUser);
+
+			if (cuentaDestino == null || cuentaOrigen == null)
+			{
+				return new ResponseService()
+				{
+					status = 400,
+					message = "Cuentas no configuradas correctamente"
+				};
+			}
+			return new Movimientos_Cuentas
+			{
+				Catalogo_Cuentas_Destino = cuentaDestino,
+				Catalogo_Cuentas_Origen = cuentaOrigen,
+				concepto = "Desembolso de monto para, contrato No: " + Transaction_Contratos.numero_contrato,
+				descripcion = "Desembolso de monto para, contrato No: " + Transaction_Contratos.numero_contrato,
+				moneda = Moneda ?? "DOLARES",
+				monto = Moneda == "CORDOBAS" ? Transaction_Contratos.Valoracion_empeño_cordobas : Transaction_Contratos.monto,
+				tasa_cambio = Transaction_Contratos.taza_cambio,
+				tasa_cambio_compra = Transaction_Contratos.taza_cambio_compra,
+				is_transaction = true
+			}.SaveMovimiento(seasonKey);
 		}
 
 		public ContractServices GetDataContract(string seasonKey)

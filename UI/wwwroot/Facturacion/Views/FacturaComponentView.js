@@ -39,7 +39,7 @@ class FacturaComponentView extends HTMLElement {
         this.OptionContainer = WRender.Create({ className: "OptionContainer" });
         this.TabContainer = WRender.Create({ className: "TabContainer", id: 'TabContainer' });
         this.Manager = new ComponentsManager({ MainContainer: this.TabContainer, SPAManage: true });
-        this.navigator = new WAppNavigator({ Inicialize: true, Elements: this.ElementsNav,   })
+        this.navigator = new WAppNavigator({ Inicialize: true, Elements: this.ElementsNav, })
         this.append(this.CustomStyle, this.OptionContainer, this.navigator, this.TabContainer);
         this.Draw();
     }
@@ -65,18 +65,43 @@ class FacturaComponentView extends HTMLElement {
 
         this.Manager.NavigateFunction("newFactura", new VentasComponent({
             TasaActual: this.TasaActual,
-            action: async (/**@type {Tbl_Factura} */ factura) => {
-                switch (factura.Tipo) {
+            action: async (/**@type { {factura: Tbl_Factura, Contract: String}} */ response) => {
+                switch (response.factura.Tipo) {
                     case "VENTA":
-                        this.Manager.NavigateFunction("newFacturaPrinter", await this.VerFactura(factura));
-                        break;    
-                    case "VENTA":           
+                        this.Manager.NavigateFunction("newFacturaPrinter", await this.VerFactura(response.factura));
+                        break;
+                    case "APARTADO_MENSUAL": case "APARTADO_QUINCENAL":
+                        this.Manager.NavigateFunction("newFacturaPrinter", await this.VerContratoRecibo(response));
+
+
+                        break;
                     default:
                         break;
                 }
-                
+
             }
         }));
+    }
+    /**
+     * @param {{factura: Tbl_Factura, Contract: String}} response
+     * @returns {Promise<HTMLElement>}
+     */
+    async VerContratoRecibo(response) {
+        /**@type {DocumentsData} */
+        const documentsData = await new DocumentsData().GetDataFragments();
+        documentsData.Header.style.width = "100%";
+        const factura = FacturasBuilder.BuildFacturaRecibo(response, documentsData)
+        //const contrato = await
+        return html`<div class="contract-response">
+         ${new WPrintExportToolBar({PrintAction: (toolBar)=> {
+                toolBar.Print(html`<div class="contract-response">
+                    <div class="recibo">${factura.cloneNode(true)}</div>
+                    <div class="response">${response.Contract}</div>
+                </div>`)
+            }})}
+            <div class="recibo">${factura}</div>
+            <div class="response">${response.Contract}</div>            
+        </div>`;
     }
 
     VerFacturasRealizadas() {
@@ -86,15 +111,59 @@ class FacturaComponentView extends HTMLElement {
                 Filter: true,
                 UserActions: [
                     {
-                        name: "Imprimir", action: async (/**@type {Tbl_Factura} */ factura) => {
+                        name: "Imprimir",
+                        rendered: (/**@type {Tbl_Factura} */ factura) => factura.Tipo == "VENTA",
+                        action: async (/**@type {Tbl_Factura} */ factura) => {
                             this.append(new WModalForm({
+                                ShadowRoot: false,
                                 ObjectModal: await this.VerFactura(factura)
+                            }))
+                        }
+                    }, {
+                        name: "Contrato",
+                        rendered: (/**@type {Tbl_Factura} */ factura) => factura.Tipo == "APARTADO_MENSUAL" || factura.Tipo == "APARTADO_QUINCENAL",
+                        action: async (/**@type {Tbl_Factura} */ factura) => {
+                            this.append(new WModalForm({
+                                ShadowRoot: false,
+                                ObjectModal: await this.VerContrato(factura)
+                            }))
+                        }
+                    }, {
+                        name: "Recibos",
+                        rendered: (/**@type {Tbl_Factura} */ factura) => factura.Tipo == "APARTADO_MENSUAL" || factura.Tipo == "APARTADO_QUINCENAL",
+                        action: async (/**@type {Tbl_Factura} */ factura) => {
+                            this.append(new WModalForm({
+                                ShadowRoot: false,
+                                ObjectModal: await this.VerRecibos(factura)
                             }))
                         }
                     }
                 ]
             }
         });
+    }
+    async VerRecibos(factura) {
+        const response  = await new Tbl_Factura(factura).GetFacturaContrato();
+        /**@type {DocumentsData} */
+        const documentsData = await new DocumentsData().GetDataFragments();
+        documentsData.Header.style.width = "100%";
+        const facturaR = FacturasBuilder.BuildFacturaRecibo(response.body, documentsData)
+        return html`<div class="contract-response">
+             ${new WPrintExportToolBar({PrintAction: (toolBar)=> {
+                toolBar.Print(facturaR.cloneNode(true))
+            }})}
+            <div class="recibo">${facturaR}</div>         
+        </div>`;
+
+    }
+    async VerContrato(factura) {
+        const response  = await new Tbl_Factura(factura).GetFacturaContrato();
+        return html`<div class="contract-response">
+            ${new WPrintExportToolBar({PrintAction: (toolBar)=> {
+                toolBar.Print(html`<div>${response.body.Contract}</div>`)
+            }})}
+            <div class="contract">${response.body.Contract}</div>            
+        </div>`;
     }
 
     /**
@@ -106,11 +175,11 @@ class FacturaComponentView extends HTMLElement {
         const documentsData = await new DocumentsData().GetDataFragments();
         documentsData.Header.style.width = "100%";
         this.factura = FacturasBuilder.BuildFactura(factura, documentsData)
-        return html`<div class="factura-container-modal">
+        return html`<div class="contract-response">
             ${this.BuildOptionsBar(this.factura, documentsData)}
-            <div class="factura-container"> ${this.factura}</div>           
+            <div class="recibo"> ${this.factura}</div>           
         </div>`;
-    }   
+    }
 
     /**
     * @param {HTMLElement} factura
@@ -138,6 +207,31 @@ class FacturaComponentView extends HTMLElement {
             display: flex;
             flex-direction: column;
             align-items: center;
+        }
+        .contract-response {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0px  30px;
+            background-color: #d7d7d7;
+        }
+
+        .recibo, .contract {
+            width: 210mm; /* A4 width */
+            height: auto; /* A4 height */
+            background-color: white;
+            margin: 10px 0;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            page-break-after: always; /* Ensure each .recibo starts on a new page */
+            & *{
+                color: #000;
+            }
+        }
+        
+
+        .recibo {
+            page-break-after: always; /* Ensure each .page-container starts on a new page */
         }
     `
 }

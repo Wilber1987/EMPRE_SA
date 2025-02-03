@@ -85,7 +85,7 @@ namespace UI.CAPA_NEGOCIO.Empresa.Services.Recibos
 			List<Transactional_Configuraciones> configuraciones_theme = new Transactional_Configuraciones().GetTheme();
 			var configuraciones_generales = new Transactional_Configuraciones().GetGeneralData();
 			Catalogo_Clientes? cliente = model?.Catalogo_Clientes?.Find<Catalogo_Clientes>();
-			double valorInteres = model?.DesgloseIntereses?.GetPorcentageInteresesSGC() ?? 0;
+			double valorInteres = model?.DesgloseIntereses?.GetPorcentageInteresesSGC(ContractTemplateService.AplicaGastosAdministrativos(model)) ?? 0;
 
 			Datos_Reestructuracion? datos_Reestructuracion = factura?.Factura_contrato?.Datos_Reestructuracion;
 			templateContent = templateContent

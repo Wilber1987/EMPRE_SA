@@ -16,7 +16,7 @@ namespace DataBaseModel
 		public int? Id_User { get; set; }
 		public int? Id_Sucursal { get; set; }
 		[JsonProp]
-		public Object? Datos_Compra { get; set; }
+		public Datos_Compra? Datos_Compra { get; set; }
 		public int? Id_Proveedor { get; set; }
 		public DateTime? Fecha { get; set; }
 		public Double? Tasa_Cambio { get; set; }
@@ -25,6 +25,7 @@ namespace DataBaseModel
 		public Double? Iva { get; set; }
 		public Double? Total { get; set; }
 		public string? Estado { get; set; }
+		public string? Observaciones { get; set; }
 		[ManyToOne(TableName = "Cat_Proveedor", KeyColumn = "Id_Proveedor", ForeignKeyColumn = "Id_Proveedor")]
 		public Cat_Proveedor? Cat_Proveedor { get; set; }
 		[OneToMany(TableName = "Detalle_Compra", KeyColumn = "Id_Compra", ForeignKeyColumn = "Id_Compra")]
@@ -74,14 +75,21 @@ namespace DataBaseModel
 					total += detalle.SubTotal;
 					SetLote(dbUser, detalle);
 				}
-				;
+				Id_User = dbUser?.Id_User;
+				Id_Sucursal = dbUser?.Id_Sucursal;
+				Datos_Compra = new Datos_Compra
+				{
+					RUC = proveedor?.Identificacion,
+					Nombre_Comprador = dbUser?.Nombres
+				};
 				Fecha = DateTime.Now;
 				Total = total;
 				Estado = EstadoEnum.ACTIVO.ToString();
 				Sub_Total = subtotal;
 				Iva = ivaTotal;
 				Total = total;
-				Save();
+				var responseCompra = Save();
+				Id_Compra = ((Tbl_Compra?)responseCompra)?.Id_Compra;
 				var cuentaDestino = Catalogo_Cuentas.GetCuentaIngresoRecibos(dbUser);
 				var cuentaOrigen = Catalogo_Cuentas.GetCuentaEgresoRecibos(dbUser);
 				if (cuentaDestino == null || cuentaOrigen == null)
@@ -111,6 +119,7 @@ namespace DataBaseModel
 				return new ResponseService()
 				{
 					status = 200,
+					body = this,
 					message = "Compra registrada correctamente"
 				};
 			}
@@ -169,6 +178,7 @@ namespace DataBaseModel
 			try
 			{
 				var user = AuthNetCore.User(Identify);
+				var dbUser = new Security_Users { Id_User = user.UserId }.Find<Security_Users>();
 				var compra = new Tbl_Compra() { Id_Compra = this.Id_Compra }.Find<Tbl_Compra>();
 
 				if (compra == null)
@@ -202,6 +212,33 @@ namespace DataBaseModel
 					compra.Estado = EstadoEnum.ANULADO.ToString();
 					compra.Update();
 				}
+				var cuentaDestino = Catalogo_Cuentas.GetCuentaEgresoRecibos(dbUser);
+				var cuentaOrigen = Catalogo_Cuentas.GetCuentaIngresoRecibos(dbUser);
+				if (cuentaDestino == null || cuentaOrigen == null)
+				{
+					RollBackGlobalTransaction();
+					return new ResponseService()
+					{
+						status = 400,
+						message = "Cuentas no configuradas correctamente"
+					};
+				}
+				string detalleT = $"Anulacion de compra directa de producto, factura: {Id_Compra} al cliente {Cat_Proveedor?.Nombre}";
+				ResponseService response = new Movimientos_Cuentas
+				{
+					Catalogo_Cuentas_Destino = cuentaDestino,
+					Catalogo_Cuentas_Origen = cuentaOrigen,
+					concepto = detalleT,
+					descripcion = detalleT,
+					moneda = this.Moneda?.ToUpper(),
+					monto = this.Total,
+					tasa_cambio = this.Tasa_Cambio,
+					//tasa_cambio_compra = this.Tasa_Cambio_Venta,
+					is_transaction = true,
+
+				}.SaveMovimiento(Identify);
+				if (response.status == 400) return response;
+				
 				CommitGlobalTransaction();
 
 				return new ResponseService()
@@ -226,5 +263,11 @@ namespace DataBaseModel
 		{
 			return "";
 		}
+	}
+
+	public class Datos_Compra
+	{
+		public string? RUC { get; set; }
+		public string? Nombre_Comprador { get; set; }
 	}
 }

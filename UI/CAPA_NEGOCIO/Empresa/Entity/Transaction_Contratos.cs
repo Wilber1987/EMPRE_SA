@@ -49,7 +49,7 @@ namespace DataBaseModel
 		public int? Id_User { get; set; }
 		public int? reestructurado { get; set; }
 		[JsonProp]
-		public DesgloseIntereses? DesgloseIntereses { get; set; }		
+		public DesgloseIntereses? DesgloseIntereses { get; set; }
 		[JsonProp]
 		public List<Notas_de_contrato>? Notas { get; set; }
 
@@ -133,7 +133,10 @@ namespace DataBaseModel
 			this.Update();
 			return CrearCuotas(this.saldo, reestructuracion_value);
 		}
-		public List<Tbl_Cuotas> CrearCuotas(double? monto, double? plazo)
+		public List<Tbl_Cuotas> CrearCuotas(double? monto,
+								 double? plazo,
+								 bool autoSave = true,
+								 bool quincenal = false)
 		{
 			var tasasCambio = new Catalogo_Cambio_Divisa().Get<Catalogo_Cambio_Divisa>()[0].Valor_de_venta;
 			this.cuotafija_dolares = this.GetPago(monto, plazo);
@@ -142,9 +145,21 @@ namespace DataBaseModel
 			List<Tbl_Cuotas> cuotas = new List<Tbl_Cuotas>();
 			DateTime fechaC = fecha.GetValueOrDefault();
 
-			for (var index = 0; index < plazo; index++)
+			int totalCuotas = quincenal ? (int)(plazo * 2) : (int)plazo;
+
+			for (var index = 0; index < totalCuotas; index++)
 			{
-				fechaC = fechaC.AddMonths(1);
+				if (quincenal)
+				{
+					// Si es la primera cuota del mes, se asigna al día 15, si no, al día 30
+					fechaC = new DateTime(fechaC.Year, fechaC.Month, (index % 2 == 0) ? 15 : 30);
+					if (index % 2 != 0) fechaC = fechaC.AddMonths(1); // Avanza al siguiente mes después del día 30
+				}
+				else
+				{
+					fechaC = fechaC.AddMonths(1);
+				}
+
 				var abono_capital = this.cuotafija_dolares - (capital * this.tasas_interes);
 				var cuota = new Tbl_Cuotas
 				{
@@ -158,14 +173,25 @@ namespace DataBaseModel
 					numero_contrato = this.numero_contrato
 				};
 				capital -= abono_capital;
-				cuota.Save();
+
+				if (autoSave)
+				{
+					cuota.Save();
+				}
+
 				cuotas.Add(cuota);
 			}
 			return cuotas;
 		}
+
 		private double? GetPago(double? monto, double? cuotas)
 		{
+
 			var tasa = this.tasas_interes;
+			if (tasa == 0)
+			{
+				return monto / cuotas;
+			}
 			var payment = tasa * Math.Pow(Convert.ToDouble(1 + tasa), Convert.ToDouble(cuotas)) * monto
 				/ (Math.Pow(Convert.ToDouble(1 + tasa), Convert.ToDouble(cuotas)) - 1);
 			return payment;
@@ -213,65 +239,65 @@ namespace DataBaseModel
 		}
 
 		private void GenerarLoteAPartirDePrenda(Detail_Prendas prenda, Transactional_Configuraciones beneficioVentaE, Security_Users? dbUser)
-        {
-            double? mora = prenda.Transactional_Valoracion?.Tasa_interes * 2 / 100;
-            double? precio_venta_empeño = (prenda.Transactional_Valoracion?.Valoracion_empeño_dolares)
-                * (mora + 1)
-                * (Convert.ToDouble(beneficioVentaE.Valor) / 100 + 1);
-            Cat_Producto producto = new Cat_Producto
-            {
-                Descripcion = prenda.Descripcion,
-                Cat_Marca = new Cat_Marca
-                {
-                    Nombre = prenda.marca,
-                    Descripcion = prenda.marca,
-                    Estado = EstadoEnum.ACTIVO.ToString()
-                },
-                Cat_Categorias = new Cat_Categorias
-                {
-                    Descripcion = prenda.Catalogo_Categoria?.descripcion,
-                    Estado = EstadoEnum.ACTIVO.ToString()
-                }
-            };
-            Cat_Producto.SetProductData(producto);
-            SaveLote(prenda, dbUser, precio_venta_empeño, producto);
-        }
+		{
+			double? mora = prenda.Transactional_Valoracion?.Tasa_interes * 2 / 100;
+			double? precio_venta_empeño = (prenda.Transactional_Valoracion?.Valoracion_empeño_dolares)
+				* (mora + 1)
+				* (Convert.ToDouble(beneficioVentaE.Valor) / 100 + 1);
+			Cat_Producto producto = new Cat_Producto
+			{
+				Descripcion = prenda.Descripcion,
+				Cat_Marca = new Cat_Marca
+				{
+					Nombre = prenda.marca,
+					Descripcion = prenda.marca,
+					Estado = EstadoEnum.ACTIVO.ToString()
+				},
+				Cat_Categorias = new Cat_Categorias
+				{
+					Descripcion = prenda.Catalogo_Categoria?.descripcion,
+					Estado = EstadoEnum.ACTIVO.ToString()
+				}
+			};
+			Cat_Producto.SetProductData(producto);
+			SaveLote(prenda, dbUser, precio_venta_empeño, producto);
+		}
 
-        private void SaveLote(Detail_Prendas prenda, Security_Users? dbUser, double? precio_venta_empeño, Cat_Producto producto)
-        {
-            string codigo = Tbl_Lotes.GenerarLote();
-            int porcentajesUtilidad = 45;
-            int porcentajesApartado = 60;
-            int? Ncuotas = 4;
+		private void SaveLote(Detail_Prendas prenda, Security_Users? dbUser, double? precio_venta_empeño, Cat_Producto producto)
+		{
+			string codigo = Tbl_Lotes.GenerarLote();
+			int porcentajesUtilidad = 45;
+			int porcentajesApartado = 60;
+			int? Ncuotas = 4;
 
-            new Tbl_Lotes()
-            {
-                Cat_Producto = producto,
-                Precio_Venta = precio_venta_empeño,
-                Precio_Compra = prenda.Transactional_Valoracion?.Valoracion_empeño_dolares,
-                Cantidad_Inicial = 1,
-                Cantidad_Existente = 1,
-                Id_Sucursal = dbUser?.Id_Sucursal,
-                Id_User = dbUser?.Id_User,
-                Fecha_Ingreso = DateTime.Now,
-                Datos_Producto = prenda.Transactional_Valoracion,
-                Detalles = $"Existencia perteneciente a vencimineto de contrato No. {numero_contrato.GetValueOrDefault():D9}",
-                Id_Almacen = new Cat_Almacenes().GetAlmacen(dbUser?.Id_Sucursal ?? 0),
-                Lote = codigo,
-                EtiquetaLote = new EtiquetaLote
-                {
-                    Tipo = "CV",
-                    Articulo = prenda.Transactional_Valoracion?.Descripcion,
-                    Codigo = codigo,
-                    PorcentajesUtilidad = porcentajesUtilidad,
-                    PorcentajesApartado = porcentajesApartado,
-                    PorcentajeAdicional = 0,
-                    N_Cuotas = Ncuotas
-                }
-            }.Save();
-        }
+			new Tbl_Lotes()
+			{
+				Cat_Producto = producto,
+				Precio_Venta = precio_venta_empeño,
+				Precio_Compra = prenda.Transactional_Valoracion?.Valoracion_empeño_dolares,
+				Cantidad_Inicial = 1,
+				Cantidad_Existente = 1,
+				Id_Sucursal = dbUser?.Id_Sucursal,
+				Id_User = dbUser?.Id_User,
+				Fecha_Ingreso = DateTime.Now,
+				Datos_Producto = prenda.Transactional_Valoracion,
+				Detalles = $"Existencia perteneciente a vencimineto de contrato No. {numero_contrato.GetValueOrDefault():D9}",
+				Id_Almacen = new Cat_Almacenes().GetAlmacen(dbUser?.Id_Sucursal ?? 0),
+				Lote = codigo,
+				EtiquetaLote = new EtiquetaLote
+				{
+					Tipo = "CV",
+					Articulo = prenda.Transactional_Valoracion?.Descripcion,
+					Codigo = codigo,
+					PorcentajesUtilidad = porcentajesUtilidad,
+					PorcentajesApartado = porcentajesApartado,
+					PorcentajeAdicional = 0,
+					N_Cuotas = Ncuotas
+				}
+			}.Save();
+		}
 
-        internal Transaction_Contratos? FindAndUpdateContract()
+		internal Transaction_Contratos? FindAndUpdateContract()
 		{
 			Transaction_Contratos? contrato = Find<Transaction_Contratos>();
 			var cuotas = new Tbl_Cuotas()
