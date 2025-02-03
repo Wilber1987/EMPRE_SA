@@ -154,6 +154,7 @@ namespace DataBaseModel
 					Id_Sucursal = dbUser?.Id_Sucursal,
 					Id_User =  dbUser?.Id_User,
 					Fecha_Ingreso = DateTime.Now,
+					Detalles = detalle?.Datos_Producto_Lote?.Descripcion,
 					Datos_Producto = detalle?.Datos_Producto_Lote,
 					Id_Almacen = new Cat_Almacenes().GetAlmacen(dbUser?.Id_Sucursal ?? 0),
 					Lote = codigo,
