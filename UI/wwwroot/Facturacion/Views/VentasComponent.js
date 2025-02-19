@@ -3,7 +3,7 @@ import { Transactional_Configuraciones } from "../../Admin/ADMINISTRATIVE_ACCESS
 import { Catalogo_Cambio_Divisa } from "../../FrontModel/Catalogo_Cambio_Divisa.js";
 import { Catalogo_Cambio_Divisa_ModelComponent } from "../../FrontModel/DBODataBaseModel.js";
 import { WAppNavigator } from "../../WDevCore/WComponents/WAppNavigator.js";
-import { ModalMessege, ModalVericateAction, WForm } from "../../WDevCore/WComponents/WForm.js";
+import { ModalMessage, ModalVericateAction, WForm } from "../../WDevCore/WComponents/WForm.js";
 import { WArrayF } from "../../WDevCore/WModules/WArrayF.js";
 import { ComponentsManager, ConvertToMoneyString, html, WRender } from "../../WDevCore/WModules/WComponentsTools.js";
 import { WOrtograficValidation } from "../../WDevCore/WModules/WOrtograficValidation.js";
@@ -66,7 +66,7 @@ class VentasComponent extends HTMLElement {
             SaveFunction: async (/**@type {Tbl_Factura} */ factura) => {           
                 
                 if (!this.ComprasForm?.Validate()) {
-                    this.append(ModalMessege("Agregue datos para poder continuar"));
+                    this.append(ModalMessage("Agregue datos para poder continuar"));
                     return;
                 }
                 const response = await new Tbl_Factura(factura).Save();
@@ -77,10 +77,10 @@ class VentasComponent extends HTMLElement {
                             this.VentasConfig?.action(response.body, response);
                         }, response.message));
                     } else {
-                        this.append(ModalMessege(response.message))
+                        this.append(ModalMessage(response.message))
                     }
                 } else {
-                    this.append(ModalMessege(response.message))
+                    this.append(ModalMessage(response.message))
                 }
             }
         });
@@ -149,7 +149,7 @@ class VentasComponent extends HTMLElement {
             //form.DrawComponent();
         } catch (error) {
             console.error(error);
-            this.append(ModalMessege(error))
+            this.append(ModalMessage(error))
         }
     }
 

@@ -146,7 +146,7 @@ namespace DataBaseModel
 
 			detalle!.lotes = [ new Tbl_Lotes()
 				{
-					Cat_Producto = detalle?.Cat_Producto,
+					//Cat_Producto = detalle?.Cat_Producto,
 					Precio_Venta = detalle?.Precio_Venta,
 					Precio_Compra = detalle?.Precio_Unitario,
 					Cantidad_Inicial = detalle?.Cantidad,

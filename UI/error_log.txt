@@ -468,3 +468,39 @@ Incorrect syntax near the keyword 'ORDER'.
    at UI.CAPA_NEGOCIO.Facturacion.Operations.FacturacionServices.GenerarContratoMensual(String Identity, Tbl_Factura factura) in C:\Users\wilbe\repos\NETCORE\EMPRE_SA\UI\CAPA_NEGOCIO\Facturacion\Operations\FacturacionServices.cs:line 244
    at UI.CAPA_NEGOCIO.Facturacion.Operations.FacturacionServices.DoSaveFactura(String Identity, Tbl_Factura factura) in C:\Users\wilbe\repos\NETCORE\EMPRE_SA\UI\CAPA_NEGOCIO\Facturacion\Operations\FacturacionServices.cs:line 153
    at UI.CAPA_NEGOCIO.Facturacion.Operations.FacturacionServices.SaveFactura(String Identity, Tbl_Factura factura) in C:\Users\wilbe\repos\NETCORE\EMPRE_SA\UI\CAPA_NEGOCIO\Facturacion\Operations\FacturacionServices.cs:line 20
+[2/19/2025 9:04:09 AM] ERROR: Max retries reached. Operation failed.: A transport-level error has occurred when receiving results from the server. (provider: Session Provider, error: 19 - Physical connection is not usable)
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParserStateObject.ThrowExceptionAndWarning(Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParserStateObject.ReadSniError(TdsParserStateObject stateObj, UInt32 error)
+   at System.Data.SqlClient.TdsParserStateObject.ReadSniSyncOverAsync()
+   at System.Data.SqlClient.TdsParserStateObject.TryPrepareBuffer()
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.FillInternal(DataSet dataset, DataTable[] datatables, Int32 startRecord, Int32 maxRecords, String srcTable, IDbCommand command, CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.Fill(DataSet dataSet, Int32 startRecord, Int32 maxRecords, String srcTable, IDbCommand command, CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.Fill(DataSet dataSet)
+   at CAPA_DATOS.GDatosAbstract.<>c__DisplayClass30_0.<TraerDatosSQL>b__0() in C:\Users\wilbe\repos\NETCORE\EMPRE_SA\CAPA_DATOS\BDCore\Abstracts\GDatosAbstract.cs:line 361
+   at CAPA_DATOS.GDatosAbstract.ExecuteWithRetry(Func`1 operation, Int32 maxRetries) in C:\Users\wilbe\repos\NETCORE\EMPRE_SA\CAPA_DATOS\BDCore\Abstracts\GDatosAbstract.cs:line 299
+[2/19/2025 9:04:09 AM] Transaction failed and connection restarted.: A transport-level error has occurred when receiving results from the server. (provider: Session Provider, error: 19 - Physical connection is not usable)
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParserStateObject.ThrowExceptionAndWarning(Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParserStateObject.ReadSniError(TdsParserStateObject stateObj, UInt32 error)
+   at System.Data.SqlClient.TdsParserStateObject.ReadSniSyncOverAsync()
+   at System.Data.SqlClient.TdsParserStateObject.TryPrepareBuffer()
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.FillInternal(DataSet dataset, DataTable[] datatables, Int32 startRecord, Int32 maxRecords, String srcTable, IDbCommand command, CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.Fill(DataSet dataSet, Int32 startRecord, Int32 maxRecords, String srcTable, IDbCommand command, CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.Fill(DataSet dataSet)
+   at CAPA_DATOS.GDatosAbstract.<>c__DisplayClass30_0.<TraerDatosSQL>b__0() in C:\Users\wilbe\repos\NETCORE\EMPRE_SA\CAPA_DATOS\BDCore\Abstracts\GDatosAbstract.cs:line 361
+   at CAPA_DATOS.GDatosAbstract.ExecuteWithRetry(Func`1 operation, Int32 maxRetries) in C:\Users\wilbe\repos\NETCORE\EMPRE_SA\CAPA_DATOS\BDCore\Abstracts\GDatosAbstract.cs:line 299

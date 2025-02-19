@@ -4,7 +4,7 @@ import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/St
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
 import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
-import { ModalMessege, WForm } from "../WDevCore/WComponents/WForm.js";
+import { ModalMessage, WForm } from "../WDevCore/WComponents/WForm.js";
 import { Catalogo_Clientes, Condicion_Laboral_Cliente, Transaccion_Factura, Transaction_Contratos_ModelComponent } from "../FrontModel/DBODataBaseModel.js";
 import { WOrtograficValidation } from "../WDevCore/WModules/WOrtograficValidation.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";

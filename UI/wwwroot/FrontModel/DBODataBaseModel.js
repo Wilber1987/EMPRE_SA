@@ -68,7 +68,7 @@ class Transactional_Valoracion_ModelComponent extends EntityClass {
     /**@type {ModelProperty} */ Detail_Valores = { type: 'MASTERDETAIL', hidden: true }
     /**@type {ModelProperty} */ requiere_valoracion;
     GuardarValoraciones = async (valoraciones) => {
-        return await this.SaveData("Transactional_Valoracion_ModelComponent/GuardarValoraciones", { valoraciones: valoraciones })
+        return await this.SaveData("Transactional_Valoracion/GuardarValoraciones", { valoraciones: valoraciones })
     }
 }
 export { Transactional_Valoracion_ModelComponent }

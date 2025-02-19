@@ -51,7 +51,7 @@ class ClientComponentView extends HTMLElement {
             onclick: async () => {
                 if (!this.FormularioCliente?.Validate()) {
                     this.Manager?.NavigateFunction("formularioCliente", this.FormularioCliente)
-                    this.append(ModalMessege("Necesita llenar todos los datos del cliente primeramente"));
+                    this.append(ModalMessage("Necesita llenar todos los datos del cliente primeramente"));
                     return;
                 }
 
@@ -61,14 +61,14 @@ class ClientComponentView extends HTMLElement {
 
                     if (result?.codigo_cliente != null) {
                         this.cliente.codigo_cliente = result?.codigo_cliente;
-                        this.append(ModalMessege("Datos guardados correctamente"));
+                        this.append(ModalMessage("Datos guardados correctamente"));
                         this.updateForms();
                     } else {
-                        this.append(ModalMessege("Error al guardar intentelo nuevamente"));
+                        this.append(ModalMessage("Error al guardar intentelo nuevamente"));
                     }
                 } else {
                     const result = await new Catalogo_Clientes(this.cliente).Update();
-                    this.append(ModalMessege(WOrtograficValidation.es(result.message)));
+                    this.append(ModalMessage(WOrtograficValidation.es(result.message)));
                 }
             }
         }))

@@ -2,7 +2,7 @@
 // @ts-ignore
 import { ConvertToMoneyString, html, WRender } from "../../WDevCore/WModules/WComponentsTools.js";
 // @ts-ignore
-import { ModalMessege, ModalVericateAction, WForm } from "../../WDevCore/WComponents/WForm.js";
+import { ModalMessage, ModalVericateAction, WForm } from "../../WDevCore/WComponents/WForm.js";
 import { css } from "../../WDevCore/WModules/WStyledRender.js";
 import { Detalle_Compra } from "../FrontModel/Detalle_Compra.js";
 import { Tbl_Compra_ModelComponent } from "../FrontModel/ModelComponent/Tbl_Compra_ModelComponent.js";
@@ -60,21 +60,18 @@ class ComprasComponent extends HTMLElement {
             // @ts-ignore
             SaveFunction: async (/**@type {Tbl_Compra} */ compra) => {
                 if (!this.ComprasForm?.Validate()) {
-                    this.append(ModalMessege("Agregue datos para poder continuar"));
+                    this.append(ModalMessage("Agregue datos para poder continuar"));
                     return;
                 }
                 const response = await new Tbl_Compra(compra).Save();
                 if (response.status == 200) {
                     if (this.ComprasConfig?.action != undefined) {
-                        this.append(ModalVericateAction(async () => {
-                            // @ts-ignore
-                            this.ComprasConfig?.action(compra, response);
-                        }, response.message));
+                        this.ComprasConfig?.action(compra, response);
                     } else {
-                        this.append(ModalMessege(response.message))
+                        this.append(ModalMessage(response.message))
                     }
                 } else {
-                    this.append(ModalMessege(response.message))
+                    this.append(ModalMessage(response.message))
                 }
             }
         });

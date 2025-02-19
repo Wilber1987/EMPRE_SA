@@ -4,7 +4,7 @@ import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/St
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
 import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
-import { ModalMessege, WForm } from "../WDevCore/WComponents/WForm.js";
+import { ModalMessage, WForm } from "../WDevCore/WComponents/WForm.js";
 import { Catalogo_Clientes, Condicion_Laboral_Cliente, Transaction_Contratos_ModelComponent } from "../FrontModel/DBODataBaseModel.js";
 import { WOrtograficValidation } from "../WDevCore/WModules/WOrtograficValidation.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
@@ -67,12 +67,12 @@ class ClientComponentView extends HTMLElement {
             onclick: async () => {
                 if (!this.FormularioCliente?.Validate()) {
                     this.Manager?.NavigateFunction("formularioCliente", this.FormularioCliente)
-                    this.append(ModalMessege("Necesita llenar todos los datos del cliente primeramente"));
+                    this.append(ModalMessage("Necesita llenar todos los datos del cliente primeramente"));
                     return;
                 }
                 // if (!this.FormularioDatos?.Validate()) {
                 //     this.Manager?.NavigateFunction("formularioDatosLabora    les", this.FormularioDatos)
-                //     this.append(ModalMessege("Necesita llenar todos los datos laborales del cliente primeramente"));
+                //     this.append(ModalMessage("Necesita llenar todos los datos laborales del cliente primeramente"));
                 //     return;
                 // }
 
@@ -82,16 +82,16 @@ class ClientComponentView extends HTMLElement {
 
                     if (result?.codigo_cliente != null) {
                         this.cliente.codigo_cliente = result?.codigo_cliente;
-                        this.append(ModalMessege("Datos guardados correctamente"));
+                        this.append(ModalMessage("Datos guardados correctamente"));
                         this.updateForms();
                     } else if (result?.status == 403) {
-                        this.append(ModalMessege(result?.message));
+                        this.append(ModalMessage(result?.message));
                     } else {
-                        this.append(ModalMessege("Error al guardar intentelo nuevamente"));
+                        this.append(ModalMessage("Error al guardar intentelo nuevamente"));
                     }
                 } else {
                     const result = await new Catalogo_Clientes(this.cliente).Update();
-                    this.append(ModalMessege(WOrtograficValidation.es(result.message)));
+                    this.append(ModalMessage(WOrtograficValidation.es(result.message)));
                 }
             }
         }))

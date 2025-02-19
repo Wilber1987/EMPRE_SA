@@ -272,7 +272,7 @@ namespace DataBaseModel
 
 			new Tbl_Lotes()
 			{
-				Cat_Producto = producto,
+				//Cat_Producto = producto,
 				Precio_Venta = precio_venta_empeño,
 				Precio_Compra = prenda.Transactional_Valoracion?.Valoracion_empeño_dolares,
 				Cantidad_Inicial = 1,
@@ -292,7 +292,8 @@ namespace DataBaseModel
 					PorcentajesUtilidad = porcentajesUtilidad,
 					PorcentajesApartado = porcentajesApartado,
 					PorcentajeAdicional = 0,
-					N_Cuotas = Ncuotas
+					N_Cuotas = Ncuotas,
+					Precio_compra_dolares = prenda.Transactional_Valoracion?.Valoracion_empeño_dolares,
 				}
 			}.Save();
 		}

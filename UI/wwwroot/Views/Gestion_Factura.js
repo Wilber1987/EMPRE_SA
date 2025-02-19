@@ -10,7 +10,7 @@ import { Tbl_Compra_ModelComponent } from "../Facturacion/FrontModel/ModelCompon
 import { Tbl_Compra } from "../Facturacion/FrontModel/Tbl_Compra.js";
 import { Catalogo_Cambio_Divisa_ModelComponent } from "../FrontModel/DBODataBaseModel.js";
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
-import { ModalMessege, WForm } from "../WDevCore/WComponents/WForm.js";
+import { ModalMessage, WForm } from "../WDevCore/WComponents/WForm.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 
 /**
@@ -53,12 +53,12 @@ class MainFactura extends HTMLElement {
 
                 console.log(valoracion);
                 if (!this.facturaForm?.Validate()) {
-                    this.append(ModalMessege("Agregue datos para poder continuar"));
+                    this.append(ModalMessage("Agregue datos para poder continuar"));
                     return;
                 }
                 const response = await new Tbl_Compra(this.facturaForm?.FormObject).Save();
 
-                this.append(ModalMessege(response.message));
+                this.append(ModalMessage(response.message));
                 return;
             }
         });

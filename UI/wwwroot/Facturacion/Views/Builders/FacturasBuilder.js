@@ -256,7 +256,7 @@ export class FacturasBuilder {
             <div style="display: flex; gap: 10px" class="marco">
                 <div style="flex:2">
                     <p><strong>Nombre:</strong> ${factura.Cat_Proveedor.Nombre}</p>
-                    <p><strong>Cédula:</strong> ${factura.Datos_Compra.RUC}</p>
+                    <p><strong>Cédula:</strong> ${factura.Cat_Proveedor.Identificacion}</p>
                     <p><strong>Comprador:</strong> ${factura.Datos_Compra.Nombre_Comprador}</p>                    
                 </div>
                 <div style="flex:1">
@@ -337,19 +337,19 @@ export class FacturasBuilder {
             tagName: "tr", children: [
                 WRender.Create({
                     tagName: "td", style: "border: 1px solid #ccc; padding: 8px;",
-                    innerText: `${detalle.Lote?.Cat_Producto.Descripcion || 'N/A'}`
+                    innerText: `${detalle.Lote?.Datos_Producto?.Descripcion || 'N/A'}`
                 }),
                 WRender.Create({
                     tagName: "td", style: "border: 1px solid #ccc; padding: 8px;",
-                    innerText: `${detalle.Lote?.Datos_Producto?.Marca}`
+                    innerText: `${detalle.Lote?.Datos_Producto?.Marca  ?? "-"}`
                 }),
                 WRender.Create({
                     tagName: "td", style: "border: 1px solid #ccc; padding: 8px;",
-                    innerText: `${detalle.Lote?.Datos_Producto?.Modelo}`
+                    innerText: `${detalle.Lote?.Datos_Producto?.Modelo ?? "-"}`
                 }),
                 WRender.Create({
                     tagName: "td", style: "border: 1px solid #ccc; padding: 8px;",
-                    innerText: `${detalle.Lote?.Datos_Producto?.Serie}`
+                    innerText: `${detalle.Lote?.Datos_Producto?.Serie  ?? "-"}`
                 }),
                 WRender.Create({
                     tagName: "td", style: "border: 1px solid #ccc; padding: 8px;",
@@ -384,15 +384,15 @@ export class FacturasBuilder {
                 }),
                 WRender.Create({
                     tagName: "td", style: "border: 1px solid #ccc; padding: 8px;",
-                    innerText: `${detalle?.Cat_Producto?.Cat_Marca?.Descripcion}`
+                    innerText: `${detalle?.Cat_Producto?.Cat_Marca?.Descripcion ?? "-"}`
                 }),
                 WRender.Create({
                     tagName: "td", style: "border: 1px solid #ccc; padding: 8px;",
-                    innerText: `${detalle?.Datos_Producto_Lote?.Modelo}`
+                    innerText: `${detalle?.Datos_Producto_Lote?.Modelo ?? "-" }`
                 }),
                 WRender.Create({
                     tagName: "td", style: "border: 1px solid #ccc; padding: 8px;",
-                    innerText: `${detalle?.Datos_Producto_Lote?.Serie}`
+                    innerText: `${detalle?.Datos_Producto_Lote?.Serie ?? "-"}`
                 }),
                 WRender.Create({
                     tagName: "td", style: "border: 1px solid #ccc; padding: 8px;",

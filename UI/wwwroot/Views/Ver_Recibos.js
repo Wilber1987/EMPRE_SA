@@ -2,7 +2,7 @@ import { WRender, ComponentsManager, html } from "../WDevCore/WModules/WComponen
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js"
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
 import { Transaccion_Factura, Catalogo_Cambio_Divisa_ModelComponent } from "../FrontModel/DBODataBaseModel.js"
-import { ModalMessege, ModalVericateAction } from "../WDevCore/WComponents/WForm.js";
+import { ModalMessage, ModalVericateAction } from "../WDevCore/WComponents/WForm.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 import {WAjaxTools} from "../WDevCore/WModules/WAjaxTools.js";
@@ -42,7 +42,7 @@ class Ver_RecibosView extends HTMLElement {
                                 ObjectOptions: {
                                     SaveFunction: async () => {
                                         if (factura.estado == "ANULADO") {
-                                            this.append(ModalMessege("Recibo ya esta anulado"));
+                                            this.append(ModalMessage("Recibo ya esta anulado"));
                                             return;
                                         }
                                         this.append(ModalVericateAction(async (editObject) => {
@@ -55,7 +55,7 @@ class Ver_RecibosView extends HTMLElement {
                                                         motivo_anulacion: factura.motivo_anulacion
                                                     });
 
-                                            this.append(ModalMessege(response.message, null, true));
+                                            this.append(ModalMessage(response.message, null, true));
                                             modal.close();
                                         }, "Esta seguro que desea anular este contrato"))
                                     }
@@ -146,7 +146,7 @@ class Ver_RecibosView extends HTMLElement {
             //     ventimp?.close();
             // }, 100);
         } else if  (response.status == 200 && response.message != null) {   
-            this.append(ModalMessege(response.message))
+            this.append(ModalMessage(response.message))
         }
     }
 

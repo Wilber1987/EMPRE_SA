@@ -2,7 +2,7 @@
 import { Catalogo_Cambio_Divisa_ModelComponent } from "../FrontModel/DBODataBaseModel.js";
 import { Transaction_Contratos } from "../FrontModel/Model.js";
 import { StyleScrolls, StylesControlsV2, StylesControlsV3 } from "../WDevCore/StyleModules/WStyleComponents.js";
-import { ModalMessege, ModalVericateAction, WForm } from "../WDevCore/WComponents/WForm.js";
+import { ModalMessage, ModalVericateAction, WForm } from "../WDevCore/WComponents/WForm.js";
 import { ComponentsManager, ConvertToMoneyString, html, WRender } from "../WDevCore/WModules/WComponentsTools.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 import { contratosSearcher } from "../modules/SerchersModules.js";
@@ -111,7 +111,7 @@ class Gestion_RecibosView extends HTMLElement {
             SaveFunction: async (/**@type {Recibos} */ recibo, form) => {
 
                 if (!this.reciboForm?.Validate()) {
-                    this.append(ModalMessege("Agregue datos para poder continuar"));
+                    this.append(ModalMessage("Agregue datos para poder continuar"));
                     return;
                 }
                 const nuevoRecibo = new Recibos(this.reciboForm?.FormObject);
@@ -193,7 +193,7 @@ class Gestion_RecibosView extends HTMLElement {
             tagName: 'button', className: 'Block-Primary', innerText: 'Recibo',
             onclick: () => {
                 if (this.ContractData.Contrato.numero_contrato == undefined) {
-                    this.append(ModalMessege("Seleccione un contrato"));
+                    this.append(ModalMessage("Seleccione un contrato"));
                     return;
                 }
                 this.Manager.NavigateFunction("valoraciones", this.valoracionesContainer);
@@ -203,7 +203,7 @@ class Gestion_RecibosView extends HTMLElement {
             tagName: 'button', className: 'Block-Tertiary', innerText: 'Proyección de pago',
             onclick: () => {
                 if (this.ContractData.Contrato.numero_contrato == undefined) {
-                    this.append(ModalMessege("Seleccione un contrato"));
+                    this.append(ModalMessage("Seleccione un contrato"));
                     return;
                 }
                 this.setProyeccion();
@@ -327,7 +327,7 @@ class Gestion_RecibosView extends HTMLElement {
     }
     selectContrato = async (/**@type {Transaction_Contratos} */ selectContrato) => {
         if (selectContrato.estado != "ACTIVO") {
-            this.append(ModalMessege("Este contrato se encuentra " + selectContrato.estado));
+            this.append(ModalMessage("Este contrato se encuentra " + selectContrato.estado));
             return;
         }
 

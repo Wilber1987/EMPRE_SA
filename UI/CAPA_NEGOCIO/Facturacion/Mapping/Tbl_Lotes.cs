@@ -36,10 +36,10 @@ namespace DataBaseModel
 		public Cat_Almacenes? Cat_Almacenes { get; set; }
 		[ManyToOne(TableName = "Detalle_Compra", KeyColumn = "Id_Detalle_Compra", ForeignKeyColumn = "Id_Detalle_Compra")]
 		public Detalle_Compra? Detalle_Compra { get; set; }
-		[ManyToOne(TableName = "Cat_Producto", KeyColumn = "Id_Producto", ForeignKeyColumn = "Id_Producto")]
-		public Cat_Producto? Cat_Producto { get; set; }
+		//[ManyToOne(TableName = "Cat_Producto", KeyColumn = "Id_Producto", ForeignKeyColumn = "Id_Producto")]
+		//public Cat_Producto? Cat_Producto { get; set; }
 
-		[OneToMany(TableName = "Tbl_Transaccion", KeyColumn = "Id_Lote", ForeignKeyColumn = "Id_Lote")]
+		//[OneToMany(TableName = "Tbl_Transaccion", KeyColumn = "Id_Lote", ForeignKeyColumn = "Id_Lote")]
 		public List<Tbl_Transaccion>? lotes { get; set; }
 
 		public static string GenerarLote()

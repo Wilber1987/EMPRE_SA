@@ -4,7 +4,7 @@ import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/St
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
 import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
-import { ModalMessege, WForm } from "../WDevCore/WComponents/WForm.js";
+import { ModalMessage, WForm } from "../WDevCore/WComponents/WForm.js";
 import { Catalogo_Inversores } from "../FrontModel/DBODataBaseModel.js";
 import { WOrtograficValidation } from "../WDevCore/WModules/WOrtograficValidation.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
@@ -100,7 +100,7 @@ class Gestion_InversionistaForm extends HTMLElement {
             tagName: 'button', className: 'Block-Success', innerText: 'Guardar',
             onclick: async () => {
                 if (!this.FormularioCliente?.Validate()) {
-                    this.append(ModalMessege("Necesita llenar todos los datos del cliente primeramente"));
+                    this.append(ModalMessage("Necesita llenar todos los datos del cliente primeramente"));
                     return;
                 }
                 if (this.cliente.codigo_cliente == null || this.cliente.codigo_cliente == undefined) {
@@ -109,13 +109,13 @@ class Gestion_InversionistaForm extends HTMLElement {
                     
                     if (result?.id_inversor != null) {
                         this.cliente.codigo_cliente = result?.id_inversor;
-                        this.append(ModalMessege("Datos guardados correctamente"));
+                        this.append(ModalMessage("Datos guardados correctamente"));
                     } else {
-                        this.append(ModalMessege("Error al guardar intentelo nuevamente"));
+                        this.append(ModalMessage("Error al guardar intentelo nuevamente"));
                     }
                 } else {
                     const result = await new Catalogo_Inversores(this.cliente).Update();
-                    this.append(ModalMessege(WOrtograficValidation.es(result.message)));
+                    this.append(ModalMessage(WOrtograficValidation.es(result.message)));
                 }
             }
         }))

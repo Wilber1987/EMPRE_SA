@@ -5,7 +5,7 @@ import { ComponentsManager, html, WRender } from "../../WDevCore/WModules/WCompo
 import { WTableComponent } from "../../WDevCore/WComponents/WTableComponent.js";
 // @ts-ignore
 import { WAppNavigator } from "../../WDevCore/WComponents/WAppNavigator.js";
-import { ModalMessege, ModalVericateAction } from "../../WDevCore/WComponents/WForm.js";
+import { ModalMessage, ModalVericateAction } from "../../WDevCore/WComponents/WForm.js";
 import { css } from "../../WDevCore/WModules/WStyledRender.js";
 import { Tbl_Compra_ModelComponent } from "../FrontModel/ModelComponent/Tbl_Compra_ModelComponent.js";
 import { Tbl_Compra } from "../FrontModel/Tbl_Compra.js";
@@ -50,7 +50,7 @@ class ComprasManagerView extends HTMLElement {
                                 this.append(ModalVericateAction(async () => {
                                     const response = await compra.Anular();
                                     // @ts-ignore
-                                    this.append(ModalMessege(response.message));
+                                    this.append(ModalMessage(response.message));
 
                                     //modal.close();
                                 }, "¿Esta seguro que desea anular esta compra?"))
