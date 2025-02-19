@@ -281,13 +281,13 @@ namespace DataBaseModel
 				Id_User = dbUser?.Id_User,
 				Fecha_Ingreso = DateTime.Now,
 				Datos_Producto = prenda.Transactional_Valoracion,
-				Detalles = $"Existencia perteneciente a vencimineto de contrato No. {numero_contrato.GetValueOrDefault():D9}",
+				Detalles = $"{ prenda.Transactional_Valoracion?.Descripcion}, Marca: { prenda.Transactional_Valoracion?.Marca}, Modelo: { prenda.Transactional_Valoracion?.Modelo}, Existencia perteneciente a vencimineto de contrato No. {numero_contrato.GetValueOrDefault():D9}",
 				Id_Almacen = new Cat_Almacenes().GetAlmacen(dbUser?.Id_Sucursal ?? 0),
 				Lote = codigo,
 				EtiquetaLote = new EtiquetaLote
 				{
 					Tipo = "CV",
-					Articulo = prenda.Transactional_Valoracion?.Descripcion,
+					Articulo = $"{ prenda.Transactional_Valoracion?.Descripcion}, Marca: { prenda.Transactional_Valoracion?.Marca}, Modelo: { prenda.Transactional_Valoracion?.Modelo}",
 					Codigo = codigo,
 					PorcentajesUtilidad = porcentajesUtilidad,
 					PorcentajesApartado = porcentajesApartado,

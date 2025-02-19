@@ -10,8 +10,6 @@ import { Detalle_Factura } from "../Detalle_Factura.js";
 import { WArrayF } from "../../../WDevCore/WModules/WArrayF.js";
 import { FinancialModule } from "../../../modules/FinancialModule.js";
 import { Detail_Prendas, Transaction_Contratos, ValoracionesTransaction } from "../../../FrontModel/Model.js";
-import { Transactional_Configuraciones } from "../../../Admin/ADMINISTRATIVE_ACCESSDataBaseModel.js";
-import { Catalogo_Cambio_Divisa_ModelComponent } from "../../../FrontModel/DBODataBaseModel.js";
 import { Catalogo_Cambio_Divisa } from "../../../FrontModel/Catalogo_Cambio_Divisa.js";
 
 

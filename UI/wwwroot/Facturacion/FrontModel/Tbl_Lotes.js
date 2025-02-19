@@ -32,7 +32,7 @@ class Tbl_Lotes extends EntityClass {
 	async DarDeBaja(/**@type {Tbl_Transaccion}*/Transaction) {
 		return await this.SaveData("TransactionLotes/DarDeBaja", Transaction)
 	}
-	/**@type {String}*/  get Nombre() {
+	/**@type {String}*/  get Descripcion() {
 		return `${this.Detalle_Compra.Cat_Producto.Descripcion}`;
 	}
 }
