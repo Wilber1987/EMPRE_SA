@@ -5,12 +5,13 @@ import { ModelProperty } from "../../../WDevCore/WModules/CommonModel.js";
 import { Detalle_Factura_ModelComponent } from './Detalle_Factura_ModelComponent.js'
 import { Catalogo_Clientes } from "../../../ClientModule/FrontModel/Catalogo_Clientes.js";
 import { Datos_Financiamiento, Tbl_Factura } from "../Tbl_Factura.js";
-import { ModalMessage, WForm } from "../../../WDevCore/WComponents/WForm.js";
+import { WForm } from "../../../WDevCore/WComponents/WForm.js";
 import { Detalle_Factura } from "../Detalle_Factura.js";
 import { WArrayF } from "../../../WDevCore/WModules/WArrayF.js";
 import { FinancialModule } from "../../../modules/FinancialModule.js";
 import { Detail_Prendas, Transaction_Contratos, ValoracionesTransaction } from "../../../FrontModel/Model.js";
 import { Catalogo_Cambio_Divisa } from "../../../FrontModel/Catalogo_Cambio_Divisa.js";
+import { ModalMessage } from "../../../WDevCore/WComponents/ModalMessage.js";
 
 
 

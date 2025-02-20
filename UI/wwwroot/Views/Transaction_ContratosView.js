@@ -12,10 +12,11 @@ import { Tbl_Cuotas_ModelComponent } from "../FrontModel/ModelComponents.js";
 import { FinancialModule } from "../modules/FinancialModule.js";
 import { clientSearcher, contratosSearcher, ValoracionesSearch } from "../modules/SerchersModules.js";
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
-import { ModalMessage, ModalVericateAction } from "../WDevCore/WComponents/WForm.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { WArrayF } from "../WDevCore/WModules/WArrayF.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
+import { ModalMessage } from "../WDevCore/WComponents/ModalMessage.js";
+import { ModalVericateAction } from "../WDevCore/WComponents/ModalVericateAction.js";
 
 /**
  * @typedef {Object} ContratosConfig

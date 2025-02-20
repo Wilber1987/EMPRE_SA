@@ -2,7 +2,7 @@
 import { Catalogo_Cambio_Divisa_ModelComponent } from "../FrontModel/DBODataBaseModel.js";
 import { Transaction_Contratos } from "../FrontModel/Model.js";
 import { StyleScrolls, StylesControlsV2, StylesControlsV3 } from "../WDevCore/StyleModules/WStyleComponents.js";
-import { ModalMessage, ModalVericateAction, WForm } from "../WDevCore/WComponents/WForm.js";
+import {  WForm } from "../WDevCore/WComponents/WForm.js";
 import { ComponentsManager, ConvertToMoneyString, html, WRender } from "../WDevCore/WModules/WComponentsTools.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 import { contratosSearcher } from "../modules/SerchersModules.js";
@@ -16,6 +16,8 @@ import { Detail_Prendas, Tbl_Cuotas } from "../FrontModel/Model.js";
 import { Catalogo_Cambio_Divisa } from "../FrontModel/Catalogo_Cambio_Divisa.js";
 import { ParcialesData } from "../FrontModel/ParcialData.js";
 import { DateTime } from "../WDevCore/WModules/Types/DateTime.js";
+import { ModalMessage } from "../WDevCore/WComponents/ModalMessage.js";
+import { ModalVericateAction } from "../WDevCore/WComponents/ModalVericateAction.js";
 
 class Gestion_RecibosView extends HTMLElement {
     // @ts-ignore

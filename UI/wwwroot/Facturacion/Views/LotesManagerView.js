@@ -5,7 +5,6 @@ import { ComponentsManager, html, WRender } from "../../WDevCore/WModules/WCompo
 import { WTableComponent } from "../../WDevCore/WComponents/WTableComponent.js";
 // @ts-ignore
 import { WAppNavigator } from "../../WDevCore/WComponents/WAppNavigator.js";
-import { ModalMessage, ModalVericateAction } from "../../WDevCore/WComponents/WForm.js";
 import { css } from "../../WDevCore/WModules/WStyledRender.js";
 import { Tbl_Lotes_ModelComponent } from "../FrontModel/ModelComponent/Tbl_Lotes_ModelComponent.js";
 import { Tbl_Lotes } from "../FrontModel/Tbl_Lotes.js";
@@ -17,6 +16,8 @@ import { WPrintExportToolBar } from "../../WDevCore/WComponents/WPrintExportTool
 import { WArrayF } from "../../WDevCore/WModules/WArrayF.js";
 import { DateTime } from "../../WDevCore/WModules/Types/DateTime.js";
 import { ControlBuilder } from "../../WDevCore/WModules/WControlBuilder.js";
+import { ModalMessage } from "../../WDevCore/WComponents/ModalMessage.js";
+import { ModalVericateAction } from "../../WDevCore/WComponents/ModalVericateAction.js";
 
 /**
  * @typedef {Object} LotesConfig

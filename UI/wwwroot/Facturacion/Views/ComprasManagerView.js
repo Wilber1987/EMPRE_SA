@@ -5,7 +5,6 @@ import { ComponentsManager, html, WRender } from "../../WDevCore/WModules/WCompo
 import { WTableComponent } from "../../WDevCore/WComponents/WTableComponent.js";
 // @ts-ignore
 import { WAppNavigator } from "../../WDevCore/WComponents/WAppNavigator.js";
-import { ModalMessage, ModalVericateAction } from "../../WDevCore/WComponents/WForm.js";
 import { css } from "../../WDevCore/WModules/WStyledRender.js";
 import { Tbl_Compra_ModelComponent } from "../FrontModel/ModelComponent/Tbl_Compra_ModelComponent.js";
 import { Tbl_Compra } from "../FrontModel/Tbl_Compra.js";
@@ -13,6 +12,7 @@ import { WPrintExportToolBar } from "../../WDevCore/WComponents/WPrintExportTool
 import { FacturasBuilder } from "./Builders/FacturasBuilder.js";
 import { DocumentsData } from "../FrontModel/DocumentsData.js";
 import { WModalForm } from "../../WDevCore/WComponents/WModalForm.js";
+import { ModalVericateAction } from "../../WDevCore/WComponents/ModalVericateAction.js";
 
 /**
  * @typedef {Object} ComprasConfig

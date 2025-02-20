@@ -2,7 +2,7 @@
 // @ts-ignore
 import { ConvertToMoneyString, html, WRender } from "../../WDevCore/WModules/WComponentsTools.js";
 // @ts-ignore
-import { ModalMessage, ModalVericateAction, WForm } from "../../WDevCore/WComponents/WForm.js";
+import { WForm } from "../../WDevCore/WComponents/WForm.js";
 import { css } from "../../WDevCore/WModules/WStyledRender.js";
 import { Detalle_Compra } from "../FrontModel/Detalle_Compra.js";
 import { Tbl_Compra_ModelComponent } from "../FrontModel/ModelComponent/Tbl_Compra_ModelComponent.js";
@@ -11,6 +11,7 @@ import { Tbl_Compra } from "../FrontModel/Tbl_Compra.js";
 import { ModelProperty } from "../../WDevCore/WModules/CommonModel.js";
 import { WOrtograficValidation } from "../../WDevCore/WModules/WOrtograficValidation.js";
 import {WArrayF} from "../../WDevCore/WModules/WArrayF.js";
+import { ModalMessage } from "../../WDevCore/WComponents/ModalMessage.js";
 
 /**
  * @typedef {Object} ComprasConfig

@@ -2,8 +2,10 @@
 import { Transactional_Configuraciones } from "../../Admin/ADMINISTRATIVE_ACCESSDataBaseModel.js";
 import { Catalogo_Cambio_Divisa } from "../../FrontModel/Catalogo_Cambio_Divisa.js";
 import { Catalogo_Cambio_Divisa_ModelComponent } from "../../FrontModel/DBODataBaseModel.js";
+import { ModalMessage } from "../../WDevCore/WComponents/ModalMessage.js";
+import { ModalVericateAction } from "../../WDevCore/WComponents/ModalVericateAction.js";
 import { WAppNavigator } from "../../WDevCore/WComponents/WAppNavigator.js";
-import { ModalMessage, ModalVericateAction, WForm } from "../../WDevCore/WComponents/WForm.js";
+import { WForm } from "../../WDevCore/WComponents/WForm.js";
 import { WArrayF } from "../../WDevCore/WModules/WArrayF.js";
 import { ComponentsManager, ConvertToMoneyString, html, WRender } from "../../WDevCore/WModules/WComponentsTools.js";
 import { WOrtograficValidation } from "../../WDevCore/WModules/WOrtograficValidation.js";

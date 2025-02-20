@@ -11,8 +11,8 @@ import { Tbl_Cuotas, Transaction_Contratos, ValoracionesTransaction } from "../F
 import { Tbl_Cuotas_ModelComponent } from "../FrontModel/ModelComponents.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { WDetailObject } from "../WDevCore/WComponents/WDetailObject.js";
-import { ModalMessage } from "../WDevCore/WComponents/ModalMessage.js";
 import { FilterData } from "../WDevCore/WModules/CommonModel.js";
+import { ModalMessage } from "../WDevCore/WComponents/ModalMessage.js";
 class ValoracionesSearch extends HTMLElement {
     constructor(/** @type {Function} */ action,/** @type {Function|undefined} */ secondAction,/** @type {Boolean} */ onlyValids = false) {
         super();

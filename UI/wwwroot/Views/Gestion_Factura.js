@@ -10,8 +10,9 @@ import { Tbl_Compra_ModelComponent } from "../Facturacion/FrontModel/ModelCompon
 import { Tbl_Compra } from "../Facturacion/FrontModel/Tbl_Compra.js";
 import { Catalogo_Cambio_Divisa_ModelComponent } from "../FrontModel/DBODataBaseModel.js";
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
-import { ModalMessage, WForm } from "../WDevCore/WComponents/WForm.js";
+import {  WForm } from "../WDevCore/WComponents/WForm.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
+import { ModalMessage } from "../WDevCore/WComponents/ModalMessage.js";
 
 /**
  * @typedef {Object} facturaconfig

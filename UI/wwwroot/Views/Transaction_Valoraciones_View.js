@@ -5,7 +5,7 @@ import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js";
 import { ComponentsManager, ConvertToMoneyString, html, WRender } from "../WDevCore/WModules/WComponentsTools.js";
 // @ts-ignore
 import { Catalogo_Cambio_Divisa_ModelComponent, Catalogo_Categoria_ModelComponent, Catalogo_Clientes, Catalogo_Estados_Articulos, Transactional_Valoracion_ModelComponent } from "../FrontModel/DBODataBaseModel.js";
-import { ModalMessage, WForm } from "../WDevCore/WComponents/WForm.js";
+import {  WForm } from "../WDevCore/WComponents/WForm.js";
 
 
 import { Transactional_Configuraciones } from "../Admin/ADMINISTRATIVE_ACCESSDataBaseModel.js";
@@ -30,6 +30,7 @@ import { DocumentsData } from "../Facturacion/FrontModel/DocumentsData.js";
 import { Catalogo_Cambio_Divisa } from "../FrontModel/Catalogo_Cambio_Divisa.js";
 import { Transactional_Valoracion } from "../Facturacion/FrontModel/Tbl_Lotes.js";
 import { WPrintExportToolBar } from "../WDevCore/WComponents/WPrintExportToolBar.mjs";
+import { ModalMessage } from "../WDevCore/WComponents/ModalMessage.js";
 class Transaction_Valoraciones_View extends HTMLElement {
 	// @ts-ignore
 	constructor(props) {
