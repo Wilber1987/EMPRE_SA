@@ -6,8 +6,10 @@ using API.Controllers;
 using CAPA_DATOS;
 using CAPA_NEGOCIO.Services;
 using DataBaseModel;
+using Financial;
 using Model;
 using Transactions;
+using UI.CAPA_NEGOCIO.Empresa.Services.Recibos;
 
 namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 {
@@ -81,11 +83,25 @@ namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 
 			foreach (var detalle in factura.Detalle_Factura)
 			{
-				var subtotal = detalle.Cantidad * detalle.Lote?.Precio_Venta;
+				switch (factura.Tipo)
+				{
+					case "VENTA":
+						detalle.Precio_Venta = detalle.Lote?.EtiquetaLote?.Precio_venta_Contado_dolares;
+						break;
+					case "APARTADO_MENSUAL":
+					case "APARTADO_QUINCENAL":
+						detalle.Precio_Venta = detalle.Lote?.EtiquetaLote?.Precio_venta_Apartado_dolares;
+						break;
+					default:
+						break;
+				}
+				var subtotal = detalle.Cantidad * detalle.Precio_Venta;
 				var montoDescuento = subtotal * ((detalle.Descuento ?? 0) / 100);
 				var subTotalCalculado = subtotal - montoDescuento;
 				var ivaCalculado = subTotalCalculado * 0;
 				var totalCalculado = subTotalCalculado + ivaCalculado;
+
+
 
 				detalle.Sub_Total = subTotalCalculado;
 				detalle.Iva = ivaCalculado;
@@ -111,10 +127,10 @@ namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 			}
 
 			factura.Iva = totalIva;
-			factura.Sub_Total =factura.Tipo == "VENTA" ? totalSubTotal :  totalSubTotal - factura.Datos_Financiamiento?.Total_Financiado ?? 0;
+			factura.Sub_Total = factura.Tipo == "VENTA" ? totalSubTotal : totalSubTotal - factura.Datos_Financiamiento?.Total_Financiado ?? 0;
 			factura.TotalDescuento = totalDescuento;
 			factura.Total = factura.Sub_Total + factura.Iva;
-			
+
 			factura.Fecha = DateTime.Now;
 			factura.Datos = new DatosFactura
 			{
@@ -158,8 +174,10 @@ namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 						};
 					}
 					factura.Total_Pagado = factura.Monto_dolares;
-					factura.Total_Financiado = factura.Total - factura.Monto_dolares;
+					factura.Total_Financiado = factura.Datos_Financiamiento?.Total_Financiado;
 					var (contractResponse, contrato) = GenerarContratoFinanciamiento(Identity, factura, isQuincenal);
+
+
 					if (contractResponse.status != 200)
 					{
 						return contractResponse;
@@ -169,13 +187,72 @@ namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 						factura.Datos_Financiamiento!.Numero_Contrato
 							= contrato.Transaction_Contratos?.numero_contrato;
 						contract = contrato.Transaction_Contratos;
+						Tbl_Cuotas? cuota = new Tbl_Cuotas().Find<Tbl_Cuotas>(
+							FilterData.Equal("numero_contrato", contrato?.Transaction_Contratos?.numero_contrato),
+							FilterData.Equal("estado", Contratos_State.CAPITAL_CANCELADO.ToString())
+						);
+						var cuotasPendientes = contrato?.Transaction_Contratos?.Tbl_Cuotas.Where(c => c.Estado?.ToUpper() == EstadoEnum.PENDIENTE.ToString()).ToList();
+
+
+						Transaccion_Factura transaccion_Factura = new Transaccion_Factura
+						{
+							fecha = DateTime.Now,
+							numero_contrato = contract?.numero_contrato,
+							Moneda = factura.Moneda,
+							total = factura.Monto_dolares,
+							total_cordobas = factura.Monto_cordobas,
+							id_usuario = User.UserId,
+							tasa_cambio = factura.Tasa_Cambio_Venta,
+							Factura_contrato = new Factura_contrato()
+							{
+								numero_contrato = contrato?.Transaction_Contratos?.numero_contrato,
+								cuotas_pactadas = contrato?.Transaction_Contratos?.Tbl_Cuotas.Count(),
+								cuotas_pendientes = cuotasPendientes.Count(),
+								saldo_anterior = contrato?.Transaction_Contratos?.saldo,
+								saldo_actual = contrato?.Transaction_Contratos?.saldo,
+								abono_capital = factura.Monto_dolares,
+								interes_pagado = 0,
+								mora_pagado = 0,
+								//id_clasificacion_interes_anterior = id_clasificacion_interes_anterior,
+								reestructurado_anterior = 0,
+								//mora = this.mora_dolares,
+								interes_demas_cargos_pagar = 0,
+								proximo_pago_pactado = cuotasPendientes.Count > 0 ? cuotasPendientes[0].fecha : null,
+								//total_parciales = this.total_parciales,//todo preguntar a EMPRESA 
+								tipo = null,
+								tipo_cuenta = null,
+								total = factura.Monto_dolares,
+								tasa_cambio = factura.Tasa_Cambio_Venta,
+								id_cliente = contrato?.Transaction_Contratos?.codigo_cliente,
+								id_sucursal = dbUser?.Id_Sucursal,
+								reestructuracion = 0,
+								perdida_de_documento = 0,
+								total_pagado = factura.Monto_dolares,
+								cancel_with_perdida = false,
+								Solo_Interes_Mora = false
+							},
+							concepto = $"pago de apartado en contrato No. {contract?.numero_contrato}",
+							Detalle_Factura_Recibo = [new Detalle_Factura_Recibo
+							{
+								total_cuota = cuota?.total,
+								monto_pagado = cuota?.total,
+								capital_restante = cuota?.capital_restante,
+								id_cuota = cuota?.id_cuota,
+								concepto = $"{cuota?.id_cuota?.ToString("D9")}",
+								tasa_cambio = factura?.Tasa_Cambio,
+							}]
+						};
+						transaccion_Factura.id_factura = ((Transaccion_Factura?)transaccion_Factura.Save())?.id_factura;
+						factura.Datos_Financiamiento!.Id_recibo = transaccion_Factura.id_factura;
+
+						contrato!.Transaction_Contratos!.Recibos = [transaccion_Factura];
 					}
 					break;
 				default:
 					break;
 			}
 
-			factura.Save();
+			factura?.Save();
 			var cuentaDestino = Catalogo_Cuentas.GetCuentaIngresoRecibos(dbUser);
 			var cuentaOrigen = Catalogo_Cuentas.GetCuentaEgresoRecibos(dbUser);
 			if (cuentaDestino == null || cuentaOrigen == null)
@@ -186,7 +263,7 @@ namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 					message = "Cuentas no configuradas correctamente"
 				};
 			}
-			string detalleT = $"Venta de producto, factura: {factura.Id_Factura} al cliente {factura.Cliente?.Nombre_Completo}";
+			string detalleT = $"Venta de producto, factura: {factura?.Id_Factura} al cliente {factura.Cliente?.Nombre_Completo}";
 			ResponseService response = new Movimientos_Cuentas
 			{
 				Catalogo_Cuentas_Destino = cuentaDestino,
@@ -205,9 +282,12 @@ namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 			{
 				status = 200,
 				message = "Factura guardada con éxito",
-				body = new {
+				body = new
+				{
 					factura,
-					Contract = ContractTemplateService.GetContractContent(contract)
+					Contract = ContractTemplateService.GetContractContent(contract),
+					Transaction_Contratos = contract,
+					Recibo = new RecibosTemplateServices().GenerateReciboHtmlTemplate(contract?.Recibos?[0])
 				}
 			};
 		}
@@ -227,7 +307,7 @@ namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 				fecha = DateTime.Now,
 				plazo = factura.Datos_Financiamiento?.Plazo ?? 1,
 				taza_cambio = factura.Tasa_Cambio_Venta,
-				taza_cambio_compra = factura.Tasa_Cambio,
+				taza_cambio_compra = factura.Tasa_Cambio_Venta,
 				Catalogo_Clientes = GetCliente(factura.Id_Cliente),
 				tipo = isQuincenal ? Contratos_Type.APARTADO_QUINCENAL.ToString() : Contratos_Type.APARTADO_MENSUAL.ToString(),
 				gestion_crediticia = 0,
@@ -235,7 +315,8 @@ namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 				saldo = factura.Datos_Financiamiento?.Total_Financiado,
 				Valoracion_empeño_dolares = factura.Datos_Financiamiento?.Total_Financiado,
 				Valoracion_empeño_cordobas = factura.Datos_Financiamiento?.Total_Financiado_Cordobas,
-
+				cuotafija = factura.Datos_Financiamiento?.Cuota_Fija_Cordobas,
+				cuotafija_dolares = factura.Datos_Financiamiento?.Cuota_Fija_Dolares,
 				Detail_Prendas = factura.Detalle_Factura?.Select(detalle =>
 				{
 					var valoracion = detalle.Lote?.Datos_Producto;
@@ -256,6 +337,17 @@ namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 				}).ToList()
 			};
 			contrato.Transaction_Contratos.Tbl_Cuotas = contrato.Transaction_Contratos.CrearCuotas(factura.Total_Financiado ?? 0, factura.Datos_Financiamiento?.Plazo ?? 1, false, false);
+			contrato.Transaction_Contratos.Tbl_Cuotas.Insert(0, new Tbl_Cuotas
+			{
+				Estado = Contratos_State.CAPITAL_CANCELADO.ToString(),
+				fecha = DateTime.Now,
+				total = factura.Total,
+				interes = 0,
+				abono_capital = factura.Total,
+				capital_restante = factura.Datos_Financiamiento?.Total_Financiado,
+				tasa_cambio = factura.Tasa_Cambio_Venta,
+				numero_contrato = contrato.Transaction_Contratos.numero_contrato
+			});
 			return (contrato.DoSaveContract(Identity), contrato);
 		}
 
@@ -276,21 +368,27 @@ namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 		{
 			return "";
 		}
-		
-		public static  ResponseService? FindFacturaContrato(Tbl_Factura factura)
+
+		public static ResponseService? FindFacturaContrato(Tbl_Factura factura)
 		{
-			Transaction_Contratos? contract = new Transaction_Contratos{ numero_contrato = factura?.Datos_Financiamiento?.Numero_Contrato}.Find<Transaction_Contratos>();
+			Transaction_Contratos? contract = new Transaction_Contratos { numero_contrato = factura?.Datos_Financiamiento?.Numero_Contrato }.Find<Transaction_Contratos>();
 			string contractData = contract != null ? ContractTemplateService.GetContractContent(contract) : "";
+			Transaccion_Factura? transaccion_Factura = new Transaccion_Factura { id_factura = factura?.Datos_Financiamiento?.Id_recibo }.Find<Transaccion_Factura>();
+
 			return new ResponseService
 			{
 				status = 200,
 				message = "Factura guardada con éxito",
-				body = new {
+				body = new
+				{
 					factura,
-					Contract = contractData
+					Contract = contractData,
+					Contrato = contract,
+					Recibo = new RecibosTemplateServices().GenerateReciboHtmlTemplate(transaccion_Factura)
+
 				}
 			};
 		}
-		
+
 	}
 }

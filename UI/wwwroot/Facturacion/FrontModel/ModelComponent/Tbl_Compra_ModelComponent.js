@@ -1,5 +1,4 @@
 //@ts-check
-
 // @ts-ignore
 import { ModelProperty } from "../../../WDevCore/WModules/CommonModel.js";
 import { Cat_Proveedor_ModelComponent } from './Cat_Proveedor_ModelComponent.js'

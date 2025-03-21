@@ -23,7 +23,7 @@ class Tbl_Factura_ModelComponent extends EntityClass {
 		};
 	}
 	/**@type {ModelProperty}*/ Id_Factura = { type: 'number', primary: true };
-	/**@type {ModelProperty}*/ Cliente = { type: 'wselect', ModelObject: () => new Catalogo_Clientes(), defaultValue: null };
+	/**@type {ModelProperty}*/ Cliente = { type: 'wselect', ModelObject: () => new Catalogo_Clientes(), defaultValue: null, ForeignKeyColumn : "Id_Cliente" };
 	/**@type {ModelProperty}*/ Tipo = {
 		type: 'select', Dataset: ["VENTA", "APARTADO_MENSUAL", "APARTADO_QUINCENAL"],
 		action: (/**@type {Tbl_Factura}*/ ObjectF, form) => {

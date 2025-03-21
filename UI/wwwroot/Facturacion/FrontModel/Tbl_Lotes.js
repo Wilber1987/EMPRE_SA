@@ -15,6 +15,7 @@ class Tbl_Lotes extends EntityClass {
 	}
    /**@type {Number}*/ Id_Lote;
    /**@type {Number}*/ Id_Producto;
+   /**@type {String}*/ Name;
    /**@type {String}*/ Detalles;
    /**@type {String}*/ Codigo;
    /**@type {String}*/ Tipo;
@@ -74,9 +75,9 @@ class Transactional_Valoracion extends EntityClass {
 }
 class Detail_Valores {
 	/** @type {Number} */Valoracion_1;
-	/** @type {Number} */dolares_1; 
+	/** @type {Number} */dolares_1;
 	/** @type {Number} */Valoracion_2;
-	/** @type {Number} */dolares_2; 
+	/** @type {Number} */dolares_2;
 	/** @type {Number} */Valoracion_3;
 	/** @type {Number} */dolares_3;
 }

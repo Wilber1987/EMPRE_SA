@@ -66,24 +66,7 @@ class VentasComponent extends HTMLElement {
             //Options: false,
             // @ts-ignore
             SaveFunction: async (/**@type {Tbl_Factura} */ factura) => {           
-                
-                if (!this.ComprasForm?.Validate()) {
-                    this.append(ModalMessage("Agregue datos para poder continuar"));
-                    return;
-                }
-                const response = await new Tbl_Factura(factura).Save();
-                if (response.status == 200) {
-                    if (this.VentasConfig?.action != undefined) {
-                        this.append(ModalVericateAction(async () => {
-                            // @ts-ignore
-                            this.VentasConfig?.action(response.body, response);
-                        }, response.message));
-                    } else {
-                        this.append(ModalMessage(response.message))
-                    }
-                } else {
-                    this.append(ModalMessage(response.message))
-                }
+                await this.SaveVenta(factura);
             }
         });
         this.CompraContainer.append(
@@ -91,6 +74,32 @@ class VentasComponent extends HTMLElement {
             this.TotalesDetail
         );
     }
+    async SaveVenta(factura) {
+        if (!this.ComprasForm?.Validate()) {
+            this.append(ModalMessage("Agregue datos para poder continuar"));
+            return;
+        }
+        this.append(ModalVericateAction(async () => {
+            // @ts-ignore
+            const response = await new Tbl_Factura(factura).Save();
+            if (response.status == 200) {
+                if (this.VentasConfig?.action != undefined) {
+                    this.append(ModalVericateAction(async () => {
+                        // @ts-ignore
+                        this.VentasConfig?.action(response.body, response);
+                    }, response.message, false));
+                } else {
+                    this.append(ModalMessage(response.message, undefined, true));
+                }
+            } else {
+                this.append(ModalMessage(response.message));
+            }
+        }, "¿Desea guardar la venta?"));
+
+
+        
+    }
+
     /**
     * @param {Number} subtotal
     * @param {Number} iva

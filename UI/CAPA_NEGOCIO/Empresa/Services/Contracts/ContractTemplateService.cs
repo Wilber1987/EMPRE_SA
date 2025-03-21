@@ -188,7 +188,7 @@ namespace CAPA_NEGOCIO.Services
 			{
 				string propertyName = property.Name;
 				object propertyValue = property.GetValue(model, null);
-				string placeholder = $"{{{{{propertyName}}}}}";
+				string placeholder = "{{" + propertyName + "}}";
 				if (propertyValue != null)
 				{
 					renderedTemplate = renderedTemplate.Replace(placeholder, propertyValue.ToString());

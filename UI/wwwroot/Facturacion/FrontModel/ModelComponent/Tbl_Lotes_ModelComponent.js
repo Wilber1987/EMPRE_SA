@@ -16,7 +16,8 @@ class Tbl_Lotes_ModelComponent extends EntityClass {
    
     /**@type {ModelProperty}*/ Id_Producto = { type: 'number', hiddenInTable: true, hiddenFilter: true };
     /**@type {ModelProperty}*/ Id_Almacen = { type: 'number', hiddenInTable: true, hiddenFilter: true };
-    /**@type {ModelProperty}*/ Descripcion = { type: 'text' };
+    /**@type {ModelProperty}*/ Name = { type: 'text' };
+    /**@type {ModelProperty}*/ Detalles = { type: 'text' };    
     /**@type {ModelProperty}*/ Lote = { type: 'text', label: "Código" };
     //**@type {ModelProperty}*/ Cat_Producto = { type: 'WSELECT', ModelObject: () => new Cat_Producto_ModelComponent() };
     /**@type {ModelProperty}*/ Cat_Almacenes = { type: 'WSELECT', ModelObject: () => new Cat_Almacenes_ModelComponent() };
@@ -25,7 +26,7 @@ class Tbl_Lotes_ModelComponent extends EntityClass {
     //**@type {ModelProperty}*/ Precio_Compra = { type: 'Money', hiddenFilter: true };
     /**@type {ModelProperty}*/ Cantidad_Inicial = { type: 'number', hiddenInTable: true, hiddenFilter: true };
     /**@type {ModelProperty}*/ Cantidad_Existente = { type: 'number', hiddenFilter: true };
-    /**@type {ModelProperty}*/ Fecha_Ingreso = { type: 'date', hiddenInTable: true, hiddenFilter: true };
+    /**@type {ModelProperty}*/ Fecha_Ingreso = { type: 'date', hiddenInTable: true };
     /**@type {ModelProperty}*/ Detalle_Compra = { type: 'WSELECT', ModelObject: () => new Detalle_Compra_ModelComponent(), hiddenInTable: true, hiddenFilter: true };
 }
 export { Tbl_Lotes_ModelComponent }

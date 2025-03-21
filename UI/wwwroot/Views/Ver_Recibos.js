@@ -5,9 +5,10 @@ import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
 import { Transaccion_Factura, Catalogo_Cambio_Divisa_ModelComponent } from "../FrontModel/DBODataBaseModel.js"
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
-import {WAjaxTools} from "../WDevCore/WModules/WAjaxTools.js";
+import { WAjaxTools } from "../WDevCore/WModules/WAjaxTools.js";
 import { ModalMessage } from "../WDevCore/WComponents/ModalMessage.js";
 import { ModalVericateAction } from "../WDevCore/WComponents/ModalVericateAction.js";
+import { WPrintExportToolBar } from "../WDevCore/WComponents/WPrintExportToolBar.mjs";
 class Ver_RecibosView extends HTMLElement {
 	constructor(props) {
 		super();
@@ -30,11 +31,11 @@ class Ver_RecibosView extends HTMLElement {
 				FilterDisplay: true,
 				UserActions: [
 					{
-						name: "Anular", 
+						name: "Anular",
 						rendered: (/** @type { Transaccion_Factura } */ factura) => {
 							// @ts-ignore
-							return factura.estado != "ANULADO" 
-						}, 
+							return factura.estado != "ANULADO"
+						},
 						action: (factura) => {
 							factura.motivo_anulacion = null
 							const modal = new WModalForm({
@@ -75,7 +76,7 @@ class Ver_RecibosView extends HTMLElement {
 								return;
 							}
 
-							await this.printRecibo(id_factura, tasa);
+							await this.printRecibo(id_factura, tasa, factura);
 							// }, "¿Esta seguro que desea imprimir este recibo?"))
 						}
 					}
@@ -91,7 +92,7 @@ class Ver_RecibosView extends HTMLElement {
 			this.OptionContainer,
 			this.TabContainer
 		);
-	   
+
 
 	}
 	SetOption() {
@@ -104,7 +105,7 @@ class Ver_RecibosView extends HTMLElement {
 	}
 
 
-	async printRecibo(id_factura, tasa) {
+	async printRecibo(id_factura, tasa, factura) {
 		const response = await WAjaxTools.PostRequest("../api/ApiRecibos/printRecibo",
 			{ id_recibo: id_factura, tasa_cambio: tasa[0].Valor_de_compra });
 		if (response.status == 200 && response.body.documents != null && response.body.documents != undefined) {
@@ -115,12 +116,11 @@ class Ver_RecibosView extends HTMLElement {
 					tagName: "iframe", srcdoc: element.body,
 					style: {
 						minHeight: "700px",
-						width: element.type == "REESTRUCTURE_TABLE" ? "95%" : "320px",
-						maxWidth: element.type == "REESTRUCTURE_TABLE" ? "1100px" : "320px"
-
+						width: element.type == "REESTRUCTURE_TABLE" || factura.concepto.includes("pago de apartado") ? "95%" : "320px",
+						maxWidth: element.type == "REESTRUCTURE_TABLE" || factura.concepto.includes("pago de apartado") ? "1100px" : "320px"
 					}
 				})
-				//console.log(objFra.srcdoc);
+				/*//console.log(objFra.srcdoc);
 				const print = function () {
 					// @ts-ignore
 					objFra.contentWindow.focus(); // Set focus.
@@ -128,11 +128,17 @@ class Ver_RecibosView extends HTMLElement {
 					objFra.contentWindow.print(); // Print it  
 				};
 				const btn = html`<img class="print" src="../WDevCore/Media/print.png"/>`
-				btn.onclick = print
+				btn.onclick = print*/
 				docs.push(WRender.Create({
 					className: "doc-container", children: [
 						this.PrintIconStyle(response.body),
-						[btn],
+						new WPrintExportToolBar({
+							PrintAction: (toolBar) => {
+								toolBar.Print(html`<div class="contract-response">
+									<div class="recibo">${element.body}</div>
+								</div>`)
+							}
+						}),
 						// @ts-ignore
 						WRender.Create({ className: "print-container-iframe", children: objFra })]
 				}));
@@ -152,7 +158,7 @@ class Ver_RecibosView extends HTMLElement {
 			//     ventimp?.print();
 			//     ventimp?.close();
 			// }, 100);
-		} else if  (response.status == 200 && response.message != null) {   
+		} else if (response.status == 200 && response.message != null) {
 			this.append(ModalMessage(response.message))
 		}
 	}

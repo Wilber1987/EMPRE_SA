@@ -144,32 +144,34 @@ namespace DataBaseModel
 			int porcentajesApartado = 60;
 			int? Ncuotas = 4;
 
-			detalle!.lotes = [ new Tbl_Lotes()
+			Tbl_Lotes lotes = new Tbl_Lotes()
+			{
+				//Cat_Producto = detalle?.Cat_Producto,
+				Precio_Venta = detalle?.Precio_Venta,
+				Precio_Compra = detalle?.Precio_Unitario,
+				Cantidad_Inicial = detalle?.Cantidad,
+				Cantidad_Existente = detalle?.Cantidad,
+				Id_Sucursal = dbUser?.Id_Sucursal,
+				Id_User = dbUser?.Id_User,
+				Fecha_Ingreso = DateTime.Now,
+				Detalles = $"{detalle?.Cat_Producto?.Descripcion}, Marca: {detalle?.Datos_Producto_Lote?.Marca}, Modelo: {detalle?.Datos_Producto_Lote?.Modelo}",
+				Datos_Producto = detalle?.Datos_Producto_Lote,
+				Id_Almacen = new Cat_Almacenes().GetAlmacen(dbUser?.Id_Sucursal ?? 0),
+				Lote = codigo,
+				EtiquetaLote = new EtiquetaLote
 				{
-					//Cat_Producto = detalle?.Cat_Producto,
-					Precio_Venta = detalle?.Precio_Venta,
-					Precio_Compra = detalle?.Precio_Unitario,
-					Cantidad_Inicial = detalle?.Cantidad,
-					Cantidad_Existente = detalle?.Cantidad,
-					Id_Sucursal = dbUser?.Id_Sucursal,
-					Id_User =  dbUser?.Id_User,
-					Fecha_Ingreso = DateTime.Now,
-					Detalles = $"{detalle?.Cat_Producto?.Descripcion}, Marca: {detalle?.Datos_Producto_Lote?.Marca}, Modelo: {detalle?.Datos_Producto_Lote?.Modelo}",
-					Datos_Producto = detalle?.Datos_Producto_Lote,
-					Id_Almacen = new Cat_Almacenes().GetAlmacen(dbUser?.Id_Sucursal ?? 0),
-					Lote = codigo,
-					EtiquetaLote = new EtiquetaLote {
-							Tipo = "CV",
-							Articulo = $"{detalle?.Cat_Producto?.Descripcion}, Marca: {detalle?.Datos_Producto_Lote?.Marca}, Modelo: {detalle?.Datos_Producto_Lote?.Modelo}",
-							Codigo = codigo,
-							PorcentajesUtilidad = porcentajesUtilidad,
-							PorcentajesApartado = porcentajesApartado,
-							PorcentajeAdicional = 0,
-							Precio_compra_dolares = detalle?.Precio_Unitario,
-							N_Cuotas = Ncuotas
-						}
+					Tipo = "CV",
+					Articulo = $"{detalle?.Cat_Producto?.Descripcion}, Marca: {detalle?.Datos_Producto_Lote?.Marca}, Modelo: {detalle?.Datos_Producto_Lote?.Modelo}",
+					Codigo = codigo,
+					PorcentajesUtilidad = porcentajesUtilidad,
+					PorcentajesApartado = porcentajesApartado,
+					PorcentajeAdicional = 0,
+					Precio_compra_dolares = detalle?.Precio_Unitario,
+					N_Cuotas = Ncuotas
 				}
-			];
+			};
+			lotes.Save();
+			detalle!.lotes = [lotes];
 		}
 
 
@@ -239,7 +241,7 @@ namespace DataBaseModel
 
 				}.SaveMovimiento(Identify);
 				if (response.status == 400) return response;
-				
+
 				CommitGlobalTransaction();
 
 				return new ResponseService()

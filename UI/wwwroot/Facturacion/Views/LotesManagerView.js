@@ -18,6 +18,7 @@ import { DateTime } from "../../WDevCore/WModules/Types/DateTime.js";
 import { ControlBuilder } from "../../WDevCore/WModules/WControlBuilder.js";
 import { ModalMessage } from "../../WDevCore/WComponents/ModalMessage.js";
 import { ModalVericateAction } from "../../WDevCore/WComponents/ModalVericateAction.js";
+import { WFilterOptions } from "../../WDevCore/WComponents/WFilterControls.js";
 
 /**
  * @typedef {Object} LotesConfig
@@ -99,38 +100,22 @@ class LotesManagerView extends HTMLElement {
 		this.append(modal);
 	}
 
-	async EtiquetasView() {
-		/**@type {Array<Tbl_Lotes>} */
-		const lotes = await new Tbl_Lotes().Where(
-			FilterData.Greater("Cantidad_Existente", 0)
-		);
+	async EtiquetasView() {		
 		/**@type {Array<Tbl_Lotes>} */
 		const selectedLotes = [];
-		return html`<div>
-			<div class="OptionContainer">
-				${ControlBuilder.BuildSearchInput({
-					action: async (value) => {
-						console.log(value);                        
-						if (value == "") {
-							// @ts-ignore
-							this.querySelectorAll(".etiqueta-detail").forEach((etiqueta) => { etiqueta.style.display = "contents" })
-							return;
-						}
-						const filters = await WArrayF.FilterInArrayByValue(lotes, value);
-						this.querySelectorAll(".etiqueta-detail").forEach((etiqueta) => {
-							const filter = filters.find(f => f.id == etiqueta);
-							if (!filter) {
-								// @ts-ignore
-								etiqueta.style.display = "none"
-							}
-						})
 
-					}
-				})}
-				${new WPrintExportToolBar({ PrintAction: (tool) => this.ImprimirEtiquetas(selectedLotes, tool) })}
-			</div>            
-			<div class="etiquetas-container">               
-				<div class="etiqueta-detail-header">
+		const dataContainer = html`<div></div>`
+		const etiquetasContainer = html`<div class="etiquetas-container"></div>`
+
+		const filter = new WFilterOptions({
+			ModelObject: new Tbl_Lotes_ModelComponent(),
+			EntityModel: new Tbl_Lotes(),
+			AutoSetDate: true,
+			UseEntityMethods: true,	
+			Display: true,
+			FilterFunction: async (lotes) => {
+				etiquetasContainer.innerHTML = "";
+				etiquetasContainer.append(html`<div class="etiqueta-detail-header">
 					<div class="etiqueta-header">Detalle</div>
 					<div class="etiqueta-header">Código</div>
 					<div class="etiqueta-header">Tipo</div>
@@ -141,11 +126,19 @@ class LotesManagerView extends HTMLElement {
 					<div class="etiqueta-header">Precio de S. Apartado $</div>
 					<div class="etiqueta-header"><%</div>
 					<div class="etiqueta-header"></div>
-				</div>
-				${lotes.map(lote => this.CreateEtiqueta(lote, selectedLotes))}
-			</div>
+				</div>`)
+				lotes.forEach(lote => { etiquetasContainer.append(this.CreateEtiqueta(lote, selectedLotes)) })
+			}
+		});
+		await filter.filterFunction();
+		const div = html`<div>
+			<div class="OptionContainer">
+				${filter}
+				${new WPrintExportToolBar({ PrintAction: (tool) => this.ImprimirEtiquetas(selectedLotes, tool) })}			
+			</div>	
+			${etiquetasContainer}		
 		</div>`
-
+		return div;
 	}
 	/**
 	* @param {Array<Tbl_Lotes>} lotes 
@@ -156,6 +149,8 @@ class LotesManagerView extends HTMLElement {
 			${this.EtiquetaStyle()}               
 			${lotes.map(lote => this.BuildLoteEtiqueta(lote))}
 		</div>`
+		this.append(fragment.cloneNode(true));
+
 		tool.Print(fragment);
 		//this.append(fragment)
 	}
@@ -164,42 +159,38 @@ class LotesManagerView extends HTMLElement {
 	* @param {Tbl_Lotes} lote
 	*/
 	BuildLoteEtiqueta(lote) {
-		return html`<div class="etiqueta">
-			<table>                
+		return html`<div class="etiqueta" >
+			<table >                
 				<tr>
-					<td class="value-prop" style="text-align: center;" colspan="2"> 
+					<td class="value-prop" style="text-align: center; width: 50%" colspan="2"> 
 						<img class="logo" src="/Media/img/logo.png"/>
 					</td >
-					<td colspan="2" style="text-align: center;">Datos de venta</td>
+					<td colspan="4" style="text-align: center;">Datos de venta</td>
 				</tr>
 				<tr>
-					<td class="value-prop" colspan="2">ARTÍCULO</td>
-					<td colspan="2">${lote.Detalles}</td>
+					<td class="value-prop" style="width: 50%" colspan="2">ARTÍCULO</td>
+					<td colspan="4">${lote.Detalles}</td>
 				</tr>
 				<tr>
-					<td class="value-prop" colspan="2">P/CONTADO</td>                    
-					<td>C$ ${(lote.EtiquetaLote.Precio_venta_Apartado_dolares * lote.EtiquetaLote.TasaCambio.Valor_de_venta).toFixed(2)}</td>
-					<td>$ ${lote.EtiquetaLote.Precio_venta_Apartado_dolares.toFixed(2)}</td>
+					<td class="value-prop" style="width: 50%" colspan="2">P/CONTADO</td>                    
+					<td  colspan="4">C$ ${(lote.EtiquetaLote.Precio_venta_Apartado_dolares * lote.EtiquetaLote.TasaCambio.Valor_de_venta).toFixed(2)}</td>					
 				</tr>
 				<tr>
-					<td class="value-prop" colspan="2">P/CONTADO</td>                    
-					<td>C$ ${(lote.EtiquetaLote.Cuota_apartado_quincenal_dolares * lote.EtiquetaLote.TasaCambio.Valor_de_venta).toFixed(2)}</td>
-					<td>$ ${lote.EtiquetaLote.Cuota_apartado_quincenal_dolares.toFixed(2)}</td>
+					<td class="value-prop" style="width: 50%" colspan="2">APARTADO / QUINCENAL</td>                    
+					<td  colspan="4">C$ ${(lote.EtiquetaLote.Cuota_apartado_quincenal_dolares * lote.EtiquetaLote.TasaCambio.Valor_de_venta).toFixed(2)}</td>					
 				</tr>
 				<tr>
-					<td class="value-prop" colspan="2">N° CUOTAS</td>
-					<td colspan="2" style="text-align: center;">${lote.EtiquetaLote.N_Cuotas}</td>
+					<td class="value-prop" style="width: 50%" colspan="2">N° CUOTAS</td>
+					<td colspan="4" style="text-align: center;">${lote.EtiquetaLote.N_Cuotas}</td>
 				</tr>
 				<tr>
-					<td class="value-prop" colspan="2">APARTADO / MENSUAL</td>                    
-					<td>C$ ${(lote.EtiquetaLote.Cuota_apartado_mensual_dolares * lote.EtiquetaLote.TasaCambio.Valor_de_venta).toFixed(2)}</td>
-					<td>$ ${lote.EtiquetaLote.Cuota_apartado_mensual_dolares.toFixed(2)}</td>
+					<td class="value-prop" style="width: 50%" colspan="2">APARTADO / MENSUAL</td>                    
+					<td  colspan="4">C$ ${(lote.EtiquetaLote.Cuota_apartado_mensual_dolares * lote.EtiquetaLote.TasaCambio.Valor_de_venta).toFixed(2)}</td>					
 				</tr>
 				<tr>
-					<td class="value-prop">CÓDIGO</td>
-					<td>${lote.EtiquetaLote.Codigo}</td> 
-					<td>${lote.EtiquetaLote.Tipo != "CV" ? "ENVIADO A LIQ" : "Comprado"}</td>
-					<td>${new DateTime(lote.Fecha_Ingreso).toDDMMYYYY()}</td>
+					<td colspan="2" class="value-prop">CÓDIGO: ${lote.EtiquetaLote.Codigo}</td>
+					<td colspan="2">${lote.EtiquetaLote.Tipo != "CV" ? "ENVIADO A LIQ" : "Comprado"}</td>
+					<td colspan="2">${new DateTime(lote.Fecha_Ingreso).toDDMMYYYY()}</td>
 				</tr>
 			</table>
 		</div>`;
@@ -223,13 +214,13 @@ class LotesManagerView extends HTMLElement {
 				value="${lote.EtiquetaLote?.PorcentajeAdicional}" 
 				max="100" min="0" pattern="\d*" 
 				onchange="${async (ev) => {
-					const value = ev.target.value;
-					lote.EtiquetaLote.PorcentajeAdicional = value;
-					const response = await lote.Update();
-					if (response.status == 200) {
-						location.reload();
-					}
+				const value = ev.target.value;
+				lote.EtiquetaLote.PorcentajeAdicional = value;
+				const response = await lote.Update();
+				if (response.status == 200) {
+					location.reload();
 				}
+			}
 			}"></div>
 			<div><input type="checkbox" onchange="${async (ev) => {
 				WArrayF.AddOrRemove(lote, selectedLotes, ev.target.checked);
@@ -239,7 +230,6 @@ class LotesManagerView extends HTMLElement {
 	}
 	CustomStyle = css`       
 		.OptionContainer{
-			display: flex;
 			justify-content: space-between;
 			align-items: center;
 			& .search-box {
@@ -310,19 +300,21 @@ class LotesManagerView extends HTMLElement {
 	`
 	EtiquetaStyle() {
 		return css`
-			.etiquetas {                
-				width: 100%;
-				display: grid;
-				grid-template-columns: repeat(2, 1fr);
-				& .etiqueta {
-					max-width: 100mm;
-					display: inline-block;
-				}
+			.etiquetas {  
+				text-align: center;
+			}
+			.etiqueta {
+				max-width: 100mm;
+				display: inline-block;
+				width:45%;
+				margin: 10px;
+				height: 300px;
+				overflow: hidden;
 			}
 			table {
 				width: 100%;
+				height: 100%;
 				max-width: 100mm;
-				width: 100mm;
 				border-collapse: collapse;
 				& img {
 					height: 50px;
@@ -332,9 +324,9 @@ class LotesManagerView extends HTMLElement {
 					text-align: right;
 				}
 				& td {
-					font-size: 13px !important;
+					font-size: 12px !important;
 					border: solid 1px #000;
-					padding: 8px;
+					padding: 5px;
 				}               
 			}
 	   `
@@ -347,3 +339,22 @@ window.addEventListener('load', async () => {
 	// @ts-ignore
 	MainBody.append(new LotesManagerView())
 });
+
+
+		// const buildInput = ControlBuilder.BuildSearchInput({action: async (value) => {
+		// 		if (value == "") {
+		// 			// @ts-ignore
+		// 			this.querySelectorAll(".etiqueta-detail").forEach((etiqueta) => { etiqueta.style.display = "contents" })
+		// 			return;
+		// 		}
+		// 		const filters = await WArrayF.FilterInArrayByValue(lotes, value);
+		// 		this.querySelectorAll(".etiqueta-detail").forEach((etiqueta) => {
+		// 			const filter = filters.find(f => f.id == etiqueta);
+		// 			if (!filter) {
+		// 				// @ts-ignore
+		// 				etiqueta.style.display = "none"
+		// 			}
+		// 		})
+
+		// 	}
+		// });

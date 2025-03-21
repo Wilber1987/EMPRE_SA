@@ -851,22 +851,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
 			align-items: center;
 			padding: 0px  30px;
 			background-color: #d7d7d7;
-		}
-		.recibo, .contract {
-			width: 210mm; /* A4 width */
-			height: auto; /* A4 height */
-			background-color: white;
-			margin: 10px 0;
-			padding: 20px;
-			box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-			page-break-after: always; /* Ensure each .recibo starts on a new page */
-			& *{
-				color: #000;
-			}
 		}    
-		.recibo {
-			page-break-after: always; /* Ensure each .page-container starts on a new page */
-		}     
 		.OptionContainer{
 			display: flex;
 		} w-filter-option {

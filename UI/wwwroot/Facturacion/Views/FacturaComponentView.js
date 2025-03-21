@@ -3,23 +3,18 @@
 import { ComponentsManager, html, WRender } from "../../WDevCore/WModules/WComponentsTools.js";
 // @ts-ignore
 // @ts-ignore
-import { WAppNavigator } from "../../WDevCore/WComponents/WAppNavigator.js";
-import { css } from "../../WDevCore/WModules/WStyledRender.js";
-import { Tbl_Compra } from "../FrontModel/Tbl_Compra.js";
-import { VentasComponent } from "./VentasComponent.js";
-import { Tbl_Factura } from "../FrontModel/Tbl_Factura.js";
-import { DocumentViewer } from "../../WDevCore/WComponents/WDocumentViewer.js";
-import { WPrintExportToolBar } from "../../WDevCore/WComponents/WPrintExportToolBar.mjs";
-import { DocumentsData } from "../FrontModel/DocumentsData.js";
-import { WTableComponent } from "../../WDevCore/WComponents/WTableComponent.js";
-import { Tbl_Factura_ModelComponent } from "../FrontModel/ModelComponent/Tbl_Factura_ModelComponent.js";
-import { WModalForm } from "../../WDevCore/WComponents/WModalForm.js";
-import { Catalogo_Cambio_Divisa_ModelComponent } from "../../FrontModel/DBODataBaseModel.js";
 import { Catalogo_Cambio_Divisa } from "../../FrontModel/Catalogo_Cambio_Divisa.js";
-import { DateTime } from "../../WDevCore/WModules/Types/DateTime.js";
-import { WOrtograficValidation } from "../../WDevCore/WModules/WOrtograficValidation.js";
-import { Detalle_Factura } from "../FrontModel/Detalle_Factura.js";
+import { WAppNavigator } from "../../WDevCore/WComponents/WAppNavigator.js";
+import { WModalForm } from "../../WDevCore/WComponents/WModalForm.js";
+import { WPrintExportToolBar } from "../../WDevCore/WComponents/WPrintExportToolBar.mjs";
+import { WTableComponent } from "../../WDevCore/WComponents/WTableComponent.js";
+import { css } from "../../WDevCore/WModules/WStyledRender.js";
+import { DocumentsData } from "../FrontModel/DocumentsData.js";
+import { Tbl_Factura_ModelComponent } from "../FrontModel/ModelComponent/Tbl_Factura_ModelComponent.js";
+import { Tbl_Factura } from "../FrontModel/Tbl_Factura.js";
 import { FacturasBuilder } from "./Builders/FacturasBuilder.js";
+import { VentasComponent } from "./VentasComponent.js";
+import { Transaction_Contratos } from "../../FrontModel/Model.js";
 
 /**
  * @typedef {Object} FacturacionConfig
@@ -65,15 +60,13 @@ class FacturaComponentView extends HTMLElement {
 
         this.Manager.NavigateFunction("newFactura", new VentasComponent({
             TasaActual: this.TasaActual,
-            action: async (/**@type { {factura: Tbl_Factura, Contract: String}} */ response) => {
+            action: async (/**@type { {factura: Tbl_Factura, Contract: String, Recibo: String, Contrato:  Transaction_Contratos}} */ response) => {
                 switch (response.factura.Tipo) {
                     case "VENTA":
                         this.Manager.NavigateFunction("newFacturaPrinter", await this.VerFactura(response.factura));
                         break;
                     case "APARTADO_MENSUAL": case "APARTADO_QUINCENAL":
                         this.Manager.NavigateFunction("newFacturaPrinter", await this.VerContratoRecibo(response));
-
-
                         break;
                     default:
                         break;
@@ -83,7 +76,7 @@ class FacturaComponentView extends HTMLElement {
         }));
     }
     /**
-     * @param {{factura: Tbl_Factura, Contract: String}} response
+     * @param {{factura: Tbl_Factura, Contract: String, Recibo: String,Contrato: Transaction_Contratos}} response
      * @returns {Promise<HTMLElement>}
      */
     async VerContratoRecibo(response) {
@@ -93,14 +86,16 @@ class FacturaComponentView extends HTMLElement {
         const factura = FacturasBuilder.BuildFacturaRecibo(response, documentsData)
         //const contrato = await
         return html`<div class="contract-response">
-         ${new WPrintExportToolBar({PrintAction: (toolBar)=> {
-                toolBar.Print(html`<div class="contract-response">
-                    <div class="recibo">${factura.cloneNode(true)}</div>
-                    <div class="response">${response.Contract}</div>
-                </div>`)
-            }})}
+            ${new WPrintExportToolBar({
+                PrintAction: (toolBar) => {
+                    toolBar.Print(html`<div class="contract-response">
+                        <div class="recibo">${factura.cloneNode(true)}</div>
+                        <div class="contract">${response.Contract}</div>
+                    </div>`)
+                }
+            })}
             <div class="recibo">${factura}</div>
-            <div class="response">${response.Contract}</div>            
+            <div class="contract">${response.Contract}</div>            
         </div>`;
     }
 
@@ -143,26 +138,30 @@ class FacturaComponentView extends HTMLElement {
         });
     }
     async VerRecibos(factura) {
-        const response  = await new Tbl_Factura(factura).GetFacturaContrato();
+        const response = await new Tbl_Factura(factura).GetFacturaContrato();
         /**@type {DocumentsData} */
         const documentsData = await new DocumentsData().GetDataFragments();
         documentsData.Header.style.width = "100%";
         const facturaR = FacturasBuilder.BuildFacturaRecibo(response.body, documentsData)
         return html`<div class="contract-response">
-             ${new WPrintExportToolBar({PrintAction: (toolBar)=> {
-                toolBar.Print(facturaR.cloneNode(true))
-            }})}
-            <div class="recibo">${facturaR}</div>         
+             ${new WPrintExportToolBar({
+            PrintAction: (toolBar) => {
+                toolBar.Print(html`<div>${facturaR.cloneNode(true)}</div>`)
+            }
+        })}
+            ${facturaR}        
         </div>`;
 
     }
     async VerContrato(factura) {
-        const response  = await new Tbl_Factura(factura).GetFacturaContrato();
+        const response = await new Tbl_Factura(factura).GetFacturaContrato();
         return html`<div class="contract-response">
-            ${new WPrintExportToolBar({PrintAction: (toolBar)=> {
+            ${new WPrintExportToolBar({
+            PrintAction: (toolBar) => {
                 toolBar.Print(html`<div>${response.body.Contract}</div>`)
-            }})}
-            <div class="contract">${response.body.Contract}</div>            
+            }
+        })}
+        <div class="contract">${response.body.Contract}</div>            
         </div>`;
     }
 
@@ -177,7 +176,7 @@ class FacturaComponentView extends HTMLElement {
         this.factura = FacturasBuilder.BuildFactura(factura, documentsData)
         return html`<div class="contract-response">
             ${this.BuildOptionsBar(this.factura, documentsData)}
-            <div class="recibo"> ${this.factura}</div>           
+            ${this.factura}          
         </div>`;
     }
 
@@ -185,20 +184,13 @@ class FacturaComponentView extends HTMLElement {
     * @param {HTMLElement} factura
     */
     BuildOptionsBar(factura, documentsData) {
-
         return new WPrintExportToolBar({
             PrintAction: (toolBar) => {
-                toolBar.Print(html`<div class="page">                   
-                    ${factura.innerHTML}    
+                toolBar.Print(html`<div class="">                   
+                    ${factura.cloneNode(true)}    
                 </div>`);
                 return;
-            }, ExportPdfAction: (/** @type {WPrintExportToolBar} */ toolBar) => {
-                const body = html`<div class="page" style="position:relative">
-                    ${factura.innerHTML}
-                </div>`
-                toolBar.ExportPdf(body);
-                return;
-            },
+            }
         });
     }
 
@@ -215,24 +207,14 @@ class FacturaComponentView extends HTMLElement {
             padding: 0px  30px;
             background-color: #d7d7d7;
         }
-
-        .recibo, .contract {
-            width: 210mm; /* A4 width */
-            height: auto; /* A4 height */
+        .contract  {
+            width: 210mm; /* A4 width */            
             background-color: white;
             margin: 10px 0;
             padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            page-break-after: always; /* Ensure each .recibo starts on a new page */
-            & *{
-                color: #000;
-            }
+            color: #000;              
         }
-        
 
-        .recibo {
-            page-break-after: always; /* Ensure each .page-container starts on a new page */
-        }
     `
 }
 customElements.define('w-main-factura-component', FacturaComponentView);

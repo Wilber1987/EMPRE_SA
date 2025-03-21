@@ -47,7 +47,37 @@ namespace CAPA_NEGOCIO.Templates
 			return this;
 		}
 
-	
+		public static string GetReciboTemplate()
+		{
+			//var User = AuthNetCore.User(Identity);
+			//var dbUser = new Security_Users { Id_User = User.UserId }.Find<Security_Users>();
+			//var sucursal = new Catalogo_Sucursales() { Id_Sucursal = dbUser?.Id_Sucursal }.Find<Catalogo_Sucursales>();
+			//var theme = new PageConfig();
 
+			var theme = new PageConfig();
+			return HtmlContentGetter.ReadHtmlFile("reciboTemplate.html", "Resources/Recibos").Replace("{{ logo }}", theme.MEDIA_IMG_PATH + theme.LOGO_PRINCIPAL)
+				.Replace("{{ titulo }}", theme.TITULO)
+				.Replace("{{ ruc }}", theme.RUC)
+				.Replace("{{ sub-titulo }}", theme.SUB_TITULO)
+				.Replace("{{ email }}", theme.EMAIL)
+				.Replace("{{ info_tel }}", theme.INFO_TEL);
+
+		}
+
+		public static string GetReciboTemplateApartado()
+		{
+			//var User = AuthNetCore.User(Identity);
+			//var dbUser = new Security_Users { Id_User = User.UserId }.Find<Security_Users>();
+			//var sucursal = new Catalogo_Sucursales() { Id_Sucursal = dbUser?.Id_Sucursal }.Find<Catalogo_Sucursales>();
+			var theme = new PageConfig();
+			string TEMPLATE = HtmlContentGetter.ReadHtmlFile("reciboApartadoTemplate.html", "Resources/Recibos")
+				.Replace("{{ logo }}", theme.MEDIA_IMG_PATH + theme.LOGO_PRINCIPAL)
+				.Replace("{{ titulo }}", theme.TITULO)
+				.Replace("{{ ruc }}", theme.RUC)
+				.Replace("{{ sub-titulo }}", theme.SUB_TITULO)
+				.Replace("{{ email }}", theme.EMAIL)
+				.Replace("{{ info_tel }}", theme.INFO_TEL);
+			return TEMPLATE;
+		}
 	}
 }

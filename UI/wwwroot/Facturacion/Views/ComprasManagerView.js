@@ -40,7 +40,7 @@ class ComprasManagerView extends HTMLElement {
     ElementsNav = [
         {
             name: "Compras Proveedor", action: () => {
-                this.Manager.NavigateFunction("Compras", new WTableComponent({                    
+                this.Manager.NavigateFunction("Compras", new WTableComponent({
                     ModelObject: new Tbl_Compra_ModelComponent, EntityModel: new Tbl_Compra,
                     Options: {
                         Search: false, Filter: true, Add: false, Edit: false, FilterDisplay: true,
@@ -61,14 +61,14 @@ class ComprasManagerView extends HTMLElement {
                                 /**@type {DocumentsData} */
                                 const documentsData = await new DocumentsData().GetDataFragments();
                                 documentsData.Header.style.width = "100%";
-                                const facturaR = FacturasBuilder.BuildFacturaCompra(documentsData, compra);
+                                const facturaR = FacturasBuilder.BuildFacturaCompra(documentsData, compra);  
                                 const div = html`<div class="contract-response">
                                     ${new WPrintExportToolBar({
-                                                PrintAction: (toolBar) => {
-                                                    toolBar.Print(facturaR.cloneNode(true))
-                                                }
-                                            })}
-                                    <div class="recibo">${facturaR}</div>         
+                                        PrintAction: (/** @type {WPrintExportToolBar} */ toolBar) => {
+                                            toolBar.Print(html`<div>${facturaR.cloneNode(true)}</div>`)
+                                        }
+                                    })}
+                                    ${facturaR}      
                                 </div>`;
                                 document.body.append(new WModalForm({
                                     ShadowRoot: false,
@@ -103,22 +103,7 @@ class ComprasManagerView extends HTMLElement {
             align-items: center;
             padding: 0px  30px;
             background-color: #d7d7d7;
-        }
-        .recibo, .contract {
-            width: 210mm; /* A4 width */
-            height: auto; /* A4 height */
-            background-color: white;
-            margin: 10px 0;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            page-break-after: always; /* Ensure each .recibo starts on a new page */
-            & *{
-                color: #000;
-            }
-        }    
-        .recibo {
-            page-break-after: always; /* Ensure each .page-container starts on a new page */
-        }     
+        }         
     `
 }
 customElements.define('w-main-compras-manager', ComprasManagerView);

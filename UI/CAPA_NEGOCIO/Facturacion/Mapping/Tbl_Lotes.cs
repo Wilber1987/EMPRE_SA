@@ -26,7 +26,9 @@ namespace DataBaseModel
 		public int? Id_Almacen { get; set; }
 		public string? Lote { get; set; }
 		public int? Id_Detalle_Compra { get; set; }
+		public string? Name { get { return Datos_Producto?.Descripcion ?? "-"; } }
 		public string? Detalles { get; set; }
+		
 		[JsonProp]
 		public Transactional_Valoracion? Datos_Producto { get; set; }
 		[JsonProp]
@@ -110,20 +112,20 @@ namespace DataBaseModel
 			var dbUser = new Security_Users { Id_User = User.UserId }.Find<Security_Users>();
 			if (User.isAdmin)
 			{
-				return new Tbl_Lotes { }.Where<Tbl_Lotes>(
+				return Where<Tbl_Lotes>(
 					FilterData.Greater("Cantidad_Existente", 0)
 				);
 			}
 			else if (AuthNetCore.HavePermission(Identify, CAPA_DATOS.Security.Permissions.GESTION_LOTES))
 			{
-				return new Tbl_Lotes { Id_Sucursal = dbUser?.Id_Sucursal }
-				.Where<Tbl_Lotes>(
+				Id_Sucursal = dbUser?.Id_Sucursal;
+				return Where<Tbl_Lotes>(
 					FilterData.Greater("Cantidad_Existente", 0)
 				);
 			}
 			else
 			{
-				return new Tbl_Lotes().Where<Tbl_Lotes>(
+				return Where<Tbl_Lotes>(
 					FilterData.Equal("Id_Sucursal", dbUser?.Id_Sucursal),
 					FilterData.Greater("Cantidad_Existente", 0)
 				);

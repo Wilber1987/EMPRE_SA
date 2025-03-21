@@ -130,7 +130,7 @@ namespace Model
 			Transaction_Contratos.Tbl_Cuotas?.ForEach(c =>
 			{
 				c.pago_contado = 0;
-				c.Estado = "PENDIENTE";
+				c.Estado = c.Estado == Contratos_State.CAPITAL_CANCELADO.ToString() ? c.Estado : "PENDIENTE";
 			});
 			var Intereses = new Transactional_Configuraciones().GetIntereses();
 			Transaction_Contratos.DesgloseIntereses = new DesgloseIntereses

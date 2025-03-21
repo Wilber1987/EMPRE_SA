@@ -61,240 +61,200 @@ namespace Transactions
 		public object SaveRecibos(string token)
 		{
 			try
-			{
-				var user = AuthNetCore.User(token);
-				var dbUser = new Security_Users { Id_User = user.UserId }.Find<Security_Users>();
-				var contrato = new Transaction_Contratos() { numero_contrato = this.numero_contrato }.Find<Transaction_Contratos>();
-				var sucursal = new Catalogo_Sucursales() { Id_Sucursal = dbUser?.Id_Sucursal }.Find<Catalogo_Sucursales>();
-				if (contrato == null)
-				{
-					return new ResponseService()
-					{
-						status = 400,
-						message = "Nº contrato no encontrado"
-					};
-				}
-				if (this.cancelar.HasValue && this.cancelar.Value
-					&& Math.Round((Decimal)this.paga_dolares.GetValueOrDefault(), 3) < Math.Round((Decimal)contrato.saldo.GetValueOrDefault(), 3))
-				{
-					return new ResponseService()
-					{
-						status = 400,
-						message = "Para cancelar es necesario un monto de " + contrato.saldo
-					};
-				}
-				double monto = this.paga_dolares.GetValueOrDefault();
-				BeginGlobalTransaction();
+            {
+                var user = AuthNetCore.User(token);
+                var dbUser = new Security_Users { Id_User = user.UserId }.Find<Security_Users>();
+                var contrato = new Transaction_Contratos() { numero_contrato = this.numero_contrato }.Find<Transaction_Contratos>();
+                var sucursal = new Catalogo_Sucursales() { Id_Sucursal = dbUser?.Id_Sucursal }.Find<Catalogo_Sucursales>();
+                if (contrato == null)
+                {
+                    return new ResponseService()
+                    {
+                        status = 400,
+                        message = "Nº contrato no encontrado"
+                    };
+                }
+                if (this.cancelar.HasValue && this.cancelar.Value
+                    && Math.Round((Decimal)this.paga_dolares.GetValueOrDefault(), 3) < Math.Round((Decimal)contrato.saldo.GetValueOrDefault(), 3))
+                {
+                    return new ResponseService()
+                    {
+                        status = 400,
+                        message = "Para cancelar es necesario un monto de " + contrato.saldo
+                    };
+                }
+                double monto = this.paga_dolares.GetValueOrDefault();
+                BeginGlobalTransaction();
 
-				var DetallesFacturaRecibos = new List<Detalle_Factura_Recibo>();
-				//SE VALIDA SI AL MONTO SE LE VA A DEBITAR LA REESTRUCTURACION Y LA PERDIDA DE DOCUMENTOS                
-				monto = CalcularGastosAdicionales(contrato, monto, DetallesFacturaRecibos);
-				//respaldos
-				var reestructuradoRespaldo = contrato.reestructurado;
-				var Cuota_Anterior = contrato.cuotafija_dolares;
-				var Cuota_Anterior_Cordobas = contrato.cuotafija_dolares;
-				var Monto_Anterior = contrato.monto;
-				var Monto_Anterior_Cordobas = contrato.Valoracion_empeño_cordobas;
-				var Plazo_Anterior = contrato.plazo;
-				var id_clasificacion_interes_anterior = contrato.Catalogo_Clientes?.id_clasificacion_interes;
+                var DetallesFacturaRecibos = new List<Detalle_Factura_Recibo>();
+                //SE VALIDA SI AL MONTO SE LE VA A DEBITAR LA REESTRUCTURACION Y LA PERDIDA DE DOCUMENTOS                
+                monto = CalcularGastosAdicionales(contrato, monto, DetallesFacturaRecibos);
+                //respaldos
+                var reestructuradoRespaldo = contrato.reestructurado;
+                var Cuota_Anterior = contrato.cuotafija_dolares;
+                var Cuota_Anterior_Cordobas = contrato.cuotafija_dolares;
+                var Monto_Anterior = contrato.monto;
+                var Monto_Anterior_Cordobas = contrato.Valoracion_empeño_cordobas;
+                var Plazo_Anterior = contrato.plazo;
+                var id_clasificacion_interes_anterior = contrato.Catalogo_Clientes?.id_clasificacion_interes;
 
-				var cuotasPendientes = contrato.Tbl_Cuotas.Where(c => c.Estado?.ToUpper() == EstadoEnum.PENDIENTE.ToString()).ToList();
-				Tbl_Cuotas CuotaActual = cuotasPendientes.Last();
-				double? mora = cuotasPendientes?.Select(c => c.mora).ToList().Sum();
-				double? saldo_pendiente = contrato.saldo;
-				double? interesCorriente = InteresCorriente(CuotaActual, contrato);
-				double? perdida_de_documento_monto = this.perdida_de_documento == true ? 1 : 0;
-				double? reestructuracion_monto = reestructurar_value ?? 0;
-				double? total_capital_restante = mora
-					+ saldo_pendiente
-					+ interesCorriente
-					+ perdida_de_documento_monto
-					+ reestructuracion_monto;
+                var cuotasPendientes = contrato.Tbl_Cuotas.Where(c => c.Estado?.ToUpper() == EstadoEnum.PENDIENTE.ToString()).ToList();
+                
+                
+                Tbl_Cuotas CuotaActual = cuotasPendientes.Last();
+                double? mora = cuotasPendientes?.Select(c => c.mora).ToList().Sum();
+                double? saldo_pendiente = contrato.saldo;
+                double? interesCorriente = InteresCorriente(CuotaActual, contrato);
+                double? perdida_de_documento_monto = this.perdida_de_documento == true ? 1 : 0;
+                double? reestructuracion_monto = reestructurar_value ?? 0;
+                double? total_capital_restante = mora
+                    + saldo_pendiente
+                    + interesCorriente
+                    + perdida_de_documento_monto
+                    + reestructuracion_monto;
 
-				double? interesPagado = monto > (mora + interesCorriente) ? interesCorriente
-					: monto > mora ? monto - mora : 0;
-				double? moraPagado = monto > mora ? mora : mora - monto;
+                double? interesPagado = monto > (mora + interesCorriente) ? interesCorriente
+                    : monto > mora ? monto - mora : 0;
+                double? moraPagado = monto > mora ? mora : mora - monto;
 
-				double? abonoCapital = monto > (mora + interesCorriente) ? (monto - mora - interesCorriente) : 0;
-				double? saldoRespaldo = contrato.saldo;
-				contrato.saldo -= abonoCapital;
-				if (contrato.saldo <= 0.5)
-				{
-					contrato.saldo = 0;
-					contrato.estado = Contratos_State.CANCELADO.ToString();
-					var contartosActivos = new Transaction_Contratos { codigo_cliente = contrato.codigo_cliente }.Where<Transaction_Contratos>(
-						FilterData.Equal("estado", Contratos_State.ACTIVO.ToString()),
-						FilterData.Distinc("numero_contrato", contrato.numero_contrato)
-					);
-					if (contartosActivos.Count == 0)
-					{
-						contrato.Catalogo_Clientes?.ActualizarClasificacionInteres();
-					}
-				}
+                double? abonoCapital = monto > (mora + interesCorriente) ? (monto - mora - interesCorriente) : 0;
+                double? saldoRespaldo = contrato.saldo;
+                contrato.saldo -= abonoCapital;
+                if (contrato.saldo <= 0.5)
+                {
+                    contrato.saldo = 0;
+                    contrato.estado = Contratos_State.CANCELADO.ToString();
+                    var contartosActivos = new Transaction_Contratos { codigo_cliente = contrato.codigo_cliente }.Where<Transaction_Contratos>(
+                        FilterData.Equal("estado", Contratos_State.ACTIVO.ToString()),
+                        FilterData.Distinc("numero_contrato", contrato.numero_contrato)
+                    );
+                    if (contartosActivos.Count == 0)
+                    {
+                        contrato.Catalogo_Clientes?.ActualizarClasificacionInteres();
+                    }
+                }
 
-				if (this.cancelar == true && contrato.saldo == 0)
-				{
-					contrato.saldo = 0;
-					contrato.estado = Contratos_State.CANCELADO.ToString();
-					cuotasPendientes?.ForEach(cuota =>
-					{
-						EstadoAnteriorCuota estadoAnterior = CloneCuota(cuota);
-						cuota.pago_contado = cuota.abono_capital;
-						AgregarCuotaDetalle(cuota, DetallesFacturaRecibos, estadoAnterior,
-						"Pago de completo de cuota, en la cancelación de contrato No: " + this.numero_contrato);
-						cuota.Estado = Contratos_State.CANCELADO.ToString();
-					});
-				}
-				else if (solo_interes_mora == true)//PAGA SOLO INTERES + MORA
-				{
-					monto = SoloInteresMora(contrato, monto, DetallesFacturaRecibos, null, CuotaActual);
-				}
-				else if (pago_parcial == true)//PAGA SOLO INTERES + MORA
-				{
-					monto = SoloPagoParcial(contrato, monto, DetallesFacturaRecibos, cuotasPendientes, CuotaActual);
-				}
-				else if (solo_abono == true) //PAGA ABONO AL CAPITAL
-				{
-					monto = AbonoCapital(contrato, monto, DetallesFacturaRecibos, cuotasPendientes, null);
-				}
-				else if (reestructurar == true) //PAGA ABONO AL CAPITAL
-				{
-					monto = SoloInteresMora(contrato, monto, DetallesFacturaRecibos, cuotasPendientes, CuotaActual);
-					if (abonoCapital > 0)
-					{
-						DetallesFacturaRecibos?.Add(new Detalle_Factura_Recibo()
-						{
-							total_cuota = abonoCapital,
-							monto_pagado = abonoCapital,
-							capital_restante = 0,
-							concepto = "Abono al capital en la reestructuración",
-							tasa_cambio = this.tasa_cambio
-						});
-					}
-					cuotasPendientes?.ForEach(c =>
-					{
-						c.Estado = EstadoEnum.INACTIVO.ToString();
-						c.Update();
-					});
-					monto = CalcularReestructurar(contrato, monto, DetallesFacturaRecibos);
-				}
-				else //PAGA MAS DE LO NORMAL (CUOTA CON INTERESES + MORA) + ABONO AL CAPITAL
-				{
-					monto = CancelarCuotaActual(monto, CuotaActual, DetallesFacturaRecibos);
-					monto = AbonoCapital(contrato, monto, DetallesFacturaRecibos, cuotasPendientes, CuotaActual);
-				}
+                if (this.cancelar == true && contrato.saldo == 0)
+                {
+                    contrato.saldo = 0;
+                    contrato.estado = Contratos_State.CANCELADO.ToString();
+                    cuotasPendientes?.ForEach(cuota =>
+                    {
+                        EstadoAnteriorCuota estadoAnterior = CloneCuota(cuota);
+                        cuota.pago_contado = cuota.abono_capital;
+                        AgregarCuotaDetalle(cuota, DetallesFacturaRecibos, estadoAnterior,
+                        "Pago de completo de cuota, en la cancelación de contrato No: " + this.numero_contrato);
+                        cuota.Estado = Contratos_State.CANCELADO.ToString();
+                    });
+                }
+                else if (solo_interes_mora == true)//PAGA SOLO INTERES + MORA
+                {
+                    monto = SoloInteresMora(contrato, monto, DetallesFacturaRecibos, null, CuotaActual);
+                }
+                else if (pago_parcial == true)//PAGA SOLO INTERES + MORA
+                {
+                    monto = SoloPagoParcial(contrato, monto, DetallesFacturaRecibos, cuotasPendientes, CuotaActual);
+                }
+                else if (solo_abono == true) //PAGA ABONO AL CAPITAL
+                {
+                    monto = AbonoCapital(contrato, monto, DetallesFacturaRecibos, cuotasPendientes, null);
+                }
+                else if (reestructurar == true) //PAGA ABONO AL CAPITAL
+                {
+                    monto = SoloInteresMora(contrato, monto, DetallesFacturaRecibos, cuotasPendientes, CuotaActual);
+                    if (abonoCapital > 0)
+                    {
+                        DetallesFacturaRecibos?.Add(new Detalle_Factura_Recibo()
+                        {
+                            total_cuota = abonoCapital,
+                            monto_pagado = abonoCapital,
+                            capital_restante = 0,
+                            concepto = "Abono al capital en la reestructuración",
+                            tasa_cambio = this.tasa_cambio
+                        });
+                    }
+                    cuotasPendientes?.ForEach(c =>
+                    {
+                        c.Estado = EstadoEnum.INACTIVO.ToString();
+                        c.Update();
+                    });
+                    monto = CalcularReestructurar(contrato, monto, DetallesFacturaRecibos);
+                }
+                else //PAGA MAS DE LO NORMAL (CUOTA CON INTERESES + MORA) + ABONO AL CAPITAL
+                {
+                    monto = CancelarCuotaActual(monto, CuotaActual, DetallesFacturaRecibos);
+                    monto = AbonoCapital(contrato, monto, DetallesFacturaRecibos, cuotasPendientes, CuotaActual);
+                }
 
-				//fecha de proximo pago
-				var cuotasPendiente = contrato.Tbl_Cuotas.Where(c => c.Estado?.ToUpper() == EstadoEnum.PENDIENTE.ToString()).ToList();
+                //fecha de proximo pago
+                var cuotasPendiente = contrato.Tbl_Cuotas.Where(c => c.Estado?.ToUpper() == EstadoEnum.PENDIENTE.ToString()).ToList();
 
-				//guardado de factura
-				var factura = new Transaccion_Factura()
-				{
-					tipo = "RECIBO", //TODO ENUM
-					estado = EstadoEnum.ACTIVO.ToString(),
-					concepto = GetConcepto(),
-					tasa_cambio = this.tasa_cambio,
-					total = this.paga_dolares,
-					id_cliente = contrato.codigo_cliente,
-					id_sucursal = sucursal?.Id_Sucursal,
-					fecha = DateTime.Now,
-					Moneda = moneda,
-					Consecutivo = temporal != true ? getConsecutivo(dbUser) : null,
-					total_cordobas = paga_cordobas,
-					id_usuario = user.UserId,
-					Factura_contrato = new Factura_contrato()
-					{
-						numero_contrato = this.numero_contrato,
-						cuotas_pactadas = contrato.Tbl_Cuotas.Count(),
-						cuotas_pendientes = cuotasPendiente.Count(),
-						saldo_anterior = saldoRespaldo,
-						saldo_actual = contrato.saldo,
-						abono_capital = abonoCapital,
-						interes_pagado = interesPagado,
-						mora_pagado = moraPagado,
-						id_clasificacion_interes_anterior = id_clasificacion_interes_anterior,
-						reestructurado_anterior = reestructuradoRespaldo,
-						mora = this.mora_dolares,
-						interes_demas_cargos_pagar = this.interes_demas_cargos_pagar_dolares,
-						proximo_pago_pactado = cuotasPendiente.Count > 0 ? cuotasPendiente[0].fecha : null,
-						//total_parciales = this.total_parciales,//todo preguntar a EMPRESA 
-						tipo = null,
-						tipo_cuenta = null,
-						total = this.total_dolares,
-						tasa_cambio = this.tasa_cambio,
-						id_cliente = contrato.codigo_cliente,
-						id_sucursal = dbUser?.Id_Sucursal,
-						reestructuracion = this.reestructurar == true ? 1 : 0,
-						perdida_de_documento = this.perdida_de_documento == true ? 1 : 0,
-						total_pagado = this.total_apagar_dolares,
-						cancel_with_perdida = this.cancelar == true && this.perdida_de_documento == true,
-						Datos_Reestructuracion = this.reestructurar == true ? new Datos_Reestructuracion
-						{
-							Cuotas_reestructuradas = CuotasReestructuradas,
-							Cuota_Anterior = Cuota_Anterior,
-							Cuota_Anterior_Cordobas = Cuota_Anterior_Cordobas,
-							Nuevo_Cuota = CuotasReestructuradas.FirstOrDefault()?.total,
-							Nueva_Cuota_Cordobas = CuotasReestructuradas[0].total * tasa_cambio,
+                //guardado de factura
+                var factura = new Transaccion_Factura()
+                {
+                    tipo = "RECIBO", //TODO ENUM
+                    estado = EstadoEnum.ACTIVO.ToString(),
+                    concepto = GetConcepto(),
+                    tasa_cambio = this.tasa_cambio,
+                    total = this.paga_dolares,
+                    id_cliente = contrato.codigo_cliente,
+                    id_sucursal = sucursal?.Id_Sucursal,
+                    fecha = DateTime.Now,
+                    Moneda = moneda,
+                    Consecutivo = temporal != true ? getConsecutivo(dbUser) : null,
+                    total_cordobas = paga_cordobas,
+                    id_usuario = user.UserId,
+                    Factura_contrato = BuildFacturaContrato(dbUser, contrato, reestructuradoRespaldo, Cuota_Anterior, Cuota_Anterior_Cordobas, Monto_Anterior, Monto_Anterior_Cordobas, Plazo_Anterior, id_clasificacion_interes_anterior, interesPagado, moraPagado, abonoCapital, saldoRespaldo, cuotasPendiente),
+                    Detalle_Factura_Recibo = DetallesFacturaRecibos
+                };
+                if (temporal != true)
+                {
+                    contrato.Update();
+                    factura.Save();
+                    var cuentaDestino = Catalogo_Cuentas.GetCuentaIngresoRecibos(dbUser);
 
-							Monto_Anterior = Monto_Anterior,
-							Nuevo_Monto = contrato.saldo,
-							Monto_Anterior_Cordobas = Monto_Anterior_Cordobas,
-							Nuevo_Monto_Cordobas = contrato.saldo * tasa_cambio,
-							Plazo_Anterior = Plazo_Anterior,
-							Nuevo_Plazo = Convert.ToInt32(plazo)
-						} : null,
-						Solo_Interes_Mora = solo_interes_mora
-					},
-					Detalle_Factura_Recibo = DetallesFacturaRecibos
-				};
-				if (temporal != true)
-				{
-					contrato.Update();
-					factura.Save();
-					var cuentaDestino = Catalogo_Cuentas.GetCuentaIngresoRecibos(dbUser);
+                    var cuentaOrigen = Catalogo_Cuentas.GetCuentaEgresoRecibos(dbUser);
 
-					var cuentaOrigen = Catalogo_Cuentas.GetCuentaEgresoRecibos(dbUser);
+                    if (cuentaDestino == null || cuentaOrigen == null)
+                    {
+                        RollBackGlobalTransaction();
+                        return new ResponseService()
+                        {
+                            status = 400,
+                            message = "Cuentas no configuradas correctamente"
+                        };
+                    }
+                    ResponseService response = new Movimientos_Cuentas
+                    {
+                        Catalogo_Cuentas_Destino = cuentaDestino,
+                        Catalogo_Cuentas_Origen = cuentaOrigen,
+                        concepto = "Pago de cuota, contrato No: " + this.numero_contrato,
+                        descripcion = "Pago de cuota, contrato No: " + this.numero_contrato,
+                        moneda = this.moneda?.ToUpper(),
+                        monto = this.moneda?.ToUpper() == "DOLARES" ? this.paga_dolares : this.paga_cordobas,
+                        tasa_cambio = this.tasa_cambio,
+                        //tasa_cambio_compra = this.tasa_cambio_compra,
+                        is_transaction = true
+                    }.SaveMovimiento(token); if (response.status == 400)
+                    {
+                        RollBackGlobalTransaction();
+                        return response;
+                    }
+                    CommitGlobalTransaction();
+                }
+                else
+                {
+                    RollBackGlobalTransaction();
+                }
+                return new ResponseService()
+                {
+                    status = 200,
+                    message = temporal == true ? "Factura temporal" : "Factura registrada correctamente",
+                    body = temporal == true ? new RecibosTemplateServices().GenerateReciboHtmlTemplate(factura) : factura
+                };
 
-					if (cuentaDestino == null || cuentaOrigen == null)
-					{
-						RollBackGlobalTransaction();
-						return new ResponseService()
-						{
-							status = 400,
-							message = "Cuentas no configuradas correctamente"
-						};
-					}
-					ResponseService response = new Movimientos_Cuentas
-					{
-						Catalogo_Cuentas_Destino = cuentaDestino,
-						Catalogo_Cuentas_Origen = cuentaOrigen,
-						concepto = "Pago de cuota, contrato No: " + this.numero_contrato,
-						descripcion = "Pago de cuota, contrato No: " + this.numero_contrato,
-						moneda = this.moneda?.ToUpper(),
-						monto = this.moneda?.ToUpper() == "DOLARES" ? this.paga_dolares : this.paga_cordobas,
-						tasa_cambio = this.tasa_cambio,
-						//tasa_cambio_compra = this.tasa_cambio_compra,
-						is_transaction = true
-					}.SaveMovimiento(token); if (response.status == 400)
-					{
-						RollBackGlobalTransaction();
-						return response;
-					}
-					CommitGlobalTransaction();
-				}
-				else
-				{
-					RollBackGlobalTransaction();
-				}
-				return new ResponseService()
-				{
-					status = 200,
-					message = temporal == true ? "Factura temporal" : "Factura registrada correctamente",
-					body = temporal == true ? new RecibosTemplateServices().GenerateReciboHtmlTemplate(factura) : factura
-				};
-
-			}
-			catch (System.Exception ex)
+            }
+            catch (System.Exception ex)
 			{
 				RollBackGlobalTransaction();
 				return new ResponseService()
@@ -306,7 +266,54 @@ namespace Transactions
 
 		}
 
-		private double SoloPagoParcial(Transaction_Contratos contrato, double monto, List<Detalle_Factura_Recibo> DetallesFacturaRecibos, List<Tbl_Cuotas>? cuotasPendientes, Tbl_Cuotas? CuotaActual)
+        private Factura_contrato BuildFacturaContrato(Security_Users? dbUser, Transaction_Contratos contrato, int? reestructuradoRespaldo, double? Cuota_Anterior, double? Cuota_Anterior_Cordobas, double? Monto_Anterior, double? Monto_Anterior_Cordobas, int? Plazo_Anterior, int? id_clasificacion_interes_anterior, double? interesPagado, double? moraPagado, double? abonoCapital, double? saldoRespaldo, List<Tbl_Cuotas> cuotasPendiente)
+        {
+            return new Factura_contrato()
+            {
+                numero_contrato = this.numero_contrato,
+                cuotas_pactadas = contrato.Tbl_Cuotas.Count(),
+                cuotas_pendientes = cuotasPendiente.Count(),
+                saldo_anterior = saldoRespaldo,
+                saldo_actual = contrato.saldo,
+                abono_capital = abonoCapital,
+                interes_pagado = interesPagado,
+                mora_pagado = moraPagado,
+                id_clasificacion_interes_anterior = id_clasificacion_interes_anterior,
+                reestructurado_anterior = reestructuradoRespaldo,
+                mora = this.mora_dolares,
+                interes_demas_cargos_pagar = this.interes_demas_cargos_pagar_dolares,
+                proximo_pago_pactado = cuotasPendiente.Count > 0 ? cuotasPendiente[0].fecha : null,
+                //total_parciales = this.total_parciales,//todo preguntar a EMPRESA 
+                tipo = null,
+                tipo_cuenta = null,
+                total = this.total_dolares,
+                tasa_cambio = this.tasa_cambio,
+                id_cliente = contrato.codigo_cliente,
+                id_sucursal = dbUser?.Id_Sucursal,
+                reestructuracion = this.reestructurar == true ? 1 : 0,
+                perdida_de_documento = this.perdida_de_documento == true ? 1 : 0,
+                total_pagado = this.total_apagar_dolares,
+                cancel_with_perdida = this.cancelar == true && this.perdida_de_documento == true,
+                Datos_Reestructuracion = this.reestructurar == true ? new Datos_Reestructuracion
+                {
+                    Cuotas_reestructuradas = CuotasReestructuradas,
+                    Cuota_Anterior = Cuota_Anterior,
+                    Cuota_Anterior_Cordobas = Cuota_Anterior_Cordobas,
+                    Nuevo_Cuota = CuotasReestructuradas.FirstOrDefault()?.total,
+                    Nueva_Cuota_Cordobas = CuotasReestructuradas[0].total * tasa_cambio,
+
+                    Monto_Anterior = Monto_Anterior,
+                    Nuevo_Monto = contrato.saldo,
+                    Monto_Anterior_Cordobas = Monto_Anterior_Cordobas,
+                    Nuevo_Monto_Cordobas = contrato.saldo * tasa_cambio,
+                    Plazo_Anterior = Plazo_Anterior,
+                    Nuevo_Plazo = Convert.ToInt32(plazo)
+                } : null,
+                Solo_Interes_Mora = solo_interes_mora
+            };
+        }
+
+        private double SoloPagoParcial(Transaction_Contratos contrato, double monto, List<Detalle_Factura_Recibo> DetallesFacturaRecibos, List<Tbl_Cuotas>? cuotasPendientes, Tbl_Cuotas? CuotaActual)
 		{
 			double montoPago = monto;
 			EstadoAnteriorCuota estadoAnteriorCuotaActual = CloneCuota(CuotaActual);

@@ -44,7 +44,7 @@ namespace DataBaseModel
 		[JsonProp]
 		public Datos_Financiamiento? Datos_Financiamiento { get; set; }
 
-		//[ManyToOne(TableName = "Catalogo_Clientes", KeyColumn = "codigo_cliente", ForeignKeyColumn = "Id_Cliente")]
+		[ManyToOne(TableName = "Catalogo_Clientes", KeyColumn = "codigo_cliente", ForeignKeyColumn = "Id_Cliente")]
 		public ClientDataBaseModel.Catalogo_Clientes? Cliente { get; set; }
 
 		[OneToMany(TableName = "Detalle_Factura", KeyColumn = "Id_Factura", ForeignKeyColumn = "Id_Factura")]
@@ -62,7 +62,8 @@ namespace DataBaseModel
 		public double? Total_Financiado_Cordobas { get; set; }
 		public double? Cuota_Fija_Dolares { get; set; }
 		public double? Cuota_Fija_Cordobas { get; set; }
-	}
+        public int? Id_recibo { get;  set; }
+    }
 
 	public class DatosFactura
 	{
