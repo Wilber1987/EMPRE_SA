@@ -356,7 +356,7 @@ class Tbl_Factura_ModelComponent extends EntityClass {
 		const Configs = JSON.parse(sessionStorage.getItem("Configs") ?? "[]");
 		const Tasa_Cambio = EditObject.Detalle_Factura[0].Lote?.EtiquetaLote?.TasaCambio?.Valor_de_venta;
 		const porcentajeMinimoMensual = (Configs.find(c => c.Nombre == "PORCENTAGE_MINIMO_DE_PAGO_APARTADO_MENSUAL").Valor ?? 35) / 100
-		const porcentajeMinimoQuincenal = 1 / (Configs.find(c => c.Nombre == "QUOTAS_QUINCENALES").Valor ?? 4)
+		const porcentajeMinimoQuincenal = 1 / this.GetNumeroCuotasQuincenales(EditObject.Total);
 		let montoMinimoC = 0;
 		let montoMinimo  = 0;
 		switch (EditObject.Tipo) {
