@@ -108,6 +108,7 @@ class Gestion_RecibosView extends HTMLElement {
             AutoSave: false,
             EditObject: this.Recibo,
             //Options: false,
+            // @ts-ignore
             id: "reciboForm",
             // @ts-ignore
             SaveFunction: async (/**@type {Recibos} */ recibo, form) => {
@@ -253,6 +254,7 @@ class Gestion_RecibosView extends HTMLElement {
             ModelObject: reciboModel,
             AutoSave: false,
             Options: false,
+            // @ts-ignore
             id: "proyeccionForm",
             DivColumns: "repeat(6, 15%)",
             EditObject: proyeccionContractData.Recibo,
@@ -669,15 +671,15 @@ class Gestion_RecibosView extends HTMLElement {
                     grid-column: 3/4 !important;
                 }.ModalElement:nth-child(n + 24):nth-child(-n + 32) {
                     grid-column: 4/5 !important;
-                }  .ModalElement.titleContainer:nth-child(1) {
+                }  .ModalElement.TITLE:nth-child(1) {
                     grid-column: 1/3 !important;
-                } .ModalElement.titleContainer:nth-child(16){
+                } .ModalElement.TITLE:nth-child(16){
                     grid-column: 3/5 !important;
                 } .ModalElement label {
                     display: block;
                     width: 100%;
                     margin: 0px;
-                } `;
+                }`;
     }
     printRecibo(body) {
         const objFra = WRender.Create({

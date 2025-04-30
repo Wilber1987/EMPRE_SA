@@ -1,12 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using API.Controllers;
 using CAPA_DATOS;
 using CAPA_NEGOCIO.Services;
 using DataBaseModel;
-using Financial;
 using Model;
 using Transactions;
 using UI.CAPA_NEGOCIO.Empresa.Services.Recibos;
@@ -157,95 +152,35 @@ namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 				case "APARTADO_MENSUAL":
 				case "APARTADO_QUINCENAL":
 					bool isQuincenal = factura.Tipo == "APARTADO_QUINCENAL";
-					if (!isQuincenal && factura.Monto_dolares < Math.Round(factura.Total.GetValueOrDefault() * 0.35, 2))
+					double porcentajeQuincenal = 1 / Transactional_Configuraciones.GetNumeroCuotasQuincenales(factura!.Monto_dolares + factura.Datos_Financiamiento!.Total_Financiado);
+					double porcentajeMensual = Transactional_Configuraciones.GetPorcentageMinimoPagoApartadoMensual() / 100;
+					if (isQuincenal && factura.Monto_dolares < Math.Round(factura.Total.GetValueOrDefault() * porcentajeQuincenal, 2))
 					{
 						return new ResponseService()
 						{
 							status = 400,
-							message = "El monto debe ser equivalente como minimo al 35% del total"
+							message = $"El monto debe ser equivalente como minimo al {Math.Round(porcentajeQuincenal, 2) * 100} % del total"
 						};
 					}
-					else if (isQuincenal && factura.Monto_dolares < Math.Round(factura.Total.GetValueOrDefault() * 0.25, 2))
+					else if (!isQuincenal && factura.Monto_dolares < Math.Round(factura.Total.GetValueOrDefault() * porcentajeMensual, 2))
 					{
 						return new ResponseService()
 						{
 							status = 400,
-							message = "El monto debe ser equivalente como minimo al 25% del total"
+							message = $"El monto debe ser equivalente como minimo al {porcentajeMensual * 100} % del total"
 						};
 					}
 					factura.Total_Pagado = factura.Monto_dolares;
 					factura.Total_Financiado = factura.Datos_Financiamiento?.Total_Financiado;
 					var (contractResponse, contrato) = GenerarContratoFinanciamiento(Identity, factura, isQuincenal);
-
-
 					if (contractResponse.status != 200)
 					{
 						return contractResponse;
 					}
 					else
 					{
-						factura.Datos_Financiamiento!.Numero_Contrato
-							= contrato.Transaction_Contratos?.numero_contrato;
+						factura.Datos_Financiamiento!.Numero_Contrato = contrato!.Transaction_Contratos?.numero_contrato;
 						contract = contrato.Transaction_Contratos;
-						Tbl_Cuotas? cuota = new Tbl_Cuotas().Find<Tbl_Cuotas>(
-							FilterData.Equal("numero_contrato", contrato?.Transaction_Contratos?.numero_contrato),
-							FilterData.Equal("estado", Contratos_State.CAPITAL_CANCELADO.ToString())
-						);
-						var cuotasPendientes = contrato?.Transaction_Contratos?.Tbl_Cuotas.Where(c => c.Estado?.ToUpper() == EstadoEnum.PENDIENTE.ToString()).ToList();
-
-
-						Transaccion_Factura transaccion_Factura = new Transaccion_Factura
-						{
-							fecha = DateTime.Now,
-							numero_contrato = contract?.numero_contrato,
-							Moneda = factura.Moneda,
-							total = factura.Monto_dolares,
-							total_cordobas = factura.Monto_cordobas,
-							id_usuario = User.UserId,
-							tasa_cambio = factura.Tasa_Cambio_Venta,
-							Factura_contrato = new Factura_contrato()
-							{
-								numero_contrato = contrato?.Transaction_Contratos?.numero_contrato,
-								cuotas_pactadas = contrato?.Transaction_Contratos?.Tbl_Cuotas.Count(),
-								cuotas_pendientes = cuotasPendientes.Count(),
-								saldo_anterior = contrato?.Transaction_Contratos?.saldo,
-								saldo_actual = contrato?.Transaction_Contratos?.saldo,
-								abono_capital = factura.Monto_dolares,
-								interes_pagado = 0,
-								mora_pagado = 0,
-								//id_clasificacion_interes_anterior = id_clasificacion_interes_anterior,
-								reestructurado_anterior = 0,
-								//mora = this.mora_dolares,
-								interes_demas_cargos_pagar = 0,
-								proximo_pago_pactado = cuotasPendientes.Count > 0 ? cuotasPendientes[0].fecha : null,
-								//total_parciales = this.total_parciales,//todo preguntar a EMPRESA 
-								tipo = null,
-								tipo_cuenta = null,
-								total = factura.Monto_dolares,
-								tasa_cambio = factura.Tasa_Cambio_Venta,
-								id_cliente = contrato?.Transaction_Contratos?.codigo_cliente,
-								id_sucursal = dbUser?.Id_Sucursal,
-								reestructuracion = 0,
-								perdida_de_documento = 0,
-								total_pagado = factura.Monto_dolares,
-								cancel_with_perdida = false,
-								Solo_Interes_Mora = false
-							},
-							concepto = $"pago de apartado en contrato No. {contract?.numero_contrato}",
-							Detalle_Factura_Recibo = [new Detalle_Factura_Recibo
-							{
-								total_cuota = cuota?.total,
-								monto_pagado = cuota?.total,
-								capital_restante = cuota?.capital_restante,
-								id_cuota = cuota?.id_cuota,
-								concepto = $"{cuota?.id_cuota?.ToString("D9")}",
-								tasa_cambio = factura?.Tasa_Cambio,
-							}]
-						};
-						transaccion_Factura.id_factura = ((Transaccion_Factura?)transaccion_Factura.Save())?.id_factura;
-						factura.Datos_Financiamiento!.Id_recibo = transaccion_Factura.id_factura;
-
-						contrato!.Transaction_Contratos!.Recibos = [transaccion_Factura];
 					}
 					break;
 				default:
@@ -263,16 +198,16 @@ namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 					message = "Cuentas no configuradas correctamente"
 				};
 			}
-			string detalleT = $"Venta de producto, factura: {factura?.Id_Factura} al cliente {factura.Cliente?.Nombre_Completo}";
+			string detalleT = $"Venta de producto, factura: {factura?.Id_Factura} al cliente {factura?.Cliente?.Nombre_Completo}";
 			ResponseService response = new Movimientos_Cuentas
 			{
 				Catalogo_Cuentas_Destino = cuentaDestino,
 				Catalogo_Cuentas_Origen = cuentaOrigen,
 				concepto = detalleT,
 				descripcion = detalleT,
-				moneda = factura.Moneda?.ToUpper(),
-				monto = factura.Total,
-				tasa_cambio = factura.Tasa_Cambio,
+				moneda = factura?.Moneda?.ToUpper(),
+				monto = factura?.Total,
+				tasa_cambio = factura?.Tasa_Cambio,
 				//tasa_cambio_compra = factura.Tasa_Cambio_Venta,
 				is_transaction = true,
 
@@ -294,7 +229,7 @@ namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 
 
 
-		private (ResponseService, ContractServices) GenerarContratoFinanciamiento(string? Identity, Tbl_Factura factura, bool isQuincenal = false)
+		private (ResponseService, ContractServices?) GenerarContratoFinanciamiento(string? Identity, Tbl_Factura factura, bool isQuincenal = false)
 		{
 			var contrato = new ContractServices();
 			// @ts-ignore
@@ -317,6 +252,7 @@ namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 				Valoracion_empeño_cordobas = factura.Datos_Financiamiento?.Total_Financiado_Cordobas,
 				cuotafija = factura.Datos_Financiamiento?.Cuota_Fija_Cordobas,
 				cuotafija_dolares = factura.Datos_Financiamiento?.Cuota_Fija_Dolares,
+				observaciones = factura.Observaciones,
 				Detail_Prendas = factura.Detalle_Factura?.Select(detalle =>
 				{
 					var valoracion = detalle.Lote?.Datos_Producto;
@@ -336,19 +272,25 @@ namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 					};
 				}).ToList()
 			};
-			contrato.Transaction_Contratos.Tbl_Cuotas = contrato.Transaction_Contratos.CrearCuotas(factura.Total_Financiado ?? 0, factura.Datos_Financiamiento?.Plazo ?? 1, false, false);
-			contrato.Transaction_Contratos.Tbl_Cuotas.Insert(0, new Tbl_Cuotas
+			contrato.Transaction_Contratos.Tbl_Cuotas = contrato.Transaction_Contratos.CrearCuotas(factura.Total_Financiado ?? 0, factura.Datos_Financiamiento?.Plazo ?? 1, false,  isQuincenal);
+			var response = contrato.DoSaveContract(Identity);
+			if (response.status != 200) return (contrato.DoSaveContract(Identity), contrato);
+			if (isQuincenal)
 			{
-				Estado = Contratos_State.CAPITAL_CANCELADO.ToString(),
-				fecha = DateTime.Now,
-				total = factura.Total,
-				interes = 0,
-				abono_capital = factura.Total,
-				capital_restante = factura.Datos_Financiamiento?.Total_Financiado,
-				tasa_cambio = factura.Tasa_Cambio_Venta,
-				numero_contrato = contrato.Transaction_Contratos.numero_contrato
-			});
-			return (contrato.DoSaveContract(Identity), contrato);
+				var recibosResponse = new Recibos_Transactions
+				{
+					numero_contrato = contrato?.Transaction_Contratos.numero_contrato,
+					paga_dolares = factura?.Monto_dolares,
+					paga_cordobas = factura?.Monto_cordobas,
+					tasa_cambio = factura?.Tasa_Cambio_Venta,
+					moneda = factura?.Moneda,
+					fecha_roc = DateTime.Now
+				}.SaveRecibos(Identity);
+				var transaccion_Factura = recibosResponse.body as Transaccion_Factura;
+				factura!.Datos_Financiamiento!.Id_recibo = transaccion_Factura!.id_factura;
+				contrato!.Transaction_Contratos!.Recibos = [transaccion_Factura];
+			}
+			return (response, contrato);
 		}
 
 		private double? GetTasaInteresContratoMensual()
@@ -373,7 +315,11 @@ namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 		{
 			Transaction_Contratos? contract = new Transaction_Contratos { numero_contrato = factura?.Datos_Financiamiento?.Numero_Contrato }.Find<Transaction_Contratos>();
 			string contractData = contract != null ? ContractTemplateService.GetContractContent(contract) : "";
-			Transaccion_Factura? transaccion_Factura = new Transaccion_Factura { id_factura = factura?.Datos_Financiamiento?.Id_recibo }.Find<Transaccion_Factura>();
+			Transaccion_Factura? transaccion_Factura = null;
+			if (factura?.Datos_Financiamiento?.Id_recibo != null)
+			{
+				transaccion_Factura = new Transaccion_Factura { id_factura = factura?.Datos_Financiamiento?.Id_recibo }.Find<Transaccion_Factura>();
+			}
 
 			return new ResponseService
 			{
@@ -383,12 +329,84 @@ namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 				{
 					factura,
 					Contract = contractData,
-					Contrato = contract,
+					Transaction_Contratos = contract,
 					Recibo = new RecibosTemplateServices().GenerateReciboHtmlTemplate(transaccion_Factura)
 
 				}
 			};
 		}
 
+		internal ResponseService? AnularFactura(Tbl_Factura factura, string? Identity)
+		{
+			var User = AuthNetCore.User(Identity);
+			var dbUser = new Security_Users { Id_User = User.UserId }.Find<Security_Users>();
+			try
+			{
+				BeginGlobalTransaction();
+				if (factura?.Datos_Financiamiento?.Numero_Contrato != null)
+				{
+					Transaction_Contratos? contract = new Transaction_Contratos
+					{
+						numero_contrato = factura?.Datos_Financiamiento?.Numero_Contrato,
+						motivo_anulacion = factura?.Motivo_Anulacion
+					};
+					ResponseService? response = contract?.Anular(Identity);
+					if (response?.status != 200)
+					{
+						RollBackGlobalTransaction();
+						return response;
+					}
+				}
+				if (factura?.Datos_Financiamiento?.Id_recibo != null)
+				{
+					new Recibos_Transactions
+					{
+						id_recibo = factura?.Datos_Financiamiento?.Id_recibo,
+						motivo_anulacion = factura?.Motivo_Anulacion
+					}.AnularFactura(Identity);
+				}
+				factura!.Estado = EstadoEnum.ANULADO.ToString();
+				factura?.Save();
+				var cuentaDestino = Catalogo_Cuentas.GetCuentaIngresoRecibos(dbUser);
+				var cuentaOrigen = Catalogo_Cuentas.GetCuentaEgresoRecibos(dbUser);
+				if (cuentaDestino == null || cuentaOrigen == null)
+				{
+					return new ResponseService()
+					{
+						status = 400,
+						message = "Cuentas no configuradas correctamente"
+					};
+				}
+				string detalleT = $"Snulacion de venta de producto, factura: {factura?.Id_Factura} al cliente {factura?.Cliente?.Nombre_Completo}";
+				ResponseService responseM = new Movimientos_Cuentas
+				{
+					Catalogo_Cuentas_Destino = cuentaOrigen,
+					Catalogo_Cuentas_Origen = cuentaDestino,
+					concepto = detalleT,
+					descripcion = detalleT,
+					moneda = factura?.Moneda?.ToUpper(),
+					monto = factura?.Total,
+					tasa_cambio = factura?.Tasa_Cambio,
+					is_transaction = true,
+
+				}.SaveMovimiento(Identity);
+				if (responseM.status == 400)
+				{
+					RollBackGlobalTransaction();
+					return responseM;
+				}
+				CommitGlobalTransaction();
+				return new ResponseService
+				{
+					status = 200,
+					message = "Factura anulada con éxito"
+				};
+			}
+			catch (System.Exception)
+			{
+				RollBackGlobalTransaction();
+				throw;
+			}
+		}
 	}
 }

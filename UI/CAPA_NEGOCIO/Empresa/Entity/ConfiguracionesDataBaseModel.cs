@@ -18,7 +18,7 @@ namespace DataBaseModel
 		public string? Valor { get; set; }
 		public string? Tipo_Configuracion { get; set; }
 		internal Transactional_Configuraciones GetConfig(String prop)
-		{
+		{			
 			Nombre = prop;
 			return Find<Transactional_Configuraciones>();
 		}
@@ -49,6 +49,15 @@ namespace DataBaseModel
 			return Get<Transactional_Configuraciones>()
 			   .Where(x => x.Tipo_Configuracion.Equals(ConfiguracionesTypeEnum.GENERAL_DATA.ToString())).ToList();
 		}
+		
+		static internal int GetBeneficioVentaArticulo()
+		{
+			return Convert.ToInt32(GetParam(ConfiguracionesThemeEnum.BENEFICIO_VENTA_ARTICULO_COMPRADO, "45", ConfiguracionesTypeEnum.BENEFICIOS).Valor);
+		}
+		static internal int GetPorcentajesApartado()
+		{
+			return Convert.ToInt32(GetParam(ConfiguracionesThemeEnum.PORCENTAGE_APARTADO, "60", ConfiguracionesTypeEnum.BENEFICIOS).Valor);
+		}
 
 		internal object? UpdateConfig(string? identity)
 		{
@@ -56,19 +65,58 @@ namespace DataBaseModel
 			{
 				throw new Exception("no tienes permisos para configurar la aplicación");
 			}
-			if (Nombre.Equals(GeneralDataEnum.FIRMA_DIGITAL_APODERADO.ToString()))
+			/*if (Nombre!.Equals(GeneralDataEnum.FIRMA_DIGITAL_APODERADO.ToString()))
 			{
-				var pic = (ModelFiles)FileService.upload("profiles\\", new ModelFiles
+				ModelFiles? pic = (ModelFiles?)FileService.upload("profiles\\", new ModelFiles
 				{
 					Value = Valor,
 					Type = "png",
 					Name = "profile"
 				}).body;
-				//Valor = pic.Value.Replace("wwwroot", "");
-			}
+				Valor = pic?.Value?.Replace("wwwroot", "");
+			}*/
 			return this.Update();
-		}
-	}
+		}			
+		
+		public static Transactional_Configuraciones GetParam(ConfiguracionesThemeEnum prop, string defaultValor = "", ConfiguracionesTypeEnum TYPE = ConfiguracionesTypeEnum.THEME)
+		{
+
+			var find = new Transactional_Configuraciones
+			{
+				Nombre = prop.ToString(),
+			}.Find<Transactional_Configuraciones>();
+			if (find == null)
+			{
+				find = new Transactional_Configuraciones
+				{
+					Valor = defaultValor,
+					Descripcion = prop.ToString(),
+					Nombre = prop.ToString(),
+					Tipo_Configuracion = TYPE.ToString()
+				};
+				find.Save();
+			}
+			return find;
+		}        
+        internal static int GetNumeroCuotasQuincenales(double? value)
+        {
+            if (value >= 61) 
+            {
+				return 4;
+            } else if (value >= 31)
+			{
+				return 3;
+			} else 
+			{
+				return 2;
+			}
+        }
+
+        internal static double GetPorcentageMinimoPagoApartadoMensual()
+        {
+            return Convert.ToInt32(GetParam(ConfiguracionesThemeEnum.PORCENTAGE_MINIMO_DE_PAGO_APARTADO_MENSUAL, "35", ConfiguracionesTypeEnum.BENEFICIOS).Valor);
+        }
+    }
 
 	public enum ConfiguracionesTypeEnum
 	{
@@ -80,8 +128,11 @@ namespace DataBaseModel
 	{
 		TITULO, SUB_TITULO, NOMBRE_EMPRESA, LOGO_PRINCIPAL,
 		LOGO,
-		INFO_TEL
-	}
+		INFO_TEL, 
+		BENEFICIO_VENTA_ARTICULO_COMPRADO,
+        PORCENTAGE_APARTADO,
+        PORCENTAGE_MINIMO_DE_PAGO_APARTADO_MENSUAL
+    }
 
 	public enum ConfiguracionesInteresesEnum
 	{
@@ -140,6 +191,10 @@ namespace DataBaseModel
 			SUB_TITULO = configuraciones.Find(c => c.Nombre.Equals(ConfiguracionesThemeEnum.SUB_TITULO.ToString()))?.Valor ?? SUB_TITULO;
 			NOMBRE_EMPRESA = configuraciones.Find(c => c.Nombre.Equals(ConfiguracionesThemeEnum.NOMBRE_EMPRESA.ToString()))?.Valor ?? NOMBRE_EMPRESA;
 			LOGO_PRINCIPAL = configuraciones.Find(c => c.Nombre.Equals(ConfiguracionesThemeEnum.LOGO_PRINCIPAL.ToString()))?.Valor ?? LOGO_PRINCIPAL;
+			
+			GetPorcentageMinimoPagoApartadoMensual = Transactional_Configuraciones.GetPorcentageMinimoPagoApartadoMensual();
+			GetBeneficioVentaArticulo = Transactional_Configuraciones.GetBeneficioVentaArticulo();
+			GetPorcentajesApartado = Transactional_Configuraciones.GetPorcentajesApartado();
 
 		}
 		public string TITULO = "EMPRE S.A.";
@@ -152,5 +207,9 @@ namespace DataBaseModel
 
 		public string EMAIL = "correo@correo.net";
 		public string INFO_TEL = "000000000";
+		public int GetNumeroCuotasQuincenales { get; set; }
+		public int GetBeneficioVentaArticulo { get;set; }
+		public int GetPorcentajesApartado { get;set; }
+		public double GetPorcentageMinimoPagoApartadoMensual { get;set; }
 	}
 }

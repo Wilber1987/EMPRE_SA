@@ -1,5 +1,6 @@
 using API.Controllers;
 using CAPA_DATOS;
+using CAPA_NEGOCIO.Util;
 using ClientDataBaseModel;
 using System;
 using System.Collections.Generic;
@@ -38,6 +39,11 @@ namespace DataBaseModel
 		public Double? Total_Financiado { get; set; }
 		public Double? Monto_cordobas { get; set; }
 		public Double? Monto_dolares { get; set; }
+		public string? Motivo_Anulacion { get; set; }
+		public bool IsAnulable { get 
+		{
+		    return Estado != "ANULADO" && Estado != "CANCELADO" && DateUtil.IsBefore(Fecha, 24);
+		}}		
 
 		[JsonProp]
 		public DatosFactura? Datos { get; set; }
@@ -49,9 +55,8 @@ namespace DataBaseModel
 
 		[OneToMany(TableName = "Detalle_Factura", KeyColumn = "Id_Factura", ForeignKeyColumn = "Id_Factura")]
 		public List<Detalle_Factura>? Detalle_Factura { get; set; }
-
-
-	}
+        
+    }
 
 	public class Datos_Financiamiento
 	{

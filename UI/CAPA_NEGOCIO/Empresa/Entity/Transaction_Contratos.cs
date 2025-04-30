@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using API.Controllers;
 using CAPA_DATOS;
+using CAPA_NEGOCIO.Util;
 using Transactions;
 
 namespace DataBaseModel
@@ -47,6 +48,17 @@ namespace DataBaseModel
 		public Double? total_pagar_dolares { get; set; }
 		public Double? interes_dolares { get; set; }
 		public int? Id_User { get; set; }
+		public bool IsAnulable
+		{
+			get
+			{
+				return estado != "ANULADO" && estado != "CANCELADO"
+				&& DateUtil.IsBefore(fecha, 24)
+				&& tipo != Contratos_Type.APARTADO_QUINCENAL.ToString() 
+				&& tipo != Contratos_Type.APARTADO_MENSUAL.ToString();
+			}
+		}
+
 		public int? reestructurado { get; set; }
 		[JsonProp]
 		public DesgloseIntereses? DesgloseIntereses { get; set; }
@@ -145,15 +157,16 @@ namespace DataBaseModel
 			List<Tbl_Cuotas> cuotas = new List<Tbl_Cuotas>();
 			DateTime fechaC = fecha.GetValueOrDefault();
 
-			int totalCuotas = quincenal ? (int)(plazo * 2) : (int)plazo;
+			int totalCuotas =  Convert.ToInt32(plazo);
 
 			for (var index = 0; index < totalCuotas; index++)
 			{
 				if (quincenal)
 				{
 					// Si es la primera cuota del mes, se asigna al día 15, si no, al día 30
-					fechaC = new DateTime(fechaC.Year, fechaC.Month, (index % 2 == 0) ? 15 : 30);
-					if (index % 2 != 0) fechaC = fechaC.AddMonths(1); // Avanza al siguiente mes después del día 30
+					//fechaC = new DateTime(fechaC.Year, fechaC.Month, (index % 2 == 0) ? 15 : 30);
+					//if (index % 2 != 0) fechaC = fechaC.AddMonths(1); // Avanza al siguiente mes después del día 30
+					fechaC = fechaC.AddDays(15);
 				}
 				else
 				{
@@ -266,9 +279,9 @@ namespace DataBaseModel
 		private void SaveLote(Detail_Prendas prenda, Security_Users? dbUser, double? precio_venta_empeño, Cat_Producto producto)
 		{
 			string codigo = Tbl_Lotes.GenerarLote();
-			int porcentajesUtilidad = 45;
-			int porcentajesApartado = 60;
-			int? Ncuotas = 4;
+			int porcentajesUtilidad = Transactional_Configuraciones.GetBeneficioVentaArticulo();
+			int porcentajesApartado = Transactional_Configuraciones.GetPorcentajesApartado();
+			int Ncuotas = Transactional_Configuraciones.GetNumeroCuotasQuincenales(precio_venta_empeño.GetValueOrDefault());
 
 			new Tbl_Lotes()
 			{
@@ -281,13 +294,13 @@ namespace DataBaseModel
 				Id_User = dbUser?.Id_User,
 				Fecha_Ingreso = DateTime.Now,
 				Datos_Producto = prenda.Transactional_Valoracion,
-				Detalles = $"{ prenda.Transactional_Valoracion?.Descripcion}, Marca: { prenda.Transactional_Valoracion?.Marca}, Modelo: { prenda.Transactional_Valoracion?.Modelo}, Existencia perteneciente a vencimineto de contrato No. {numero_contrato.GetValueOrDefault():D9}",
+				Detalles = $"{prenda.Transactional_Valoracion?.Descripcion}, Marca: {prenda.Transactional_Valoracion?.Marca}, Modelo: {prenda.Transactional_Valoracion?.Modelo}, Existencia perteneciente a vencimineto de contrato No. {numero_contrato.GetValueOrDefault():D9}",
 				Id_Almacen = new Cat_Almacenes().GetAlmacen(dbUser?.Id_Sucursal ?? 0),
 				Lote = codigo,
 				EtiquetaLote = new EtiquetaLote
 				{
 					Tipo = "CV",
-					Articulo = $"{ prenda.Transactional_Valoracion?.Descripcion}, Marca: { prenda.Transactional_Valoracion?.Marca}, Modelo: { prenda.Transactional_Valoracion?.Modelo}",
+					Articulo = $"{prenda.Transactional_Valoracion?.Descripcion}, Marca: {prenda.Transactional_Valoracion?.Marca}, Modelo: {prenda.Transactional_Valoracion?.Modelo}",
 					Codigo = codigo,
 					PorcentajesUtilidad = porcentajesUtilidad,
 					PorcentajesApartado = porcentajesApartado,

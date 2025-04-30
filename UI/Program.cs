@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.ResponseCompression;
 
 //SqlADOConexion.IniciarConexion("sa", "zaxscd", ".", "EMPRE_SA");
-//SqlADOConexion.IniciarConexion("sa", "123", ".\\SQLEXPRESS", "EMPRE_SA");
 
 //CONEXIONES DE PRODUCCION
 SqlADOConexion.IniciarConexion("empresa", "Wmatus09%", "tcp:empresociedadanonima.database.windows.net", "EMPRE_SA");

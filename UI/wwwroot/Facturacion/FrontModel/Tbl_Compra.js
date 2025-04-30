@@ -7,7 +7,7 @@ class Tbl_Compra extends EntityClass {
         super(props, 'EntityFacturacion');
         for (const prop in props) {
             this[prop] = props[prop];
-        }
+        };
     }
    /**@type {Number}*/ Id_Compra;
    /**@type {Datos_Compra}*/ Datos_Compra;
@@ -21,6 +21,7 @@ class Tbl_Compra extends EntityClass {
    /**@type {String}*/ Observaciones;
    /**@type {Cat_Proveedor} ManyToOne*/ Cat_Proveedor;
    /**@type {Array<Detalle_Compra>} OneToMany*/ Detalle_Compra;
+   /**@type {Boolean}*/ IsAnulable;
     Anular = async () => {
         return await this.SaveData("apiEntityFacturacion/anularCompra", this);
     }

@@ -806,7 +806,7 @@ public class ContractsTemplates
 				pública
 				#51, Constitución de Sociedad Anónima y estatutos,
 				y bajo el asiento #10011, Pág. 229/245, Tomo 97, Libro segundo de sociedades del Registro público de Carazo, que
-				por brevedad en lo sucesivo del presente contrato se le podrá denominar el ACREEDOR; siendo el domicilio: Del
+				por brevedad en lo sucesivo del presente contrato se le podrá denominar el VENDEDOR; siendo el domicilio: Del
 				Instituto Juan XXIII, 20 varas al Oeste,
 				en el municipio de San Marcos, Departamento de Carazo, Dirección electrónica: empresociedadanonima@gmail.com; y
 				por otra parte el / la señor (a) : {{primer_nombre}} {{segundo_nombre}} {{primer_apellido}}
@@ -852,12 +852,12 @@ public class ContractsTemplates
 				fecha que el cliente
 				haga efectivo su pago. Los pagos se realizarán en córdobas o el equivalente a: $ {{cuotafija_dolares}} ($
 				{{cuotafija_dolares_label}}) Estadounidenses,
-				Según tasa de cambio del Banco de la producción. El comprador se compromete con el pago de su última
+				según  la tasa de cambio en la fecha del pago. El comprador se compromete con el pago de su última
 				cuota el día, como se muestra en la siguiente tabla de pago.
 
 			</p>
 			<br></br>
-			" + ContractTableQuincenal + $@"
+			" + ContractTableQuincenal + @"
 			<p style='text-align: justify; font-size:9.5px;'>
 				<u>5. QUINTA (VENCIMIENTO ANTICIPADO Y PRORROGA):
 				</u>
@@ -865,7 +865,7 @@ public class ContractsTemplates
 				Apartado del artículo comercial,
 				si el comprador faltare a una de las cuotas, en el tiempo establecido, otorgando al
 				COMPRADOR una prorroga no mayor a 5 días para actualizar su cuota, En caso de que no
-				se actualice, automáticamente el/la señor(a): , cede y traspasa todo el dinero
+				se actualice, automáticamente el/la señor(a): {{primer_nombre}} {{segundo_nombre}} {{primer_apellido}} {{segundo_apellidio}}, cede y traspasa todo el dinero
 				abonado al vendedor, y pierde el derecho sobre el/los artículo (s), donde este (os)
 				pasará (n) nuevamente a venta.
 

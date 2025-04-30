@@ -19,6 +19,7 @@ class Detalle_Factura_ModelComponent extends EntityClass {
 	/**@type {ModelProperty}*/ Lote = {
 		require: false,
 		type: 'WSELECT',
+		label: "Artículos",
 		ModelObject: () => new Tbl_Lotes_ModelComponent(),
 		EntityModel: new Tbl_Lotes(),
 		action: (/**@type {Detalle_Factura} */ detail, /**@type {WForm} */ form) => {
@@ -27,20 +28,25 @@ class Detalle_Factura_ModelComponent extends EntityClass {
 	};
 	/**@type {ModelProperty}*/ Presentacion = {
 		type: 'select',
+		hiddenInTable: true,
+		defaultValue: "UND",
 		Dataset: ["UND"] // ["KILATE", "UND", "LBS", "KILO", "DOCENA"]
 	};
 	//**@type {ModelProperty}*/ Id_Lote = { type: 'number' };
 	/**@type {ModelProperty}*/ Descuento = {
-		type: 'select',
+		type: 'number',
+		min: 0,
+		max: 50,
 		Dataset: [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50],
 		defaultValue: 0,
 		require: false,
+		label: " % de Descuento",
 		action: (/**@type {Detalle_Factura} */ detail, /**@type {WForm} */ form) => {
 			this.CalculeTotal(detail, form);
 		}
 	};
 	/**@type {ModelProperty}*/ Cantidad = { type: 'number', min: 1, hidden: true };
-	/**@type {ModelProperty}*/ Precio_Venta = { type: 'money', disabled: true };
+	/**@type {ModelProperty}*/ Precio_Venta = { type: 'money', disabled: true, label: "Pre/Cont. $" };
 	/**@type {ModelProperty}*/ Monto_Descuento = { type: 'money', disabled: true, require: false };
 	/**@type {ModelProperty}*/ Sub_Total = { type: 'money', disabled: true, hidden: true };
 	/**@type {ModelProperty}*/ Iva = { type: 'money', disabled: true, hidden: true };
@@ -55,8 +61,9 @@ class Detalle_Factura_ModelComponent extends EntityClass {
 				detail.Precio_Venta = detail.Lote.EtiquetaLote.Precio_venta_Contado_dolares;
 				break;
 			case "APARTADO_MENSUAL": case "APARTADO_QUINCENAL":
+				detail.Descuento = 0;
 				if (updateProps) {
-					this.Precio_Venta.defaultValue = detail.Lote.EtiquetaLote.Precio_venta_Apartado_dolares;					
+					this.Precio_Venta.defaultValue = detail.Lote.EtiquetaLote.Precio_venta_Apartado_dolares;
 				}
 				detail.Precio_Venta = detail.Lote.EtiquetaLote.Precio_venta_Apartado_dolares;
 				break;
@@ -66,9 +73,9 @@ class Detalle_Factura_ModelComponent extends EntityClass {
 		if (updateProps) {
 			this.Cantidad.max = detail.Lote.Cantidad_Existente;
 		}
-		
-		detail.Cantidad = 1;
-		detail.Descuento = 0;
+
+		detail.Cantidad = detail.Cantidad ?? 1;
+		detail.Descuento = detail.Descuento ?? 0;
 		this.CalculeTotal(detail, form);
 	}
 

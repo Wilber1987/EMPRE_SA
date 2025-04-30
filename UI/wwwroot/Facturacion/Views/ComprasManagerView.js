@@ -46,6 +46,10 @@ class ComprasManagerView extends HTMLElement {
                         Search: false, Filter: true, Add: false, Edit: false, FilterDisplay: true,
                         UserActions: [{
                             name: "Anular",
+                            rendered: (/** @type { Tbl_Compra } */ factura) => {
+                                return factura.IsAnulable
+                                //return factura.Estado != "ANULADO" && factura.Estado != "CANCELADO" 
+                            },
                             action: async (/**@type {Tbl_Compra}*/compra) => {
                                 this.append(ModalVericateAction(async () => {
                                     const response = await compra.Anular();

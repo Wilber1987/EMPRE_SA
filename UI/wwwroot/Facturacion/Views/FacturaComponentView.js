@@ -15,6 +15,9 @@ import { Tbl_Factura } from "../FrontModel/Tbl_Factura.js";
 import { FacturasBuilder } from "./Builders/FacturasBuilder.js";
 import { VentasComponent } from "./VentasComponent.js";
 import { Transaction_Contratos } from "../../FrontModel/Model.js";
+import { ModalVericateAction } from "../../WDevCore/WComponents/ModalVericateAction.js";
+import { ModalMessage } from "../../WDevCore/WComponents/ModalMessage.js";
+import { WAlertMessage } from "../../WDevCore/WComponents/WAlertMessage.js";
 
 /**
  * @typedef {Object} FacturacionConfig
@@ -44,9 +47,8 @@ class FacturaComponentView extends HTMLElement {
         }
     }, {
         name: "Nueva Venta", action: async () => {
+            WAlertMessage.Clear();
             await this.NewFactura();
-
-            //new WForm({ ModelObject: this.ComprasModel, EntityModel: new Tbl_Compra }))
         }
     }]
 
@@ -60,12 +62,15 @@ class FacturaComponentView extends HTMLElement {
 
         this.Manager.NavigateFunction("newFactura", new VentasComponent({
             TasaActual: this.TasaActual,
-            action: async (/**@type { {factura: Tbl_Factura, Contract: String, Recibo: String, Contrato:  Transaction_Contratos}} */ response) => {
+            action: async (/**@type { {factura: Tbl_Factura, Contract: String, Recibo: String, Transaction_Contratos:  Transaction_Contratos}} */ response) => {
                 switch (response.factura.Tipo) {
                     case "VENTA":
                         this.Manager.NavigateFunction("newFacturaPrinter", await this.VerFactura(response.factura));
                         break;
-                    case "APARTADO_MENSUAL": case "APARTADO_QUINCENAL":
+                    case "APARTADO_MENSUAL":
+                        this.Manager.NavigateFunction("newFacturaPrinter", await this.VerContratoRecibo(response));
+                        break;
+                    case "APARTADO_QUINCENAL":
                         this.Manager.NavigateFunction("newFacturaPrinter", await this.VerContratoRecibo(response));
                         break;
                     default:
@@ -76,7 +81,7 @@ class FacturaComponentView extends HTMLElement {
         }));
     }
     /**
-     * @param {{factura: Tbl_Factura, Contract: String, Recibo: String,Contrato: Transaction_Contratos}} response
+     * @param {{factura: Tbl_Factura, Contract: String, Recibo: String, Transaction_Contratos: Transaction_Contratos}} response
      * @returns {Promise<HTMLElement>}
      */
     async VerContratoRecibo(response) {
@@ -87,14 +92,14 @@ class FacturaComponentView extends HTMLElement {
         //const contrato = await
         return html`<div class="contract-response">
             ${new WPrintExportToolBar({
-                PrintAction: (toolBar) => {
-                    toolBar.Print(html`<div class="contract-response">
-                        <div class="recibo">${factura.cloneNode(true)}</div>
+            PrintAction: (toolBar) => {
+                toolBar.Print(html`<div class="contract-response">
+                        ${factura.cloneNode(true)}
                         <div class="contract">${response.Contract}</div>
                     </div>`)
-                }
-            })}
-            <div class="recibo">${factura}</div>
+            }
+        })}
+            ${factura}
             <div class="contract">${response.Contract}</div>            
         </div>`;
     }
@@ -107,7 +112,7 @@ class FacturaComponentView extends HTMLElement {
                 UserActions: [
                     {
                         name: "Imprimir",
-                        rendered: (/**@type {Tbl_Factura} */ factura) => factura.Tipo == "VENTA",
+                        rendered: (/**@type {Tbl_Factura} */ factura) => factura.Tipo != "APARTADO_QUINCENAL",
                         action: async (/**@type {Tbl_Factura} */ factura) => {
                             this.append(new WModalForm({
                                 ShadowRoot: false,
@@ -125,12 +130,37 @@ class FacturaComponentView extends HTMLElement {
                         }
                     }, {
                         name: "Recibos",
-                        rendered: (/**@type {Tbl_Factura} */ factura) => factura.Tipo == "APARTADO_MENSUAL" || factura.Tipo == "APARTADO_QUINCENAL",
+                        rendered: (/**@type {Tbl_Factura} */ factura) => factura.Tipo == "APARTADO_QUINCENAL",
                         action: async (/**@type {Tbl_Factura} */ factura) => {
                             this.append(new WModalForm({
                                 ShadowRoot: false,
                                 ObjectModal: await this.VerRecibos(factura)
                             }))
+                        }
+                    }, {
+                        name: "Anular",
+                        rendered: (/** @type { Tbl_Factura } */ factura) => {
+                            return factura.IsAnulable;
+                            //return factura.Estado != "ANULADO" && factura.Estado != "CANCELADO"
+                        },
+                        action: async (/**@type {Tbl_Factura}*/ factura) => {
+                            factura.Motivo_anulacion = "";
+                            const modal = new WModalForm({
+                                ModelObject: {
+                                    motivo_anulacion: { type: "TEXTAREA" }
+                                }, EditObject: factura,
+                                title: "ANULACIÓN",
+                                ObjectOptions: {
+                                    SaveFunction: async () => {
+                                        this.append(ModalVericateAction(async (editObject) => {
+                                            const response = await factura.Anular();
+                                            this.append(ModalMessage(response.message, undefined, true));
+                                            modal.close();
+                                        }, "Esta seguro que desea anular este contrato"))
+                                    }
+                                }
+                            });
+                            this.append(modal);
                         }
                     }
                 ]

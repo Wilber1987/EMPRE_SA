@@ -1,5 +1,6 @@
 using API.Controllers;
 using CAPA_DATOS;
+using CAPA_NEGOCIO.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +27,11 @@ namespace DataBaseModel
 		public Double? Total { get; set; }
 		public string? Estado { get; set; }
 		public string? Observaciones { get; set; }
+		public bool IsAnulable { get 
+		{
+		    return Estado != "ANULADO" && Estado != "CANCELADO" && DateUtil.IsBefore(Fecha, 24);
+		}}		
+		
 		[ManyToOne(TableName = "Cat_Proveedor", KeyColumn = "Id_Proveedor", ForeignKeyColumn = "Id_Proveedor")]
 		public Cat_Proveedor? Cat_Proveedor { get; set; }
 		[OneToMany(TableName = "Detalle_Compra", KeyColumn = "Id_Compra", ForeignKeyColumn = "Id_Compra")]
@@ -140,9 +146,9 @@ namespace DataBaseModel
 		private void SetLote(Security_Users? dbUser, Detalle_Compra? detalle)
 		{
 			string codigo = Tbl_Lotes.GenerarLote();
-			int porcentajesUtilidad = 45;
-			int porcentajesApartado = 60;
-			int? Ncuotas = 4;
+			int porcentajesUtilidad = Transactional_Configuraciones.GetBeneficioVentaArticulo();
+			int porcentajesApartado = Transactional_Configuraciones.GetPorcentajesApartado();
+			int Ncuotas = Transactional_Configuraciones.GetNumeroCuotasQuincenales(detalle?.Precio_Venta);
 
 			Tbl_Lotes lotes = new Tbl_Lotes()
 			{

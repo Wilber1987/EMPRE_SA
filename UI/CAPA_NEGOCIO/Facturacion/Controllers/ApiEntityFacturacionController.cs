@@ -29,6 +29,12 @@ namespace API.Controllers
         {
             return FacturacionServices.FindFacturaContrato(Inst);
         }
+        [HttpPost]
+        [AuthController]
+        public ResponseService? AnularFactura(Tbl_Factura Inst)
+        {
+            return new FacturacionServices().AnularFactura(Inst, HttpContext.Session.GetString("seassonKey"));
+        }
 		[HttpPost]
 		[AuthController]
 		public object? saveTbl_Factura(Tbl_Factura Inst)

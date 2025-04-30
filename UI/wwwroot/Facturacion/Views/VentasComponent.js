@@ -4,13 +4,10 @@ import { Catalogo_Cambio_Divisa } from "../../FrontModel/Catalogo_Cambio_Divisa.
 import { Catalogo_Cambio_Divisa_ModelComponent } from "../../FrontModel/DBODataBaseModel.js";
 import { ModalMessage } from "../../WDevCore/WComponents/ModalMessage.js";
 import { ModalVericateAction } from "../../WDevCore/WComponents/ModalVericateAction.js";
-import { WAppNavigator } from "../../WDevCore/WComponents/WAppNavigator.js";
 import { WForm } from "../../WDevCore/WComponents/WForm.js";
-import { WArrayF } from "../../WDevCore/WModules/WArrayF.js";
 import { ComponentsManager, ConvertToMoneyString, html, WRender } from "../../WDevCore/WModules/WComponentsTools.js";
 import { WOrtograficValidation } from "../../WDevCore/WModules/WOrtograficValidation.js";
 import { css } from "../../WDevCore/WModules/WStyledRender.js";
-import { Detalle_Factura } from "../FrontModel/Detalle_Factura.js";
 import { Tbl_Factura_ModelComponent } from "../FrontModel/ModelComponent/Tbl_Factura_ModelComponent.js";
 import { Tbl_Factura } from "../FrontModel/Tbl_Factura.js";
 
@@ -19,7 +16,7 @@ import { Tbl_Factura } from "../FrontModel/Tbl_Factura.js";
  * @property {string} someProperty - Description of the property
  * @property {function} [action] - Optional action function
  * @property {Catalogo_Cambio_Divisa}  TasaActual
- * @property {Object} [Entity] - Optional entity object
+ * @property {Tbl_Factura} [Entity] - Optional entity object
  */
 
 class VentasComponent extends HTMLElement {
@@ -43,12 +40,14 @@ class VentasComponent extends HTMLElement {
         this.append(this.CustomStyle, this.OptionContainer, this.CompraContainer, this.TabContainer);
     }
     connectedCallback() {
+        this.CompraContainer.innerHTML = "";
         this.Draw();
     }
 
 
     Draw = async () => {
         this.Intereses = await new Transactional_Configuraciones().getConfiguraciones_Intereses();
+        this.Configs = await new Transactional_Configuraciones().getConfiguraciones_Beneficios();
         this.TasasCambioList = await new Catalogo_Cambio_Divisa_ModelComponent().Get();
         this.TasasCambio = this.TasasCambioList[0];
         this.setComprasContainer();
@@ -62,10 +61,30 @@ class VentasComponent extends HTMLElement {
             ModelObject: this.ComprasModel,
             AutoSave: false,
             limit: 5,
+            EditObject: this.VentasConfig.Entity,
+            Groups: [  // Grupos de controles para organizar el formulario
+                {
+                    Name: "Datos_de_pago",  // Nombre del grupo
+                    Propertys: [
+                        "Monto_dolares",
+                        "Monto_cordobas",
+                        "cambio_dolares",
+                        "cambio_cordobas",
+                        "is_cambio_cordobas"
+                    ],  // Propiedades que pertenecen a este grupo
+                    WithAcordeon: false  // Si el grupo debe mostrarse como un acordeón
+                }, {
+                    Name: "Articulos",  // Nombre del grupo
+                    Propertys: [
+                        "Detalle_Factura",
+                    ],  // Propiedades que pertenecen a este grupo
+                    WithAcordeon: false  // Si el grupo debe mostrarse como un acordeón
+                }
+            ],
             //DivColumns: "repeat(5, 20%)",
             //Options: false,
             // @ts-ignore
-            SaveFunction: async (/**@type {Tbl_Factura} */ factura) => {           
+            SaveFunction: async (/**@type {Tbl_Factura} */ factura) => {
                 await this.SaveVenta(factura);
             }
         });
@@ -91,13 +110,11 @@ class VentasComponent extends HTMLElement {
                 } else {
                     this.append(ModalMessage(response.message, undefined, true));
                 }
+                this.setComprasContainer();
             } else {
                 this.append(ModalMessage(response.message));
             }
         }, "¿Desea guardar la venta?"));
-
-
-        
     }
 
     /**
@@ -112,7 +129,7 @@ class VentasComponent extends HTMLElement {
         // @ts-ignore                
         this.TotalesDetail.innerHTML = "";
         this.TotalesDetail?.append(html`<div class="detail-container">
-            <h3>Resumen</h3>
+            <h3>DATOS DE CONTADO</h3>
             <hr/>
             <label class="value-container">
                 <span>Sub Total:</span>
@@ -131,17 +148,37 @@ class VentasComponent extends HTMLElement {
                 <span>Total:</span>
                 <span class="value">${WOrtograficValidation.es(this.VentasConfig.Entity?.Moneda)} ${ConvertToMoneyString(total ?? 0)} </span>
             </label>
-        </div>`
-        );
+            <hr/>
+        </div>`);
+        if (["APARTADO_MENSUAL", "APARTADO_QUINCENAL"].includes(this.VentasConfig.Entity?.Tipo ?? "VENTA")) {
+            this.TotalesDetail?.append(html`<div class="detail-container">       
+                <h3>DATOS DE FINANCIAMIENTO</h3>
+                <hr/>
+                <label class="value-container">
+                    <span>Plazo:</span>
+                    <span class="value">${ConvertToMoneyString(this.VentasConfig.Entity?.Datos_Financiamiento?.Plazo ?? 0)}</span>
+                </label>
+                <label class="value-container">
+                    <span>Cuota Fija $:</span>
+                    <span class="value"> ${ConvertToMoneyString(this.VentasConfig.Entity?.Datos_Financiamiento?.Cuota_Fija_Dolares ?? 0)}</span>
+                </label>
+                <label class="value-container">
+                    <span>Cuota Fija C$:</span>
+                    <span class="value"> ${ConvertToMoneyString(this.VentasConfig.Entity?.Datos_Financiamiento?.Cuota_Fija_Cordobas ?? 0)}</span>
+                </label>                
+                <hr/>
+            </div>`);
+        }
     }
     BuildCompraModel() {
         sessionStorage.setItem("Intereses", JSON.stringify(this.Intereses));
         sessionStorage.setItem("TasasCambio", JSON.stringify(this.TasasCambio));
+        sessionStorage.setItem("Configs", JSON.stringify(this.Configs));
         const ventasModel = new Tbl_Factura_ModelComponent();
         /**analisa EditObject.Detalle_Factura y el elmento Lote de cada detalle factura y detecta si los lotes (id_lote) estan repetidos analisa si la cantidad_existente del primer lote encontrado es suficiente para la sumatoria de la cantidad de cada detalle, si no es asi retorna false, si es asi fusionalos en un solo detalle, seleccionado el primer lote como lote seleccionado */
         ventasModel.Detalle_Factura.action = (/**@type {Tbl_Factura} */ EditObject, form, control) => { this.CalculeTotal(EditObject, form, ventasModel) }
-        ventasModel.Tipo.action = (/**@type {Tbl_Factura} */ EditObject, form, control) => { 
-            ventasModel.TypeAction(EditObject, form);                        
+        ventasModel.Tipo.action = (/**@type {Tbl_Factura} */ EditObject, form, control) => {
+            ventasModel.TypeAction(EditObject, form);
             this.CalculeTotal(EditObject, form, ventasModel)
         }
         return ventasModel;

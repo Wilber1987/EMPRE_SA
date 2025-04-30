@@ -13,6 +13,7 @@ import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { WDetailObject } from "../WDevCore/WComponents/WDetailObject.js";
 import { FilterData } from "../WDevCore/WModules/CommonModel.js";
 import { ModalMessage } from "../WDevCore/WComponents/ModalMessage.js";
+import { DateTime } from "../WDevCore/WModules/Types/DateTime.js";
 class ValoracionesSearch extends HTMLElement {
     constructor(/** @type {Function} */ action,/** @type {Function|undefined} */ secondAction,/** @type {Boolean} */ onlyValids = false) {
         super();
@@ -26,8 +27,8 @@ class ValoracionesSearch extends HTMLElement {
     DrawComponent = async () => {
         const model = new Transactional_Valoracion_ModelComponent({ requiere_valoracion: { type: "TEXT", hiddenFilter: true } });
         if (this.onlyValids) {
-            // @ts-ignore
-            model.FilterData.push(FilterData.Greater("Fecha",new Date().subtractDays(40) ) );
+            // @ts-ignore`
+            model.FilterData.push(FilterData.Greater("Fecha",new DateTime().subtractDays(40).toISO() ) );
         }
         let dataset = await model.Get();
 
@@ -128,7 +129,8 @@ const contratosSearcher = (action, anularAction, withNotas = false) => {
         actions.push({
             name: "Anular",
             rendered: (/** @type { Transaction_Contratos } */ contrato) => {
-                return contrato.estado != "ANULADO" && contrato.estado != "CANCELADO"
+                return contrato.IsAnulable
+                //return contrato.estado != "ANULADO" && contrato.estado != "CANCELADO"
             }, 
             action: async (cliente) => {
                 // @ts-ignore

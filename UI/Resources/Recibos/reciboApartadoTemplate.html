@@ -93,19 +93,19 @@
             <p class='w-50'><strong>Equivalente a </strong>$ {{ total_pagado_dolares }}</p>
         </div>
         <div class='w-100'>
-            {{ total_pagado_dolares_letras }}            
+            {{ total_pagado_dolares_letras }}, en concepto de pago por el (los) articulo(s) en sistema de apartado.
         </div>
-        <div class='w-100'>
-            {{ concepto }}            
-        </div>
-        <p class='w-100' style="text-align: center; justify-content: center; border-bottom: solid 1px #000">{{ fecha }}</p>      
-        <p class='w-100'  style="text-align: center; justify-content: center">Recaudado el</p> 
-       
+         <!--<div class='w-100'>
+             {{ concepto }}       
+        </div>             -->
         <p><strong>Próximo Pago:</strong> {{ proximo_pago }}</p>
         <div class='w-100'>
             <p class='w-50'><strong>Saldo Actual:</strong> C$ {{ saldo_actual_cordobas }}</p>
             <p class='w-50'><strong>Equivalente a</strong> $ {{ saldo_actual_dolares }}</p>
         </div>
+        <p class='w-100' style="text-align: center; justify-content: center; border-bottom: solid 1px #000; margin-top: 5px">{{ fecha }}</p>      
+        <p class='w-100'  style="text-align: center; justify-content: center ; margin-bottom: 5px">Recaudado el</p> 
+
         <div style="margin-top: 5px; display: flex;">
             <div style="margin: 5px; flex:1; text-align: center">
                 <div style="height: 30px;"></div>

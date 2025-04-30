@@ -11,11 +11,9 @@ import { Tbl_Lotes } from "../FrontModel/Tbl_Lotes.js";
 import { WModalForm } from "../../WDevCore/WComponents/WModalForm.js";
 import { Tbl_Transaccion } from "../FrontModel/Tbl_Transaction.js";
 import { Tbl_Transaccion_ModelComponent } from "../FrontModel/ModelComponent/Tbl_Transaction_ModelComponent.js";
-import { FilterData } from "../../WDevCore/WModules/CommonModel.js";
 import { WPrintExportToolBar } from "../../WDevCore/WComponents/WPrintExportToolBar.mjs";
 import { WArrayF } from "../../WDevCore/WModules/WArrayF.js";
 import { DateTime } from "../../WDevCore/WModules/Types/DateTime.js";
-import { ControlBuilder } from "../../WDevCore/WModules/WControlBuilder.js";
 import { ModalMessage } from "../../WDevCore/WComponents/ModalMessage.js";
 import { ModalVericateAction } from "../../WDevCore/WComponents/ModalVericateAction.js";
 import { WFilterOptions } from "../../WDevCore/WComponents/WFilterControls.js";
@@ -188,12 +186,13 @@ class LotesManagerView extends HTMLElement {
 					<td  colspan="4">C$ ${(lote.EtiquetaLote.Cuota_apartado_mensual_dolares * lote.EtiquetaLote.TasaCambio.Valor_de_venta).toFixed(2)}</td>					
 				</tr>
 				<tr>
-					<td colspan="2" class="value-prop">CÓDIGO: ${lote.EtiquetaLote.Codigo}</td>
-					<td colspan="2">${lote.EtiquetaLote.Tipo != "CV" ? "ENVIADO A LIQ" : "Comprado"}</td>
+					<td colspan="2" class="value-prop">CÓDIGO: ${lote.Id_Lote}</td>
+					<td colspan="2">${lote.EtiquetaLote.Tipo != "CV" ? "ENVIADO A LIQ" : "ENVIADO A LIQ"}</td>
 					<td colspan="2">${new DateTime(lote.Fecha_Ingreso).toDDMMYYYY()}</td>
 				</tr>
 			</table>
 		</div>`;
+		//TODO ENVIO A LIQ Y COMPRA
 	}
 	/**
 	 * @param {Tbl_Lotes} lote
@@ -203,7 +202,7 @@ class LotesManagerView extends HTMLElement {
 	CreateEtiqueta(lote, selectedLotes) {
 		const etiqueta = html`<div class="etiqueta-detail" id="${lote.EtiquetaLote?.Codigo}">
 			<div>${lote.Detalles}</div>
-			<div>${lote.EtiquetaLote?.Codigo}</div>
+			<div>${lote.Id_Lote}</div>
 			<div>${lote.EtiquetaLote?.Tipo}</div>
 			<div>$ ${lote.EtiquetaLote?.Precio_compra_dolares?.toFixed(2)}</div>
 			<div>${lote.EtiquetaLote?.PorcentajesUtilidad}</div>

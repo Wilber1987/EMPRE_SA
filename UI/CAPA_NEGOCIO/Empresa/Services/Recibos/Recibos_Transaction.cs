@@ -58,7 +58,7 @@ namespace Transactions
 		public List<Tbl_Cuotas>? CuotasReestructuradas { get; private set; }
 		#endregion
 
-		public object SaveRecibos(string token)
+		public ResponseService SaveRecibos(string token)
 		{
 			try
             {

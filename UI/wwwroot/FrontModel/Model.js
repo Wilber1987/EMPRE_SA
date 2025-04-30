@@ -1,6 +1,5 @@
 import { EntityClass } from "../WDevCore/WModules/EntityClass.js";
 import { Catalogo_Clientes, Transaccion_Factura } from "./DBODataBaseModel.js";
-import { Recibos } from "./Recibos.js";
 
 //@ts-check
 class ValoracionesTransaction extends EntityClass {
@@ -92,6 +91,7 @@ class Transaction_Contratos extends EntityClass {
 	/**@type {Number} */ interes;
 	/**@type {Number} */ interes_dolares;
 	/**@type {Number} */ mora;
+	/**@type {Boolean}*/ IsAnulable;
 	estado;
 	fecha_vencimiento;
 	/**@type {Number} */ saldo;

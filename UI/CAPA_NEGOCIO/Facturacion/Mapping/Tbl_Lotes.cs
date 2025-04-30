@@ -176,9 +176,10 @@ namespace DataBaseModel
 		{
 			get
 			{
-				return CuotasModule.GetPago(Precio_venta_Apartado_dolares,
+				return Precio_compra_dolares * Transactional_Configuraciones.GetPorcentageMinimoPagoApartadoMensual();
+				/*return CuotasModule.GetPago(Precio_venta_Apartado_dolares,
 					N_Cuotas,
-					Intereses.Sum(i => Convert.ToDouble(i.Valor)));
+					Intereses.Sum(i => Convert.ToDouble(i.Valor)));*/
 			}
 		}
 		/*[OnDeserialized]

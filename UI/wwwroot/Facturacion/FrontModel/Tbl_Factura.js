@@ -3,12 +3,10 @@ import { Catalogo_Clientes } from "../../FrontModel/DBODataBaseModel.js";
 import { EntityClass } from "../../WDevCore/WModules/EntityClass.js";
 import { Detalle_Factura } from './Detalle_Factura.js';
 class Tbl_Factura extends EntityClass {
-   
     /**
      * @param {Partial<Tbl_Factura> } props
      */
     constructor(props) {
-        ``
         super(props, 'EntityFacturacion');
         for (const prop in props) {
             this[prop] = props[prop];
@@ -44,13 +42,18 @@ class Tbl_Factura extends EntityClass {
     /**@type {Number}*/ cambio_cordobas;
     /**@type {Number}*/ cambio_dolares;
     /**@type {Number}*/ Monto_cordobas;
+    /**@type {String}*/ Motivo_anulacion;
     /**@type {Datos_Financiamiento?} */ Datos_Financiamiento;
+    /**@type {Boolean}*/ IsAnulable;
 
     GetValoracionContrato = async () => {
         return await this.SaveData("Transactional_Contrato/GetDataContract", this)
     }
     async GetFacturaContrato() {
         return await this.SaveData("ApiEntityFacturacion/FindFacturaContrato", this)
+    }
+    async Anular() {
+        return await this.SaveData("ApiEntityFacturacion/AnularFactura", this)
     }
 }
 export { Tbl_Factura };

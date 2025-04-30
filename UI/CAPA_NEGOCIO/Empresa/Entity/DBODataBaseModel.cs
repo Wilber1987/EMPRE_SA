@@ -1,5 +1,6 @@
 using CAPA_DATOS;
 using CAPA_DATOS.Security;
+using CAPA_NEGOCIO.Util;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Model;
 using System;
@@ -268,6 +269,11 @@ namespace DataBaseModel
 		public string? Moneda { get; set; }
 		public string? Motivo_Anulacion { get; set; }
 		public string? Consecutivo { get;  set; }
+		
+		public bool IsAnulable { get 
+		{
+		    return estado != "ANULADO" && estado != "CANCELADO" && DateUtil.IsBefore(fecha, 24);
+		}}
 
 		[JsonProp]
 		public Factura_contrato? Factura_contrato { get; set; }

@@ -21,9 +21,12 @@ VALUES(N'CORREO', N'CORREO EMPRESA', N'TEST@TEST.ES', N'GENERAL_DATA');
 
 
 
-ALTER TABLE EMPRE_SA.facturacion.Tbl_Factura  ADD Total_Pagado float NULL;
+ALTER TABLE EMPRE_SA.facturacion.Tbl_Factura ADD Total_Pagado float NULL;
 ALTER TABLE EMPRE_SA.facturacion.Tbl_Factura ADD Total_Financiado float NULL;
 ALTER TABLE EMPRE_SA.facturacion.Tbl_Factura ADD Datos_Financiamiento nvarchar(MAX) NULL;
 
 ALTER TABLE EMPRE_SA.facturacion.Tbl_Compra ADD Observaciones nvarchar(MAX) NULL;
+ALTER TABLE EMPRE_SA.facturacion.Tbl_Factura ADD Motivo_Anulacion nvarchar(500) NULL;
+ALTER TABLE EMPRE_SA.facturacion.Tbl_Compra ADD Motivo_Anulacion nvarchar(500) NULL;
+
 

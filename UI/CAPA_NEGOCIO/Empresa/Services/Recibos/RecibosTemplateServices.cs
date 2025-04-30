@@ -154,9 +154,10 @@ namespace UI.CAPA_NEGOCIO.Empresa.Services.Recibos
 
 			// Obtener el ID más alto de la primera lista
 			var maxIdCuota = cuotas?.Max(c => c?.id_cuota) ?? 0;
-
+			// Obtener el ID más alto de la primera lista
+			var minIdCuota = cuotas?.Min(c => c?.id_cuota) ?? 0;
 			// Buscar la posición de ese ID en la segunda lista
-			int numero_cuota = cuotasList.FindIndex(c => c.id_cuota == maxIdCuota) + 1;
+			int numero_cuota = cuotasList.FindIndex(c => c.id_cuota == minIdCuota) + 1;
 
 			var cuotasPendiente = new Tbl_Cuotas { numero_contrato = factura?.Factura_contrato?.numero_contrato }
 				.Where<Tbl_Cuotas>(FilterData.Equal("Estado", EstadoEnum.PENDIENTE)).OrderBy(c => c.id_cuota).ToList();

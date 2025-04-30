@@ -90,21 +90,23 @@ class ComprasComponent extends HTMLElement {
     TotalesDetailUpdate(subtotal, iva, total) {
         // @ts-ignore
         this.ComprasConfig.Entity.Moneda = this.ComprasConfig.Entity?.Moneda ?? "CORDOBAS"
+
+        let Tasa_Cambio = this.ComprasConfig.Entity?.Moneda != "CORDOBAS" ? 1 : this.TasaCambio;
         // @ts-ignore                
         this.TotalesDetail.innerHTML = "";
         this.TotalesDetail?.append(html`<div class="detail-container">
             <h3>Resumen</h3>
             <label class="value-container">
                 <span>Sub Total:</span>
-                <span class="value">${WOrtograficValidation.es(this.ComprasConfig.Entity?.Moneda)} ${ConvertToMoneyString(subtotal)}</span>
+                <span class="value">${WOrtograficValidation.es(this.ComprasConfig.Entity?.Moneda)} ${ConvertToMoneyString(subtotal * Tasa_Cambio)}</span>
             </label>
             <label class="value-container">
                 <span>Iva:</span>
-                <span class="value">${WOrtograficValidation.es(this.ComprasConfig.Entity?.Moneda)} ${ConvertToMoneyString(iva)}</span>
+                <span class="value">${WOrtograficValidation.es(this.ComprasConfig.Entity?.Moneda)} ${ConvertToMoneyString(iva * Tasa_Cambio )}</span>
             </label>
             <label class="value-container total">
                 <span>Total:</span>
-                <span class="value">${WOrtograficValidation.es(this.ComprasConfig.Entity?.Moneda)} ${ConvertToMoneyString(total)} </span>
+                <span class="value">${WOrtograficValidation.es(this.ComprasConfig.Entity?.Moneda)} ${ConvertToMoneyString(total * Tasa_Cambio)} </span>
             </label>
         </div>`
         );
@@ -139,11 +141,10 @@ class ComprasComponent extends HTMLElement {
             this.ComprasModel.Datos_Compra = this.ComprasConfig.DatosCompra;
         }
 
-        this.ComprasModel.Sub_Total.action = (/**@type {Tbl_Compra} */ EditObject, form, control) => {
-            //console.log(EditObject);
+        this.ComprasModel.Sub_Total.action = (/**@type {Tbl_Compra} */ EditObject, form, control) => {            
             let subtotal;
             let total;
-            let iva;
+            let iva;           
             if (EditObject.Detalle_Compra != undefined) {
                 subtotal = WArrayF.SumValAtt(EditObject.Detalle_Compra, "SubTotal");
                 iva = WArrayF.SumValAtt(EditObject.Detalle_Compra, "Iva");

@@ -22,7 +22,7 @@ class Catalogo_Estados_Articulos extends EntityClass {
 export { Catalogo_Estados_Articulos }
 class Transactional_Valoracion_ModelComponent extends EntityClass {
     requireReValoracion(dias = 40) {
-        console.log("dias: ", new Date().subtractDays(dias) > new Date(this.Fecha));
+        //console.log("dias: ", new Date().subtractDays(dias) > new Date(this.Fecha));
         return new Date().subtractDays(dias) > new Date(this.Fecha);
     }
     /**
@@ -44,7 +44,7 @@ class Transactional_Valoracion_ModelComponent extends EntityClass {
         type: 'WSELECT',
         ModelObject: () => new Catalogo_Categoria_ModelComponent(), action: (ObjectF, /**@type {WForm} */ form, InputControl, prop) => {
             // console.log(ObjectF.Catalogo_Categoria.plazo_limite);
-            this.Plazo.max = ObjectF.Catalogo_Categoria.plazo_limite;
+            this.Plazo.max = ObjectF?.Catalogo_Categoria?.plazo_limite ?? 6;
             if (ObjectF.Plazo > this.Plazo.max) {
                 ObjectF.Plazo = this.Plazo.max;
             }
@@ -657,6 +657,7 @@ class Transaccion_Factura extends EntityClass {
     fecha = { type: "date" };    
     Detalle_Factura_Recibo = { type: 'MasterDetail', label: "Cuotas Pagadas", label: "Detalle recibos", ModelObject: () => new Detalle_Factura_Recibo(), hiddenFilter: true };
     Factura_contrato = { type: 'model', label: "Datos del contrato al momento del pago", ModelObject: () => new Factura_contrato() };
+    /**@type {Boolean}*/ IsAnulable;
 
 }
 export { Transaccion_Factura }

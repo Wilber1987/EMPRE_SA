@@ -114,11 +114,12 @@ class Transaction_Valoraciones_View extends HTMLElement {
 			ModelObject: this.valoracionModel,
 			AutoSave: false,
 			Options: false,
+			// @ts-ignore
 			id: "valoracionesForm",
 			// @ts-ignore
 			SaveFunction: (/**@type {Transactional_Valoracion_ModelComponent} */ valoracion) => {
 			}, CustomStyle: css`
-				.divForm{
+				.divForm {
 					display: "grid";
 					grid-template-columns: repeat(5, calc(20% - 15px));
 					grid-template-rows: repeat(3, auto)
@@ -129,7 +130,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
 					display: block;
 					width: 100%;
 					margin: 0px;
-				} `
+				}`
 		});
 
 		this.valoracionesTable = new WTableComponent({
@@ -333,7 +334,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
 		};
 	}
 	promediarValoresDolares(data) {
-		console.log(data);
+		//console.log(data);
 		data.total_dolares = ((parseFloat(data.dolares_1) + parseFloat(data.dolares_2) + parseFloat(data.dolares_3)) / 3).toFixed(3);
 		const control = this.valoresForm?.shadowRoot?.querySelector(".total_dolares");
 		if (control != undefined || control != null) {
@@ -568,6 +569,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
 		}) ?? [];
 		const modal = new WModalForm({
 			title: "REGISTRAR COMPRA",
+			// @ts-ignore
 			FullScreen: true,
 			ObjectModal: new ComprasComponent({
 				Entity: nuevaCompra,
@@ -584,15 +586,14 @@ class Transaction_Valoraciones_View extends HTMLElement {
 					const div = html`<div class="contract-response">
 						${new WPrintExportToolBar({
 						PrintAction: (toolBar) => {
-							toolBar.Print(facturaR.cloneNode(true))
-						}
-					})}
-						<div class="recibo">${facturaR}</div>         
+								toolBar.Print(html`<div>${facturaR.cloneNode(true)}</div>`)
+							}
+						})}
+						${facturaR}        
 					</div>`;
 					document.body.append(new WModalForm({
 						ShadowRoot: false,
-						ObjectModal: div,
-						
+						ObjectModal: div,						
 						ObjectOptions: {
 							SaveFunction: () => {
 								location.href = "/Facturacion/ComprasManager"
