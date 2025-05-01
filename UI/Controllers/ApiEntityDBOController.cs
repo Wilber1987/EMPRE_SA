@@ -3,14 +3,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using CAPA_NEGOCIO.Services;
-using CAPA_DATOS;
-using iText.IO.Source;
-using iText.Kernel.Pdf;
-using iText.Html2pdf;
-using iText.Kernel.Geom;
+
 using System.Text;
-using iText.Layout;
-using CAPA_DATOS.Security;
+using APPCORE.Security;
+using APPCORE;
 
 namespace API.Controllers
 {
@@ -214,7 +210,7 @@ namespace API.Controllers
 		[AuthController]
 		public List<Transaction_Contratos> getTransaction_Contratos(Transaction_Contratos Inst, [FromQuery] SearchData? pageData)
 		{
-			return Inst.Where<Transaction_Contratos>(FilterData.Limit(30));
+			return Inst.GetContratos();
 		}
 		[HttpPost]
         [AuthController]

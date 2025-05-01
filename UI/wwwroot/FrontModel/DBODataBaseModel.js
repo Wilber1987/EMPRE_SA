@@ -3,8 +3,9 @@ import { Catalogo_Tipo_Identificacion } from "../ClientModule/FrontModel/Catalog
 import { WForm } from "../WDevCore/WComponents/WForm.js";
 import { ModelProperty } from "../WDevCore/WModules/CommonModel.js";
 import { EntityClass } from "../WDevCore/WModules/EntityClass.js";
-import { Detail_Prendas_Vehiculos, Tbl_Cuotas } from "./Model.js";
+import { Detail_Prendas_Vehiculos } from "./Model.js";
 import { Tbl_Cuotas_ModelComponent } from "./ModelComponents.js";
+import { Recibos } from "./Recibos.js";
 class Catalogo_Estados_Articulos extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
@@ -19,14 +20,14 @@ class Catalogo_Estados_Articulos extends EntityClass {
     porcentaje_empeno = { type: 'number' };
 }
 export { Catalogo_Estados_Articulos }
-class Transactional_Valoracion extends EntityClass {
+class Transactional_Valoracion_ModelComponent extends EntityClass {
     requireReValoracion(dias = 40) {
-        console.log("dias: ", new Date().subtractDays(dias) > new Date(this.Fecha));
+        //console.log("dias: ", new Date().subtractDays(dias) > new Date(this.Fecha));
         return new Date().subtractDays(dias) > new Date(this.Fecha);
     }
     /**
      * 
-     * @param {Transactional_Valoracion | Object} props 
+     * @param {Partial<Transactional_Valoracion_ModelComponent>} props 
      */
     constructor(props) {
         super(props, 'EntityDBO');
@@ -34,42 +35,43 @@ class Transactional_Valoracion extends EntityClass {
             this[prop] = props[prop];
         }
     }
-    id_valoracion = { type: 'number', primary: true };
-    Descripcion = { type: 'textarea' };
-    Serie = { type: 'text', require: false };
-    Marca = { type: 'text' };
-    Modelo = { type: 'text' };
-    Catalogo_Categoria = {
+    /**@type {ModelProperty} */ id_valoracion = { type: 'number', primary: true };
+    /**@type {ModelProperty} */ Descripcion = { type: 'textarea' };
+    /**@type {ModelProperty} */ Serie = { type: 'text', require: false };
+    /**@type {ModelProperty} */ Marca = { type: 'text' };
+    /**@type {ModelProperty} */ Modelo = { type: 'text' };
+    /**@type {ModelProperty} */ Catalogo_Categoria = {
         type: 'WSELECT',
         ModelObject: () => new Catalogo_Categoria_ModelComponent(), action: (ObjectF, /**@type {WForm} */ form, InputControl, prop) => {
             // console.log(ObjectF.Catalogo_Categoria.plazo_limite);
-            this.Plazo.max = ObjectF.Catalogo_Categoria.plazo_limite;
+            this.Plazo.max = ObjectF?.Catalogo_Categoria?.plazo_limite ?? 6;
             if (ObjectF.Plazo > this.Plazo.max) {
                 ObjectF.Plazo = this.Plazo.max;
             }
             form.DrawComponent();
         }, hiddenFilter: true
     };
-    Plazo = { type: 'number', hiddenInTable: true, max: 24, min: 1, hiddenFilter: true };
-    Tasa_interes = { type: 'number', hiddenInTable: true, enabled: false, Dataset: [], hiddenFilter: true };
-    Fecha = { type: 'date', hiddenInTable: true, hiddenFilter: true };
-    Tasa_de_cambio = { type: 'money', hiddenInTable: true, hiddenFilter: true };
-    Valoracion_compra_cordobas = { type: 'money', hiddenFilter: true };
-    Valoracion_compra_dolares = { type: 'money', hiddenFilter: true };
-    Valoracion_empeño_cordobas = { type: 'money', hiddenFilter: true };
-    Valoracion_empeño_dolares = { type: 'money', hiddenFilter: true };
-    Catalogo_Estados_Articulos = { type: 'WSELECT', hiddenInTable: true, ModelObject: () => new Catalogo_Estados_Articulos(), hiddenFilter: true };
+    /**@type {ModelProperty} */ Plazo = { type: 'number', hiddenInTable: true, max: 24, min: 1, hiddenFilter: true };
+    /**@type {ModelProperty} */ Tasa_interes = { type: 'number', hiddenInTable: true, enabled: false, Dataset: [], hiddenFilter: true };
+    /**@type {ModelProperty} */ Fecha = { type: 'date', hiddenInTable: true, hiddenFilter: true };
+    /**@type {ModelProperty} */ Tasa_de_cambio = { type: 'money', hiddenInTable: true, hiddenFilter: true };
+    /**@type {ModelProperty} */ Valoracion_compra_cordobas = { type: 'money', hiddenFilter: true };
+    /**@type {ModelProperty} */ Valoracion_compra_dolares = { type: 'money', hiddenFilter: true };
+    /**@type {ModelProperty} */ Valoracion_empeño_cordobas = { type: 'money', hiddenFilter: true };
+    /**@type {ModelProperty} */ Valoracion_empeño_dolares = { type: 'money', hiddenFilter: true };
+    /**@type {ModelProperty} */ Catalogo_Estados_Articulos = { type: 'WSELECT', hiddenInTable: true, ModelObject: () => new Catalogo_Estados_Articulos(), hiddenFilter: true };
     //TASAS DE INTERES
-    Valoracion_empeño_dolares = { type: 'operation' };
+    //Valoracion_empeño_dolares = { type: 'operation' };
 
-    Precio_venta_empeño_cordobas = { type: 'number', hidden: true };
-    Precio_venta_empeño_dolares = { type: 'number', hidden: true };
-    Detail_Valores = { type: 'MASTERDETAIL', hidden: true }
+    /**@type {ModelProperty} */ Precio_venta_empeño_cordobas = { type: 'number', hidden: true };
+    /**@type {ModelProperty} */ Precio_venta_empeño_dolares = { type: 'number', hidden: true };
+    /**@type {ModelProperty} */ Detail_Valores = { type: 'MASTERDETAIL', hidden: true }
+    /**@type {ModelProperty} */ requiere_valoracion;
     GuardarValoraciones = async (valoraciones) => {
         return await this.SaveData("Transactional_Valoracion/GuardarValoraciones", { valoraciones: valoraciones })
     }
 }
-export { Transactional_Valoracion }
+export { Transactional_Valoracion_ModelComponent }
 //TODO ELIMINAR A POSTERIOR LO DE LOS AGENTES
 class Catalogo_Agentes extends EntityClass {
     constructor(props) {
@@ -165,7 +167,7 @@ class Catalogo_Clientes extends EntityClass {
     Catalogo_Profesiones = { type: 'WSELECT', ModelObject: () => new Catalogo_Profesiones(), hiddenInTable: true, hiddenFilter: true };
     Condicion_Laboral_Cliente = { type: 'WSELECT', ModelObject: () => new Condicion_Laboral_Cliente(), hiddenInTable: true, hiddenFilter: true, hidden: true };
     Catalogo_Departamento = {
-        type: 'WSELECT', ModelObject: () => new Catalogo_Departamento(),
+        type: 'WSELECT', ModelObject: () => new Catalogo_Departamento(), hiddenFilter: true,
         action: async (editObject, /** @type {WForm} */ Form) => {
 
             const servicios = await new Catalogo_Municipio({
@@ -182,7 +184,7 @@ class Catalogo_Clientes extends EntityClass {
     };
 
     Catalogo_Municipio = {
-        type: 'WSELECT', ModelObject: () => new Catalogo_Municipio(),
+        type: 'WSELECT', ModelObject: () => new Catalogo_Municipio(), hiddenFilter: true,
         action: async (editObject, /** @type {WForm} */ Form) => {
             const findObject = this.Catalogo_Departamento.Dataset.find(d => d.id_departamento == editObject.Catalogo_Municipio.id_departamento);
             editObject.Catalogo_Departamento = findObject;
@@ -259,7 +261,7 @@ class Transaction_Contratos_ModelComponent extends EntityClass {
     monto = { type: "MONEY", label: "monto $",  hiddenInTable: true, hiddenFilter: true };
     interes = { type: "MONEY", hiddenInTable: true, hiddenFilter: true, label: "interés $"  };
     mora = { type: "PERCENTAGE", hiddenInTable: true, hiddenFilter: true };
-    estado = { type: "Select", Dataset: ["ACTIVO", "CANCELADO", "ANULADO"] };
+    estado = { type: "Select", Dataset: ["ACTIVO", "CANCELADO", "ANULADO", "VENCIDO"] };
     fecha_vencimiento = { type: "date", hiddenFilter: true };
     codigo_cliente = { type: "number", hiddenInTable: true, hiddenFilter: true };
     saldo = { type: "MONEY", label: "saldo $", hiddenFilter: true, hiddenInTable: true };
@@ -294,8 +296,17 @@ class Transaction_Contratos_ModelComponent extends EntityClass {
     //Catalogo_Agentes = { type: 'WSELECT', ModelObject: () => new Catalogo_Agentes(), hiddenInTable: true, hiddenFilter: true };
     Detail_Prendas = { type: 'MasterDetail', ModelObject: () => new Detail_Prendas_ModelComponent(), hiddenFilter: true };
     Tbl_Cuotas = { type: 'MasterDetail', ModelObject: () => new Tbl_Cuotas_ModelComponent(), hiddenFilter: true };
+    Recibos = { type: 'MasterDetail', ModelObject: () => new Transaccion_Factura(), hiddenFilter: true };
+    Notas = { type: 'MasterDetail', ModelObject: () => new Notas_de_contrato(), hiddenFilter: true };
 }
 export { Transaction_Contratos_ModelComponent }
+
+class Notas_de_contrato {
+    Fecha = { type: "date" };
+    Descripcion = { type: "richtext" };
+}
+
+export { Notas_de_contrato }
 
 class Detail_Prendas_ModelComponent extends EntityClass {
     constructor(props) {
@@ -634,6 +645,7 @@ class Transaccion_Factura extends EntityClass {
     /**@type {ModelProperty}*/
     Catalogo_Clientes = { type: 'WSELECT', ModelObject: () => new Catalogo_Clientes(), ForeignKeyColumn: "id_cliente", hiddenInTable: true };
     id_factura = { type: "number", primary: true, label: "Número recibo" };
+    Consecutivo = { type: "text" };
     tipo = { type: "text", hidden: true };
     concepto = { type: "text", hiddenFilter: true };
     tasa_cambio = { type: "money", label: "tasa_cambio C$", hiddenFilter: true };
@@ -644,7 +656,8 @@ class Transaccion_Factura extends EntityClass {
     id_sucursal = { type: "number", hidden: true };
     fecha = { type: "date" };    
     Detalle_Factura_Recibo = { type: 'MasterDetail', label: "Cuotas Pagadas", label: "Detalle recibos", ModelObject: () => new Detalle_Factura_Recibo(), hiddenFilter: true };
-    Factura_contrato = { type: 'model', label: "Datos del contrato al momento del pago", ModelObject: () => new Factura_contrato(), hidden: true };
+    Factura_contrato = { type: 'model', label: "Datos del contrato al momento del pago", ModelObject: () => new Factura_contrato() };
+    /**@type {Boolean}*/ IsAnulable;
 
 }
 export { Transaccion_Factura }
@@ -657,16 +670,20 @@ class Factura_contrato {
     }
     numero_contrato = { type: "number" };
     cuotas_pendientes = { type: "number" };
-    saldo_anterior = { type: "number" };
-    saldo_actual = { type: "number" };
-    mora = { type: "number" };
-    interes_demas_cargos_pagar = { type: "number" };
-    proximo_pago_pactado = { type: "date" };
-    total_parciales = { type: "number" };
-    tipo = { type: "number" };
-    tipo_cuenta = { type: "number" };
-    total = { type: "number" };
+    saldo_anterior = { type: "money" };
+    saldo_actual = { type: "money" };
+    mora = { type: "money" };
+    interes_demas_cargos_pagar = { type: "money" };
+    abono_capital = { type: "money" };
+    //proximo_pago_pactado = { type: "date" };
+    //total_parciales = { type: "money" };//todo revisar por que manda valores
+    //tipo = { type: "number" };
+    //tipo_cuenta = { type: "number" };
+    total = { type: "money" };
     tasa_cambio = { type: "number" };
+    //reestructuracion = { type: "number" }
+    //Solo_Interes_Mora = { type: "text" }
+
 }
 export { Factura_contrato }
 

@@ -1,14 +1,13 @@
 //@ts-check
-import { WRender, ComponentsManager } from "../WDevCore/WModules/WComponentsTools.js";
-import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js"
-import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
-import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
-import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
-import { ModalMessege, WForm } from "../WDevCore/WComponents/WForm.js";
 import { Catalogo_Inversores } from "../FrontModel/DBODataBaseModel.js";
+import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js";
+import { ModalMessage } from "../WDevCore/WComponents/ModalMessage.js";
+import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
+import { WForm } from "../WDevCore/WComponents/WForm.js";
+import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js";
+import { ComponentsManager, WRender } from "../WDevCore/WModules/WComponentsTools.js";
 import { WOrtograficValidation } from "../WDevCore/WModules/WOrtograficValidation.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
-import {WAjaxTools} from "../WDevCore/WModules/WAjaxTools.js";
 class Gestion_InversionistaView extends HTMLElement {
     constructor(props) {
         super();
@@ -100,7 +99,7 @@ class Gestion_InversionistaForm extends HTMLElement {
             tagName: 'button', className: 'Block-Success', innerText: 'Guardar',
             onclick: async () => {
                 if (!this.FormularioCliente?.Validate()) {
-                    this.append(ModalMessege("Necesita llenar todos los datos del cliente primeramente"));
+                    this.append(ModalMessage("Necesita llenar todos los datos del cliente primeramente"));
                     return;
                 }
                 if (this.cliente.codigo_cliente == null || this.cliente.codigo_cliente == undefined) {
@@ -109,13 +108,13 @@ class Gestion_InversionistaForm extends HTMLElement {
                     
                     if (result?.id_inversor != null) {
                         this.cliente.codigo_cliente = result?.id_inversor;
-                        this.append(ModalMessege("Datos guardados correctamente"));
+                        this.append(ModalMessage("Datos guardados correctamente"));
                     } else {
-                        this.append(ModalMessege("Error al guardar intentelo nuevamente"));
+                        this.append(ModalMessage("Error al guardar intentelo nuevamente"));
                     }
                 } else {
                     const result = await new Catalogo_Inversores(this.cliente).Update();
-                    this.append(ModalMessege(WOrtograficValidation.es(result.message)));
+                    this.append(ModalMessage(WOrtograficValidation.es(result.message)));
                 }
             }
         }))
@@ -153,4 +152,5 @@ class Gestion_InversionistaForm extends HTMLElement {
     `
 }
 customElements.define('w-catalogo_inversores', Gestion_InversionistaForm);
-export {Gestion_InversionistaView}
+export { Gestion_InversionistaView };
+

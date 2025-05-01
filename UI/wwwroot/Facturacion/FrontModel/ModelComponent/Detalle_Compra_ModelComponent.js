@@ -22,7 +22,7 @@ class Detalle_Compra_ModelComponent extends EntityClass {
     };
     /**@type {ModelProperty}*/ Aplica_Iva = { type: 'CHECKBOX', require: false, hiddenInTable: true };
     /**@type {ModelProperty}*/ Iva = {
-        type: "OPERATION", disabled: true, label: "Iva Cordobas",
+        type: "OPERATION", disabled: true, label: "Iva Cordobas", hidden: true,
         action: (/**@type {Detalle_Compra} */ cuota) => { }
     };
     /**@type {ModelProperty}*/ Total = {
@@ -34,7 +34,7 @@ class Detalle_Compra_ModelComponent extends EntityClass {
         Dataset: ["UND"] // ["KILATE", "UND", "LBS", "KILO", "DOCENA"]
     };
     /**@type {ModelProperty}*/ Cat_Producto = { type: 'WSELECT', ModelObject: () => new Cat_Producto_ModelComponent() };
-    /**@type {ModelProperty}*/ Datos_Producto_Lote = { type: 'Model', ModelObject: () => new BasicDatosCompra() };
+    /**@type {ModelProperty}*/ Datos_Producto_Lote = { type: 'Model', ModelObject: () => new BasicDatosCompra(), hiddenInTable: true };
 }
 export { Detalle_Compra_ModelComponent };
 class BasicDatosCompra {

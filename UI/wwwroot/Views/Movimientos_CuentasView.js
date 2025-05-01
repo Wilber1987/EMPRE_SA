@@ -3,7 +3,7 @@ import { Catalogo_Cambio_Divisa } from "../FrontModel/Catalogo_Cambio_Divisa.js"
 import { Catalogo_Cambio_Divisa_ModelComponent, Catalogo_Cuentas } from "../FrontModel/DBODataBaseModel.js";
 import { Movimientos_Cuentas } from "../FrontModel/MovimientosCuentas.js";
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js";
-import { ModalMessege } from "../WDevCore/WComponents/WForm.js";
+import { ModalMessage } from "../WDevCore/WComponents/ModalMessage.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js";
 import { ComponentsManager, WRender } from "../WDevCore/WModules/WComponentsTools.js";
@@ -81,7 +81,7 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
         const ObjectOptions = {
             SaveFunction: (param, response) => {
                 console.log(response)
-                this.append(ModalMessege(response.message))
+                this.append(ModalMessage(response.message))
             }
         }
 
@@ -164,7 +164,7 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
     }
     ObjectOptionsModal = {
         SaveFunction: async (profile, response) => {
-            this.append(ModalMessege(response.message))
+            this.append(ModalMessage(response.message))
             if (response.status == 200) {
                 const dataset = await new Movimientos_Cuentas().Get();
                 this.TableComponent.Dataset = dataset;

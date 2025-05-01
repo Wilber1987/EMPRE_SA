@@ -12,10 +12,11 @@ import { Tbl_Cuotas_ModelComponent } from "../FrontModel/ModelComponents.js";
 import { FinancialModule } from "../modules/FinancialModule.js";
 import { clientSearcher, contratosSearcher, ValoracionesSearch } from "../modules/SerchersModules.js";
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
-import { ModalMessege, ModalVericateAction } from "../WDevCore/WComponents/WForm.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { WArrayF } from "../WDevCore/WModules/WArrayF.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
+import { ModalMessage } from "../WDevCore/WComponents/ModalMessage.js";
+import { ModalVericateAction } from "../WDevCore/WComponents/ModalVericateAction.js";
 
 /**
  * @typedef {Object} ContratosConfig
@@ -140,9 +141,9 @@ class Transaction_ContratosView extends HTMLElement {
      */
     prioridadEnElPlazo() {
         const prioridad = this.entity.Transaction_Contratos?.Detail_Prendas?.find(p =>
-            p.Transactional_Valoracion.Catalogo_Categoria.prioridad ==
+            p.Transactional_Valoracion_ModelComponent.Catalogo_Categoria.prioridad ==
             WArrayF.MinValue(this.entity.Transaction_Contratos.Detail_Prendas.map(
-                sp => sp.Transactional_Valoracion.Catalogo_Categoria), "prioridad"));
+                sp => sp.Transactional_Valoracion_ModelComponent.Catalogo_Categoria), "prioridad"));
         // @ts-ignore
         return prioridad?.Catalogo_Categoria?.plazo_limite ?? 1
 
@@ -191,7 +192,7 @@ class Transaction_ContratosView extends HTMLElement {
             tagName: 'button', className: 'Block-Fifth', innerText: 'Guardar contrato',
             onclick: async () => {
                 if (this.entity.Transaction_Contratos.Detail_Prendas.length == 0) {
-                    this.shadowRoot?.append(ModalMessege("Debe ingresar prendas para realizar el contrato!"));
+                    this.shadowRoot?.append(ModalMessage("Debe ingresar prendas para realizar el contrato!"));
                     return;
                 }
 
@@ -210,11 +211,11 @@ class Transaction_ContratosView extends HTMLElement {
                     }
                 });
                 if (!isSerieValidation) {
-                    this.shadowRoot?.append(ModalMessege("Debe ingresar la información requerida de las prendas, serie incompleta!"));
+                    this.shadowRoot?.append(ModalMessage("Debe ingresar la información requerida de las prendas, serie incompleta!"));
                     return;
                 }
                 if (!isVehiculoValidation) {
-                    this.shadowRoot?.append(ModalMessege("Debe ingresar la información requerida del vehículos!"));
+                    this.shadowRoot?.append(ModalMessage("Debe ingresar la información requerida del vehículos!"));
                     return;
                 }
 
@@ -224,7 +225,7 @@ class Transaction_ContratosView extends HTMLElement {
                         location.href = "/PagesViews/Transaction_ContratosViewDetail?numero_contrato=" + response.body.numero_contrato;
                     }, response.message, false));
                 } else {
-                    this.shadowRoot?.append(ModalMessege(response.message));
+                    this.shadowRoot?.append(ModalMessage(response.message));
                 }
             }
         }))
@@ -325,19 +326,19 @@ class Transaction_ContratosView extends HTMLElement {
         // @ts-ignore
         const existInList = this.entity.Transaction_Contratos.Detail_Prendas?.find(p => p.serie == valoracion.Serie);
         if (existInList != undefined) {
-            this.shadowRoot?.append(ModalMessege("La valoración ya esta en la lista"));
+            this.shadowRoot?.append(ModalMessage("La valoración ya esta en la lista"));
             return;
         }
         // @ts-ignore
         const existVehiculo = this.entity.Transaction_Contratos?.Detail_Prendas?.find(p => p.Catalogo_Categoria.id_categoria == 2);
         if (existVehiculo != undefined && valoracion.Catalogo_Categoria.id_categoria != 2) {
-            this.shadowRoot?.append(ModalMessege("Anteriormente valoro un vehículo por lo tanto no puede agregar valoraciones de diferente categoría"));
+            this.shadowRoot?.append(ModalMessage("Anteriormente valoro un vehículo por lo tanto no puede agregar valoraciones de diferente categoría"));
             return;
         }
         // @ts-ignore
         const notExistVehiculo = this.entity.Transaction_Contratos?.Detail_Prendas?.find(p => p.Catalogo_Categoria.id_categoria != 2);
         if (notExistVehiculo != undefined && valoracion.Catalogo_Categoria.id_categoria == 2) {
-            this.shadowRoot?.append(ModalMessege("Anteriormente valoro un artículo distinto de vehículo por lo tanto no puede agregar valoraciones de esta categoría"));
+            this.shadowRoot?.append(ModalMessage("Anteriormente valoro un artículo distinto de vehículo por lo tanto no puede agregar valoraciones de esta categoría"));
             return;
         }
         this.entity.Transaction_Contratos.Detail_Prendas = this.entity.Transaction_Contratos.Detail_Prendas ?? [];
@@ -352,7 +353,7 @@ class Transaction_ContratosView extends HTMLElement {
             monto_aprobado_dolares: valoracion.Valoracion_empeño_dolares,
             en_manos_de: undefined,
             Catalogo_Categoria: valoracion.Catalogo_Categoria,
-            Transactional_Valoracion: valoracion
+            Transactional_Valoracion_ModelComponent: valoracion
         }))
         // @ts-ignore
         this.entity.Transaction_Contratos.taza_cambio = this.tasaActual?.Valor_de_venta;
@@ -380,16 +381,15 @@ class Transaction_ContratosView extends HTMLElement {
         // @ts-ignore
         this.CuotasTable.Dataset = undefined;
         // @ts-ignore
-        this.entity.valoraciones = this.entity.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion);
+        this.entity.valoraciones = this.entity.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion_ModelComponent);
         this.update();
 
     }
     update() {
-
         FinancialModule.calculoAmortizacion(this.entity);
         if (this.prendasTable != undefined && this.entity.Transaction_Contratos.Detail_Prendas != undefined) {
             this.entity.Transaction_Contratos?.Detail_Prendas.forEach(detalle => {
-                detalle.monto_aprobado_dolares = detalle.Transactional_Valoracion.Valoracion_empeño_dolares
+                detalle.monto_aprobado_dolares = detalle.Transactional_Valoracion_ModelComponent.Valoracion_empeño_dolares
             })
             this.prendasTable.Dataset = this.entity.Transaction_Contratos.Detail_Prendas;
             this.prendasTable?.DrawTable();
@@ -488,19 +488,14 @@ class MainContract extends HTMLElement {
                                 this.append(ModalVericateAction(async (editObject) => {
                                     console.log(contrato, editObject);
                                     const response = await new Transaction_Contratos(contrato).Anular();
-                                    this.append(ModalMessege(response.message));
+                                    this.append(ModalMessage(response.message));
                                     modal.close();
                                 }, "Esta seguro que desea anular este contrato"))
                             }
                         }
                     });
                     this.append(modal);
-                }))
-            }
-        }, {
-            name: "Nuevo Contrato", action: () => {
-                this.Manager.NavigateFunction("newContrato", new Transaction_ContratosView({}))
-                this.indexContract++;
+                }, true))
             }
         }
     ]

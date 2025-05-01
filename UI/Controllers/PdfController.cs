@@ -1,9 +1,10 @@
 ﻿using CAPA_NEGOCIO.Services;
 using DataBaseModel;
 using Microsoft.AspNetCore.Mvc;
-using CAPA_DATOS;
+
 using API.Controllers;
-using CAPA_DATOS.Security;
+using APPCORE.Security;
+using APPCORE;
 
 namespace UI.Controllers
 {

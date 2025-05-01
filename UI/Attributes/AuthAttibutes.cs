@@ -1,4 +1,4 @@
-using CAPA_DATOS.Security;
+using APPCORE.Security;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 

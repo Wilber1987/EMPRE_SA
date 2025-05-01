@@ -7,15 +7,12 @@ import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js";
 //import {  Detalle_Factura, Tbl_Factura, Detail_Factura_ModelComponent, Cat_Proveedor  } from "../FrontModel/FacturacionModel.js"
 // @ts-ignore
 import { Tbl_Compra_ModelComponent } from "../Facturacion/FrontModel/ModelComponent/Tbl_Compra_ModelComponent.js";
-<<<<<<< HEAD
-import { Catalogo_Cambio_Divisa_ModelComponent, Transactional_Valoracion } from "../FrontModel/DBODataBaseModel.js";
-=======
 import { Tbl_Compra } from "../Facturacion/FrontModel/Tbl_Compra.js";
 import { Catalogo_Cambio_Divisa_ModelComponent } from "../FrontModel/DBODataBaseModel.js";
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
-import { ModalMessege, WForm } from "../WDevCore/WComponents/WForm.js";
+import {  WForm } from "../WDevCore/WComponents/WForm.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
->>>>>>> 73b1b0f833938f9bd3f41b89a31f9c9fedb3f577
+import { ModalMessage } from "../WDevCore/WComponents/ModalMessage.js";
 
 /**
  * @typedef {Object} facturaconfig
@@ -37,9 +34,7 @@ class MainFactura extends HTMLElement {
             subtotal: 0,
             iva: 0,
         }
-
         //this.ComprasModel = new Tbl_Compra_ModelComponent();//todo constructor
-
         this.setComprasContainer();
 
     }
@@ -59,17 +54,15 @@ class MainFactura extends HTMLElement {
 
                 console.log(valoracion);
                 if (!this.facturaForm?.Validate()) {
-                    this.append(ModalMessege("Agregue datos para poder continuar"));
+                    this.append(ModalMessage("Agregue datos para poder continuar"));
                     return;
                 }
                 const response = await new Tbl_Compra(this.facturaForm?.FormObject).Save();
 
-                this.append(ModalMessege(response.message));
+                this.append(ModalMessage(response.message));
                 return;
             }
         });
-
-
         this.valoracionesContainer.append(
             this.facturaForm,
             this.totalesDetail
@@ -209,7 +202,7 @@ class MainFactura extends HTMLElement {
         justify-content: space-between;
         font-size: 14px;
         font-weight: bold;
-        color: #00238a
+        color: var(--font-secundary-color)
     }        
     .OptionContainer{
         display: flex;

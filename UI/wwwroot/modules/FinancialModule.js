@@ -4,7 +4,7 @@ import { Detail_Prendas, Tbl_Cuotas, Transaction_Contratos, ValoracionesTransact
 import { ParcialesData } from "../FrontModel/ParcialData.js";
 import { Recibos } from "../FrontModel/Recibos.js";
 
-import {WArrayF} from "../WDevCore/WModules/WArrayF.js";
+import { WArrayF } from "../WDevCore/WModules/WArrayF.js";
 
 
 class FinancialModule {
@@ -24,7 +24,7 @@ class FinancialModule {
         if (withValoraciones) {
             contrato.Transaction_Contratos.Detail_Prendas = contrato.valoraciones.map(
             // @ts-ignore
-            /**@type {Transactional_Valoracion}*/valoracion => new Detail_Prendas({
+            /**@type {Transactional_Valoracion_ModelComponent}*/valoracion => new Detail_Prendas({
                 Descripcion: valoracion.Descripcion,
                 modelo: valoracion.Modelo,
                 marca: valoracion.Marca,
@@ -35,25 +35,11 @@ class FinancialModule {
                 en_manos_de: tipo_contrato == "EMPEÑO" ? "ACREEDOR" : "DEUDOR",
                 precio_venta: valoracion.Precio_venta_empeño_dolares,
                 Catalogo_Categoria: valoracion.Catalogo_Categoria,
-                Transactional_Valoracion: valoracion
+                Transactional_Valoracion_ModelComponent: valoracion
             }));
         }
 
-        contrato.Transaction_Contratos.Valoracion_compra_cordobas = FinancialModule.round(WArrayF.SumValAtt(contrato.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion), "Valoracion_compra_cordobas"));
-        contrato.Transaction_Contratos.Valoracion_compra_dolares = FinancialModule.round(WArrayF.SumValAtt(contrato.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion), "Valoracion_compra_dolares"));
-        contrato.Transaction_Contratos.Valoracion_empeño_cordobas = FinancialModule.round(WArrayF.SumValAtt(contrato.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion), "Valoracion_empeño_cordobas"));
-        contrato.Transaction_Contratos.Valoracion_empeño_dolares = FinancialModule.round(WArrayF.SumValAtt(contrato.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion), "Valoracion_empeño_dolares"));
-        //contrato.Transaction_Contratos.taza_interes_cargos = contrato.Transaction_Contratos.taza_interes_cargos ?? 0.09
-        contrato.Transaction_Contratos.tasas_interes =
-            (parseFloat(contrato.Transaction_Contratos?.Catalogo_Clientes?.Catalogo_Clasificacion_Interes?.porcentaje)
-                + contrato.Transaction_Contratos?.taza_interes_cargos) / 100;
-        contrato.Transaction_Contratos.plazo = contrato.Transaction_Contratos.plazo ?? 1;
-        contrato.Transaction_Contratos.fecha = new Date(contrato.Transaction_Contratos.fecha);
-        contrato.Transaction_Contratos.Catalogo_Clientes = contrato.Transaction_Contratos.Catalogo_Clientes;
-        //contrato.fecha = new Date(contrato.Transaction_Contratos.fecha)
-
-        contrato.Transaction_Contratos.Tbl_Cuotas = new Array();
-        contrato.Transaction_Contratos.gestion_crediticia = contrato.Transaction_Contratos.Catalogo_Clientes?.Catalogo_Clasificacion_Interes?.porcentaje ?? 6;
+        FinancialModule.CalculeTotales(contrato);
 
         FinancialModule.crearCuotas(contrato);
 
@@ -66,13 +52,18 @@ class FinancialModule {
         return contrato;
     }
 
-    static getPago = (contrato) => {
+    static getPago = (contrato) => {        
+
         const monto = contrato.Transaction_Contratos.Valoracion_empeño_dolares;
         //console.log(monto);
         const cuotas = contrato.Transaction_Contratos.plazo;
         const tasa = contrato.Transaction_Contratos.tasas_interes;
+        if (tasa == 0)  {
+            return monto / cuotas;	
+        }
         const payment = ((tasa * Math.pow(1 + tasa, cuotas)) * monto) / (Math.pow(1 + tasa, cuotas) - 1);
         //console.log(monto, cuotas, tasa, payment);
+        
         return payment;
     }
     static getPagoValoracion = (valoracion) => {
@@ -82,6 +73,23 @@ class FinancialModule {
         //console.log(monto, cuotas, tasa);
         const payment = ((tasa * Math.pow(1 + tasa, cuotas)) * monto) / (Math.pow(1 + tasa, cuotas) - 1);
         return payment.toString() == "NaN" ? 0 : payment;
+    }
+
+    static CalculeTotales(contrato) {
+        contrato.Transaction_Contratos.Valoracion_compra_cordobas = contrato.Transaction_Contratos.Valoracion_compra_cordobas ?? FinancialModule.round(WArrayF.SumValAtt(contrato.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion_ModelComponent), "Valoracion_compra_cordobas"));
+        contrato.Transaction_Contratos.Valoracion_compra_dolares = contrato.Transaction_Contratos.Valoracion_compra_dolares ??  FinancialModule.round(WArrayF.SumValAtt(contrato.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion_ModelComponent), "Valoracion_compra_dolares"));
+        contrato.Transaction_Contratos.Valoracion_empeño_cordobas = contrato.Transaction_Contratos.Valoracion_empeño_cordobas ?? FinancialModule.round(WArrayF.SumValAtt(contrato.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion_ModelComponent), "Valoracion_empeño_cordobas"));
+        contrato.Transaction_Contratos.Valoracion_empeño_dolares = contrato.Transaction_Contratos.Valoracion_empeño_dolares ?? FinancialModule.round(WArrayF.SumValAtt(contrato.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion_ModelComponent), "Valoracion_empeño_dolares"));
+        //contrato.Transaction_Contratos.taza_interes_cargos = contrato.Transaction_Contratos.taza_interes_cargos ?? 0.09
+        contrato.Transaction_Contratos.tasas_interes = contrato.Transaction_Contratos.tasas_interes ??
+            (parseFloat(contrato.Transaction_Contratos?.Catalogo_Clientes?.Catalogo_Clasificacion_Interes?.porcentaje)
+                + contrato.Transaction_Contratos?.taza_interes_cargos) / 100;
+        contrato.Transaction_Contratos.plazo = contrato.Transaction_Contratos.plazo ?? 1;
+        contrato.Transaction_Contratos.fecha = new Date(contrato.Transaction_Contratos.fecha);
+        contrato.Transaction_Contratos.Catalogo_Clientes = contrato.Transaction_Contratos.Catalogo_Clientes;
+        //contrato.fecha = new Date(contrato.Transaction_Contratos.fecha)
+        contrato.Transaction_Contratos.Tbl_Cuotas = new Array();
+        contrato.Transaction_Contratos.gestion_crediticia = contrato.Transaction_Contratos.gestion_crediticia ?? contrato.Transaction_Contratos.Catalogo_Clientes?.Catalogo_Clasificacion_Interes?.porcentaje ?? 6;
     }
 
     /**
@@ -142,21 +150,24 @@ class FinancialModule {
 
         //TODO BORRAR CICLO DE MORA FORZADA 
         selectContrato.Tbl_Cuotas?.filter(cuota => cuota.Estado == "PENDIENTE")?.forEach(cuota => {
-            // Obtenemos la fecha de pago como un objeto Date
+            // Obtenemos la fecha de pago
             const fechaPago = new Date(cuota.fecha);
-            // Obtenemos la fecha y hora actuales
+            fechaPago.setHours(0, 0, 0, 0);            
+            // Obtenemos la fecha actual
             const ahora = new Date();
-            // Calculamos la diferencia en milisegundos
+            ahora.setHours(23, 59, 0, 0);        
+            // Calculamos la diferencia en días calendario usando los componentes de la fecha
             // @ts-ignore
-            const diferencia = ahora - fechaPago;
-            // Convertimos la diferencia de milisegundos a días (1 día = 24 * 60 * 60 * 1000 ms)
-            const diasEnMora = Math.ceil(diferencia / (24 * 60 * 60 * 1000));
-            // Si 'diasEnMora' es negativo, significa que la fecha de pago aún no ha llegado, entonces ajustamos a cero
-            const diasEnMoraFinal = Math.max(diasEnMora, 0);
-            if (diasEnMoraFinal > 0) {
+            const diferenciaDias = Math.floor((ahora - fechaPago) / (1000 * 60 * 60 * 24));
+        
+            // Si la diferencia es negativa, ajustamos a cero
+            const diasEnMoraFinal = Math.max(diferenciaDias, 0);
+            
+            if (diasEnMoraFinal > 0 && contractData.diasMora < diasEnMoraFinal) {
                 contractData.diasMora = diasEnMoraFinal;
             }
         });
+        
         // @ts-ignore
         const CuotaActual = contractData.cuotasPendientes[0];
         const mora = WArrayF.SumValAtt(contractData.cuotasPendientes, "mora");
@@ -198,6 +209,8 @@ class FinancialModule {
         contractData.pagoMinimoCordobas = contractData.pagoMinimoDolares * contractData.tasasCambio[0].Valor_de_venta;
         contractData.pagoMaximoCordobas = contractData.pagoMaximoDolares * contractData.tasasCambio[0].Valor_de_venta;
         contractData.pagoActualCordobas = contractData.pagoActual * contractData.tasasCambio[0].Valor_de_venta;
+        console.log(contractData);
+
     }
     /**
    * @param {Tbl_Cuotas} cuota 
@@ -212,6 +225,7 @@ class FinancialModule {
         const saldo_actual_dolares = contractData.Contrato.saldo;
         /**@type {Date} */
         const fechaActual = contractData.Fecha;
+        fechaActual.setHours(23, 59, 0, 0);
         // @ts-ignore
         //const diasDelMesDePago = new Date(contractData.cuota?.fecha).getDate();
 
@@ -230,16 +244,20 @@ class FinancialModule {
             return cuota.interes;
         }
         /**@type {Date} */ // @ts-ignore
-        const fechaEnQueIniciaPeriodo = new Date(cuota?.fecha).modifyMonth(-1);
+        const fechaEnQueIniciaPeriodo = new Date(cuota?.fecha);
+        fechaEnQueIniciaPeriodo.setHours(0, 0, 0, 0);
         if (fechaActual < fechaEnQueIniciaPeriodo) {
             return 0;
         }
         // @ts-ignore
-        const diferencia = fechaActual - fechaEnQueIniciaPeriodo;
+        //const diferencia = fechaActual - fechaEnQueIniciaPeriodo;
+        // Calculamos la diferencia en días calendario usando los componentes de la fecha
+        const diferenciaDias = Math.floor((fechaActual - fechaEnQueIniciaPeriodo) / (1000 * 60 * 60 * 24));
         //console.log(diferencia);
-        
+        const diasDeInteresesFinal = Math.max(diferenciaDias, 0);
+
         /**@type {Number} */
-        const diasDeDiferencia = (diferencia / (1000 * 60 * 60 * 24)) >= 0 ? Math.floor(diferencia / (1000 * 60 * 60 * 24)) + 1 : 1;
+       // const diasDeDiferencia = Math.floor(diferencia / (1000 * 60 * 60 * 24));
         /**@type {Number} */
         const porcentajeInteres = contractData.Contrato.tasas_interes;
         //console.log(diasDeDiferencia, porcentajeInteres);
@@ -252,7 +270,7 @@ class FinancialModule {
         const procentageDiario = porcentajeInteres / 30;
         //console.log(saldo_actual_dolares, procentageDiario, porcentajeInteres, diasDelMes, saldo_actual_dolares * procentageDiario, diasDeDiferencia);
         /**@type {Number} */
-        const interesCorriente = saldo_actual_dolares * procentageDiario * diasDeDiferencia;
+        const interesCorriente = (saldo_actual_dolares * procentageDiario * diasDeInteresesFinal) + cuota.interes;
         //console.log(interesCorriente);
         /**@type {Number} */
         const parciales = contractData.parciales?.pagoParciales != undefined && contractData.parciales?.pagoParciales > 0 ? contractData.parciales?.pagoParciales : 0;
@@ -278,7 +296,7 @@ class FinancialModule {
             canReestructure = true;
         }
         //console.log(Contrato.Tbl_Cuotas);
-        const existeMora = contractData.Contrato.Tbl_Cuotas?.filter(c => c.mora != null && c.mora > 0).length > 0;
+        const existeMora = contractData.Contrato.Tbl_Cuotas?.filter(c => c.Estado == "PENDIENTE" && c.mora != null && c.mora > 0).length > 0;
 
         contractData.canReestructure = canReestructure
         contractData.canPagoParcial = fechaVencida

@@ -1,19 +1,11 @@
 //@ts-check
-import { WRender, ComponentsManager } from "../WDevCore/WModules/WComponentsTools.js";
-import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js"
-import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
-import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
-import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
-import { ModalMessege, WForm } from "../WDevCore/WComponents/WForm.js";
-import { Catalogo_Clientes, Condicion_Laboral_Cliente, Transaccion_Factura, Transaction_Contratos_ModelComponent } from "../FrontModel/DBODataBaseModel.js";
-import { WOrtograficValidation } from "../WDevCore/WModules/WOrtograficValidation.js";
-import { css } from "../WDevCore/WModules/WStyledRender.js";
-import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
-import { clientSearcher } from "../modules/SerchersModules.js";
+import { Catalogo_Clientes, Transaccion_Factura, Transaction_Contratos_ModelComponent } from "../FrontModel/DBODataBaseModel.js";
 import { Transaction_Contratos } from "../FrontModel/Model.js";
+import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js";
 import { WDetailObject } from "../WDevCore/WComponents/WDetailObject.js";
+import { ComponentsManager, WRender } from "../WDevCore/WModules/WComponentsTools.js";
+import { clientSearcher } from "../modules/SerchersModules.js";
 import { ClientComponentView } from "./ClientComponentView.js";
-import {WAjaxTools} from "../WDevCore/WModules/WAjaxTools.js";
 
 class Gestion_ClientesView extends HTMLElement {
     constructor(props) {

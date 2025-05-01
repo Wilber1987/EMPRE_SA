@@ -1,18 +1,21 @@
 @page
 @using API.Controllers
-@using CAPA_DATOS.Security
+@using APPCORE.Security
 @{
-    if (!SecurityController.Auth(HttpContext.Session.GetString("seassonKey")))
+    string? identfy = HttpContext.Session.GetString("seassonKey");
+    if (!SecurityController.Auth(identfy))
     {
         Response.Redirect("../Security/login");
         return;
     }
-    @if (!SecurityController.HavePermission(Permissions.GESTION_EMPEÑOS.ToString(),
-HttpContext.Session.GetString("seassonKey")))
-    {
-       Response.Redirect("../Security/login");
-        return;
-    }
+
 }
-<script src='~/Views/Transaction_Valoraciones_View.js' type='module'></script>
-<div id='MainBody'></div>
+@if (SecurityController.HavePermission(identfy, Permissions.GESTION_EMPEÑOS, Permissions.GESTION_COMPRAS))
+{
+    <script src='~/Views/Transaction_Valoraciones_View.js' type='module'></script>
+    <div id='MainBody'></div>
+}
+else
+{
+    <h1>No tiene permisos</h1>
+}

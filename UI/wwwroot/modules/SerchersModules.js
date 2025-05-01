@@ -4,11 +4,16 @@ import { WRender, ComponentsManager } from "../WDevCore/WModules/WComponentsTool
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js"
 // @ts-ignore
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
-import { Catalogo_Clientes, Transaction_Contratos_ModelComponent, Transactional_Valoracion } from "../FrontModel/DBODataBaseModel.js"
+import { Catalogo_Clientes, Notas_de_contrato, Transaction_Contratos_ModelComponent, Transactional_Valoracion_ModelComponent } from "../FrontModel/DBODataBaseModel.js"
 // @ts-ignore
 import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
 import { Tbl_Cuotas, Transaction_Contratos, ValoracionesTransaction } from "../FrontModel/Model.js";
 import { Tbl_Cuotas_ModelComponent } from "../FrontModel/ModelComponents.js";
+import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
+import { WDetailObject } from "../WDevCore/WComponents/WDetailObject.js";
+import { FilterData } from "../WDevCore/WModules/CommonModel.js";
+import { ModalMessage } from "../WDevCore/WComponents/ModalMessage.js";
+import { DateTime } from "../WDevCore/WModules/Types/DateTime.js";
 class ValoracionesSearch extends HTMLElement {
     constructor(/** @type {Function} */ action,/** @type {Function|undefined} */ secondAction,/** @type {Boolean} */ onlyValids = false) {
         super();
@@ -20,14 +25,10 @@ class ValoracionesSearch extends HTMLElement {
         this.DrawComponent();
     }
     DrawComponent = async () => {
-        const model = new Transactional_Valoracion({ requiere_valoracion: { type: "TEXT", hiddenFilter: true } });
+        const model = new Transactional_Valoracion_ModelComponent({ requiere_valoracion: { type: "TEXT", hiddenFilter: true } });
         if (this.onlyValids) {
-            model.FilterData.push({
-                PropName: "Fecha",
-                FilterType: ">",
-                // @ts-ignore
-                Values: [new Date().subtractDays(40)]
-            });
+            // @ts-ignore`
+            model.FilterData.push(FilterData.Greater("Fecha",new DateTime().subtractDays(40).toISO() ) );
         }
         let dataset = await model.Get();
 
@@ -36,7 +37,7 @@ class ValoracionesSearch extends HTMLElement {
         })
         this.MainComponent = new WTableComponent({
             ModelObject: model,
-            Dataset: dataset.map(/**@param {Transactional_Valoracion} x*/ x => {
+            Dataset: dataset.map(/**@param {Transactional_Valoracion_ModelComponent} x*/ x => {
                 // @ts-ignore
                 x.requiere_valoracion = x.requireReValoracion() ? "SI" : "NO";
                 return x;
@@ -44,7 +45,7 @@ class ValoracionesSearch extends HTMLElement {
             Options: {
                 UserActions: [
                     {
-                        name: "Seleccionar", action: (/**@type {Transactional_Valoracion}*/ selected) => {
+                        name: "Seleccionar", action: (/**@type {Transactional_Valoracion_ModelComponent}*/ selected) => {
                             this.action(selected);
                         }
                     }
@@ -101,7 +102,7 @@ export { clientSearcher }
  * @param { Function } [anularAction]
  * @returns { HTMLElement }
  */
-const contratosSearcher = (action, anularAction) => {
+const contratosSearcher = (action, anularAction, withNotas = false) => {
     const model = new Transaction_Contratos_ModelComponent();
     model.Tbl_Cuotas.ModelObject = () => new Tbl_Cuotas_ModelComponent({
         Estado: {
@@ -127,12 +128,47 @@ const contratosSearcher = (action, anularAction) => {
     if (anularAction) {
         actions.push({
             name: "Anular",
+            rendered: (/** @type { Transaction_Contratos } */ contrato) => {
+                return contrato.IsAnulable
+                //return contrato.estado != "ANULADO" && contrato.estado != "CANCELADO"
+            }, 
             action: async (cliente) => {
                 // @ts-ignore
                 await anularAction(cliente);
             }
         })
     }
+    if (withNotas) {
+        actions.push({
+            name: "Agregar nota",
+            action: async (cliente) => {
+                document.body.appendChild( new WModalForm({
+                    ModelObject: new Notas_de_contrato(),
+                    title: "Agregar nota",
+                    ObjectOptions: {
+                        SaveFunction: async (nuevaNota) => {
+                            if (cliente.Notas) {
+                                cliente.Notas.push(nuevaNota)
+                            } else {
+                                cliente.Notas = [nuevaNota]
+                            }
+                            const response = await  new Transaction_Contratos(cliente).Update();
+                            document.body.appendChild(ModalMessage(response.message));                            
+                        } 
+                    }
+                }));
+               
+            }
+        })
+    }
+    actions.push({
+        name: "Ver detalles",
+        action: async (/** @type { Transaction_Contratos } */ contrato) => {
+            // @ts-ignore
+            const contratoF = await new Transaction_Contratos({ numero_contrato: contrato.numero_contrato }).Find();
+            document.body.append(new WModalForm({ ObjectModal: new  WDetailObject({ ObjectDetail: contratoF , ModelObject: new Transaction_Contratos_ModelComponent()})}));
+        }
+    })
     const TableComponent = new WTableComponent({
         EntityModel: model,
         ModelObject: new Transaction_Contratos_ModelComponent({
@@ -140,7 +176,7 @@ const contratosSearcher = (action, anularAction) => {
         }),
         AddItemsFromApi: true,
         Options: {
-            Show: true,
+            //Show: true,
             Filter: true,
             FilterDisplay: true,
             UserActions: actions

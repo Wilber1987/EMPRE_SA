@@ -1,18 +1,12 @@
 //@ts-check
-import { WRender, ComponentsManager } from "../WDevCore/WModules/WComponentsTools.js";
-import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js"
-import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
-import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
-import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
-import { ModalMessege, WForm } from "../WDevCore/WComponents/WForm.js";
-import { Catalogo_Clientes, Condicion_Laboral_Cliente, Transaction_Contratos_ModelComponent } from "../FrontModel/DBODataBaseModel.js";
+import { Catalogo_Clientes, Condicion_Laboral_Cliente } from "../FrontModel/DBODataBaseModel.js";
+import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js";
+import { ModalMessage } from "../WDevCore/WComponents/ModalMessage.js";
+import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
+import { WForm } from "../WDevCore/WComponents/WForm.js";
+import { ComponentsManager, WRender } from "../WDevCore/WModules/WComponentsTools.js";
 import { WOrtograficValidation } from "../WDevCore/WModules/WOrtograficValidation.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
-import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
-import { clientSearcher } from "../modules/SerchersModules.js";
-import { Transaction_Contratos } from "../FrontModel/Model.js";
-import { WDetailObject } from "../WDevCore/WComponents/WDetailObject.js";
-import {WAjaxTools} from "../WDevCore/WModules/WAjaxTools.js";
 class ClientComponentView extends HTMLElement {
     constructor(cliente) {
         super();
@@ -67,12 +61,12 @@ class ClientComponentView extends HTMLElement {
             onclick: async () => {
                 if (!this.FormularioCliente?.Validate()) {
                     this.Manager?.NavigateFunction("formularioCliente", this.FormularioCliente)
-                    this.append(ModalMessege("Necesita llenar todos los datos del cliente primeramente"));
+                    this.append(ModalMessage("Necesita llenar todos los datos del cliente primeramente"));
                     return;
                 }
                 // if (!this.FormularioDatos?.Validate()) {
                 //     this.Manager?.NavigateFunction("formularioDatosLabora    les", this.FormularioDatos)
-                //     this.append(ModalMessege("Necesita llenar todos los datos laborales del cliente primeramente"));
+                //     this.append(ModalMessage("Necesita llenar todos los datos laborales del cliente primeramente"));
                 //     return;
                 // }
 
@@ -82,16 +76,16 @@ class ClientComponentView extends HTMLElement {
 
                     if (result?.codigo_cliente != null) {
                         this.cliente.codigo_cliente = result?.codigo_cliente;
-                        this.append(ModalMessege("Datos guardados correctamente"));
+                        this.append(ModalMessage("Datos guardados correctamente"));
                         this.updateForms();
                     } else if (result?.status == 403) {
-                        this.append(ModalMessege(result?.message));
+                        this.append(ModalMessage(result?.message));
                     } else {
-                        this.append(ModalMessege("Error al guardar intentelo nuevamente"));
+                        this.append(ModalMessage("Error al guardar intentelo nuevamente"));
                     }
                 } else {
                     const result = await new Catalogo_Clientes(this.cliente).Update();
-                    this.append(ModalMessege(WOrtograficValidation.es(result.message)));
+                    this.append(ModalMessage(WOrtograficValidation.es(result.message)));
                 }
             }
         }))
@@ -144,4 +138,4 @@ class ClientComponentView extends HTMLElement {
     `
 }
 customElements.define('w-catalogo_clientes', ClientComponentView);
-export { ClientComponentView }
+export { ClientComponentView };

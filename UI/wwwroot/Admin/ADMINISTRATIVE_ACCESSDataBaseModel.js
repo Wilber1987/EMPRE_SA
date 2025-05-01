@@ -1,5 +1,6 @@
 import { EntityClass } from "../WDevCore/WModules/EntityClass.js";
 class Transactional_Configuraciones extends EntityClass {
+    
     constructor(props) {
         super(props, 'EntityADMINISTRATIVE_ACCESS');
         for (const prop in props) {
@@ -20,5 +21,9 @@ class Transactional_Configuraciones extends EntityClass {
     getConfiguraciones_Configs =  async () => {
         return await this.GetData("ApiEntityADMINISTRATIVE_ACCESS/getConfiguraciones_Configs");
     }
+    GetConfigs =  async () => {
+        return await this.GetData("ApiEntityADMINISTRATIVE_ACCESS/getConfiguraciones_Theme");
+    }
+
 }
 export { Transactional_Configuraciones }

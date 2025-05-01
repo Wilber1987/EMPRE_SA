@@ -8,6 +8,7 @@ class Lotes extends EntityClass {
        }
    }
    /**@type {Number}*/ Id_Transaccion;
+   /**@type {String}*/ Name;
    /**@type {String}*/ Descripcion;
    /**@type {Date}*/ Fecha;
    /**@type {Number}*/ Id_Usuario;

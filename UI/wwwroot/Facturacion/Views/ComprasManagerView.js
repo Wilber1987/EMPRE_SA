@@ -1,14 +1,18 @@
 //@ts-check
 // @ts-ignore
-import { ComponentsManager, WRender } from "../../WDevCore/WModules/WComponentsTools.js";
+import { ComponentsManager, html, WRender } from "../../WDevCore/WModules/WComponentsTools.js";
 // @ts-ignore
 import { WTableComponent } from "../../WDevCore/WComponents/WTableComponent.js";
 // @ts-ignore
 import { WAppNavigator } from "../../WDevCore/WComponents/WAppNavigator.js";
-import { ModalMessege, ModalVericateAction } from "../../WDevCore/WComponents/WForm.js";
 import { css } from "../../WDevCore/WModules/WStyledRender.js";
 import { Tbl_Compra_ModelComponent } from "../FrontModel/ModelComponent/Tbl_Compra_ModelComponent.js";
 import { Tbl_Compra } from "../FrontModel/Tbl_Compra.js";
+import { WPrintExportToolBar } from "../../WDevCore/WComponents/WPrintExportToolBar.mjs";
+import { FacturasBuilder } from "./Builders/FacturasBuilder.js";
+import { DocumentsData } from "../FrontModel/DocumentsData.js";
+import { WModalForm } from "../../WDevCore/WComponents/WModalForm.js";
+import { ModalVericateAction } from "../../WDevCore/WComponents/ModalVericateAction.js";
 
 /**
  * @typedef {Object} ComprasConfig
@@ -31,7 +35,7 @@ class ComprasManagerView extends HTMLElement {
             subtotal: 0,
             iva: 0,
         }
-    }    
+    }
 
     ElementsNav = [
         {
@@ -39,25 +43,50 @@ class ComprasManagerView extends HTMLElement {
                 this.Manager.NavigateFunction("Compras", new WTableComponent({
                     ModelObject: new Tbl_Compra_ModelComponent, EntityModel: new Tbl_Compra,
                     Options: {
-                        Search: false, Filter: true, Add: false, Edit: false,
+                        Search: false, Filter: true, Add: false, Edit: false, FilterDisplay: true,
                         UserActions: [{
                             name: "Anular",
+                            rendered: (/** @type { Tbl_Compra } */ factura) => {
+                                return factura.IsAnulable
+                                //return factura.Estado != "ANULADO" && factura.Estado != "CANCELADO" 
+                            },
                             action: async (/**@type {Tbl_Compra}*/compra) => {
                                 this.append(ModalVericateAction(async () => {
                                     const response = await compra.Anular();
                                     // @ts-ignore
-                                    this.append(ModalMessege(response.message));
+                                    this.append(ModalMessage(response.message));
 
                                     //modal.close();
                                 }, "¿Esta seguro que desea anular esta compra?"))
                             }
+                        }, {
+                            name: "Ver Compra",
+                            action: async (/**@type {Tbl_Compra}*/compra) => {
+                                /**@type {DocumentsData} */
+                                const documentsData = await new DocumentsData().GetDataFragments();
+                                documentsData.Header.style.width = "100%";
+                                const facturaR = FacturasBuilder.BuildFacturaCompra(documentsData, compra);  
+                                const div = html`<div class="contract-response">
+                                    ${new WPrintExportToolBar({
+                                        PrintAction: (/** @type {WPrintExportToolBar} */ toolBar) => {
+                                            toolBar.Print(html`<div>${facturaR.cloneNode(true)}</div>`)
+                                        }
+                                    })}
+                                    ${facturaR}      
+                                </div>`;
+                                document.body.append(new WModalForm({
+                                    ShadowRoot: false,
+                                    ObjectModal: div,
+                                    ObjectOptions: {
+                                        SaveFunction: () => {
+                                            location.href = "/Facturacion/ComprasManager"
+                                        }
+                                    }
+                                }))
+                            }
                         }]
                     }
                 }))
-            }
-        }, {
-            name: "Nueva Factura Proveedor", action: () => {
-               window.location.href = "/Facturacion/ComprasComponentView";
             }
         }
     ]
@@ -72,6 +101,13 @@ class ComprasManagerView extends HTMLElement {
         .OptionContainer{
             display: flex;
         }
+        .contract-response {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0px  30px;
+            background-color: #d7d7d7;
+        }         
     `
 }
 customElements.define('w-main-compras-manager', ComprasManagerView);

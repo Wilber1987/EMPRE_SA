@@ -2,7 +2,7 @@
 // @ts-ignore
 import { ConvertToMoneyString, html, WRender } from "../../WDevCore/WModules/WComponentsTools.js";
 // @ts-ignore
-import { ModalMessege, ModalVericateAction, WForm } from "../../WDevCore/WComponents/WForm.js";
+import { WForm } from "../../WDevCore/WComponents/WForm.js";
 import { css } from "../../WDevCore/WModules/WStyledRender.js";
 import { Detalle_Compra } from "../FrontModel/Detalle_Compra.js";
 import { Tbl_Compra_ModelComponent } from "../FrontModel/ModelComponent/Tbl_Compra_ModelComponent.js";
@@ -11,6 +11,7 @@ import { Tbl_Compra } from "../FrontModel/Tbl_Compra.js";
 import { ModelProperty } from "../../WDevCore/WModules/CommonModel.js";
 import { WOrtograficValidation } from "../../WDevCore/WModules/WOrtograficValidation.js";
 import {WArrayF} from "../../WDevCore/WModules/WArrayF.js";
+import { ModalMessage } from "../../WDevCore/WComponents/ModalMessage.js";
 
 /**
  * @typedef {Object} ComprasConfig
@@ -54,27 +55,24 @@ class ComprasComponent extends HTMLElement {
             ModelObject: this.ComprasModel,
             AutoSave: false,
             EditObject: this.ComprasConfig.Entity,
-            limit: 3,
-            DivColumns: "repeat(3, 32%)",
+            limit: 4,
+            //DivColumns: "repeat(3, 32%)",
             //Options: false,
             // @ts-ignore
             SaveFunction: async (/**@type {Tbl_Compra} */ compra) => {
                 if (!this.ComprasForm?.Validate()) {
-                    this.append(ModalMessege("Agregue datos para poder continuar"));
+                    this.append(ModalMessage("Agregue datos para poder continuar"));
                     return;
                 }
                 const response = await new Tbl_Compra(compra).Save();
                 if (response.status == 200) {
                     if (this.ComprasConfig?.action != undefined) {
-                        this.append(ModalVericateAction(async () => {
-                            // @ts-ignore
-                            this.ComprasConfig?.action(compra, response);
-                        }, response.message));
+                        this.ComprasConfig?.action(compra, response);
                     } else {
-                        this.append(ModalMessege(response.message))
+                        this.append(ModalMessage(response.message))
                     }
                 } else {
-                    this.append(ModalMessege(response.message))
+                    this.append(ModalMessage(response.message))
                 }
             }
         });
@@ -92,21 +90,23 @@ class ComprasComponent extends HTMLElement {
     TotalesDetailUpdate(subtotal, iva, total) {
         // @ts-ignore
         this.ComprasConfig.Entity.Moneda = this.ComprasConfig.Entity?.Moneda ?? "CORDOBAS"
+
+        let Tasa_Cambio = this.ComprasConfig.Entity?.Moneda != "CORDOBAS" ? 1 : this.TasaCambio;
         // @ts-ignore                
         this.TotalesDetail.innerHTML = "";
         this.TotalesDetail?.append(html`<div class="detail-container">
             <h3>Resumen</h3>
             <label class="value-container">
                 <span>Sub Total:</span>
-                <span class="value">${WOrtograficValidation.es(this.ComprasConfig.Entity?.Moneda)} ${ConvertToMoneyString(subtotal)}</span>
+                <span class="value">${WOrtograficValidation.es(this.ComprasConfig.Entity?.Moneda)} ${ConvertToMoneyString(subtotal * Tasa_Cambio)}</span>
             </label>
             <label class="value-container">
                 <span>Iva:</span>
-                <span class="value">${WOrtograficValidation.es(this.ComprasConfig.Entity?.Moneda)} ${ConvertToMoneyString(iva)}</span>
+                <span class="value">${WOrtograficValidation.es(this.ComprasConfig.Entity?.Moneda)} ${ConvertToMoneyString(iva * Tasa_Cambio )}</span>
             </label>
             <label class="value-container total">
                 <span>Total:</span>
-                <span class="value">${WOrtograficValidation.es(this.ComprasConfig.Entity?.Moneda)} ${ConvertToMoneyString(total)} </span>
+                <span class="value">${WOrtograficValidation.es(this.ComprasConfig.Entity?.Moneda)} ${ConvertToMoneyString(total * Tasa_Cambio)} </span>
             </label>
         </div>`
         );
@@ -141,11 +141,10 @@ class ComprasComponent extends HTMLElement {
             this.ComprasModel.Datos_Compra = this.ComprasConfig.DatosCompra;
         }
 
-        this.ComprasModel.Sub_Total.action = (/**@type {Tbl_Compra} */ EditObject, form, control) => {
-            //console.log(EditObject);
+        this.ComprasModel.Sub_Total.action = (/**@type {Tbl_Compra} */ EditObject, form, control) => {            
             let subtotal;
             let total;
-            let iva;
+            let iva;           
             if (EditObject.Detalle_Compra != undefined) {
                 subtotal = WArrayF.SumValAtt(EditObject.Detalle_Compra, "SubTotal");
                 iva = WArrayF.SumValAtt(EditObject.Detalle_Compra, "Iva");
@@ -234,7 +233,7 @@ class ComprasComponent extends HTMLElement {
             justify-content: space-between;
             font-size: 14px;
             font-weight: bold;
-            color: #00238a
+            color: var(--font-secundary-color)
         }        
         .OptionContainer{
             display: flex;

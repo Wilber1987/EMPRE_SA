@@ -7,10 +7,10 @@ class Tbl_Compra extends EntityClass {
         super(props, 'EntityFacturacion');
         for (const prop in props) {
             this[prop] = props[prop];
-        }
+        };
     }
    /**@type {Number}*/ Id_Compra;
-   /**@type {Object}*/ Datos_Compra;
+   /**@type {Datos_Compra}*/ Datos_Compra;
    /**@type {Date}*/ Fecha;
    /**@type {Number}*/ Tasa_Cambio;
    /**@type {String}*/ Moneda;
@@ -18,10 +18,17 @@ class Tbl_Compra extends EntityClass {
    /**@type {Number}*/ Iva;
    /**@type {Number}*/ Total;
    /**@type {String}*/ Estado;
+   /**@type {String}*/ Observaciones;
    /**@type {Cat_Proveedor} ManyToOne*/ Cat_Proveedor;
    /**@type {Array<Detalle_Compra>} OneToMany*/ Detalle_Compra;
+   /**@type {Boolean}*/ IsAnulable;
     Anular = async () => {
-        return await this.SaveData("apiEntityFacturacion/anularCompra",this);
+        return await this.SaveData("apiEntityFacturacion/anularCompra", this);
     }
 }
 export { Tbl_Compra }
+
+export class Datos_Compra {
+    RUC;
+    Nombre_Comprador;
+}
