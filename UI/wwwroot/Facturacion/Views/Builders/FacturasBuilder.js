@@ -26,12 +26,12 @@ export class FacturasBuilder {
      * @returns {HTMLElement}
      */
     static BuildFacturaRecibo(response, documentsData) {
-        if (response.factura.Tipo == "APARTADO_MENSUAL") {
+        if (response.factura.Tipo == "APARTADO_MENSUAL" || response.factura.Tipo == "APARTADO_QUINCENAL") {
             return FacturasBuilder.BuildFacturaApartadoMensual(documentsData, response);
         }
-        if (response.factura.Tipo == "APARTADO_QUINCENAL") {
-            return FacturasBuilder.BuildFacturaApartado(documentsData, response);
-        }
+        //if () {
+            //return FacturasBuilder.BuildFacturaApartado(documentsData, response);
+        //}
         return FacturasBuilder.BuildFacturaVenta(documentsData, response.factura);
     }
     /**
@@ -51,7 +51,7 @@ export class FacturasBuilder {
      * @returns {HTMLElement}
      */
     static BuildFacturaApartadoMensual(documentsData, response) {
-        return html`<div style="font-family: Arial, sans-serif;" class="recibo recibo-${response.Transaction_Contratos.tipo}">
+        return html`<div style="font-family: Arial, sans-serif;" class="recibo-${response.Transaction_Contratos.tipo}">
             ${this.style.cloneNode(true)}
             ${FacturasBuilder.BuildFacturaVenta(documentsData, response.factura)}
             ${response.Recibo}

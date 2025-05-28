@@ -15,26 +15,26 @@ namespace API.Controllers
 		[AuthController(Permissions.GESTION_EMPEÑOS)]
 		public object SaveDataContract(ContractServices Inst)
 		{
-			return Inst.SaveDataContract(HttpContext.Session.GetString("seassonKey"));
+			return Inst.SaveDataContract(HttpContext.Session.GetString("sessionKey"));
 		}
 		[HttpPost]
 		[AuthController(Permissions.GESTION_EMPEÑOS)]
 		public object SaveContract(ContractServices Inst)
 		{
-			return Inst.SaveContract(HttpContext.Session.GetString("seassonKey"));
+			return Inst.SaveContract(HttpContext.Session.GetString("sessionKey"));
 		}
 		[HttpPost]
 		[AuthController(Permissions.GESTION_EMPEÑOS)]
 		public object AnularContract(Transaction_Contratos Inst)
 		{
-			return Inst.Anular(HttpContext.Session.GetString("seassonKey"));
+			return Inst.Anular(HttpContext.Session.GetString("sessionKey"));
 		}
 
 		[HttpPost]
 		[AuthController(Permissions.GESTION_EMPEÑOS)]
 		public object GetDataContract()
 		{
-			return new ContractServices().GetDataContract(HttpContext.Session.GetString("seassonKey"));
+			return new ContractServices().GetDataContract(HttpContext.Session.GetString("sessionKey"));
 		}
 		[HttpPost]
         [AuthController(Permissions.GESTION_EMPEÑOS)]

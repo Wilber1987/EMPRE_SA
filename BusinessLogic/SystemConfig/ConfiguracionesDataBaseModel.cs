@@ -96,19 +96,24 @@ namespace DataBaseModel
         {
             if (value >= 61) 
             {
-				return 4;
+				return 3;
             } else if (value >= 31)
 			{
-				return 3;
+				return 2;
 			} else 
 			{
-				return 2;
+				return 1;
 			}
         }
 
         public static double GetPorcentageMinimoPagoApartadoMensual()
         {
             return Convert.ToInt32(GetParam(ConfiguracionesThemeEnum.PORCENTAGE_MINIMO_DE_PAGO_APARTADO_MENSUAL, "35", ConfiguracionesTypeEnum.BENEFICIOS).Valor);
+        }
+
+        internal static double GetValorMinimoApartadoQuincenal()
+        {
+            return Convert.ToInt32(GetParam(ConfiguracionesThemeEnum.VALOR_MINIMO_APARTADO_QUINCENAL, "10", ConfiguracionesTypeEnum.BENEFICIOS).Valor);
         }
     }
 
@@ -125,7 +130,8 @@ namespace DataBaseModel
 		INFO_TEL, 
 		BENEFICIO_VENTA_ARTICULO_COMPRADO,
         PORCENTAGE_APARTADO,
-        PORCENTAGE_MINIMO_DE_PAGO_APARTADO_MENSUAL
+        PORCENTAGE_MINIMO_DE_PAGO_APARTADO_MENSUAL,
+        VALOR_MINIMO_APARTADO_QUINCENAL
     }
 
 	public enum ConfiguracionesInteresesEnum

@@ -31,6 +31,7 @@ import { Catalogo_Cambio_Divisa } from "../FrontModel/Catalogo_Cambio_Divisa.js"
 import { Transactional_Valoracion } from "../Facturacion/FrontModel/Tbl_Lotes.js";
 import { WPrintExportToolBar } from "../WDevCore/WComponents/WPrintExportToolBar.mjs";
 import { ModalMessage } from "../WDevCore/WComponents/ModalMessage.js";
+import { WAlertMessage } from "../WDevCore/WComponents/WAlertMessage.js";
 class Transaction_Valoraciones_View extends HTMLElement {
 	// @ts-ignore
 	constructor(props) {
@@ -429,18 +430,18 @@ class Transaction_Valoraciones_View extends HTMLElement {
 				if (this.valoresObject.Valoracion_1 <= 0 ||
 					this.valoresObject.Valoracion_3 <= 0 ||
 					this.valoresObject.Valoracion_3 <= 0) {
-					this.append(ModalMessage("Llene el formulario de valoraciones con montos mayores a 0"))
+					WAlertMessage.Warning("Llene el formulario de valoraciones con montos mayores a 0"); 
 					return;
 				}
 				const existVehiculo = this.valoracionesTable?.Dataset.find(p => p.Catalogo_Categoria.id_categoria == 2);
 				if (existVehiculo != undefined && this.valoracionesForm?.FormObject.Catalogo_Categoria.id_categoria != 2) {
-					this.append(ModalMessage("Anteriormente valoro un vehículo por lo tanto no puede agregar valoraciones de diferente categoría"));
+					WAlertMessage.Warning("Anteriormente valoro un vehículo por lo tanto no puede agregar valoraciones de diferente categoría"); 
 					return;
 				}
 
 				const notExistVehiculo = this.valoracionesTable?.Dataset.find(p => p.Catalogo_Categoria.id_categoria != 2);
 				if (notExistVehiculo != undefined && this.valoracionesForm?.FormObject.Catalogo_Categoria.id_categoria == 2) {
-					this.append(ModalMessage("Anteriormente valoro un artículo distinto de vehículo por lo tanto no puede agregar valoraciones de esta categoría"));
+					WAlertMessage.Warning("Anteriormente valoro un artículo distinto de vehículo por lo tanto no puede agregar valoraciones de esta categoría"); 
 					return;
 				}
 				const newValoracion = {};
@@ -471,7 +472,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
 			tagName: 'button', className: 'Block-Fifth', innerText: 'Guardar valoraciones',
 			onclick: async () => {
 				if (this.valoracionesTable?.Dataset.length == 0) {
-					this.append(ModalMessage("Agregue valoraciones para poder continuar"));
+					WAlertMessage.Connect({ Message: "Agregue valoraciones para poder continuar", Type: "warning" }); 
 					return;
 				}
 				this.valoracionesTable?.Dataset.forEach(element => {
@@ -480,7 +481,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
 				});
 				const valoracionesGuardadas = await this.valoracionModel?.GuardarValoraciones(this.valoracionesTable?.Dataset);
 				if (valoracionesGuardadas?.length > 0) {
-					this.append(ModalMessage("Valoraciones guardadas correctamente"));
+					WAlertMessage.Connect({ Message: "Valoraciones guardadas correctamente", Type: "warning" }); 
 				}
 			}
 		}))
@@ -489,11 +490,11 @@ class Transaction_Valoraciones_View extends HTMLElement {
 				tagName: 'button', className: 'Block-Success', innerText: 'Generar Contrato',
 				onclick: async () => {
 					if (this.valoracionesTable?.Dataset.length == 0) {
-						this.append(ModalMessage("Agregue valoraciones para poder continuar"));
+						WAlertMessage.Connect({ Message: "Agregue valoraciones para poder continuar", Type: "warning" });  
 						return;
 					}
 					if (this.Cliente?.codigo_cliente == undefined) {
-						this.append(ModalMessage("Seleccione un cliente para continuar"));
+						WAlertMessage.Connect({ Message: "Seleccione un cliente para continuar", Type: "warning" });
 						return;
 					}
 					const response = await this.calculoAmortizacion().SaveDataContract();

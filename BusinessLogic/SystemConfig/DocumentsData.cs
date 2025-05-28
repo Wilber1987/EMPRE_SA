@@ -1,5 +1,6 @@
 using API.Controllers;
 using APPCORE.Util;
+using CatalogDataBaseModel;
 using DataBaseModel;
 using Microsoft.Extensions.Configuration;
 

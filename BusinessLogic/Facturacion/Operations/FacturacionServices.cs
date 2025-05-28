@@ -1,6 +1,7 @@
 using API.Controllers;
 using APPCORE;
 using CAPA_NEGOCIO.Services;
+using CatalogDataBaseModel;
 using DataBaseModel;
 using Model;
 using Transactions;
@@ -40,7 +41,7 @@ namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 
 		}
 
-		private ResponseService DoSaveFactura(string? Identity, Tbl_Factura? factura)
+		public ResponseService DoSaveFactura(string? Identity, Tbl_Factura? factura)
 		{
 			var User = AuthNetCore.User(Identity);
 			var dbUser = new Security_Users { Id_User = User.UserId }.Find<Security_Users>();
@@ -154,7 +155,9 @@ namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 					bool isQuincenal = factura.Tipo == "APARTADO_QUINCENAL";
 					double porcentajeQuincenal = 1 / Transactional_Configuraciones.GetNumeroCuotasQuincenales(factura!.Monto_dolares + factura.Datos_Financiamiento!.Total_Financiado);
 					double porcentajeMensual = Transactional_Configuraciones.GetPorcentageMinimoPagoApartadoMensual() / 100;
-					if (isQuincenal && factura.Monto_dolares < Math.Round(factura.Total.GetValueOrDefault() * porcentajeQuincenal, 2))
+					
+
+					if (isQuincenal && factura.Monto_dolares < Math.Round(totalFactura * porcentajeQuincenal, 2))
 					{
 						return new ResponseService()
 						{
@@ -162,12 +165,21 @@ namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 							message = $"El monto debe ser equivalente como minimo al {Math.Round(porcentajeQuincenal, 2) * 100} % del total"
 						};
 					}
-					else if (!isQuincenal && factura.Monto_dolares < Math.Round(factura.Total.GetValueOrDefault() * porcentajeMensual, 2))
+					else if (!isQuincenal && factura.Monto_dolares < Math.Round(totalFactura * porcentajeMensual, 2))
 					{
 						return new ResponseService()
 						{
 							status = 400,
 							message = $"El monto debe ser equivalente como minimo al {porcentajeMensual * 100} % del total"
+						};
+					}
+					double valorMinimoApartadoQuincenal = Transactional_Configuraciones.GetValorMinimoApartadoQuincenal();
+					if (isQuincenal && totalFactura < valorMinimoApartadoQuincenal)
+					{
+						return new ResponseService()
+						{
+							status = 400,
+							message = $"El monto de la factura no puede ser menor a {valorMinimoApartadoQuincenal} en apartados quincenales"
 						};
 					}
 					factura.Total_Pagado = factura.Monto_dolares;
@@ -182,6 +194,12 @@ namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 						factura.Datos_Financiamiento!.Numero_Contrato = contrato!.Transaction_Contratos?.numero_contrato;
 						contract = contrato.Transaction_Contratos;
 					}
+					/* 
+					dado que se generara una transaccion de facturacion se iguala el monto de la 
+					factura al monto total y el contrato sera equivalente al monto financiado
+					*/
+					factura.Total_Pagado = totalFactura;
+					factura.Total = factura.Total_Pagado;
 					break;
 				default:
 					break;
@@ -222,7 +240,7 @@ namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 					factura,
 					Contract = ContractTemplateService.GetContractContent(contract),
 					Transaction_Contratos = contract,
-					Recibo = new RecibosTemplateServices().GenerateReciboHtmlTemplate(contract?.Recibos?[0])
+					//Recibo = new RecibosTemplateServices().GenerateReciboHtmlTemplate(contract?.Recibos?[0])
 				}
 			};
 		}
@@ -265,31 +283,16 @@ namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 						monto_aprobado_cordobas = valoracion?.Valoracion_empeño_cordobas,
 						monto_aprobado_dolares = valoracion?.Valoracion_empeño_dolares,
 						color = "-",
-						en_manos_de = "ACREEDOR",
+						en_manos_de = EnManosDe.ACREEDOR,
 						precio_venta = valoracion?.Precio_venta_empeño_dolares,
 						Catalogo_Categoria = valoracion?.Catalogo_Categoria,
 						Transactional_Valoracion = valoracion
 					};
 				}).ToList()
 			};
-			contrato.Transaction_Contratos.Tbl_Cuotas = contrato.Transaction_Contratos.CrearCuotas(factura.Total_Financiado ?? 0, factura.Datos_Financiamiento?.Plazo ?? 1, false,  isQuincenal);
+			contrato.Transaction_Contratos.Tbl_Cuotas = contrato.Transaction_Contratos.CrearCuotas(factura.Total_Financiado ?? 0, factura.Datos_Financiamiento?.Plazo ?? 1, false, isQuincenal);
 			var response = contrato.DoSaveContract(Identity);
 			if (response.status != 200) return (contrato.DoSaveContract(Identity), contrato);
-			if (isQuincenal)
-			{
-				var recibosResponse = new Recibos_Transactions
-				{
-					numero_contrato = contrato?.Transaction_Contratos.numero_contrato,
-					paga_dolares = factura?.Monto_dolares,
-					paga_cordobas = factura?.Monto_cordobas,
-					tasa_cambio = factura?.Tasa_Cambio_Venta,
-					moneda = factura?.Moneda,
-					fecha_roc = DateTime.Now
-				}.SaveRecibos(Identity);
-				var transaccion_Factura = recibosResponse.body as Transaccion_Factura;
-				factura!.Datos_Financiamiento!.Id_recibo = transaccion_Factura!.id_factura;
-				contrato!.Transaction_Contratos!.Recibos = [transaccion_Factura];
-			}
 			return (response, contrato);
 		}
 

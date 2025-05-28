@@ -1,6 +1,7 @@
 
 using APPCORE;
 using CAPA_NEGOCIO.Util;
+using CatalogDataBaseModel;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Model;
 using System;
@@ -15,12 +16,12 @@ namespace DataBaseModel
 	{
 		[PrimaryKey(Identity = false)]
 		public int? id_valoracion { get; set; }
-		public Double? Valoracion_1 { get; set; }
-		public Double? Valoracion_2 { get; set; }
-		public Double? Valoracion_3 { get; set; }
-		public Double? dolares_1 { get; set; }
-		public Double? dolares_2 { get; set; }
-		public Double? dolares_3 { get; set; }
+		public double? Valoracion_1 { get; set; }
+		public double? Valoracion_2 { get; set; }
+		public double? Valoracion_3 { get; set; }
+		public double? dolares_1 { get; set; }
+		public double? dolares_2 { get; set; }
+		public double? dolares_3 { get; set; }
 	}
 	public class Transactional_Valoracion : EntityClass
 	{
@@ -30,19 +31,19 @@ namespace DataBaseModel
 		public string? Marca { get; set; }
 		public string? Serie { get; set; }
 		public string? Modelo { get; set; }
-		public Double? Tasa_interes { get; set; }
+		public double? Tasa_interes { get; set; }
 		public int? Plazo { get; set; }
 		public DateTime? Fecha { get; set; }
-		public Double? Tasa_de_cambio { get; set; }
+		public double? Tasa_de_cambio { get; set; }
 		public int? id_estado { get; set; }
 		public int? id_categoria { get; set; }
-		public Double? Valoracion_compra_cordobas { get; set; }
-		public Double? Valoracion_compra_dolares { get; set; }
-		public Double? Valoracion_empeño_cordobas { get; set; }
-		public Double? Valoracion_empeño_dolares { get; set; }
+		public double? Valoracion_compra_cordobas { get; set; }
+		public double? Valoracion_compra_dolares { get; set; }
+		public double? Valoracion_empeño_cordobas { get; set; }
+		public double? Valoracion_empeño_dolares { get; set; }
 
-		public Double? Precio_venta_empeño_cordobas { get; set; }
-		public Double? Precio_venta_empeño_dolares { get; set; }
+		public double? Precio_venta_empeño_cordobas { get; set; }
+		public double? Precio_venta_empeño_dolares { get; set; }
 
 
 		[ManyToOne(TableName = "Catalogo_Estados_Articulos", KeyColumn = "id_estado_articulo", ForeignKeyColumn = "id_estado")]
@@ -104,8 +105,12 @@ namespace DataBaseModel
 
 	public enum Contratos_State
 	{
-		ACTIVO, CANCELADO, ANULADO,
-        CAPITAL_CANCELADO
+		ACTIVO, 
+		/* Cuando esta en saldo 0 pasa a estado cancelado*/
+		CANCELADO, 
+		ANULADO,
+        CAPITAL_CANCELADO,
+        VENCIDO
     }
 	public enum Contratos_Type
 	{
@@ -117,8 +122,8 @@ namespace DataBaseModel
 		public int? numero_prenda { get; set; }
 		public int? numero_contrato_OLD { get; set; }
 		public string? Descripcion { get; set; }
-		public Double? monto_aprobado_cordobas { get; set; }
-		public Double? monto_aprobado_dolares { get; set; }
+		public double? monto_aprobado_cordobas { get; set; }
+		public double? monto_aprobado_dolares { get; set; }
 		public string? Tipo { get; set; }
 		public string? marca { get; set; }
 		public string? serie { get; set; }
@@ -126,15 +131,15 @@ namespace DataBaseModel
 		public string? iva { get; set; }
 		public string? margen { get; set; }
 		public string? estado { get; set; }
-		public Double? interesl { get; set; }
-		public Double? moral { get; set; }
+		public double? interesl { get; set; }
+		public double? moral { get; set; }
 		public DateTime? fliquidacion { get; set; }
-		public Double? precio_venta { get; set; }
-		public string? en_manos_de { get; set; }
+		public double? precio_venta { get; set; }
+		public EnManosDe? en_manos_de { get; set; }
 		public string? color { get; set; }
 		public string? factura { get; set; }
 		public string? tipo_movimiento { get; set; }
-		public Double? v_porcentage_etiqueta { get; set; }
+		public double? v_porcentage_etiqueta { get; set; }
 		public int? id_categoria { get; set; }
 		public int? id_valoracion { get; set; }
 		public int? numero_contrato { get; set; }
@@ -150,8 +155,9 @@ namespace DataBaseModel
 	}
 	public enum EnManosDe
 	{
-		ACREEDOR, DEUDOR
-	}
+		ACREEDOR, DEUDOR,
+        CLIENTE
+    }
 	public class Detail_Prendas_Vehiculos : EntityClass
 	{
 		[PrimaryKey(Identity = false)]
@@ -167,7 +173,7 @@ namespace DataBaseModel
 		public string? defectuoso { get; set; }
 		public DateTime? fecha_aut_descuento { get; set; }
 		public string? defecto { get; set; }
-		public Double? porcentage_descuento_maximo { get; set; }
+		public double? porcentage_descuento_maximo { get; set; }
 		public string? uso { get; set; }
 		public string? servicio { get; set; }
 		public DateTime? fecha_seguro { get; set; }
@@ -180,8 +186,8 @@ namespace DataBaseModel
 		[PrimaryKey(Identity = true)]
 		public int? numero_cont { get; set; }
 		public DateTime? fecha { get; set; }
-		public Double? taza { get; set; }
-		public Double? monto_inicial { get; set; }
+		public double? taza { get; set; }
+		public double? monto_inicial { get; set; }
 		public string? nombre_sustituto { get; set; }
 		public string? identificacion_sustituto { get; set; }
 		public string? direccion_sustituto { get; set; }
@@ -190,9 +196,9 @@ namespace DataBaseModel
 		public int? id_inversor { get; set; }
 		public DateTime? fecha_pago { get; set; }
 		public DateTime? fecha_ultimo_pago { get; set; }
-		public Double? saldo { get; set; }
-		public Double? montointeres { get; set; }
-		public Double? interes { get; set; }
+		public double? saldo { get; set; }
+		public double? montointeres { get; set; }
+		public double? interes { get; set; }
 		public DateTime? fecha_restructura { get; set; }
 		public int? Id_User { get; set; }
 		[ManyToOne(TableName = "Catalogo_Inversores", KeyColumn = "id_inversor", ForeignKeyColumn = "id_inversor")]
@@ -272,7 +278,7 @@ namespace DataBaseModel
 		
 		public bool IsAnulable { get 
 		{
-		    return estado != "ANULADO" && estado != "CANCELADO" && DateUtil.IsBefore(fecha, 24);
+		    return estado != "ANULADO" && estado != "CANCELADO" && !DateUtil.IsAffterNDays(fecha, 1);
 		}}
 
 		[JsonProp]

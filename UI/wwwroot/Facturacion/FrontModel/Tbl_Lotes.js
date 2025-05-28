@@ -6,32 +6,35 @@ import { Cat_Producto } from "./Cat_Producto.js";
 import { Detalle_Compra } from './Detalle_Compra.js';
 import { Tbl_Transaccion } from "./Tbl_Transaction.js";
 class Tbl_Lotes extends EntityClass {
-
 	constructor(props) {
-		super(props, 'EntityFacturacion');
+		super(props, 'TransactionLotes');
 		for (const prop in props) {
 			this[prop] = props[prop];
-		}
+		};
 	}
-   /**@type {Number}*/ Id_Lote;
-   /**@type {Number}*/ Id_Producto;
-   /**@type {String}*/ Name;
-   /**@type {String}*/ Detalles;
-   /**@type {String}*/ Codigo;
-   /**@type {String}*/ Tipo;
-   //**@type {Number}*/ Precio_Venta;
-   //**@type {Number}*/ Precio_Compra;
-   /**@type {Number}*/ Cantidad_Inicial;
-   /**@type {Number}*/ Cantidad_Existente;
-   /**@type {String}*/ Lote;
-   /**@type {Date}*/ Fecha_Ingreso;
-   /**@type {Cat_Almacenes} ManyToOne*/ Cat_Almacenes;
-   //**@type {Cat_Producto} ManyToOne*/ Cat_Producto;
-   /**@type {Transactional_Valoracion}*/ Datos_Producto;
-   /**@type {EtiquetaLote} */ EtiquetaLote;
-   /**@type {Detalle_Compra} */ Detalle_Compra;
+	/**@type {Number}*/ Id_Lote;
+	/**@type {Number}*/ Id_Producto;
+	/**@type {String}*/ Name;
+	/**@type {String}*/ Detalles;
+	/**@type {String}*/ Codigo;
+	/**@type {String}*/ Tipo;
+	//**@type {Number}*/ Precio_Venta;
+	//**@type {Number}*/ Precio_Compra;
+	/**@type {Number}*/ Cantidad_Inicial;
+	/**@type {Number}*/ Cantidad_Existente;
+	/**@type {String}*/ Lote;
+	/**@type {Date}*/ Fecha_Ingreso;
+	/**@type {Cat_Almacenes} ManyToOne*/ Cat_Almacenes;
+	//**@type {Cat_Producto} ManyToOne*/ Cat_Producto;
+	/**@type {Transactional_Valoracion}*/ Datos_Producto;
+	/**@type {EtiquetaLote} */ EtiquetaLote;
+	/**@type {Detalle_Compra} */ Detalle_Compra;
+	/**@type {Boolean}*/ IsActivo;
 	async DarDeBaja(/**@type {Tbl_Transaccion}*/Transaction) {
-		return await this.SaveData("TransactionLotes/DarDeBaja", Transaction)
+		return await this.SaveData("ApiTransactionLotes/DarDeBaja", Transaction)
+	}
+	async RevertirBaja(Transaction) {
+		return await this.SaveData("ApiTransactionLotes/AnularTbl_Bajas_Almacen", Transaction)
 	}
 	/**@type {String}*/  get Descripcion() {
 		return `${this.Detalle_Compra.Cat_Producto.Descripcion}`;
@@ -44,7 +47,7 @@ class Transactional_Valoracion extends EntityClass {
 	 * @param {Partial<Transactional_Valoracion>} props 
 	 */
 	constructor(props) {
-		super(props, 'EntityDBO');
+		super(props, 'TransactionLotes');
 		for (const prop in props) {
 			this[prop] = props[prop];
 		}

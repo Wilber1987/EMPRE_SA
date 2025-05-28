@@ -18,12 +18,14 @@ class Transactional_Configuraciones extends EntityClass {
     getConfiguraciones_Beneficios =  async () => {
         return await this.GetData("ApiEntityADMINISTRATIVE_ACCESS/getConfiguraciones_Beneficios");
     }
+    /**
+    * @returns {Promise<Array<Transactional_Configuraciones>>}
+    */
     getConfiguraciones_Configs =  async () => {
         return await this.GetData("ApiEntityADMINISTRATIVE_ACCESS/getConfiguraciones_Configs");
     }
     GetConfigs =  async () => {
         return await this.GetData("ApiEntityADMINISTRATIVE_ACCESS/getConfiguraciones_Theme");
     }
-
 }
 export { Transactional_Configuraciones }

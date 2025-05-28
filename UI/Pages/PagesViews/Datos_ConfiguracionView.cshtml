@@ -2,13 +2,13 @@
 @using API.Controllers
 @{
 
-    if (!SecurityController.Auth(HttpContext.Session.GetString("seassonKey")))
+    if (!SecurityController.Auth(HttpContext.Session.GetString("sessionKey")))
     {
         Response.Redirect("../Security/login");
         return;
     }
 
-    if (!SecurityController.Auth(HttpContext.Session.GetString("seassonKey")))
+    if (!SecurityController.Auth(HttpContext.Session.GetString("sessionKey")))
     {
        Response.Redirect("../Security/login");
         return;

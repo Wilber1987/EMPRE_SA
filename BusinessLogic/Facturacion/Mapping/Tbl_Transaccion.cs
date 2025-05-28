@@ -13,8 +13,11 @@ namespace DataBaseModel
         public int? Id_Transaccion { get;  set; }
         public double? Cantidad { get; set; }
         public int? Id_Lote { get;  set; }
-        public string? Tipo { get; set; }
+        public TransactionsType? Tipo { get; set; }
         public string? Descripcion { get; set; }
+        public DateTime? Fecha { get; set; }
+        public EstadoEnum? Estado { get; set; }
         public int? Id_User { get;  set; }
+        
     }
 }

@@ -13,6 +13,7 @@ import { Detail_Prendas, Transaction_Contratos, ValoracionesTransaction } from "
 import { Catalogo_Cambio_Divisa } from "../../../FrontModel/Catalogo_Cambio_Divisa.js";
 import { ModalMessage } from "../../../WDevCore/WComponents/ModalMessage.js";
 import { WAlertMessage } from "../../../WDevCore/WComponents/WAlertMessage.js";
+import { DateTime } from "../../../WDevCore/WModules/Types/DateTime.js";
 
 
 
@@ -37,7 +38,7 @@ class Tbl_Factura_ModelComponent extends EntityClass {
 	//**@type {ModelProperty}*/ Direccion_Envio = { type: 'text', hidden: true  };
 	/**@type {ModelProperty}*/ Id_Cliente = { type: 'number', hidden: true };
 	/**@type {ModelProperty}*/ Id_Sucursal = { type: 'number', hidden: true };
-	/**@type {ModelProperty}*/ Fecha = { type: 'date', disabled: true };
+	/**@type {ModelProperty}*/ Fecha = { type: 'datetime', disabled: true, defaultValue: new DateTime().toISO() };
 	/**@type {ModelProperty}*/ Moneda = {
 		type: "radio", Dataset: ["DOLARES", "CORDOBAS"],
 		action: (/**@type {Tbl_Factura}*/ EditObject, form) => {
@@ -150,7 +151,7 @@ class Tbl_Factura_ModelComponent extends EntityClass {
 		//const Configs = JSON.parse(sessionStorage.getItem("Configs") ?? "[]");
 		const PlazoMaximo = this.GetNumeroCuotasQuincenales(EditObject.Total); //  (Configs.find(c => c.Nombre == "QUOTAS_QUINCENALES").Valor ?? 0.25);
 		//document.body.append(new WAlertMessage({ Message: `Apartado quincenal: Cuotas ${PlazoMaximo} (pago actual y tres futuras)` }))
-		WAlertMessage.Connect({ Message: `Apartado quincenal: Cuotas ${PlazoMaximo} (pago actual y tres futuras)` })
+		WAlertMessage.Connect({ Message: `Apartado quincenal: Cuotas ${PlazoMaximo}` })
 		this.Datos_Financiamiento.ModelObject.Plazo.max = PlazoMaximo;
 		this.Datos_Financiamiento.ModelObject.Plazo.min = PlazoMaximo;
 		EditObject.Datos_Financiamiento.Plazo = PlazoMaximo;
@@ -189,8 +190,8 @@ class Tbl_Factura_ModelComponent extends EntityClass {
 		this.CreateContrato(contrato, EditObject, interes, tasa);
 	}
 	CreateContrato(contrato, EditObject, interes, tasa) {
-		const totalDolares = EditObject.Tipo == "APARTADO_QUINCENAL" ? EditObject.Total : (EditObject.Total ?? 0) - (EditObject.Monto_dolares ?? 0);
-		const totalCordobas = EditObject.Tipo == "APARTADO_QUINCENAL" ? (EditObject.Total * EditObject.Tasa_Cambio) : ((EditObject.Total ?? 0) * EditObject.Tasa_Cambio) - (EditObject.Monto_cordobas ?? 0);
+		const totalDolares =  (EditObject.Total ?? 0) - (EditObject.Monto_dolares ?? 0);
+		const totalCordobas = ((EditObject.Total ?? 0) * EditObject.Tasa_Cambio) - (EditObject.Monto_cordobas ?? 0);
 		contrato.valoraciones = EditObject.Detalle_Factura.map(detalle => detalle.Lote.Datos_Producto);
 		contrato.Transaction_Contratos = new Transaction_Contratos({
 			tasas_interes: interes / 100,
@@ -221,9 +222,6 @@ class Tbl_Factura_ModelComponent extends EntityClass {
 			})
 		});
 		FinancialModule.calculoAmortizacion(contrato, false);
-
-
-
 		EditObject.Datos_Financiamiento.Total_Financiado = contrato.Transaction_Contratos.Valoracion_empeño_dolares;
 		EditObject.Datos_Financiamiento.Total_Financiado_Cordobas = contrato.Transaction_Contratos.Valoracion_empeño_cordobas;
 		EditObject.Datos_Financiamiento.Cuota_Fija_Dolares = contrato.Transaction_Contratos.cuotafija_dolares;
@@ -287,6 +285,9 @@ class Tbl_Factura_ModelComponent extends EntityClass {
 		const lotesMap = [];
 
 		for (const detalle of EditObject.Detalle_Factura) {
+			if (form.ModelObject.Detalle_Factura.ModelObject.__proto__ == Function.prototype) {
+				form.ModelObject.Detalle_Factura.ModelObject = form.ModelObject.Detalle_Factura.ModelObject();
+			}
 			form.ModelObject.Detalle_Factura.ModelObject.UpdateDetalle(EditObject, detalle, undefined, false);
 
 			const loteFusionado = lotesMap.find(det => det.Lote.Id_Lote == detalle.Lote.Id_Lote)
@@ -356,7 +357,7 @@ class Tbl_Factura_ModelComponent extends EntityClass {
 		const Configs = JSON.parse(sessionStorage.getItem("Configs") ?? "[]");
 		const Tasa_Cambio = EditObject.Detalle_Factura[0].Lote?.EtiquetaLote?.TasaCambio?.Valor_de_venta;
 		const porcentajeMinimoMensual = (Configs.find(c => c.Nombre == "PORCENTAGE_MINIMO_DE_PAGO_APARTADO_MENSUAL").Valor ?? 35) / 100
-		const porcentajeMinimoQuincenal = 1 / this.GetNumeroCuotasQuincenales(EditObject.Total);
+		const porcentajeMinimoQuincenal = 1 / (this.GetNumeroCuotasQuincenales(EditObject.Total) + 1);
 		let montoMinimoC = 0;
 		let montoMinimo  = 0;
 		switch (EditObject.Tipo) {
@@ -392,11 +393,11 @@ class Tbl_Factura_ModelComponent extends EntityClass {
 	*/
 	GetNumeroCuotasQuincenales(value) {
 		if (value >= 61) {
-			return 4;
-		} else if (value >= 31) {
 			return 3;
-		} else {
+		} else if (value >= 31) {
 			return 2;
+		} else {
+			return 1;
 		}
 	}
 

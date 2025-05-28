@@ -1,6 +1,7 @@
 using API.Controllers;
 using APPCORE;
 using CAPA_NEGOCIO.Services;
+using CatalogDataBaseModel;
 using DataBaseModel;
 using Model;
 using UI.CAPA_NEGOCIO.Empresa.Services.Recibos;
@@ -63,7 +64,7 @@ namespace Transactions
                 var user = AuthNetCore.User(token);
                 var dbUser = new Security_Users { Id_User = user.UserId }.Find<Security_Users>();
                 var contrato = new Transaction_Contratos() { numero_contrato = this.numero_contrato }.Find<Transaction_Contratos>();
-                var sucursal = new Catalogo_Sucursales() { Id_Sucursal = dbUser?.Id_Sucursal }.Find<Catalogo_Sucursales>();
+                var sucursal = new Catalogo_Sucursales() { Id_Sucursal = dbUser?.Id_Sucursal }.Find< Catalogo_Sucursales>();
                 if (contrato == null)
                 {
                     return new ResponseService()
@@ -121,9 +122,10 @@ namespace Transactions
                 if (contrato.saldo <= 0.5)
                 {
                     contrato.saldo = 0;
-                    contrato.estado = Contratos_State.CANCELADO.ToString();
+					contrato.Cancelar(dbUser);
+                    
                     var contartosActivos = new Transaction_Contratos { codigo_cliente = contrato.codigo_cliente }.Where<Transaction_Contratos>(
-                        FilterData.Equal("estado", Contratos_State.ACTIVO.ToString()),
+                        FilterData.Equal("estado", Contratos_State.ACTIVO),
                         FilterData.Distinc("numero_contrato", contrato.numero_contrato)
                     );
                     if (contartosActivos.Count == 0)
@@ -135,7 +137,7 @@ namespace Transactions
                 if (this.cancelar == true && contrato.saldo == 0)
                 {
                     contrato.saldo = 0;
-                    contrato.estado = Contratos_State.CANCELADO.ToString();
+                    contrato.Cancelar(dbUser);
                     cuotasPendientes?.ForEach(cuota =>
                     {
                         EstadoAnteriorCuota estadoAnterior = CloneCuota(cuota);
@@ -625,7 +627,7 @@ namespace Transactions
 				if (contrato != null)
 				{
 					contrato.saldo = factura?.Factura_contrato?.saldo_anterior;
-					contrato.estado = Contratos_State.ACTIVO.ToString();
+					contrato.estado = Contratos_State.ACTIVO;
 					contrato.reestructurado = factura?.Factura_contrato?.reestructurado_anterior;
 					var reestructuracionData = factura?.Factura_contrato?.Datos_Reestructuracion;
 					if (reestructuracionData != null)

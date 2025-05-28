@@ -1,6 +1,7 @@
 using API.Controllers;
 using APPCORE;
 using CAPA_NEGOCIO.Util;
+using CatalogDataBaseModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,16 +21,16 @@ namespace DataBaseModel
 		public Datos_Compra? Datos_Compra { get; set; }
 		public int? Id_Proveedor { get; set; }
 		public DateTime? Fecha { get; set; }
-		public Double? Tasa_Cambio { get; set; }
+		public double? Tasa_Cambio { get; set; }
 		public string? Moneda { get; set; }
-		public Double? Sub_Total { get; set; }
-		public Double? Iva { get; set; }
-		public Double? Total { get; set; }
+		public double? Sub_Total { get; set; }
+		public double? Iva { get; set; }
+		public double? Total { get; set; }
 		public string? Estado { get; set; }
 		public string? Observaciones { get; set; }
 		public bool IsAnulable { get 
 		{
-		    return Estado != "ANULADO" && Estado != "CANCELADO" && DateUtil.IsBefore(Fecha, 24);
+		    return Estado != "ANULADO" && Estado != "CANCELADO" && !DateUtil.IsAffterNDays(Fecha, 1);
 		}}		
 		
 		[ManyToOne(TableName = "Cat_Proveedor", KeyColumn = "Id_Proveedor", ForeignKeyColumn = "Id_Proveedor")]
@@ -164,6 +165,7 @@ namespace DataBaseModel
 				Datos_Producto = detalle?.Datos_Producto_Lote,
 				Id_Almacen = new Cat_Almacenes().GetAlmacen(dbUser?.Id_Sucursal ?? 0),
 				Lote = codigo,
+				Estado = EstadoEnum.ACTIVO,
 				EtiquetaLote = new EtiquetaLote
 				{
 					Tipo = "CV",

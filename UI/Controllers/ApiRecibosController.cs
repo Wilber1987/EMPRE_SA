@@ -21,7 +21,7 @@ namespace API.Controllers
         [AuthController(Permissions.GESTION_RECIBOS)]
         public object saveRecibos(Recibos_Transactions inst)
         {            
-            return inst.SaveRecibos(HttpContext.Session.GetString("seassonKey"));
+            return inst.SaveRecibos(HttpContext.Session.GetString("sessionKey"));
         }
         [HttpPost]
         [AuthController(Permissions.GESTION_RECIBOS)]
@@ -34,14 +34,14 @@ namespace API.Controllers
         [AuthController(Permissions.GESTION_RECIBOS)]
         public object? anularRecibo(Recibos_Transactions inst)
         {            
-            return inst.AnularFactura(HttpContext.Session.GetString("seassonKey"));
+            return inst.AnularFactura(HttpContext.Session.GetString("sessionKey"));
         }
 
         [HttpPost]
         [AuthController(Permissions.GESTION_RECIBOS)]
         public Object? printRecibo(RecibosTemplateServices inst)
         {            
-            return inst.PrintRecibo(HttpContext.Session.GetString("seassonKey"));
+            return inst.PrintRecibo(HttpContext.Session.GetString("sessionKey"));
         }
     }
 }

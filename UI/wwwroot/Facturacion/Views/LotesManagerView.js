@@ -17,6 +17,11 @@ import { DateTime } from "../../WDevCore/WModules/Types/DateTime.js";
 import { ModalMessage } from "../../WDevCore/WComponents/ModalMessage.js";
 import { ModalVericateAction } from "../../WDevCore/WComponents/ModalVericateAction.js";
 import { WFilterOptions } from "../../WDevCore/WComponents/WFilterControls.js";
+import { DivisasServicesUtil } from "../../Services/DivisasServicesUtil.js";
+import { SystemConfigs } from "../../Services/SystemConfigs.js";
+import { WAlertMessage } from "../../WDevCore/WComponents/WAlertMessage.js";
+import { Tbl_Bajas_Almacen, Tbl_Bajas_Almacen_ModelComponent } from "../FrontModel/Tbl_Bajas_Almacen.js";
+import { Tbl_Movimientos_Almacen, Tbl_Movimientos_Almacen_ModelComponent } from "../FrontModel/Tbl_Movimientos_Almacen.js";
 
 /**
  * @typedef {Object} LotesConfig
@@ -29,30 +34,43 @@ class LotesManagerView extends HTMLElement {
 		this.LotesConfig = LotesConfig;
 		this.OptionContainer = WRender.Create({ className: "OptionContainer" });
 		this.TabContainer = WRender.Create({ className: "TabContainer", id: 'TabContainer' });
-		this.Manager = new ComponentsManager({ MainContainer: this.TabContainer, SPAManage: false });
+		this.navigator = new WAppNavigator({ Elements: this.ElementsNav })
+		this.Manager = new ComponentsManager({ MainContainer: this.TabContainer, SPAManage: true, WNavigator: this.navigator });
 
-		this.navigator = new WAppNavigator({ Inicialize: true, Elements: this.ElementsNav })
-		this.append(this.CustomStyle, this.OptionContainer, this.navigator, this.TabContainer);
 		this.indexFactura = 0;
-		this.Draw();
 		this.valoresObject = {
 			subtotal: 0,
 			iva: 0,
 		}
+		this.Draw();
 	}
-	ElementsNav = [
-		{
-			name: "Etiquetas ventas", action: async () => {
-				this.Manager.NavigateFunction("Etiquetas-Venta", await this.EtiquetasView());
-			}
-		}, {
-			name: "Existencias", action: () => {
-				this.Manager.NavigateFunction("Lotes", this.ExistenciasView())
-			}
-		},
+	ElementsNav = [{
+		name: "Etiquetas ventas", id: "Etiquetas-Venta", action: async () => {
+			this.Manager.NavigateFunction("Etiquetas-Venta", await this.EtiquetasView());
+		}
+	}, {
+		name: "Existencias", id: "Lotes", action: () => {
+			this.Manager.NavigateFunction("Lotes", this.ExistenciasView())
+		}
+	}, {
+		name: "Existencias inactivas", id: "LotesInactivos", action: () => {
+			this.Manager.NavigateFunction("LotesInactivos", this.ExistenciasInactivasView())
+		}
+	}, {
+		name: "Articulos de baja", id: "Bajas", action: () => {
+			this.Manager.NavigateFunction("Bajas", this.BajasView())
+		}
+	}, {
+		name: "Movimientos realizados", id: "Movimientos", action: () => {
+			this.Manager.NavigateFunction("Movimientos", this.MovimientosView())
+		}
+	},
 	]
 
 	Draw = async () => {
+		this.TasaCambio = await DivisasServicesUtil.TasaCambio();
+		this.Porcentaje = await SystemConfigs.FindByName("PORCENTAGE_MINIMO_DE_PAGO_APARTADO_MENSUAL");
+		this.append(this.CustomStyle, this.OptionContainer, this.navigator, this.TabContainer);
 	}//end draw
 
 	BuildLoteModel = () => {
@@ -66,15 +84,141 @@ class LotesManagerView extends HTMLElement {
 			EntityModel: new Tbl_Lotes(),
 			TypeMoney: "Dollar",
 			Options: {
-				Search: false, Filter: true, Add: false, Edit: false, FilterDisplay: true,
+				Search: false,
+				Filter: true,
+				Add: false,
+				Edit: false,
+				FilterDisplay: true,
+				AutoSetDate: false,
 				UserActions: [{
 					name: "Dar de baja",
+					rendered: (/**@type {Tbl_Lotes}*/ Lote) => Lote.IsActivo,
 					action: async (/**@type {Tbl_Lotes}*/ Lote) => {
 						this.DarLoteDeBaja(Lote);
 					}
 				}]
 			}
 		});
+	}
+	ExistenciasInactivasView() {
+		const model = new Tbl_Lotes({
+			// @ts-ignore
+			Get: async () => {
+				return await model.GetData("ApiTransactionLotes/getTbl_LotesInactivos")
+			}
+		})
+		return new WTableComponent({
+			ModelObject: new Tbl_Lotes_ModelComponent(),
+			EntityModel: model,
+			TypeMoney: "Dollar",
+			Options: {
+				Search: false,
+				Filter: true,
+				Add: false,
+				Edit: false,
+				FilterDisplay: true,
+				AutoSetDate: false,
+				UserActions: [{
+					name: "Dar de baja",
+					rendered: (/**@type {Tbl_Lotes}*/ Lote) => Lote.IsActivo,
+					action: async (/**@type {Tbl_Lotes}*/ Lote) => {
+						this.DarLoteDeBaja(Lote);
+					}
+				}]
+			}
+		});
+	}
+	BajasView() {
+		return new WTableComponent({
+			ModelObject: new Tbl_Bajas_Almacen_ModelComponent(),
+			EntityModel: new Tbl_Bajas_Almacen(),
+			TypeMoney: "Dollar",
+			Options: {
+				Search: false,
+				Filter: true,
+				Add: false,
+				Edit: false,
+				FilterDisplay: true,
+				AutoSetDate: false,
+				UserActions: [{
+					name: "Revertir",
+					rendered: (/**@type {Tbl_Bajas_Almacen}*/ baja) => baja.IsActivo,
+					action: async (/**@type {Tbl_Bajas_Almacen}*/ Lote) => {
+						this.RevertirLoteDeBaja(Lote);
+					}
+				}]
+			}
+		});
+	}
+	/**
+	* @param {Tbl_Bajas_Almacen} Baja 
+	* @returns {any}
+	*/
+	RevertirLoteDeBaja(Baja) {
+		console.log(Baja);
+
+		const modal = new WModalForm({
+			ModelObject: new Tbl_Transaccion_ModelComponent({
+				Cantidad: undefined
+			}),
+			//EditObject: Transaction,
+			title: "REVERTIR BAJA DE EXISTENCIA",
+			ObjectOptions: {
+				SaveFunction: async (/**@type {Tbl_Transaccion}*/ editObject) => {
+					editObject.Id_Transaccion = Baja.Id_Transaccion;
+					this.append(ModalVericateAction(async () => {
+						const response = await new Tbl_Lotes().RevertirBaja(editObject);
+						this.append(ModalMessage(response.message, "success", true));
+						modal.close();
+					}, "Esta seguro que desea revertir esta baja?"));
+				}
+			}
+		});
+		this.append(modal);
+	}
+
+	MovimientosView() {
+		return new WTableComponent({
+			ModelObject: new Tbl_Movimientos_Almacen_ModelComponent(),
+			EntityModel: new Tbl_Movimientos_Almacen(),
+			TypeMoney: "Dollar",
+			AutoSave: true,
+			Options: {
+				Search: false,
+				Filter: true,
+				Add: true,
+				Edit: false,
+				FilterDisplay: true,
+				AutoSetDate: false,
+				UserActions: [{
+					name: "Dar de baja",
+					rendered: (/**@type {Tbl_Movimientos_Almacen}*/ mov) => mov.IsActivo,
+					action: async (/**@type {Tbl_Movimientos_Almacen}*/ Lote) => {
+						this.AnularMovimiento(Lote);
+					}
+				}]
+			}
+		});
+	}
+	AnularMovimiento(Movimiento) {
+		const modal = new WModalForm({
+			ModelObject: new Tbl_Transaccion_ModelComponent({
+				Cantidad: undefined
+			}),
+			//EditObject: Transaction,
+			title: "BAJA DE EXISTENCIA",
+			ObjectOptions: {
+				SaveFunction: async (/**@type {Tbl_Transaccion}*/ editObject) => {
+					editObject.Id_Transaccion = Movimiento.Id_Transaccion;
+					this.append(ModalVericateAction(async () => {
+						const response = await new Tbl_Movimientos_Almacen().AnularMovimiento(editObject);
+						this.append(ModalMessage(response.message, "success", true));
+						modal.close();
+					}, "Esta seguro que desea dar de baja esta existencia?"));
+				}
+			}
+		});
+		this.append(modal);
 	}
 	DarLoteDeBaja(Lote) {
 		const modal = new WModalForm({
@@ -89,7 +233,7 @@ class LotesManagerView extends HTMLElement {
 					this.append(ModalVericateAction(async () => {
 						console.log(editObject);
 						const response = await new Tbl_Lotes().DarDeBaja(editObject);
-						this.append(ModalMessage(response.message));
+						this.append(ModalMessage(response.message, "success", true));
 						modal.close();
 					}, "Esta seguro que desea dar de baja esta existencia?"));
 				}
@@ -98,18 +242,16 @@ class LotesManagerView extends HTMLElement {
 		this.append(modal);
 	}
 
-	async EtiquetasView() {		
+	async EtiquetasView() {
 		/**@type {Array<Tbl_Lotes>} */
 		const selectedLotes = [];
-
-		const dataContainer = html`<div></div>`
 		const etiquetasContainer = html`<div class="etiquetas-container"></div>`
 
 		const filter = new WFilterOptions({
 			ModelObject: new Tbl_Lotes_ModelComponent(),
 			EntityModel: new Tbl_Lotes(),
-			AutoSetDate: true,
-			UseEntityMethods: true,	
+			//AutoSetDate: true,
+			UseEntityMethods: true,
 			Display: true,
 			FilterFunction: async (lotes) => {
 				etiquetasContainer.innerHTML = "";
@@ -143,6 +285,10 @@ class LotesManagerView extends HTMLElement {
 	* @param {WPrintExportToolBar} tool
 	*/
 	ImprimirEtiquetas(lotes, tool) {
+		if (!lotes || lotes.length == 0) {
+			WAlertMessage.Connect({ Message: "Seleccione etiquetas para imprimir", Type: "warning" });
+			return;
+		}
 		const fragment = html`<div class="etiquetas">
 			${this.EtiquetaStyle()}               
 			${lotes.map(lote => this.BuildLoteEtiqueta(lote))}
@@ -171,11 +317,13 @@ class LotesManagerView extends HTMLElement {
 				</tr>
 				<tr>
 					<td class="value-prop" style="width: 50%" colspan="2">P/CONTADO</td>                    
-					<td  colspan="4">C$ ${(lote.EtiquetaLote.Precio_venta_Apartado_dolares * lote.EtiquetaLote.TasaCambio.Valor_de_venta).toFixed(2)}</td>					
+					<td  colspan="4">C$ ${(lote.EtiquetaLote.Precio_venta_Apartado_dolares * // @ts-ignore
+				this.TasaCambio.Valor_de_venta).toFixed(2)}</td>					
 				</tr>
 				<tr>
 					<td class="value-prop" style="width: 50%" colspan="2">APARTADO / QUINCENAL</td>                    
-					<td  colspan="4">C$ ${(lote.EtiquetaLote.Cuota_apartado_quincenal_dolares * lote.EtiquetaLote.TasaCambio.Valor_de_venta).toFixed(2)}</td>					
+					<td  colspan="4">C$ ${(lote.EtiquetaLote.Cuota_apartado_quincenal_dolares * // @ts-ignore
+				this.TasaCambio.Valor_de_venta).toFixed(2)}</td>					
 				</tr>
 				<tr>
 					<td class="value-prop" style="width: 50%" colspan="2">N° CUOTAS</td>
@@ -183,7 +331,8 @@ class LotesManagerView extends HTMLElement {
 				</tr>
 				<tr>
 					<td class="value-prop" style="width: 50%" colspan="2">APARTADO / MENSUAL</td>                    
-					<td  colspan="4">C$ ${(lote.EtiquetaLote.Cuota_apartado_mensual_dolares * lote.EtiquetaLote.TasaCambio.Valor_de_venta).toFixed(2)}</td>					
+					<td  colspan="4">C$ ${// @ts-ignore
+			(lote.EtiquetaLote.Precio_compra_dolares * parseFloat(this.Porcentaje?.Valor ?? 0) * this.TasaCambio.Valor_de_venta).toFixed(2)}</td>					
 				</tr>
 				<tr>
 					<td colspan="2" class="value-prop">CÓDIGO: ${lote.Id_Lote}</td>
@@ -252,8 +401,7 @@ class LotesManagerView extends HTMLElement {
 			font-weight: bold;
 			text-align: center;
 			padding: 5px 10px;
-			border: 1px solid #ccc;
-			border-radius: 4px;
+			background-color:  #ebebeb;
 			display: flex;
 			align-items: center;
 			justify-content: center;
@@ -340,20 +488,3 @@ window.addEventListener('load', async () => {
 });
 
 
-		// const buildInput = ControlBuilder.BuildSearchInput({action: async (value) => {
-		// 		if (value == "") {
-		// 			// @ts-ignore
-		// 			this.querySelectorAll(".etiqueta-detail").forEach((etiqueta) => { etiqueta.style.display = "contents" })
-		// 			return;
-		// 		}
-		// 		const filters = await WArrayF.FilterInArrayByValue(lotes, value);
-		// 		this.querySelectorAll(".etiqueta-detail").forEach((etiqueta) => {
-		// 			const filter = filters.find(f => f.id == etiqueta);
-		// 			if (!filter) {
-		// 				// @ts-ignore
-		// 				etiqueta.style.display = "none"
-		// 			}
-		// 		})
-
-		// 	}
-		// });

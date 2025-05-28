@@ -45,7 +45,7 @@ class Detalle_Factura_ModelComponent extends EntityClass {
 			this.CalculeTotal(detail, form);
 		}
 	};
-	/**@type {ModelProperty}*/ Cantidad = { type: 'number', min: 1, hidden: true };
+	/**@type {ModelProperty}*/ Cantidad = { type: 'number', min: 1 };
 	/**@type {ModelProperty}*/ Precio_Venta = { type: 'money', disabled: true, label: "Pre/Cont. $" };
 	/**@type {ModelProperty}*/ Monto_Descuento = { type: 'money', disabled: true, require: false };
 	/**@type {ModelProperty}*/ Sub_Total = { type: 'money', disabled: true, hidden: true };

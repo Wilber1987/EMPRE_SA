@@ -2,12 +2,12 @@
 @using API.Controllers
 @using APPCORE.Security
 @{
-     if (!SecurityController.Auth(HttpContext.Session.GetString("seassonKey")))
+     if (!SecurityController.Auth(HttpContext.Session.GetString("sessionKey")))
     {
         Response.Redirect("../Security/login");
         return;
     }
-    @if (!SecurityController.HavePermission(Permissions.GESTION_EMPEÑOS.ToString(), HttpContext.Session.GetString("seassonKey")) )//todo
+    @if (!SecurityController.HavePermission(Permissions.GESTION_EMPEÑOS.ToString(), HttpContext.Session.GetString("sessionKey")) )//todo
     {
        Response.Redirect("../Security/login");
         return;

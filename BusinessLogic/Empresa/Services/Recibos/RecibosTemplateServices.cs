@@ -7,6 +7,7 @@ using APPCORE;
 using APPCORE.Services;
 using CAPA_NEGOCIO.Services;
 using CAPA_NEGOCIO.SystemConfig;
+using CatalogDataBaseModel;
 using DataBaseModel;
 
 namespace UI.CAPA_NEGOCIO.Empresa.Services.Recibos

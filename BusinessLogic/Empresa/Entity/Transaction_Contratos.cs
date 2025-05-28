@@ -4,7 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using API.Controllers;
 using APPCORE;
+using BusinessLogic.Empresa.Contratos;
 using CAPA_NEGOCIO.Util;
+using CatalogDataBaseModel;
 using Transactions;
 
 namespace DataBaseModel
@@ -15,46 +17,46 @@ namespace DataBaseModel
 		public int? numero_contrato { get; set; }
 		public DateTime? fecha_contrato { get; set; }
 		public DateTime? fecha_cancelar { get; set; }
-		public Double? monto { get; set; }
-		public Double? interes { get; set; }
-		public Double? mora { get; set; }
-		public string? estado { get; set; }
+		public double? monto { get; set; }
+		public double? interes { get; set; }
+		public double? mora { get; set; }
+		public Contratos_State? estado { get; set; }
 		public DateTime? fecha_vencimiento { get; set; }
 		public int? codigo_cliente { get; set; }
-		public Double? saldo { get; set; }
-		public Double? abonos { get; set; }
+		public double? saldo { get; set; }
+		public double? abonos { get; set; }
 		public string? tipo { get; set; }
 		public string? entregado { get; set; }
-		public Double? interes_actual { get; set; }
+		public double? interes_actual { get; set; }
 		public string? observaciones { get; set; }
-		public Double? iva { get; set; }
-		public Double? descuento { get; set; }
-		public Double? taza_cambio { get; set; }
-		public Double? taza_cambio_compra { get; set; }
+		public double? iva { get; set; }
+		public double? descuento { get; set; }
+		public double? taza_cambio { get; set; }
+		public double? taza_cambio_compra { get; set; }
 		public int? id_agente { get; set; }
 		public int? plazo { get; set; }
-		public Double? cuotafija { get; set; }
-		public Double? tasa_hoy { get; set; }
+		public double? cuotafija { get; set; }
+		public double? tasa_hoy { get; set; }
 		public string? motivo_anulacion { get; set; }
-		public Double? Valoracion_compra_dolares { get; set; }
-		public Double? Valoracion_compra_cordobas { get; set; }
-		public Double? Valoracion_empeño_cordobas { get; set; }
-		public Double? Valoracion_empeño_dolares { get; set; }
-		public Double? tasas_interes { get; set; }
-		public Double? gestion_crediticia { get; set; }
-		public Double? cuotafija_dolares { get; set; }
+		public double? Valoracion_compra_dolares { get; set; }
+		public double? Valoracion_compra_cordobas { get; set; }
+		public double? Valoracion_empeño_cordobas { get; set; }
+		public double? Valoracion_empeño_dolares { get; set; }
+		public double? tasas_interes { get; set; }
+		public double? gestion_crediticia { get; set; }
+		public double? cuotafija_dolares { get; set; }
 		public DateTime? fecha { get; set; }
-		public Double? total_pagar_cordobas { get; set; }
-		public Double? total_pagar_dolares { get; set; }
-		public Double? interes_dolares { get; set; }
+		public double? total_pagar_cordobas { get; set; }
+		public double? total_pagar_dolares { get; set; }
+		public double? interes_dolares { get; set; }
 		public int? Id_User { get; set; }
 		public bool IsAnulable
 		{
 			get
 			{
-				return estado != "ANULADO" && estado != "CANCELADO"
+				return estado != Contratos_State.ANULADO && estado != Contratos_State.CANCELADO
 				&& DateUtil.IsBefore(fecha, 24)
-				&& tipo != Contratos_Type.APARTADO_QUINCENAL.ToString() 
+				&& tipo != Contratos_Type.APARTADO_QUINCENAL.ToString()
 				&& tipo != Contratos_Type.APARTADO_MENSUAL.ToString();
 			}
 		}
@@ -76,7 +78,7 @@ namespace DataBaseModel
 
 		//[OneToMany(TableName = "Transaccion_Factura", KeyColumn = "numero_contrato", ForeignKeyColumn = "numero_contrato")]
 		public List<Transaccion_Factura>? Recibos { get; set; }
-		public ResponseService Anular(string seasonKey)
+		public ResponseService Anular(string seasonKey, bool anularIgnoreTransactions = false, bool anularFullCost = false)
 		{
 			try
 			{
@@ -92,20 +94,16 @@ namespace DataBaseModel
 					return new ResponseService { status = 403, message = "Contrato no existe" };
 				}
 				var cuotasPagadas = Transaction_Contratos.Tbl_Cuotas.Where(c => c.Estado?.ToUpper() == "CANCELADO").ToList();
-				if (cuotasPagadas.Count > 0)
+				if (cuotasPagadas.Count > 0 && !anularIgnoreTransactions)
 				{
 					return new ResponseService { status = 403, message = "Contrato no puede ser anulado debido a que ya se realizaron transacciones en el (pago de cuotas)" };
 				}
-				DateTime fechaGuardada = Transaction_Contratos.fecha_contrato.GetValueOrDefault(); // Tu fecha guardada
-				DateTime fechaActual = DateTime.Now;
-
-				TimeSpan diferencia = fechaActual - fechaGuardada;
-				if (diferencia.TotalDays > 1)
+				if (IsAnulable && !anularIgnoreTransactions)
 				{
-					return new ResponseService { status = 403, message = "Fecha límite para canulación a caducado" };
+					return new ResponseService { status = 403, message = "Fecha límite para anulación a caducado" };
 				}
 				Transaction_Contratos.motivo_anulacion = this.motivo_anulacion;
-				Transaction_Contratos.estado = Contratos_State.ANULADO.ToString();
+				Transaction_Contratos.estado = Contratos_State.ANULADO;
 				Transaction_Contratos.Update();
 				//CommitGlobalTransaction();
 				var cuentaOrigen = Catalogo_Cuentas.GetCuentaRegistoContratos(dbUser);
@@ -157,7 +155,7 @@ namespace DataBaseModel
 			List<Tbl_Cuotas> cuotas = new List<Tbl_Cuotas>();
 			DateTime fechaC = fecha.GetValueOrDefault();
 
-			int totalCuotas =  Convert.ToInt32(plazo);
+			int totalCuotas = Convert.ToInt32(plazo);
 
 			for (var index = 0; index < totalCuotas; index++)
 			{
@@ -226,16 +224,16 @@ namespace DataBaseModel
 				int diasDeDiferencia = diferencia.Days;
 				if (diasDeDiferencia > Convert.ToInt32(VencimientoConfig.Valor))
 				{
-					estado = EstadoEnum.VENCIDO.ToString();
+					estado = Contratos_State.VENCIDO;
 					Update();
 					Transactional_Configuraciones beneficioVentaE = new Transactional_Configuraciones()
 						   .GetConfig(ConfiguracionesBeneficiosEnum.BENEFICIO_VENTA_ARTICULO_EMPENO.ToString());
 					var dbUser = new Security_Users { Id_User = Id_User }.Find<Security_Users>();
 					Detail_Prendas?.ForEach(prenda =>
 					{
-						if (prenda.en_manos_de == EnManosDe.ACREEDOR.ToString())
+						if (prenda.en_manos_de == EnManosDe.ACREEDOR)
 						{
-							GenerarLoteAPartirDePrenda(prenda, beneficioVentaE, dbUser);
+							Tbl_Lotes.GenerarLoteAPartirDePrenda(prenda, beneficioVentaE, dbUser, this);
 						}
 					});
 					Tbl_Cuotas?.ForEach(Cuota =>
@@ -251,65 +249,8 @@ namespace DataBaseModel
 			}
 		}
 
-		private void GenerarLoteAPartirDePrenda(Detail_Prendas prenda, Transactional_Configuraciones beneficioVentaE, Security_Users? dbUser)
-		{
-			double? mora = prenda.Transactional_Valoracion?.Tasa_interes * 2 / 100;
-			double? precio_venta_empeño = (prenda.Transactional_Valoracion?.Valoracion_empeño_dolares)
-				* (mora + 1)
-				* (Convert.ToDouble(beneficioVentaE.Valor) / 100 + 1);
-			Cat_Producto producto = new Cat_Producto
-			{
-				Descripcion = prenda.Descripcion,
-				Cat_Marca = new Cat_Marca
-				{
-					Nombre = prenda.marca,
-					Descripcion = prenda.marca,
-					Estado = EstadoEnum.ACTIVO.ToString()
-				},
-				Cat_Categorias = new Cat_Categorias
-				{
-					Descripcion = prenda.Catalogo_Categoria?.descripcion,
-					Estado = EstadoEnum.ACTIVO.ToString()
-				}
-			};
-			Cat_Producto.SetProductData(producto);
-			SaveLote(prenda, dbUser, precio_venta_empeño, producto);
-		}
 
-		private void SaveLote(Detail_Prendas prenda, Security_Users? dbUser, double? precio_venta_empeño, Cat_Producto producto)
-		{
-			string codigo = Tbl_Lotes.GenerarLote();
-			int porcentajesUtilidad = Transactional_Configuraciones.GetBeneficioVentaArticulo();
-			int porcentajesApartado = Transactional_Configuraciones.GetPorcentajesApartado();
-			int Ncuotas = Transactional_Configuraciones.GetNumeroCuotasQuincenales(precio_venta_empeño.GetValueOrDefault());
 
-			new Tbl_Lotes()
-			{
-				//Cat_Producto = producto,
-				Precio_Venta = precio_venta_empeño,
-				Precio_Compra = prenda.Transactional_Valoracion?.Valoracion_empeño_dolares,
-				Cantidad_Inicial = 1,
-				Cantidad_Existente = 1,
-				Id_Sucursal = dbUser?.Id_Sucursal,
-				Id_User = dbUser?.Id_User,
-				Fecha_Ingreso = DateTime.Now,
-				Datos_Producto = prenda.Transactional_Valoracion,
-				Detalles = $"{prenda.Transactional_Valoracion?.Descripcion}, Marca: {prenda.Transactional_Valoracion?.Marca}, Modelo: {prenda.Transactional_Valoracion?.Modelo}, Existencia perteneciente a vencimineto de contrato No. {numero_contrato.GetValueOrDefault():D9}",
-				Id_Almacen = new Cat_Almacenes().GetAlmacen(dbUser?.Id_Sucursal ?? 0),
-				Lote = codigo,
-				EtiquetaLote = new EtiquetaLote
-				{
-					Tipo = "CV",
-					Articulo = $"{prenda.Transactional_Valoracion?.Descripcion}, Marca: {prenda.Transactional_Valoracion?.Marca}, Modelo: {prenda.Transactional_Valoracion?.Modelo}",
-					Codigo = codigo,
-					PorcentajesUtilidad = porcentajesUtilidad,
-					PorcentajesApartado = porcentajesApartado,
-					PorcentajeAdicional = 0,
-					N_Cuotas = Ncuotas,
-					Precio_compra_dolares = prenda.Transactional_Valoracion?.Valoracion_empeño_dolares,
-				}
-			}.Save();
-		}
 
 		public Transaction_Contratos? FindAndUpdateContract()
 		{
@@ -355,13 +296,22 @@ namespace DataBaseModel
 			{
 				filterData = [new FilterData
 				{
-					ObjectName = "Factura_contrato",
-					PropName = "numero_contrato",
+					PropName = "Factura_contrato",
+					JsonPropName = "numero_contrato",
 					FilterType = "JSONPROP_EQUAL",
 					PropSQLType = "int",
 					Values = new List<string?> { numero_contrato.GetValueOrDefault().ToString() }
 				}]
 			}.SimpleGet<Transaccion_Factura>();
+		}
+
+		internal void Cancelar(Security_Users? dbUser)
+		{
+			if (estado != Contratos_State.CANCELADO)
+			{
+				estado = Contratos_State.CANCELADO;
+				Tbl_Acta_Entrega.ActasDePrendasPorCancelacionContrato(dbUser, this);
+			}
 		}
 	}
 

@@ -2,6 +2,7 @@ using System.Transactions;
 using API.Controllers;
 using APPCORE;
 using APPCORE.Services;
+using CatalogDataBaseModel;
 using DataBaseModel;
 using Transactions;
 namespace Model
@@ -85,7 +86,7 @@ namespace Model
 					foreach (var prendaGuardada in prendasGuardadas)
 					{
 						Transaction_Contratos? contrato = new Transaction_Contratos { numero_contrato = prendaGuardada.numero_contrato }.Find<Transaction_Contratos>();
-						if (contrato?.estado == EstadoEnum.ACTIVO.ToString() || contrato?.estado == EstadoEnum.VENCIDO.ToString())
+						if (contrato?.estado == Contratos_State.ACTIVO || contrato?.estado == Contratos_State.VENCIDO)
 						{
 							return new ResponseService()
 							{
@@ -106,12 +107,12 @@ namespace Model
 			{
 				valoracion.Catalogo_Categoria.tipo = valoracion.Catalogo_Categoria.tipo;
 				
-			}else if (valoracion.en_manos_de == EnManosDe.ACREEDOR.ToString()
+			}else if (valoracion.en_manos_de == EnManosDe.ACREEDOR
 			&& valoracion.Catalogo_Categoria.tipo.ToUpper() != "Vehículos".ToUpper())
 			{
 				Transaction_Contratos.tipo = Contratos_Type.EMPENO.ToString();
 			}
-			else if (valoracion.en_manos_de == EnManosDe.ACREEDOR.ToString()
+			else if (valoracion.en_manos_de == EnManosDe.ACREEDOR
 			 && valoracion.Catalogo_Categoria.tipo.ToUpper() == "Vehículos".ToUpper())
 			{
 
@@ -125,7 +126,7 @@ namespace Model
 			Transaction_Contratos.monto = Transaction_Contratos.Valoracion_empeño_dolares;
 			Transaction_Contratos.saldo = Transaction_Contratos.Valoracion_empeño_dolares;
 			Transaction_Contratos.mora = Convert.ToDouble(configuraciones.Valor);
-			Transaction_Contratos.estado = Contratos_State.ACTIVO.ToString();
+			Transaction_Contratos.estado = Contratos_State.ACTIVO;
 			Transaction_Contratos.Id_User = dbUser?.Id_User;
 			Transaction_Contratos.Tbl_Cuotas?.ForEach(c =>
 			{

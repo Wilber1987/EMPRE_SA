@@ -25,21 +25,12 @@ namespace DataBaseModel
 
         public static void SetProductData(Cat_Producto? productParam)
         {
-            Cat_Producto? producto = productParam?.Find<Cat_Producto>();
-            Cat_Categorias? categoria = productParam?.Cat_Categorias?.Find<Cat_Categorias>();
-            Cat_Marca? marca = productParam?.Cat_Marca?.Find<Cat_Marca>();
+            Cat_Producto? producto = productParam?.Find<Cat_Producto>();            
             if (producto != null)
             {
-                productParam = producto;
-            }
-            if (productParam != null && categoria != null)
-            {
-                productParam.Cat_Categorias = categoria;
-            }
-            if (productParam != null && marca != null)
-            {
-                productParam.Cat_Marca = marca;
-            }
+               productParam?.Save();
+            }  
+            
         }
     }
 }

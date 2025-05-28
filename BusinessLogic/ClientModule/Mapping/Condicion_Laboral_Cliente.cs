@@ -12,7 +12,7 @@ namespace ClientDataBaseModel {
        public int? id_cliente { get; set; }
        public DateTime? fecha_ingreso { get; set; }
        public string? ocupacion_cargo { get; set; }
-       public Double? ingresos_mensuales { get; set; }
+       public double? ingresos_mensuales { get; set; }
        public string? direccion { get; set; }
        public int? id_municipio { get; set; }
        public int? id_departamento { get; set; }

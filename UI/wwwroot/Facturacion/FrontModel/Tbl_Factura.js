@@ -4,7 +4,7 @@ import { EntityClass } from "../../WDevCore/WModules/EntityClass.js";
 import { Detalle_Factura } from './Detalle_Factura.js';
 class Tbl_Factura extends EntityClass {
     /**
-     * @param {Partial<Tbl_Factura> } props
+     * @param {Partial<Tbl_Factura> } [props]
      */
     constructor(props) {
         super(props, 'EntityFacturacion');
@@ -12,7 +12,7 @@ class Tbl_Factura extends EntityClass {
             this[prop] = props[prop];
         };
     }
-   /**@type {Number}*/ Id_Factura;
+   /**@type {Number?}*/ Id_Factura;
    /**@type {String}*/ Tipo;
    /**@type {String}*/ Concepto;
    /**@type {String}*/ Codigo_venta;

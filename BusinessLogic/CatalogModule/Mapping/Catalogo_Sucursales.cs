@@ -26,5 +26,20 @@ namespace CatalogDataBaseModel {
 		public string? Encabezado { get; set; }
 		public bool? AutoDebito { get; set; }
 		public int? Consecutivo { get; set; }
+		public Datos_Configuracion? FindConfig()
+		{
+			Datos_Configuracion? config = Find<Datos_Configuracion>();
+			if (config == null)
+			{
+				config = (Datos_Configuracion?)new Datos_Configuracion
+				{
+					AutoDebito = false,
+					Consecutivo = 0,
+					Encabezado = null,
+					Id_Sucursal = Id_Sucursal
+				}.Save();
+			}
+			return config;
+		}
 	}
 }

@@ -28,13 +28,13 @@ namespace API.Controllers
 		[AuthController(Permissions.GESTION_MOVIMIENTOS)]
 		public List<Movimientos_Cuentas> getMovimientos_Cuentas(Movimientos_Cuentas Inst)
 		{
-			return Inst.Get(HttpContext.Session.GetString("seassonKey"));
+			return Inst.Get(HttpContext.Session.GetString("sessionKey"));
 		}
 		[HttpPost]
 		[AuthController(Permissions.GESTION_MOVIMIENTOS)]
 		public object? saveMovimientos_Cuentas(Movimientos_Cuentas inst)
 		{			
-			return inst.Save(HttpContext.Session.GetString("seassonKey"));
+			return inst.Save(HttpContext.Session.GetString("sessionKey"));
 		}
 	}
 }

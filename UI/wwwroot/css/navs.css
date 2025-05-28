@@ -60,6 +60,7 @@
     background-color: var(--fourth-color);   
     text-decoration: none;
     color: var(--font-primary-color);
+    text-transform: uppercase;
 }
 .home-menu .title-collapse {
     display: block;

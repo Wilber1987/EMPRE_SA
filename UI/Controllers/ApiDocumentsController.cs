@@ -23,7 +23,7 @@ namespace UI.Controllers
 		[AuthController]
 		public object GetDataFragments(DocumentsData Inst)
 		{
-			return Inst.GetDataFragments(HttpContext.Session.GetString("seassonKey"));
+			return Inst.GetDataFragments(HttpContext.Session.GetString("sessionKey"));
 		}
 		//pdf 
 		[HttpPost]

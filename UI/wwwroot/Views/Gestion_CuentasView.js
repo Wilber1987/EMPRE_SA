@@ -158,6 +158,8 @@ class GestionCuentaComponent extends HTMLElement {
         const filterOptions = new WFilterOptions({
             Dataset: movimientos,
             ModelObject: filterModel,
+            AutoSetDate: true,
+            UseEntityMethods: true,
             Display: true,
             FilterFunction: (DFilt) => {
                 this.buildDetailMovimientos(DFilt, detalle, fecha, debito, creadito, saldo, displayType);

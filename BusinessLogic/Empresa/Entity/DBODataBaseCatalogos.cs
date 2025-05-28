@@ -1,5 +1,6 @@
 using API.Controllers;
 using APPCORE;
+using CatalogDataBaseModel;
 using ClientDataBaseModel;
 using System;
 using System.Collections.Generic;
@@ -14,8 +15,8 @@ namespace DataBaseModel
 		public int? id_estado_articulo { get; set; }
 		public string? nombre { get; set; }
 		public string? descripcion { get; set; }
-		public Double? porcentaje_compra { get; set; }
-		public Double? porcentaje_empeno { get; set; }
+		public double? porcentaje_compra { get; set; }
+		public double? porcentaje_empeno { get; set; }
 		// [OneToMany(TableName = "Transactional_Valoracion", KeyColumn = "id_estado_articulo", ForeignKeyColumn = "id_estado")]
 		// public List<Transactional_Valoracion>? Transactional_Valoracion { get; set; }
 	}
@@ -44,7 +45,7 @@ namespace DataBaseModel
 		public int? id_clasificacion { get; set; }
 		public string? Descripcion { get; set; }
 		public string? Estado { get; set; }
-		public Double? porcentaje { get; set; }
+		public double? porcentaje { get; set; }
 
 		//[OneToMany(TableName = "Catalogo_Clientes", KeyColumn = "id_clasificacion", ForeignKeyColumn = "id_clasificacion")]
 		public List<Catalogo_Clientes>? Catalogo_Clientes { get; set; }
@@ -56,7 +57,7 @@ namespace DataBaseModel
 		public int? id_clasificacion_interes { get; set; }
 		public string? Descripcion { get; set; }
 		public string? Estado { get; set; }
-		public Double? porcentaje { get; set; }
+		public double? porcentaje { get; set; }
 
 		//[OneToMany(TableName = "Catalogo_Clientes", KeyColumn = "id_clasificacion", ForeignKeyColumn = "id_clasificacion")]
 		public List<Catalogo_Clientes>? Catalogo_Clientes { get; set; }

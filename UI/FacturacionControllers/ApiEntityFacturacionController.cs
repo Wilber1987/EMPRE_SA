@@ -1,5 +1,6 @@
 
 using APPCORE;
+using BusinessLogic.Facturacion.Mapping;
 using DataBaseModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -34,13 +35,13 @@ namespace API.Controllers
         [AuthController]
         public ResponseService? AnularFactura(Tbl_Factura Inst)
         {
-            return new FacturacionServices().AnularFactura(Inst, HttpContext.Session.GetString("seassonKey"));
+            return new FacturacionServices().AnularFactura(Inst, HttpContext.Session.GetString("sessionKey"));
         }
 		[HttpPost]
 		[AuthController]
 		public object? saveTbl_Factura(Tbl_Factura Inst)
 		{
-			return new FacturacionServices().SaveFactura(HttpContext.Session.GetString("seassonKey"),Inst);
+			return new FacturacionServices().SaveFactura(HttpContext.Session.GetString("sessionKey"),Inst);
 		}
 		[HttpPost]
 		[AuthController]
@@ -191,7 +192,7 @@ namespace API.Controllers
 		public object? saveTbl_Compra(Tbl_Compra Inst)
 		{
 			//return Inst?.Save();
-			return Inst?.SaveCompra(HttpContext.Session.GetString("seassonKey"));
+			return Inst?.SaveCompra(HttpContext.Session.GetString("sessionKey"));
 		}
 		[HttpPost]
 		[AuthController]
@@ -203,7 +204,7 @@ namespace API.Controllers
 		[AuthController]
 		public object? anularCompra(Tbl_Compra Inst)
 		{            
-			return Inst?.AnularCompra(HttpContext.Session.GetString("seassonKey"));
+			return Inst?.AnularCompra(HttpContext.Session.GetString("sessionKey"));
 		}
 		//Cat_Almacenes
 		[HttpPost]
@@ -230,31 +231,7 @@ namespace API.Controllers
 		{
 			return Inst?.Update();
 		}
-		//Tbl_Lotes
-		[HttpPost]
-		[AuthController]
-		public List<Tbl_Lotes>? getTbl_Lotes(Tbl_Lotes Inst)
-		{
-			return Inst?.GetLotes(HttpContext.Session.GetString("seassonKey"));
-		}
-		[HttpPost]
-		[AuthController]
-		public Tbl_Lotes? findTbl_Lotes(Tbl_Lotes Inst)
-		{
-			return Inst?.Find<Tbl_Lotes>();
-		}
-		[HttpPost]
-		[AuthController]
-		public object? saveTbl_Lotes(Tbl_Lotes Inst)
-		{
-			return Inst?.Save();
-		}
-		[HttpPost]
-		[AuthController]
-		public object? updateTbl_Lotes(Tbl_Lotes Inst)
-		{
-			return Inst?.Update();
-		}
+		
 		//Detalle_Compra
 		[HttpPost]
 		[AuthController]
@@ -305,5 +282,9 @@ namespace API.Controllers
 		{
 			return Inst?.Update();
 		}
+		
+		
+		
+		
 	}
 }

@@ -21,7 +21,7 @@ namespace DataBaseModel
 		public int? tipoc { get; set; }
 		public string? valor_cliente { get; set; }
 		public string? solo_acreedor { get; set; }
-		public Double? promedio { get; set; }
+		public double? promedio { get; set; }
 		public int? id_clasificacion { get; set; }
 		public int? id_clasificacion_interes { get; set; }
 		[ManyToOne(TableName = "Catalogo_Clasificacion_Cliente", KeyColumn = "id_clasificacion", ForeignKeyColumn = "id_clasificacion")]

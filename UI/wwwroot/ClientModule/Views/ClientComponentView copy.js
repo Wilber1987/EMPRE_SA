@@ -3,6 +3,7 @@
 import { Condicion_Laboral_Cliente } from "../../FrontModel/DBODataBaseModel.js";
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../../WDevCore/StyleModules/WStyleComponents";
 import { ModalMessage } from "../../WDevCore/WComponents/ModalMessage";
+import { WAlertMessage } from "../../WDevCore/WComponents/WAlertMessage.js";
 import { WAppNavigator } from "../../WDevCore/WComponents/WAppNavigator.js";
 import { WForm } from "../../WDevCore/WComponents/WForm.js";
 import { ComponentsManager, WRender } from "../../WDevCore/WModules/WComponentsTools";
@@ -58,8 +59,8 @@ class ClientComponentView extends HTMLElement {
 			tagName: 'button', className: 'Block-Success', innerText: 'Guardar',
 			onclick: async () => {
 				if (!this.FormularioCliente?.Validate()) {
-					this.Manager?.NavigateFunction("formularioCliente", this.FormularioCliente)
-					this.append(ModalMessage("Necesita llenar todos los datos del cliente primeramente"));
+					this.Manager?.NavigateFunction("formularioCliente", this.FormularioCliente)					
+					WAlertMessage.Warning("Necesita llenar todos los datos del cliente primeramente"); 
 					return;
 				}
 

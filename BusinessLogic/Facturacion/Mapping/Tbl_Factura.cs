@@ -29,20 +29,20 @@ namespace DataBaseModel
 		public int? Id_Usuario { get; set; }
 		public string? Estado { get; set; }
 		public string? Moneda { get; set; }
-		public Double? Sub_Total { get; set; }
+		public double? Sub_Total { get; set; }
 		public double? TotalDescuento { get; set; }
-		public Double? Iva { get; set; }
-		public Double? Tasa_Cambio { get; set; }
-		public Double? Tasa_Cambio_Venta { get; set; }
-		public Double? Total { get; set; }
-		public Double? Total_Pagado { get; set; }
-		public Double? Total_Financiado { get; set; }
-		public Double? Monto_cordobas { get; set; }
-		public Double? Monto_dolares { get; set; }
+		public double? Iva { get; set; }
+		public double? Tasa_Cambio { get; set; }
+		public double? Tasa_Cambio_Venta { get; set; }
+		public double? Total { get; set; }
+		public double? Total_Pagado { get; set; }
+		public double? Total_Financiado { get; set; }
+		public double? Monto_cordobas { get; set; }
+		public double? Monto_dolares { get; set; }
 		public string? Motivo_Anulacion { get; set; }
 		public bool IsAnulable { get 
 		{
-		    return Estado != "ANULADO" && Estado != "CANCELADO" && DateUtil.IsBefore(Fecha, 24);
+		    return Estado != "ANULADO" && Estado != "CANCELADO" && !DateUtil.IsAffterNDays(Fecha, 5);
 		}}		
 
 		[JsonProp]

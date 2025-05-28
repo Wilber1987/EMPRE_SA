@@ -58,21 +58,21 @@ public class ContractsTemplates
 	";
 
 	public static string ContractTable = @"<style>
-				td {
+				.table td {
 					border: 1px black solid;
 					padding: 5px;
 					width: 7.14% !important;
 				}
 
-				td.col2 {
+				.table td.col2 {
 					width: 14.28% !important;
 				}
 
-				td.col6 {
+				.table td.col6 {
 					width: 42.85% !important;
 				}
 
-				td.val {
+				.table td.val {
 					text-align: right;
 				}
 				span.sombrear {

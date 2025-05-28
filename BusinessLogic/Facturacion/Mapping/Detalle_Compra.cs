@@ -14,12 +14,12 @@ namespace DataBaseModel {
         public int? Id_Detalle_Compra { get; set; }
         public int? Id_Compra { get; set; }
         public int? Id_Producto { get; set; }
-        public Double? Cantidad { get; set; }
-        public Double? Precio_Unitario { get; set; }
-        public Double? Precio_Venta { get; set; }
-        public Double? SubTotal { get; set; }
-        public Double? Iva { get; set; }
-        public Double? Total { get; set; }
+        public double? Cantidad { get; set; }
+        public double? Precio_Unitario { get; set; }
+        public double? Precio_Venta { get; set; }
+        public double? SubTotal { get; set; }
+        public double? Iva { get; set; }
+        public double? Total { get; set; }
         public string? Presentacion { get; set; }
         //Datos del producto que se agregara al lote
         public Transactional_Valoracion? Datos_Producto_Lote { get; set; }
