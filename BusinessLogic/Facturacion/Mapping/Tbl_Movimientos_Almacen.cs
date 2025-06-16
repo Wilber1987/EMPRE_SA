@@ -38,7 +38,7 @@ namespace BusinessLogic.Facturacion.Mapping
 		{
 			try
 			{
-				if (Id_Lote_Original == null || Cantidad == null || Cantidad <= 0)
+				if ((Tbl_Lote_Original == null && Id_Lote_Original == null) || Cantidad == null || Cantidad <= 0)
 				{
 					return new ResponseService()
 					{

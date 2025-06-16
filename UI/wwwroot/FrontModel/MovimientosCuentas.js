@@ -37,17 +37,16 @@ class Detail_Movimiento extends EntityClass {
 		};
 	}
 	id_movimiento = { type: "number", primary: true };
-	fecha = { type: "date" };
+	fecha = { type: "datetime" };
 	//moneda = { type: 'select', Dataset: ["C$", "$"], hiddenInTable: false,hidden:true, disabled: true, require: false, };
-	debito = { type: "number" };
-	credito = { type: "number" };
-	debito_dolares = { type: "number" };
-	credito_dolares = { type: "number" };
-	monto_inicial = { type: "number" };
-	monto_final = { type: "number" };
-	monto_inicial_dolares = { type: "number" };
-	monto_final_dolares = { type: "number" };
+	debito = { type: "money" };
+	credito = { type: "money" };
+	debito_dolares = { type: "money" };
+	credito_dolares = { type: "money" };
+	monto_inicial = { type: "money" };
+	monto_final = { type: "money" };
+	monto_inicial_dolares = { type: "money" };
+	monto_final_dolares = { type: "money" };
 	Transaction_Movimiento = undefined;
-
 }
 export { Detail_Movimiento }

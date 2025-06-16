@@ -36,12 +36,12 @@ class Tbl_Acta_Entrega_ModelComponent extends EntityClass {
         for (const prop in props) this[prop] = props[prop];
     }
 
-    /**@type {ModelProperty}*/ Id_Acta_Entrega = { type: 'number' };
+    /**@type {ModelProperty}*/ Id_Acta_Entrega = { type: 'number', hiddenFilter: true };
     /**@type {ModelProperty}*/ Fecha = { type: 'date' };
-    /**@type {ModelProperty}*/ Observaciones = { type: 'text' };
+    /**@type {ModelProperty}*/ Observaciones = { type: 'text' , hiddenFilter: true};
     /**@type {ModelProperty}*/ Numero_Contrato = { type: 'number' };
     /**@type {ModelProperty}*/ Numero_Prenda = { type: 'number' };
-    /**@type {ModelProperty}*/ Id_Sucursal = { type: 'number' };
+    /**@type {ModelProperty}*/ Id_Sucursal = { type: 'number', hiddenFilter: true };
     /**@type {ModelProperty}*/ Estado = { type: 'select', Dataset: Object.values(EstadoEnum) };
 
     /**@type {ModelProperty}*/ Catalogo_Sucursales = { type: 'WSELECT', ModelObject: () => new Catalogo_Sucursales_ModelComponent() };

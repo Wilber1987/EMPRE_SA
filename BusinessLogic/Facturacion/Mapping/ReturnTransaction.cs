@@ -31,14 +31,14 @@ namespace BusinessLogic.Facturacion.Mapping
                 {
                     Id_Factura = ArticulosRemplazados
                     .FirstOrDefault()?.Id_Factura
-                }
-                    .Find<Tbl_Factura>();
+                }.Find<Tbl_Factura>();
 
                 Transaction_Contratos? contratoOriginal = new Transaction_Contratos { numero_contrato = Numero_Contrato }
                     .Find<Transaction_Contratos>();
 
                 List<Tbl_Acta_Entrega> tbl_Acta_Entregas = new Tbl_Acta_Entrega { Numero_Contrato = Numero_Contrato }
                     .Get<Tbl_Acta_Entrega>();
+                    
                 BeginGlobalTransaction();
                 bool isActaEncontrada = false;
                 foreach (var tbl_Acta in tbl_Acta_Entregas)
@@ -46,6 +46,12 @@ namespace BusinessLogic.Facturacion.Mapping
                     var producto = ArticulosRemplazados
                         .Find(articulo => articulo.Lote?.Datos_Producto?.Modelo == tbl_Acta?.Detail_Prenda?.modelo
                             && articulo?.Lote?.Datos_Producto?.Marca == tbl_Acta?.Detail_Prenda?.marca);
+                            
+                    var productoOriginal = facturaOriginal?.Detalle_Factura?
+                        .Find(detalle => detalle.Lote?.Datos_Producto?.Modelo == tbl_Acta?.Detail_Prenda?.modelo
+                            && detalle?.Lote?.Datos_Producto?.Marca == tbl_Acta?.Detail_Prenda?.marca);                            
+                    //var descuento = productoOriginal!.Sub_Total > producto!.Sub_Total ? productoOriginal.Sub_Total - producto.Sub_Total : 0;
+                    //var pre        
                     if (producto != null)
                     {
                         isActaEncontrada = true;

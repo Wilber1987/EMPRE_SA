@@ -22,6 +22,7 @@ import { SystemConfigs } from "../../Services/SystemConfigs.js";
 import { WAlertMessage } from "../../WDevCore/WComponents/WAlertMessage.js";
 import { Tbl_Bajas_Almacen, Tbl_Bajas_Almacen_ModelComponent } from "../FrontModel/Tbl_Bajas_Almacen.js";
 import { Tbl_Movimientos_Almacen, Tbl_Movimientos_Almacen_ModelComponent } from "../FrontModel/Tbl_Movimientos_Almacen.js";
+import { EstadoEnum } from "../Enums/enums.js";
 
 /**
  * @typedef {Object} LotesConfig
@@ -60,11 +61,12 @@ class LotesManagerView extends HTMLElement {
 		name: "Articulos de baja", id: "Bajas", action: () => {
 			this.Manager.NavigateFunction("Bajas", this.BajasView())
 		}
-	}, {
+	}, //TODO REVISAR MOVIMIENTOS
+	/*{
 		name: "Movimientos realizados", id: "Movimientos", action: () => {
 			this.Manager.NavigateFunction("Movimientos", this.MovimientosView())
 		}
-	},
+	},*/
 	]
 
 	Draw = async () => {
@@ -119,6 +121,12 @@ class LotesManagerView extends HTMLElement {
 				FilterDisplay: true,
 				AutoSetDate: false,
 				UserActions: [{
+					name: "Activar",
+					rendered: (/**@type {Tbl_Lotes}*/ Lote) => Lote.IsActivo,
+					action: async (/**@type {Tbl_Lotes}*/ Lote) => {
+						this.ActivarLoteDeBaja(Lote);
+					}
+				}, {
 					name: "Dar de baja",
 					rendered: (/**@type {Tbl_Lotes}*/ Lote) => Lote.IsActivo,
 					action: async (/**@type {Tbl_Lotes}*/ Lote) => {
@@ -127,6 +135,34 @@ class LotesManagerView extends HTMLElement {
 				}]
 			}
 		});
+	}
+	/**
+	 * @param {Tbl_Lotes} Lote
+	 */
+	ActivarLoteDeBaja(Lote) {
+		const modal = new WModalForm({
+			ModelObject: new Tbl_Transaccion_ModelComponent({
+				Cantidad: undefined
+			}),
+			//EditObject: Transaction,
+			title: "ACTIVAR  EXISTENCIA",
+			ObjectOptions: {
+				SaveFunction: async (/**@type {Tbl_Transaccion}*/ editObject) => {
+					editObject.Id_Lote = Lote.Id_Lote;
+					this.append(ModalVericateAction(async () => {
+						const response = await new Tbl_Lotes({
+							Id_Lote: Lote.Id_Lote,
+							Estado: EstadoEnum.ACTIVO,
+							Detalles: `${Lote.Descripcion} - Activado: ${editObject.Descripcion}`,
+						}
+						).Update();
+						this.append(ModalMessage(response.message, "success", true));
+						modal.close();
+					}, "¿Está seguro que desea activar esta existencia existencia?"));
+				}
+			}
+		});
+		this.append(modal);
 	}
 	BajasView() {
 		return new WTableComponent({

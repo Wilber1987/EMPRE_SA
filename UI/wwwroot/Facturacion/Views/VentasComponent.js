@@ -93,7 +93,11 @@ class VentasComponent extends HTMLElement {
                 await this.SaveVenta(factura);
             }
         });
-        this.CalculeTotal(this.FacturaForm.FormObject, this.FacturaForm,  this.FacturaModel)
+
+        if (this.Config.ReturnData?.IsDevolucion == true) {
+            this.CalculeTotal(this.FacturaForm.FormObject, this.FacturaForm, this.FacturaModel)
+        }
+
         this.CompraContainer.append(
             this.FacturaForm,
             this.TotalesDetail
@@ -104,13 +108,15 @@ class VentasComponent extends HTMLElement {
             WAlertMessage.Warning("Agregue datos para poder continuar");
             return;
         }
-        this.append(ModalVericateAction(async () => {
-            if (this.Config.IsReturn) {
-                if (this.Config.ReturnData?.IsAllArticulosRemplazados == false && (this.Config.ReturnData?.MinAmount ?? 0) > factura.Total) {
-                    WAlertMessage.Info(`El monto minímo de la factura es ${this.Config.ReturnData?.MinAmount}`);
-                    return;
-                }
+        if (this.Config.IsReturn) {
+            if (this.Config.ReturnData?.IsAllArticulosRemplazados == false && (this.Config.ReturnData?.MinAmount ?? 0) > factura.Total) {
+                WAlertMessage.Info(`El monto minímo de la factura es de $ ${ConvertToMoneyString(this.Config.ReturnData?.MinAmount)} dólares, 
+                    equivalentes a C$ ${ConvertToMoneyString(this.Config.ReturnData?.MinAmount * (this.Config.TasaActual?.Valor_de_compra ?? 1))} córdobas.`);
+                return;
             }
+        }
+        this.append(ModalVericateAction(async () => {
+
             let response = { status: 400 };
             if (this.Config.saveAction) {
                 response = await this.Config.saveAction(new Tbl_Factura(factura));
@@ -185,17 +191,17 @@ class VentasComponent extends HTMLElement {
                 <hr/>
             </div>`);
         }
-        if (this.Config.IsReturn) {
+        if (this.Config.IsReturn && this.Config.ReturnData?.IsAllArticulosRemplazados == false) {
             this.TotalesDetail?.append(html`<div class="detail-container">       
                 <h3>DATOS DE ANULACIÓN DE ACTA DE ENTREGA</h3>
                 <hr/>
                 <label class="value-container">
                     <span>Monto disponible C$:</span>
-                    <span class="value">${(this.Config.ReturnData?.MinAmount ?? 1) * (this.Config.TasaActual?.Valor_de_compra ?? 1)}</span>
+                    <span class="value">${ConvertToMoneyString((this.Config.ReturnData?.MinAmount ?? 1) * (this.Config.TasaActual?.Valor_de_compra ?? 1))}</span>
                 </label>
                 <label class="value-container">
                     <span>Monto disponible $:</span>
-                    <span class="value">${this.Config.ReturnData?.MinAmount ?? 1}</span>
+                    <span class="value">${ConvertToMoneyString(this.Config.ReturnData?.MinAmount ?? 1)}</span>
                 </label>                              
                 <hr/>
             </div>`);
@@ -220,7 +226,17 @@ class VentasComponent extends HTMLElement {
         }
         if (this.Config.ReturnData?.IsDevolucion == true) {
             ventasModel.Cliente.hidden = true;
+            if (this.Config.ReturnData?.IsAllArticulosRemplazados == true) {
+                ventasModel.Detalle_Factura.Options = {}
+                ventasModel.Monto_dolares.hidden = true;
+                ventasModel.Monto_cordobas.hidden = true;
+                ventasModel.cambio_dolares.hidden = true;
+                ventasModel.cambio_cordobas.hidden = true;
+                ventasModel.is_cambio_cordobas.hidden = true;
+            }
         }
+
+
 
         return ventasModel;
     }

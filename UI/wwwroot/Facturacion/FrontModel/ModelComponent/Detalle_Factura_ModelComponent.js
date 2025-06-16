@@ -53,6 +53,7 @@ class Detalle_Factura_ModelComponent extends EntityClass {
 	/**@type {ModelProperty}*/ Total = { type: 'money', disabled: true };
 
 	UpdateDetalle(ParentEntity, detail, form, updateProps = true) {
+		//TODO AGREGAR PERRA TASA DE CAMBIO
 		switch (ParentEntity.Tipo) {
 			case "VENTA":
 				if (updateProps) {

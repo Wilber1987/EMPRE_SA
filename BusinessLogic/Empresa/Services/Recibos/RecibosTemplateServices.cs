@@ -22,6 +22,8 @@ namespace UI.CAPA_NEGOCIO.Empresa.Services.Recibos
 			try
 			{
 				Transaccion_Factura? factura = new Transaccion_Factura() { id_factura = this.id_recibo }.Find<Transaccion_Factura>();
+				var contrato = new Transaction_Contratos() { numero_contrato = factura?.Factura_contrato?.numero_contrato }.Find<Transaction_Contratos>();
+
 				if (factura?.estado == EstadoEnum.ANULADO.ToString())
 				{
 					return new ResponseService()
@@ -43,7 +45,7 @@ namespace UI.CAPA_NEGOCIO.Empresa.Services.Recibos
 				//templateContent.Add(GenerateReciboHtmlTemplate(factura));
 				List<object> templateContent = [ new
 				{
-					type= DocType.RECIBO.ToString(),
+					type= contrato?.tipo == Contratos_Type.APARTADO_QUINCENAL.ToString() ? DocType.RECIBO_QUINCENAL.ToString() : DocType.RECIBO.ToString(),
 					body= GenerateReciboHtmlTemplate(factura)
 				}];
 				if (factura?.Factura_contrato?.reestructuracion != 0)
@@ -168,8 +170,7 @@ namespace UI.CAPA_NEGOCIO.Empresa.Services.Recibos
 			var detallePerdidaDoc = factura?.Detalle_Factura_Recibo?.Find(d => d.concepto != null
 				&& d.concepto.Contains("Pago por tramite de perdida de documentos"));
 				
-			string templateContent = contrato?.tipo == Contratos_Type.APARTADO_QUINCENAL.ToString() || (contrato?.tipo == Contratos_Type.APARTADO_MENSUAL.ToString() && numero_cuota == 1)?
-				DocumentsData.GetReciboTemplateApartado() : DocumentsData.GetReciboTemplate();
+			string templateContent = contrato?.tipo == Contratos_Type.APARTADO_QUINCENAL.ToString() ? DocumentsData.GetReciboTemplateApartado() : DocumentsData.GetReciboTemplate();
 				
 			bool isCancelacion = factura?.Factura_contrato?.saldo_actual == 0;
 
@@ -260,8 +261,9 @@ namespace UI.CAPA_NEGOCIO.Empresa.Services.Recibos
 		private enum DocType
 		{
 			RECIBO,
-			REESTRUCTURE_TABLE
-		}
+			REESTRUCTURE_TABLE,
+            RECIBO_QUINCENAL
+        }
 	}
 
 }

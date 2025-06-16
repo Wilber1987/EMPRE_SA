@@ -7,7 +7,8 @@ import { ColumChart } from "../WDevCore/WComponents/WChartJSComponents.js";
 import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
 import { ComponentsManager, ConvertToMoneyString, WRender } from "../WDevCore/WModules/WComponentsTools.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
-import {WArrayF} from "../WDevCore/WModules/WArrayF.js";
+import { WArrayF } from "../WDevCore/WModules/WArrayF.js";
+import { PageType, WReportComponent } from "../WDevCore/WComponents/WReportComponent.js";
 
 /**
  * @typedef {Object} ComponentConfig
@@ -35,7 +36,7 @@ class Gestion_CuentasView extends HTMLElement {
         this.Draw();
     }
     Draw = async () => {
-        this.SetOption();       
+        this.SetOption();
     }
 
     SetOption = async () => {
@@ -64,7 +65,7 @@ class Gestion_CuentasView extends HTMLElement {
                 this.Manager.NavigateFunction("PAGOS", new GestionCuentaComponent({ Dataset: dataset.filter(c => c.tipo_cuenta == "PAGO") }));
             }
         }))
-          // @ts-ignore
+        // @ts-ignore
         this.Manager.NavigateFunction("PROPIAS", new GestionCuentaComponent({ Dataset: dataset.filter(c => c.tipo_cuenta == "PROPIA") }));
     }
 
@@ -200,19 +201,31 @@ class GestionCuentaComponent extends HTMLElement {
                     tagName: 'input', type: 'button', className: 'Btn-Mini', value: 'Movimientos C$', onclick: async () => {
                         displayType = "cordobas";
                         this.buildDetailMovimientos(movimientos, detalle, fecha, debito, creadito, saldo, displayType);
-                        
+
                     }
                 })
             ]
         });
-       
+        const report = new WReportComponent({
+            ModelObject: new Detail_Movimiento(),
+            Dataset: movimientos,
+            //Header: reportHeader,
+            PageType: PageType.OFICIO_HORIZONTAL,
+            exportXls: true,
+            exportPdf: true,
+            exportPdfApi: true,
+            DocumentViewFirst: true
+        });
+
+
         const detalle = WRender.Create({ className: "detalle" });
         const fecha = WRender.Create({ className: "fecha" });
         const debito = WRender.Create({ className: "debito" });
         const creadito = WRender.Create({ className: "creadito" });
         const saldo = WRender.Create({ className: "saldo" });
         this.buildDetailMovimientos(movimientos, detalle, fecha, debito, creadito, saldo);
-        detail.append(detalleCuenta, filterOptions, detalle, fecha, debito, creadito, saldo/* , this.columChartMovimientos */);
+        detail.append(detalleCuenta, filterOptions, //detalle, fecha, debito, creadito, saldo/* , this.columChartMovimientos */,
+            report);
         return detail;
     }
     /**
@@ -225,6 +238,24 @@ class GestionCuentaComponent extends HTMLElement {
      * @param {String} [type]
      */
     buildDetailMovimientos(movimientos, detalle, fecha, debito, creadito, saldo, type = "dolares") {
+        const report = new WReportComponent({
+            ModelObject: new Detail_Movimiento(),
+            Dataset: movimientos,
+            //Header: reportHeader,
+            PageType: PageType.OFICIO_HORIZONTAL,
+            exportXls: true,
+            exportPdf: true,
+            exportPdfApi: true,
+            DocumentViewFirst: true,
+            GroupParams: ["Sucursal", "Producto"],
+            EvalParams: ["SubTotal",
+                "Descuento",
+                "Iva",
+                "Total"],
+        });
+
+        console.log(movimientos);
+
         //console.log(type);
         detalle.innerHTML = "";
         fecha.innerHTML = "";
@@ -260,7 +291,8 @@ class GestionCuentaComponent extends HTMLElement {
            display: block;
         } 
         .detail {
-            display: grid;
+            display: flex;
+flex-direction: column;
             grid-template-columns: auto auto auto auto auto;
             row-gap: 20px;
             font-size: 12px;

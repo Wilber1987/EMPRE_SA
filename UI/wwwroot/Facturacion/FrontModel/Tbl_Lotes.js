@@ -6,6 +6,10 @@ import { Cat_Producto } from "./Cat_Producto.js";
 import { Detalle_Compra } from './Detalle_Compra.js';
 import { Tbl_Transaccion } from "./Tbl_Transaction.js";
 class Tbl_Lotes extends EntityClass {
+
+	/**
+	* @param {Partial<Tbl_Lotes>} [props] 
+	*/
 	constructor(props) {
 		super(props, 'TransactionLotes');
 		for (const prop in props) {
@@ -30,6 +34,7 @@ class Tbl_Lotes extends EntityClass {
 	/**@type {EtiquetaLote} */ EtiquetaLote;
 	/**@type {Detalle_Compra} */ Detalle_Compra;
 	/**@type {Boolean}*/ IsActivo;
+	/**@type {String}*/ Estado
 	async DarDeBaja(/**@type {Tbl_Transaccion}*/Transaction) {
 		return await this.SaveData("ApiTransactionLotes/DarDeBaja", Transaction)
 	}
