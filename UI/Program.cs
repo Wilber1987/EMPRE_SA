@@ -1,14 +1,17 @@
-using CAPA_DATOS;
+
 using BackgroundJob.Cron.Jobs;
-using CAPA_DATOS.Cron.Jobs;
+using APPCORE.Cron.Jobs;
 using Model;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.ResponseCompression;
+using BusinessLogic.Connection;
+using System.Text.Json.Serialization;
 
 //SqlADOConexion.IniciarConexion("sa", "zaxscd", ".", "EMPRE_SA");
 
+
 //CONEXIONES DE PRODUCCION
-SqlADOConexion.IniciarConexion("empresa", "Wmatus09%", "tcp:empresociedadanonima.database.windows.net", "EMPRE_SA");
+//SqlADOConexion.IniciarConexion("empresa", "Wmatus09%", "tcp:empresociedadanonima.database.windows.net", "EMPRE_SA");
 
 //var test = new test{ Parameters = new List<object> {1 , 2}}.Get<test>(true);
 //var testfilter = (from t in test where t.val1 == "1"  select t).ToList();
@@ -23,7 +26,8 @@ builder.Services.AddRazorPages();
 
 builder.Services.AddControllers()
 	.AddJsonOptions(JsonOptions => JsonOptions.JsonSerializerOptions.PropertyNamingPolicy = null)// retorna los nombres reales de las propiedades
-	.AddJsonOptions(options => options.JsonSerializerOptions.WriteIndented = false);// Desactiva la indentación
+	.AddJsonOptions(options => options.JsonSerializerOptions.WriteIndented = false)// Desactiva la indentación
+	.AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
 
 builder.Services.AddResponseCompression(options =>
@@ -60,6 +64,7 @@ builder.Services.AddCronJob<DailyCronJob>(options =>
 });
 
 var app = builder.Build();
+new BDConnection().IniciarMainConecction(app.Environment.IsDevelopment());
 // builder.Services.AddSession(options =>
 // {
 //     options.Cookie.Name = ".AdventureWorks.Session";

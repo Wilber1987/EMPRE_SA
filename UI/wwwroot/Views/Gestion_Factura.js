@@ -13,6 +13,10 @@ import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
 import {  WForm } from "../WDevCore/WComponents/WForm.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 import { ModalMessage } from "../WDevCore/WComponents/ModalMessage.js";
+<<<<<<< HEAD
+=======
+import { WAlertMessage } from "../WDevCore/WComponents/WAlertMessage.js";
+>>>>>>> main
 
 /**
  * @typedef {Object} facturaconfig
@@ -51,14 +55,19 @@ class MainFactura extends HTMLElement {
             //Options: false,
             // @ts-ignore
             SaveFunction: async (/**@type {Tbl_Compra} */ valoracion) => {
-
-                console.log(valoracion);
                 if (!this.facturaForm?.Validate()) {
+<<<<<<< HEAD
                     this.append(ModalMessage("Agregue datos para poder continuar"));
                     return;
                 }
                 const response = await new Tbl_Compra(this.facturaForm?.FormObject).Save();
 
+=======
+                    WAlertMessage.Warning("Agregue datos para poder continuar"); 
+                    return;
+                }
+                const response = await new Tbl_Compra(this.facturaForm?.FormObject).Save();
+>>>>>>> main
                 this.append(ModalMessage(response.message));
                 return;
             }

@@ -1,5 +1,5 @@
 using API.Controllers;
-using CAPA_NEGOCIO.Templates;
+using CAPA_NEGOCIO.SystemConfig;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc;
 using System.IO;
@@ -23,7 +23,7 @@ namespace UI.Controllers
 		[AuthController]
 		public object GetDataFragments(DocumentsData Inst)
 		{
-			return Inst.GetDataFragments(HttpContext.Session.GetString("seassonKey"));
+			return Inst.GetDataFragments(HttpContext.Session.GetString("sessionKey"));
 		}
 		//pdf 
 		[HttpPost]

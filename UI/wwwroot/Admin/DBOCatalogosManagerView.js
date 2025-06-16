@@ -5,7 +5,7 @@ import { StylesControlsV2, StyleScrolls } from "../WDevCore/StyleModules/WStyleC
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
 import { WFilterOptions } from '../WDevCore/WComponents/WFilterControls.js';
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js"
-import { Catalogo_Agentes, Catalogo_Clasificacion_Cliente, Catalogo_Clientes, Catalogo_Tipo_Agente, Catalogo_Cambio_Divisa_ModelComponent, Catalogo_Cuentas, Catalogo_Departamento, Catalogo_Inversores, Catalogo_Municipio, Catalogo_Nacionalidad, Catalogo_Profesiones, Catalogo_Sucursales, Catalogo_Estados_Articulos, Catalogo_Categoria_ModelComponent, Permisos_Cuentas, Catalogo_Clasificacion_Interes } from "../FrontModel/DBODataBaseModel.js"
+import { Catalogo_Agentes, Catalogo_Clasificacion_Cliente, Catalogo_Clientes, Catalogo_Tipo_Agente, Catalogo_Cambio_Divisa_ModelComponent, Catalogo_Cuentas, Catalogo_Departamento, Catalogo_Inversores, Catalogo_Municipio, Catalogo_Nacionalidad, Catalogo_Profesiones, Catalogo_Sucursales_ModelComponent, Catalogo_Estados_Articulos, Catalogo_Categoria_ModelComponent, Permisos_Cuentas, Catalogo_Clasificacion_Interes } from "../FrontModel/DBODataBaseModel.js"
 import { EntityClass } from "../WDevCore/WModules/EntityClass.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 import { Catalogo_Tipo_Identificacion } from "../ClientModule/FrontModel/Catalogo_Clientes.js";
@@ -64,8 +64,8 @@ class DBOCatalogosManagerView extends HTMLElement {
                     this.NavigateFunction(new Catalogo_Cambio_Divisa_ModelComponent())
                 }
             }, {
-                name: WOrtograficValidation.es('Catalogo_Sucursales'), action: async () => {
-                    this.NavigateFunction(new Catalogo_Sucursales())
+                name: WOrtograficValidation.es('Catalogo_Sucursales_ModelComponent'), action: async () => {
+                    this.NavigateFunction(new Catalogo_Sucursales_ModelComponent())
                 }
             }, {
                 name: WOrtograficValidation.es('Catalogo_Cuentas'), action: async () => {

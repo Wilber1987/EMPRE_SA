@@ -10,8 +10,9 @@ import { Tbl_Compra } from "../FrontModel/Tbl_Compra.js";
 // @ts-ignore
 import { ModelProperty } from "../../WDevCore/WModules/CommonModel.js";
 import { WOrtograficValidation } from "../../WDevCore/WModules/WOrtograficValidation.js";
-import {WArrayF} from "../../WDevCore/WModules/WArrayF.js";
+import { WArrayF } from "../../WDevCore/WModules/WArrayF.js";
 import { ModalMessage } from "../../WDevCore/WComponents/ModalMessage.js";
+import { WAlertMessage } from "../../WDevCore/WComponents/WAlertMessage.js";
 
 /**
  * @typedef {Object} ComprasConfig
@@ -45,7 +46,6 @@ class ComprasComponent extends HTMLElement {
         this.setComprasContainer();
         this.TasaCambio = this.ComprasConfig.TasaCambio ?? 36.95;
         this.Draw();
-
     }
     async setComprasContainer() {
         //const tasa = await new Catalogo_Cambio_Divisa_ModelComponent().Get();      
@@ -61,7 +61,7 @@ class ComprasComponent extends HTMLElement {
             // @ts-ignore
             SaveFunction: async (/**@type {Tbl_Compra} */ compra) => {
                 if (!this.ComprasForm?.Validate()) {
-                    this.append(ModalMessage("Agregue datos para poder continuar"));
+                    WAlertMessage.Warning("Agregue datos para poder continuar");
                     return;
                 }
                 const response = await new Tbl_Compra(compra).Save();
@@ -102,7 +102,11 @@ class ComprasComponent extends HTMLElement {
             </label>
             <label class="value-container">
                 <span>Iva:</span>
+<<<<<<< HEAD
                 <span class="value">${WOrtograficValidation.es(this.ComprasConfig.Entity?.Moneda)} ${ConvertToMoneyString(iva * Tasa_Cambio )}</span>
+=======
+                <span class="value">${WOrtograficValidation.es(this.ComprasConfig.Entity?.Moneda)} ${ConvertToMoneyString(iva * Tasa_Cambio)}</span>
+>>>>>>> main
             </label>
             <label class="value-container total">
                 <span>Total:</span>
@@ -141,7 +145,7 @@ class ComprasComponent extends HTMLElement {
             this.ComprasModel.Datos_Compra = this.ComprasConfig.DatosCompra;
         }
 
-        this.ComprasModel.Sub_Total.action = (/**@type {Tbl_Compra} */ EditObject, form, control) => {            
+        this.ComprasModel.Sub_Total.action = (/**@type {Tbl_Compra} */ EditObject, form, control) => {
             let subtotal;
             let total;
             let iva;           

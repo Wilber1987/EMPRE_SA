@@ -49,7 +49,7 @@
 }
 .home-menu .collapse {
     display: grid;
-    grid-template-columns: repeat(3, 30%);
+    grid-template-columns: repeat(3, 1fr);
     gap: 10px;
 }
 .home-menu .menu-item{

@@ -2,6 +2,10 @@
 import { Catalogo_Inversores } from "../FrontModel/DBODataBaseModel.js";
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js";
 import { ModalMessage } from "../WDevCore/WComponents/ModalMessage.js";
+<<<<<<< HEAD
+=======
+import { WAlertMessage } from "../WDevCore/WComponents/WAlertMessage.js";
+>>>>>>> main
 import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
 import { WForm } from "../WDevCore/WComponents/WForm.js";
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js";
@@ -85,11 +89,11 @@ class Gestion_InversionistaForm extends HTMLElement {
     ModelCliente = new Catalogo_Inversores();
 
     Draw = async () => {
-        
+
         this.innerHTML = "";
 
         this.FormularioCliente = new WForm({
-            ModelObject: this.ModelCliente, EditObject: this.cliente, Options: false,DivColumns: "32% 32% 32%" 
+            ModelObject: this.ModelCliente, EditObject: this.cliente, Options: false, DivColumns: "32% 32% 32%"
         });
 
         this.OptionContainer = WRender.Create({ className: "OptionContainer OptionBottom" });
@@ -99,13 +103,17 @@ class Gestion_InversionistaForm extends HTMLElement {
             tagName: 'button', className: 'Block-Success', innerText: 'Guardar',
             onclick: async () => {
                 if (!this.FormularioCliente?.Validate()) {
+<<<<<<< HEAD
                     this.append(ModalMessage("Necesita llenar todos los datos del cliente primeramente"));
+=======
+                    WAlertMessage.Warning("Necesita llenar todos los datos del cliente primeramente");
+>>>>>>> main
                     return;
                 }
                 if (this.cliente.codigo_cliente == null || this.cliente.codigo_cliente == undefined) {
                     /**@type {Catalogo_Inversores} */
                     const result = await new Catalogo_Inversores(this.cliente).Save();
-                    
+
                     if (result?.id_inversor != null) {
                         this.cliente.codigo_cliente = result?.id_inversor;
                         this.append(ModalMessage("Datos guardados correctamente"));
@@ -132,9 +140,9 @@ class Gestion_InversionistaForm extends HTMLElement {
         this.append(
             StylesControlsV2.cloneNode(true),
             StyleScrolls.cloneNode(true),
-            StylesControlsV3.cloneNode(true), 
-            this.CustomStyle,           
-            this.TabContainer, 
+            StylesControlsV3.cloneNode(true),
+            this.CustomStyle,
+            this.TabContainer,
             this.OptionContainer
         );
     }

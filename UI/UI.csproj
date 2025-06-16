@@ -28,7 +28,8 @@
   
 
   <ItemGroup>
-    <ProjectReference Include="..\CAPA_DATOS\CAPA_DATOS.csproj" />
+    <ProjectReference Include="..\AppCore\AppCore.csproj" />
+    <ProjectReference Include="..\BusinessLogic\BusinessLogic.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Mapping\Entity\" />
@@ -43,6 +44,20 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Mapping\Entity\" />
+    <Folder Include="Mapping\Views\" />
+    <Folder Include="Security\" />
+    <Folder Include="Resources\" />
+    <Folder Include="Resources\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Incluye todos los archivos HTML en la carpeta Resources -->
+    <None Update="Resources\**\*.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 
 
 </Project>

@@ -1,4 +1,4 @@
-using CAPA_DATOS.Security;
+using APPCORE.Security;
 using DataBaseModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -51,7 +51,7 @@ namespace API.Controllers
 		[AuthController(Permissions.ADMIN_ACCESS)]
 		public object? updateTransactional_Configuraciones(Transactional_Configuraciones inst)
 		{
-			return inst.UpdateConfig(HttpContext.Session.GetString("seassonKey"));
+			return inst.UpdateConfig(HttpContext.Session.GetString("sessionKey"));
 		}
 	}
 }

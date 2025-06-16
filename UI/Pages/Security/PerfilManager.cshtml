@@ -1,15 +1,15 @@
 @page
 @using API.Controllers
-@using CAPA_DATOS.Security
+@using APPCORE.Security
 @{
     // Layout = null;
-    if (!SecurityController.Auth(HttpContext.Session.GetString("seassonKey")))
+    if (!SecurityController.Auth(HttpContext.Session.GetString("sessionKey")))
     {
         Response.Redirect("../Security/login");
         return;
     }
     if (!SecurityController.HavePermission(Permissions.PERFIL_MANAGER.ToString(),
-    HttpContext.Session.GetString("seassonKey")))
+    HttpContext.Session.GetString("sessionKey")))
     {
         Response.Redirect("../Security/permission_error");
         return;

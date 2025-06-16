@@ -4,23 +4,31 @@ import { EntityClass } from "../../../WDevCore/WModules/EntityClass.js";
 import { ModelProperty } from "../../../WDevCore/WModules/CommonModel.js";
 import { Cat_Almacenes_ModelComponent } from './Cat_Almacenes_ModelComponent.js'
 import { Detalle_Compra_ModelComponent } from './Detalle_Compra_ModelComponent.js'
-import { Cat_Producto_ModelComponent } from "./Cat_Producto_ModelComponent.js";
 class Tbl_Lotes_ModelComponent extends EntityClass {
     constructor(props) {
-        super(props, 'EntityFacturacion');
+        super(props, 'TransactionLotes');
         for (const prop in props) {
             this[prop] = props[prop];
         }
     }
-    /**@type {ModelProperty}*/ Id_Lote = { type: 'number', primary: true, hiddenFilter: true };
+    /**@type {ModelProperty}*/ Id_Lote = { type: 'number',   label: "Código" , primary: true};
    
     /**@type {ModelProperty}*/ Id_Producto = { type: 'number', hiddenInTable: true, hiddenFilter: true };
     /**@type {ModelProperty}*/ Id_Almacen = { type: 'number', hiddenInTable: true, hiddenFilter: true };
+<<<<<<< HEAD
     /**@type {ModelProperty}*/ Name = { type: 'text' };
     /**@type {ModelProperty}*/ Detalles = { type: 'text' };    
     /**@type {ModelProperty}*/ Lote = { type: 'text', label: "Código" };
     //**@type {ModelProperty}*/ Cat_Producto = { type: 'WSELECT', ModelObject: () => new Cat_Producto_ModelComponent() };
     /**@type {ModelProperty}*/ Cat_Almacenes = { type: 'WSELECT', ModelObject: () => new Cat_Almacenes_ModelComponent() };
+=======
+    /**@type {ModelProperty}*/ Name = { type: 'text', hiddenFilter: true };
+    /**@type {ModelProperty}*/ Detalles = { type: 'text' };    
+    /**@type {ModelProperty}*/ Lote = { type: 'text', label: "Identificador" };
+    //**@type {ModelProperty}*/ Cat_Producto = { type: 'WSELECT', ModelObject: () => new Cat_Producto_ModelComponent() };
+    /**@type {ModelProperty}*/ Cat_Almacenes = { type: 'WSELECT', label: "Almacén",
+        ModelObject: () => new Cat_Almacenes_ModelComponent() , hiddenFilter: true};
+>>>>>>> main
    
     //**@type {ModelProperty}*/ Precio_Venta = { type: 'Money', hiddenFilter: true };
     //**@type {ModelProperty}*/ Precio_Compra = { type: 'Money', hiddenFilter: true };

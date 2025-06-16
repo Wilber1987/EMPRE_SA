@@ -1,4 +1,5 @@
-﻿using CAPA_DATOS.Security;
+﻿using APPCORE.Security;
+using CAPA_NEGOCIO.SystemConfig;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -10,16 +11,16 @@ namespace API.Controllers
 		[HttpPost]
 		public object Login(UserModel Inst)
 		{
-			HttpContext.Session.SetString("seassonKey", Guid.NewGuid().ToString());
-			return AuthNetCore.loginIN(Inst.mail, Inst.password, HttpContext.Session.GetString("seassonKey"));
+			HttpContext.Session.SetString("sessionKey", Guid.NewGuid().ToString());
+			return AuthNetCore.loginIN(Inst.mail, Inst.password, HttpContext.Session.GetString("sessionKey"));
 		}
 		public object LogOut()
 		{
-			return AuthNetCore.ClearSeason(HttpContext.Session.GetString("seassonKey"));
+			return AuthNetCore.ClearSeason(HttpContext.Session.GetString("sessionKey"));
 		}
 		public bool Verification()
 		{
-			return AuthNetCore.Authenticate(HttpContext.Session.GetString("seassonKey"));
+			return AuthNetCore.Authenticate(HttpContext.Session.GetString("sessionKey"));
 		}
 	   
 		public static bool Auth(string identfy)
@@ -40,7 +41,7 @@ namespace API.Controllers
         }   
 		public object RecoveryPassword(UserModel Inst)
 		{
-			return AuthNetCore.RecoveryPassword(Inst.mail);     
+			return AuthNetCore.RecoveryPassword(Inst.mail, SystemConfig.GetSMTPDefaultConfig());     
 		}
 
 	}

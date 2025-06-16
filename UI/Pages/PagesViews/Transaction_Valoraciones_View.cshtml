@@ -1,8 +1,8 @@
 @page
 @using API.Controllers
-@using CAPA_DATOS.Security
+@using APPCORE.Security
 @{
-    string? identfy = HttpContext.Session.GetString("seassonKey");
+    string? identfy = HttpContext.Session.GetString("sessionKey");
     if (!SecurityController.Auth(identfy))
     {
         Response.Redirect("../Security/login");

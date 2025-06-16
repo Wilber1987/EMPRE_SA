@@ -2,6 +2,10 @@
 import { Catalogo_Clientes, Condicion_Laboral_Cliente } from "../FrontModel/DBODataBaseModel.js";
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js";
 import { ModalMessage } from "../WDevCore/WComponents/ModalMessage.js";
+<<<<<<< HEAD
+=======
+import { WAlertMessage } from "../WDevCore/WComponents/WAlertMessage.js";
+>>>>>>> main
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
 import { WForm } from "../WDevCore/WComponents/WForm.js";
 import { ComponentsManager, WRender } from "../WDevCore/WModules/WComponentsTools.js";
@@ -61,7 +65,11 @@ class ClientComponentView extends HTMLElement {
             onclick: async () => {
                 if (!this.FormularioCliente?.Validate()) {
                     this.Manager?.NavigateFunction("formularioCliente", this.FormularioCliente)
+<<<<<<< HEAD
                     this.append(ModalMessage("Necesita llenar todos los datos del cliente primeramente"));
+=======
+                    WAlertMessage.Warning("Necesita llenar todos los datos del cliente primeramente");
+>>>>>>> main
                     return;
                 }
                 // if (!this.FormularioDatos?.Validate()) {
@@ -79,7 +87,11 @@ class ClientComponentView extends HTMLElement {
                         this.append(ModalMessage("Datos guardados correctamente"));
                         this.updateForms();
                     } else if (result?.status == 403) {
+<<<<<<< HEAD
                         this.append(ModalMessage(result?.message));
+=======
+                        WAlertMessage.Warning(result?.message);
+>>>>>>> main
                     } else {
                         this.append(ModalMessage("Error al guardar intentelo nuevamente"));
                     }

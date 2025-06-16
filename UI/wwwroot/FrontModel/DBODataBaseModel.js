@@ -254,8 +254,8 @@ class Transaction_Contratos_ModelComponent extends EntityClass {
             this[prop] = props[prop];
         }
     }
-    Catalogo_Clientes = { type: 'WSELECT', ModelObject: () => new Catalogo_Clientes() };
     numero_contrato = { type: "number", primary: true };
+    Catalogo_Clientes = { type: 'WSELECT', ModelObject: () => new Catalogo_Clientes() };  
     fecha_contrato = { type: "date", hiddenFilter: true };
     fecha_cancelar = { type: "date", hiddenInTable: true, hiddenFilter: true };
     monto = { type: "MONEY", label: "monto $",  hiddenInTable: true, hiddenFilter: true };
@@ -266,7 +266,7 @@ class Transaction_Contratos_ModelComponent extends EntityClass {
     codigo_cliente = { type: "number", hiddenInTable: true, hiddenFilter: true };
     saldo = { type: "MONEY", label: "saldo $", hiddenFilter: true, hiddenInTable: true };
     abonos = { type: "number", hiddenInTable: true, hiddenFilter: true };
-    tipo = { type: "text", hiddenInTable: true, hiddenFilter: true };
+    tipo = { type: "text", hiddenFilter: true };
     entregado = { type: "text", hiddenInTable: true, hiddenFilter: true };
     interes_actual = { type: "number", hiddenInTable: true, hiddenFilter: true };
     observaciones = { type: "text", hiddenInTable: true, hiddenFilter: true };
@@ -400,7 +400,7 @@ class Catalogo_Cuentas extends EntityClass {
     permite_dolares = { type: "checkbox", require: false, defaultValue: true };
     permite_cordobas = { type: "checkbox", require: false, defaultValue: true };
     tipo_cuenta = { type: 'select', Dataset: ['PROPIA', 'PAGO', 'EXTERNA'] };
-    Catalogo_Sucursales = { type: 'WSELECT', ModelObject: () => new Catalogo_Sucursales() };
+    Catalogo_Sucursales = { type: 'WSELECT', ModelObject: () => new Catalogo_Sucursales_ModelComponent() };
     Categoria_Cuentas = { type: 'WSELECT', ModelObject: () => new Categoria_Cuentas() };
 }
 export { Catalogo_Cuentas }
@@ -602,7 +602,7 @@ class Transaction_Ingresos_Egresos extends EntityClass {
     Catalogo_Cuentas = { type: 'WSELECT', ModelObject: () => new Catalogo_Cuentas() };
 }
 export { Transaction_Ingresos_Egresos }
-class Catalogo_Sucursales extends EntityClass {
+class Catalogo_Sucursales_ModelComponent extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
         for (const prop in props) {
@@ -616,7 +616,7 @@ class Catalogo_Sucursales extends EntityClass {
     Catalogo_Municipio = { type: 'WSELECT', ModelObject: () => new Catalogo_Municipio(), hiddenInTable: true };
 
 }
-export { Catalogo_Sucursales }
+export { Catalogo_Sucursales_ModelComponent }
 
 class Datos_Configuracion extends EntityClass {
     constructor(props) {
@@ -627,7 +627,7 @@ class Datos_Configuracion extends EntityClass {
     }
     Encabezado = { type: 'text' };
     AutoDebito = { type: 'checkbox' };
-    Catalogo_Sucursales = { type: 'WSELECT', ModelObject: () => new Catalogo_Sucursales() };
+    Catalogo_Sucursales = { type: 'WSELECT', ModelObject: () => new Catalogo_Sucursales_ModelComponent() };
 }
 export { Datos_Configuracion }
 

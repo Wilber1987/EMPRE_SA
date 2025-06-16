@@ -1,13 +1,13 @@
 @page
 @using API.Controllers
-@using CAPA_DATOS.Security
+@using APPCORE.Security
 @{
-     if (!SecurityController.Auth(HttpContext.Session.GetString("seassonKey")))
+     if (!SecurityController.Auth(HttpContext.Session.GetString("sessionKey")))
     {
         Response.Redirect("../Security/login");
         return;
     }
-    @if (!SecurityController.HavePermission(Permissions.GESTION_PRESTAMOS_POR_PERSONAS_NATURALES.ToString(),HttpContext.Session.GetString("seassonKey")) )
+    @if (!SecurityController.HavePermission(Permissions.GESTION_PRESTAMOS_POR_PERSONAS_NATURALES.ToString(),HttpContext.Session.GetString("sessionKey")) )
     {
        Response.Redirect("../Security/login");
         return;

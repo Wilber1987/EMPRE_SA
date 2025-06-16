@@ -18,6 +18,10 @@ import { ParcialesData } from "../FrontModel/ParcialData.js";
 import { DateTime } from "../WDevCore/WModules/Types/DateTime.js";
 import { ModalMessage } from "../WDevCore/WComponents/ModalMessage.js";
 import { ModalVericateAction } from "../WDevCore/WComponents/ModalVericateAction.js";
+<<<<<<< HEAD
+=======
+import { WAlertMessage } from "../WDevCore/WComponents/WAlertMessage.js";
+>>>>>>> main
 
 class Gestion_RecibosView extends HTMLElement {
     // @ts-ignore
@@ -45,6 +49,10 @@ class Gestion_RecibosView extends HTMLElement {
     }
     Draw = async () => {
         this.Configs = await new Transactional_Configuraciones().getConfiguraciones_Configs();
+<<<<<<< HEAD
+=======
+        // @ts-ignore
+>>>>>>> main
         this.vencimientoConfig = parseInt(this.Configs?.find(c => c.Nombre == "VENCIMIENTO_CONTRATO").Valor);
         this.valoracionesContainer.innerHTML = "";
         this.tasasCambio = await new Catalogo_Cambio_Divisa_ModelComponent().Get();
@@ -114,7 +122,11 @@ class Gestion_RecibosView extends HTMLElement {
             SaveFunction: async (/**@type {Recibos} */ recibo, form) => {
 
                 if (!this.reciboForm?.Validate()) {
+<<<<<<< HEAD
                     this.append(ModalMessage("Agregue datos para poder continuar"));
+=======
+                    WAlertMessage.Warning("Agregue datos para poder continuar"); 
+>>>>>>> main
                     return;
                 }
                 const nuevoRecibo = new Recibos(this.reciboForm?.FormObject);
@@ -196,7 +208,11 @@ class Gestion_RecibosView extends HTMLElement {
             tagName: 'button', className: 'Block-Primary', innerText: 'Recibo',
             onclick: () => {
                 if (this.ContractData.Contrato.numero_contrato == undefined) {
+<<<<<<< HEAD
                     this.append(ModalMessage("Seleccione un contrato"));
+=======
+                    WAlertMessage.Connect({ Message: "Seleccione un contrato", Type: "warning" });                  
+>>>>>>> main
                     return;
                 }
                 this.Manager.NavigateFunction("valoraciones", this.valoracionesContainer);
@@ -206,7 +222,11 @@ class Gestion_RecibosView extends HTMLElement {
             tagName: 'button', className: 'Block-Tertiary', innerText: 'Proyección de pago',
             onclick: () => {
                 if (this.ContractData.Contrato.numero_contrato == undefined) {
+<<<<<<< HEAD
                     this.append(ModalMessage("Seleccione un contrato"));
+=======
+                    WAlertMessage.Connect({ Message: "Seleccione un contrato", Type: "warning" });    
+>>>>>>> main
                     return;
                 }
                 this.setProyeccion();

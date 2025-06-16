@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using CAPA_NEGOCIO.Services;
-using CAPA_DATOS;
+
 using System.Text;
-using CAPA_DATOS.Security;
+using APPCORE.Security;
+using APPCORE;
+using CatalogDataBaseModel;
 
 namespace API.Controllers
 {

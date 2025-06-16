@@ -116,8 +116,8 @@ class Ver_RecibosView extends HTMLElement {
 					tagName: "iframe", srcdoc: element.body,
 					style: {
 						minHeight: "700px",
-						width: element.type == "REESTRUCTURE_TABLE" || factura?.concepto?.includes("pago de apartado") ? "95%" : "320px",
-						maxWidth: element.type == "REESTRUCTURE_TABLE" || factura?.concepto?.includes("pago de apartado") ? "1100px" : "320px"
+						width: element.type == "REESTRUCTURE_TABLE" || element.type == "RECIBO_QUINCENAL" ? "95%" : "320px",
+						maxWidth: element.type == "REESTRUCTURE_TABLE" || element.type == "RECIBO_QUINCENAL" ? "1100px" : "320px"
 					}
 				})
 				/*//console.log(objFra.srcdoc);

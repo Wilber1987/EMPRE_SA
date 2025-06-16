@@ -13,6 +13,10 @@ import { Detail_Prendas, Transaction_Contratos, ValoracionesTransaction } from "
 import { Catalogo_Cambio_Divisa } from "../../../FrontModel/Catalogo_Cambio_Divisa.js";
 import { ModalMessage } from "../../../WDevCore/WComponents/ModalMessage.js";
 import { WAlertMessage } from "../../../WDevCore/WComponents/WAlertMessage.js";
+<<<<<<< HEAD
+=======
+import { DateTime } from "../../../WDevCore/WModules/Types/DateTime.js";
+>>>>>>> main
 
 
 
@@ -37,7 +41,11 @@ class Tbl_Factura_ModelComponent extends EntityClass {
 	//**@type {ModelProperty}*/ Direccion_Envio = { type: 'text', hidden: true  };
 	/**@type {ModelProperty}*/ Id_Cliente = { type: 'number', hidden: true };
 	/**@type {ModelProperty}*/ Id_Sucursal = { type: 'number', hidden: true };
+<<<<<<< HEAD
 	/**@type {ModelProperty}*/ Fecha = { type: 'date', disabled: true };
+=======
+	/**@type {ModelProperty}*/ Fecha = { type: 'datetime', disabled: true, defaultValue: new DateTime().toISO() };
+>>>>>>> main
 	/**@type {ModelProperty}*/ Moneda = {
 		type: "radio", Dataset: ["DOLARES", "CORDOBAS"],
 		action: (/**@type {Tbl_Factura}*/ EditObject, form) => {
@@ -150,7 +158,11 @@ class Tbl_Factura_ModelComponent extends EntityClass {
 		//const Configs = JSON.parse(sessionStorage.getItem("Configs") ?? "[]");
 		const PlazoMaximo = this.GetNumeroCuotasQuincenales(EditObject.Total); //  (Configs.find(c => c.Nombre == "QUOTAS_QUINCENALES").Valor ?? 0.25);
 		//document.body.append(new WAlertMessage({ Message: `Apartado quincenal: Cuotas ${PlazoMaximo} (pago actual y tres futuras)` }))
+<<<<<<< HEAD
 		WAlertMessage.Connect({ Message: `Apartado quincenal: Cuotas ${PlazoMaximo} (pago actual y tres futuras)` })
+=======
+		WAlertMessage.Connect({ Message: `Apartado quincenal: Cuotas ${PlazoMaximo}` })
+>>>>>>> main
 		this.Datos_Financiamiento.ModelObject.Plazo.max = PlazoMaximo;
 		this.Datos_Financiamiento.ModelObject.Plazo.min = PlazoMaximo;
 		EditObject.Datos_Financiamiento.Plazo = PlazoMaximo;
@@ -189,8 +201,13 @@ class Tbl_Factura_ModelComponent extends EntityClass {
 		this.CreateContrato(contrato, EditObject, interes, tasa);
 	}
 	CreateContrato(contrato, EditObject, interes, tasa) {
+<<<<<<< HEAD
 		const totalDolares = EditObject.Tipo == "APARTADO_QUINCENAL" ? EditObject.Total : (EditObject.Total ?? 0) - (EditObject.Monto_dolares ?? 0);
 		const totalCordobas = EditObject.Tipo == "APARTADO_QUINCENAL" ? (EditObject.Total * EditObject.Tasa_Cambio) : ((EditObject.Total ?? 0) * EditObject.Tasa_Cambio) - (EditObject.Monto_cordobas ?? 0);
+=======
+		const totalDolares = (EditObject.Total ?? 0) - (EditObject.Monto_dolares ?? 0);
+		const totalCordobas = ((EditObject.Total ?? 0) * EditObject.Tasa_Cambio) - (EditObject.Monto_cordobas ?? 0);
+>>>>>>> main
 		contrato.valoraciones = EditObject.Detalle_Factura.map(detalle => detalle.Lote.Datos_Producto);
 		contrato.Transaction_Contratos = new Transaction_Contratos({
 			tasas_interes: interes / 100,
@@ -221,9 +238,12 @@ class Tbl_Factura_ModelComponent extends EntityClass {
 			})
 		});
 		FinancialModule.calculoAmortizacion(contrato, false);
+<<<<<<< HEAD
 
 
 
+=======
+>>>>>>> main
 		EditObject.Datos_Financiamiento.Total_Financiado = contrato.Transaction_Contratos.Valoracion_empeño_dolares;
 		EditObject.Datos_Financiamiento.Total_Financiado_Cordobas = contrato.Transaction_Contratos.Valoracion_empeño_cordobas;
 		EditObject.Datos_Financiamiento.Cuota_Fija_Dolares = contrato.Transaction_Contratos.cuotafija_dolares;
@@ -277,7 +297,11 @@ class Tbl_Factura_ModelComponent extends EntityClass {
 		EditObject.Tasa_Cambio_Venta = this.GetTasa().Valor_de_venta;
 		EditObject.Tasa_Cambio = this.GetTasa().Valor_de_compra;
 		console.log(EditObject.Detalle_Factura);
+<<<<<<< HEAD
 
+=======
+		EditObject.Detalle_Factura = EditObject.Detalle_Factura ?? [];
+>>>>>>> main
 
 		if (!EditObject.Detalle_Factura || !Array.isArray(EditObject.Detalle_Factura)) {
 			throw new Error("Detalle_Factura no está definido o no es un array.");
@@ -287,6 +311,12 @@ class Tbl_Factura_ModelComponent extends EntityClass {
 		const lotesMap = [];
 
 		for (const detalle of EditObject.Detalle_Factura) {
+<<<<<<< HEAD
+=======
+			if (form.ModelObject.Detalle_Factura.ModelObject.__proto__ == Function.prototype) {
+				form.ModelObject.Detalle_Factura.ModelObject = form.ModelObject.Detalle_Factura.ModelObject();
+			}
+>>>>>>> main
 			form.ModelObject.Detalle_Factura.ModelObject.UpdateDetalle(EditObject, detalle, undefined, false);
 
 			const loteFusionado = lotesMap.find(det => det.Lote.Id_Lote == detalle.Lote.Id_Lote)
@@ -313,7 +343,13 @@ class Tbl_Factura_ModelComponent extends EntityClass {
 					Precio_Venta: detalle.Precio_Venta,
 					Monto_Descuento: totalDescuento,
 					Iva: totalIva,
+<<<<<<< HEAD
 					Total: subtotal - totalDescuento + totalIva
+=======
+					Total: subtotal - totalDescuento + totalIva,
+					isRemovable: detalle.isRemovable,
+					isEditable: detalle.isEditable
+>>>>>>> main
 				}))
 			}
 		}
@@ -342,6 +378,10 @@ class Tbl_Factura_ModelComponent extends EntityClass {
 		this.CalculeCambioDolares(EditObject, form);
 		this.CalculeCambioCordobas(EditObject, form);
 		form?.DrawComponent();
+<<<<<<< HEAD
+=======
+
+>>>>>>> main
 	}
 
 	/**
@@ -356,9 +396,15 @@ class Tbl_Factura_ModelComponent extends EntityClass {
 		const Configs = JSON.parse(sessionStorage.getItem("Configs") ?? "[]");
 		const Tasa_Cambio = EditObject.Detalle_Factura[0].Lote?.EtiquetaLote?.TasaCambio?.Valor_de_venta;
 		const porcentajeMinimoMensual = (Configs.find(c => c.Nombre == "PORCENTAGE_MINIMO_DE_PAGO_APARTADO_MENSUAL").Valor ?? 35) / 100
+<<<<<<< HEAD
 		const porcentajeMinimoQuincenal = 1 / this.GetNumeroCuotasQuincenales(EditObject.Total);
 		let montoMinimoC = 0;
 		let montoMinimo  = 0;
+=======
+		const porcentajeMinimoQuincenal = 1 / (this.GetNumeroCuotasQuincenales(EditObject.Total) + 1);
+		let montoMinimoC = 0;
+		let montoMinimo = 0;
+>>>>>>> main
 		switch (EditObject.Tipo) {
 			case "VENTA":
 				this.Monto_cordobas.min = (EditObject.Total * Tasa_Cambio).toFixed(2);
@@ -375,7 +421,11 @@ class Tbl_Factura_ModelComponent extends EntityClass {
 				break;
 			case "APARTADO_QUINCENAL":
 				montoMinimoC = ((EditObject.Total * Tasa_Cambio) * porcentajeMinimoQuincenal);
+<<<<<<< HEAD
 				montoMinimo =  ((EditObject.Total) * porcentajeMinimoQuincenal);
+=======
+				montoMinimo = ((EditObject.Total) * porcentajeMinimoQuincenal);
+>>>>>>> main
 
 				this.Monto_cordobas.min = montoMinimoC.toFixed(2);
 				this.Monto_dolares.min = montoMinimo.toFixed(2);
@@ -392,11 +442,19 @@ class Tbl_Factura_ModelComponent extends EntityClass {
 	*/
 	GetNumeroCuotasQuincenales(value) {
 		if (value >= 61) {
+<<<<<<< HEAD
 			return 4;
 		} else if (value >= 31) {
 			return 3;
 		} else {
 			return 2;
+=======
+			return 3;
+		} else if (value >= 31) {
+			return 2;
+		} else {
+			return 1;
+>>>>>>> main
 		}
 	}
 

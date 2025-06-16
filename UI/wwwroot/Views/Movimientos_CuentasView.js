@@ -4,6 +4,10 @@ import { Catalogo_Cambio_Divisa_ModelComponent, Catalogo_Cuentas } from "../Fron
 import { Movimientos_Cuentas } from "../FrontModel/MovimientosCuentas.js";
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js";
 import { ModalMessage } from "../WDevCore/WComponents/ModalMessage.js";
+<<<<<<< HEAD
+=======
+import { WAlertMessage } from "../WDevCore/WComponents/WAlertMessage.js";
+>>>>>>> main
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js";
 import { ComponentsManager, WRender } from "../WDevCore/WModules/WComponentsTools.js";
@@ -81,7 +85,11 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
         const ObjectOptions = {
             SaveFunction: (param, response) => {
                 console.log(response)
+<<<<<<< HEAD
                 this.append(ModalMessage(response.message))
+=======
+                WAlertMessage.Warning(response.message);
+>>>>>>> main
             }
         }
 

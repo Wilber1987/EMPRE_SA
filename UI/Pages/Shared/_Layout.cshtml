@@ -1,8 +1,8 @@
 ﻿@using API.Controllers
-@using CAPA_DATOS.Security
+@using APPCORE.Security
 @using DataBaseModel
 @{
-    string identify = Context.Session.GetString("seassonKey");
+    string identify = Context.Session.GetString("sessionKey");
     var pageConfig = Config.pageConfig();
 }
 <!DOCTYPE html>

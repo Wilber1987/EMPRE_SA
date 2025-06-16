@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using CAPA_DATOS.Security;
+using APPCORE.Security;
 using System.Collections.Generic;
 
 namespace API.Controllers
@@ -28,7 +28,7 @@ namespace API.Controllers
         public Object saveSecurity_Roles(Security_Roles inv) { return inv.SaveRole(); }
         [HttpPost]
         [AdminAuth]
-        public Object saveSecurity_Users(Security_Users inv) { return inv.SaveUser(HttpContext.Session.GetString("seassonKey")); }
+        public Object saveSecurity_Users(Security_Users inv) { return inv.SaveUser(HttpContext.Session.GetString("sessionKey")); }
 
         [HttpPost]
         [AdminAuth]
