@@ -45,11 +45,7 @@ class Detalle_Factura_ModelComponent extends EntityClass {
 			this.CalculeTotal(detail, form);
 		}
 	};
-<<<<<<< HEAD
-	/**@type {ModelProperty}*/ Cantidad = { type: 'number', min: 1, hidden: true };
-=======
 	/**@type {ModelProperty}*/ Cantidad = { type: 'number', min: 1 };
->>>>>>> main
 	/**@type {ModelProperty}*/ Precio_Venta = { type: 'money', disabled: true, label: "Pre/Cont. $" };
 	/**@type {ModelProperty}*/ Monto_Descuento = { type: 'money', disabled: true, require: false };
 	/**@type {ModelProperty}*/ Sub_Total = { type: 'money', disabled: true, hidden: true };
@@ -57,10 +53,7 @@ class Detalle_Factura_ModelComponent extends EntityClass {
 	/**@type {ModelProperty}*/ Total = { type: 'money', disabled: true };
 
 	UpdateDetalle(ParentEntity, detail, form, updateProps = true) {
-<<<<<<< HEAD
-=======
 		//TODO AGREGAR PERRA TASA DE CAMBIO
->>>>>>> main
 		switch (ParentEntity.Tipo) {
 			case "VENTA":
 				if (updateProps) {

@@ -15,20 +15,12 @@ class Tbl_Lotes_ModelComponent extends EntityClass {
    
     /**@type {ModelProperty}*/ Id_Producto = { type: 'number', hiddenInTable: true, hiddenFilter: true };
     /**@type {ModelProperty}*/ Id_Almacen = { type: 'number', hiddenInTable: true, hiddenFilter: true };
-<<<<<<< HEAD
-    /**@type {ModelProperty}*/ Name = { type: 'text' };
-    /**@type {ModelProperty}*/ Detalles = { type: 'text' };    
-    /**@type {ModelProperty}*/ Lote = { type: 'text', label: "Código" };
-    //**@type {ModelProperty}*/ Cat_Producto = { type: 'WSELECT', ModelObject: () => new Cat_Producto_ModelComponent() };
-    /**@type {ModelProperty}*/ Cat_Almacenes = { type: 'WSELECT', ModelObject: () => new Cat_Almacenes_ModelComponent() };
-=======
     /**@type {ModelProperty}*/ Name = { type: 'text', hiddenFilter: true };
     /**@type {ModelProperty}*/ Detalles = { type: 'text' };    
     /**@type {ModelProperty}*/ Lote = { type: 'text', label: "Identificador" };
     //**@type {ModelProperty}*/ Cat_Producto = { type: 'WSELECT', ModelObject: () => new Cat_Producto_ModelComponent() };
     /**@type {ModelProperty}*/ Cat_Almacenes = { type: 'WSELECT', label: "Almacén",
         ModelObject: () => new Cat_Almacenes_ModelComponent() , hiddenFilter: true};
->>>>>>> main
    
     //**@type {ModelProperty}*/ Precio_Venta = { type: 'Money', hiddenFilter: true };
     //**@type {ModelProperty}*/ Precio_Compra = { type: 'Money', hiddenFilter: true };

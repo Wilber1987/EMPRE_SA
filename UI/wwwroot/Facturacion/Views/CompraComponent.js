@@ -102,11 +102,7 @@ class ComprasComponent extends HTMLElement {
             </label>
             <label class="value-container">
                 <span>Iva:</span>
-<<<<<<< HEAD
-                <span class="value">${WOrtograficValidation.es(this.ComprasConfig.Entity?.Moneda)} ${ConvertToMoneyString(iva * Tasa_Cambio )}</span>
-=======
                 <span class="value">${WOrtograficValidation.es(this.ComprasConfig.Entity?.Moneda)} ${ConvertToMoneyString(iva * Tasa_Cambio)}</span>
->>>>>>> main
             </label>
             <label class="value-container total">
                 <span>Total:</span>

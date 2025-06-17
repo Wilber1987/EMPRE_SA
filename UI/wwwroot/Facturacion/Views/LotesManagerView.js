@@ -353,13 +353,6 @@ class LotesManagerView extends HTMLElement {
 				</tr>
 				<tr>
 					<td class="value-prop" style="width: 50%" colspan="2">P/CONTADO</td>                    
-<<<<<<< HEAD
-					<td  colspan="4">C$ ${(lote.EtiquetaLote.Precio_venta_Apartado_dolares * lote.EtiquetaLote.TasaCambio.Valor_de_venta).toFixed(2)}</td>					
-				</tr>
-				<tr>
-					<td class="value-prop" style="width: 50%" colspan="2">APARTADO / QUINCENAL</td>                    
-					<td  colspan="4">C$ ${(lote.EtiquetaLote.Cuota_apartado_quincenal_dolares * lote.EtiquetaLote.TasaCambio.Valor_de_venta).toFixed(2)}</td>					
-=======
 					<td  colspan="4">C$ ${(lote.EtiquetaLote.Precio_venta_Apartado_dolares * // @ts-ignore
 				this.TasaCambio.Valor_de_venta).toFixed(2)}</td>					
 				</tr>
@@ -367,7 +360,6 @@ class LotesManagerView extends HTMLElement {
 					<td class="value-prop" style="width: 50%" colspan="2">APARTADO / QUINCENAL</td>                    
 					<td  colspan="4">C$ ${(lote.EtiquetaLote.Cuota_apartado_quincenal_dolares * // @ts-ignore
 				this.TasaCambio.Valor_de_venta).toFixed(2)}</td>					
->>>>>>> main
 				</tr>
 				<tr>
 					<td class="value-prop" style="width: 50%" colspan="2">N° CUOTAS</td>
@@ -375,12 +367,8 @@ class LotesManagerView extends HTMLElement {
 				</tr>
 				<tr>
 					<td class="value-prop" style="width: 50%" colspan="2">APARTADO / MENSUAL</td>                    
-<<<<<<< HEAD
-					<td  colspan="4">C$ ${(lote.EtiquetaLote.Cuota_apartado_mensual_dolares * lote.EtiquetaLote.TasaCambio.Valor_de_venta).toFixed(2)}</td>					
-=======
 					<td  colspan="4">C$ ${// @ts-ignore
 			(lote.EtiquetaLote.Precio_compra_dolares * parseFloat(this.Porcentaje?.Valor ?? 0) * this.TasaCambio.Valor_de_venta).toFixed(2)}</td>					
->>>>>>> main
 				</tr>
 				<tr>
 					<td colspan="2" class="value-prop">CÓDIGO: ${lote.Id_Lote}</td>

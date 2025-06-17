@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-ALTER TABLE EMPRE_SA.dbo.Transaction_Contratos ADD Notas nvarchar(MAX) NULL;
-=======
 drop table  EMPRE_SA.dbo.Tbl_Acta_Entrega
 
 CREATE TABLE EMPRE_SA.dbo.Tbl_Acta_Entrega (
@@ -65,4 +62,3 @@ ALTER TABLE EMPRE_SA.facturacion.Tbl_Lotes ADD Estado nvarchar(100) ;
 ALTER TABLE EMPRE_SA.facturacion.Tbl_Lotes ADD Estado nvarchar(100);
 update  EMPRE_SA.facturacion.Tbl_Lotes set Estado = 'ACTIVO'
 
->>>>>>> main

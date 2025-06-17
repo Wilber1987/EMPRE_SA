@@ -36,11 +36,7 @@ class FacturaComponentView extends HTMLElement {
         this.FacturacionConfig = FacturacionConfig ?? {};
         this.OptionContainer = WRender.Create({ className: "OptionContainer" });
         this.TabContainer = WRender.Create({ className: "TabContainer", id: 'TabContainer' });
-<<<<<<< HEAD
-        this.Manager = new ComponentsManager({ MainContainer: this.TabContainer, SPAManage: true });
-=======
         this.Manager = new ComponentsManager({ MainContainer: this.TabContainer });
->>>>>>> main
         this.navigator = new WAppNavigator({ Inicialize: true, Elements: this.ElementsNav, })
         this.append(this.CustomStyle, this.OptionContainer, this.navigator, this.TabContainer);
         this.Draw();
@@ -63,17 +59,12 @@ class FacturaComponentView extends HTMLElement {
         this.tasasCambio = await new Catalogo_Cambio_Divisa().Get();
         /**@type  {Catalogo_Cambio_Divisa}*/
         this.TasaActual = this.tasasCambio[0];
-<<<<<<< HEAD
-
-        this.Manager.NavigateFunction("newFactura", new VentasComponent({
-=======
         if(!this.TimeId) {            
             this.TimeId =  new Date().getTime();
             console.log("isNew", this.TimeId);
         }
 
         this.Manager.NavigateFunction("newFactura" + this.TimeId, new VentasComponent({
->>>>>>> main
             TasaActual: this.TasaActual,
             action: async (/**@type { {factura: Tbl_Factura, Contract: String, Recibo: String, Transaction_Contratos:  Transaction_Contratos}} */ response) => {
                 switch (response.factura.Tipo) {
@@ -89,10 +80,7 @@ class FacturaComponentView extends HTMLElement {
                     default:
                         break;
                 }
-<<<<<<< HEAD
-=======
                 this.TimeId = undefined;
->>>>>>> main
 
             }
         }));
@@ -129,11 +117,7 @@ class FacturaComponentView extends HTMLElement {
                 UserActions: [
                     {
                         name: "Imprimir",
-<<<<<<< HEAD
-                        rendered: (/**@type {Tbl_Factura} */ factura) => factura.Tipo != "APARTADO_QUINCENAL",
-=======
                         //rendered: (/**@type {Tbl_Factura} */ factura) => factura.Tipo != "APARTADO_QUINCENAL",
->>>>>>> main
                         action: async (/**@type {Tbl_Factura} */ factura) => {
                             this.append(new WModalForm({
                                 ShadowRoot: false,
@@ -149,20 +133,7 @@ class FacturaComponentView extends HTMLElement {
                                 ObjectModal: await this.VerContrato(factura)
                             }))
                         }
-<<<<<<< HEAD
-                    }, {
-                        name: "Recibos",
-                        rendered: (/**@type {Tbl_Factura} */ factura) => factura.Tipo == "APARTADO_QUINCENAL",
-                        action: async (/**@type {Tbl_Factura} */ factura) => {
-                            this.append(new WModalForm({
-                                ShadowRoot: false,
-                                ObjectModal: await this.VerRecibos(factura)
-                            }))
-                        }
-                    }, {
-=======
                     },{
->>>>>>> main
                         name: "Anular",
                         rendered: (/** @type { Tbl_Factura } */ factura) => {
                             return factura.IsAnulable;

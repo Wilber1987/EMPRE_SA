@@ -27,9 +27,5 @@ class Transactional_Configuraciones extends EntityClass {
     GetConfigs =  async () => {
         return await this.GetData("ApiEntityADMINISTRATIVE_ACCESS/getConfiguraciones_Theme");
     }
-<<<<<<< HEAD
-
-=======
->>>>>>> main
 }
 export { Transactional_Configuraciones }
