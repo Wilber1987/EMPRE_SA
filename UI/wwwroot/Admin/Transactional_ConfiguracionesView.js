@@ -4,7 +4,7 @@ import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
 import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js"
 import { Transactional_Configuraciones } from "./ADMINISTRATIVE_ACCESSDataBaseModel.js"
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
-import {WAjaxTools} from "../WDevCore/WModules/WAjaxTools.js";
+import { WAjaxTools } from "../WDevCore/WModules/WAjaxTools.js";
 class Transactional_ConfiguracionesView extends HTMLElement {
     constructor(props) {
         super();
@@ -15,9 +15,10 @@ class Transactional_ConfiguracionesView extends HTMLElement {
         const dataset = await model.Get();
         this.TabContainer = WRender.createElement({ type: 'div', props: { class: 'TabContainer', id: 'TabContainer' } })
         this.MainComponent = new WTableComponent({
-            ModelObject: model, Dataset: dataset, maxElementByPage: 50,  Options: {
+            ModelObject: model, Dataset: dataset, maxElementByPage: 50, Options: {
                 UrlUpdate: "../api/ApiEntityADMINISTRATIVE_ACCESS/updateTransactional_Configuraciones",
-                Search: true, Filter: true, FilterDisplay: true, UserActions: [
+                //Search: true, 
+                Filter: true, FilterDisplay: true, UserActions: [
                     {
                         name: "Editar", action: (element) => {
                             this.append(new WModalForm({
@@ -38,7 +39,7 @@ class Transactional_ConfiguracionesView extends HTMLElement {
             }
         })
         this.TabContainer.append(this.MainComponent)
-       
+
         this.append(
             StylesControlsV2.cloneNode(true),
             StyleScrolls.cloneNode(true),
