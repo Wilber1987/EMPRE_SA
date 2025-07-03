@@ -63,10 +63,8 @@
 @if (SecurityController.HavePermission(Permissions.GESTION_MOVIMIENTOS.ToString(), Identify))
 {
     <a class="title-collapse" id="GestionCuentasMenu" onclick="changeActive(this)">GESTIÓN DE CUENTAS</a>
-    <div class="collapse">
-        <a class="menu-item" id="Gestion_CuentasView" asp-area="" asp-page="/PagesViews/Gestion_CuentasView">Gestión de
-            Cuentas</a>
+    <div class="collapse">        
         <a class="menu-item" id="Movimientos_CuentasView" asp-area=""
-            asp-page="/PagesViews/Movimientos_CuentasView">Movimientos</a>
+            asp-page="/PagesViews/Movimientos_CuentasView">Gestión de Cuentas</a>
     </div>
 }

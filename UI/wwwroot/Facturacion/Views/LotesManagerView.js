@@ -23,6 +23,7 @@ import { WAlertMessage } from "../../WDevCore/WComponents/WAlertMessage.js";
 import { Tbl_Bajas_Almacen, Tbl_Bajas_Almacen_ModelComponent } from "../FrontModel/Tbl_Bajas_Almacen.js";
 import { Tbl_Movimientos_Almacen, Tbl_Movimientos_Almacen_ModelComponent } from "../FrontModel/Tbl_Movimientos_Almacen.js";
 import { EstadoEnum } from "../Enums/enums.js";
+import { Money } from "../../WDevCore/WModules/Types/Money.js";
 
 /**
  * @typedef {Object} LotesConfig
@@ -62,11 +63,11 @@ class LotesManagerView extends HTMLElement {
 			this.Manager.NavigateFunction("Bajas", this.BajasView())
 		}
 	}, //TODO REVISAR MOVIMIENTOS
-	/*{
+	{
 		name: "Movimientos realizados", id: "Movimientos", action: () => {
 			this.Manager.NavigateFunction("Movimientos", this.MovimientosView())
 		}
-	},*/
+	},
 	]
 
 	Draw = async () => {
@@ -329,10 +330,8 @@ class LotesManagerView extends HTMLElement {
 			${this.EtiquetaStyle()}               
 			${lotes.map(lote => this.BuildLoteEtiqueta(lote))}
 		</div>`
-		this.append(fragment.cloneNode(true));
-
+		//this.append(fragment.cloneNode(true));
 		tool.Print(fragment);
-		//this.append(fragment)
 	}
 
 	/**
@@ -368,10 +367,10 @@ class LotesManagerView extends HTMLElement {
 				<tr>
 					<td class="value-prop" style="width: 50%" colspan="2">APARTADO / MENSUAL</td>                    
 					<td  colspan="4">C$ ${// @ts-ignore
-			(lote.EtiquetaLote.Precio_compra_dolares * parseFloat(this.Porcentaje?.Valor ?? 0) * this.TasaCambio.Valor_de_venta).toFixed(2)}</td>					
+			new Money((lote.EtiquetaLote.Precio_venta_Apartado_dolares * (parseFloat(this.Porcentaje?.Valor ?? 35) / 100)) * this.TasaCambio.Valor_de_venta, "NIO")}</td>					
 				</tr>
 				<tr>
-					<td colspan="2" class="value-prop">CÓDIGO: ${lote.Id_Lote}</td>
+					<td colspan="2" class="value-prop">CÓDIGO: ${ lote.Lote }</td>
 					<td colspan="2">${lote.EtiquetaLote.Tipo != "CV" ? "ENVIADO A LIQ" : "ENVIADO A LIQ"}</td>
 					<td colspan="2">${new DateTime(lote.Fecha_Ingreso).toDDMMYYYY()}</td>
 				</tr>
@@ -387,12 +386,12 @@ class LotesManagerView extends HTMLElement {
 	CreateEtiqueta(lote, selectedLotes) {
 		const etiqueta = html`<div class="etiqueta-detail" id="${lote.EtiquetaLote?.Codigo}">
 			<div>${lote.Detalles}</div>
-			<div>${lote.Id_Lote}</div>
+			<div>${lote.Lote}</div>
 			<div>${lote.EtiquetaLote?.Tipo}</div>
 			<div>$ ${lote.EtiquetaLote?.Precio_compra_dolares?.toFixed(2)}</div>
-			<div>${lote.EtiquetaLote?.PorcentajesUtilidad}</div>
+			<div>${lote.EtiquetaLote?.PorcentajesUtilidad + lote.EtiquetaLote?.PorcentajeAdicional}</div>
 			<div>$ ${lote.EtiquetaLote?.Precio_venta_Contado_dolares?.toFixed(2)}</div>
-			<div>${lote.EtiquetaLote?.PorcentajesApartado}</div>
+			<div>${lote.EtiquetaLote?.PorcentajesApartado + lote.EtiquetaLote?.PorcentajeAdicional}</div>
 			<div>$ ${lote.EtiquetaLote?.Precio_venta_Apartado_dolares?.toFixed(2)}</div>
 			<div><input type="number"
 				value="${lote.EtiquetaLote?.PorcentajeAdicional}" 

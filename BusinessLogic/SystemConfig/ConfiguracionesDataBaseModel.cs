@@ -30,7 +30,8 @@ namespace DataBaseModel
 		public List<Transactional_Configuraciones> GetTypeNumbers()
 		{
 			return Get<Transactional_Configuraciones>()
-				.Where(x => x.Tipo_Configuracion.Equals(ConfiguracionesTypeEnum.NUMBER.ToString())).ToList();
+				.Where(x => x.Tipo_Configuracion.Equals(ConfiguracionesTypeEnum.NUMBER.ToString()) 
+				|| x.Tipo_Configuracion.Equals(ConfiguracionesTypeEnum.BENEFICIOS.ToString())).ToList();
 		}
 		public List<Transactional_Configuraciones> GetBeneficios()
 		{

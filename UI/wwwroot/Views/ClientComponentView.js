@@ -2,6 +2,7 @@
 import { Catalogo_Clientes, Condicion_Laboral_Cliente } from "../FrontModel/DBODataBaseModel.js";
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js";
 import { ModalMessage } from "../WDevCore/WComponents/ModalMessage.js";
+import { ModalVericateAction } from "../WDevCore/WComponents/ModalVericateAction.js";
 import { WAlertMessage } from "../WDevCore/WComponents/WAlertMessage.js";
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
 import { WForm } from "../WDevCore/WComponents/WForm.js";
@@ -15,7 +16,7 @@ class ClientComponentView extends HTMLElement {
         this.Draw();
     }
 
-    ModelCliente = new Catalogo_Clientes({ grupo1: { type: 'title' } });
+    ModelCliente = new Catalogo_Clientes();
     ModelDatosLaborales = new Condicion_Laboral_Cliente();
 
     Draw = async () => {
@@ -65,29 +66,32 @@ class ClientComponentView extends HTMLElement {
                     WAlertMessage.Warning("Necesita llenar todos los datos del cliente primeramente");
                     return;
                 }
-                // if (!this.FormularioDatos?.Validate()) {
-                //     this.Manager?.NavigateFunction("formularioDatosLabora    les", this.FormularioDatos)
-                //     this.append(ModalMessage("Necesita llenar todos los datos laborales del cliente primeramente"));
-                //     return;
-                // }
-
-                if (this.cliente.codigo_cliente == null || this.cliente.codigo_cliente == undefined) {
-                    ///**@type {Catalogo_Clientes} */
-                    const result = await new Catalogo_Clientes(this.cliente).Save();
-
-                    if (result?.codigo_cliente != null) {
-                        this.cliente.codigo_cliente = result?.codigo_cliente;
-                        this.append(ModalMessage("Datos guardados correctamente"));
-                        this.updateForms();
-                    } else if (result?.status == 403) {
-                        WAlertMessage.Warning(result?.message);
-                    } else {
-                        this.append(ModalMessage("Error al guardar intentelo nuevamente"));
-                    }
-                } else {
-                    const result = await new Catalogo_Clientes(this.cliente).Update();
-                    this.append(ModalMessage(WOrtograficValidation.es(result.message)));
+                if (!this.FormularioDatos?.Validate()) {
+                    this.Manager?.NavigateFunction("formularioDatosLaborales", this.FormularioDatos)
+                    this.append(ModalMessage("Necesita llenar todos los datos laborales del cliente primeramente"));
+                    return;
                 }
+
+                this.append(ModalVericateAction(async () => {
+                    if (this.cliente.codigo_cliente == null || this.cliente.codigo_cliente == undefined) {
+                        ///**@type {Catalogo_Clientes} */
+                        const result = await new Catalogo_Clientes(this.cliente).Save();
+
+                        if (result?.codigo_cliente != null) {
+                            this.cliente.codigo_cliente = result?.codigo_cliente;
+                            this.append(ModalMessage("Datos guardados correctamente"));
+                            this.updateForms();
+                        } else if (result?.status == 403) {
+                            WAlertMessage.Warning(result?.message);
+                        } else {
+                            this.append(ModalMessage("Error al guardar intentelo nuevamente"));
+                        }
+                    } else {
+                        const result = await new Catalogo_Clientes(this.cliente).Update();
+                        this.append(ModalMessage(WOrtograficValidation.es(result.message)));
+                    }
+                }, "¿Desea guardar los datos?"));
+
             }
         }))
         this.OptionContainerBottom.append(WRender.Create({

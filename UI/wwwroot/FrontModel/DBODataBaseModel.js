@@ -148,7 +148,6 @@ class Catalogo_Clientes extends EntityClass {
     operadora_celular = { type: 'select', Dataset: ["Tigo", "Claro"], hiddenInTable: true, hiddenFilter: true };
     telefono = { type: 'tel', hiddenInTable: true, hiddenFilter: true };
     direccion = { type: 'text', hiddenInTable: true, hiddenFilter: true };
-    //grupo1 = undefined;
     hora = { type: 'text', hiddenInTable: true, hiddenFilter: true, hidden: true };
     fecha = { type: 'date', hiddenInTable: true, hiddenFilter: true, hidden: true };
     observaciones = { type: 'text', hiddenInTable: true, hiddenFilter: true, hidden: true };
@@ -169,16 +168,7 @@ class Catalogo_Clientes extends EntityClass {
     Catalogo_Departamento = {
         type: 'WSELECT', ModelObject: () => new Catalogo_Departamento(), hiddenFilter: true,
         action: async (editObject, /** @type {WForm} */ Form) => {
-
-            const servicios = await new Catalogo_Municipio({
-                FilterData: [{
-                    PropName: "id_departamento", FilterType: "in", Values: [editObject.Catalogo_Departamento.id_departamento.toString()]
-                }]
-            }).Get();
-            this.Catalogo_Municipio.Dataset = servicios;
-            //this.Tbl_Servicios_editObject.disabled = false;
-            editObject.Catalogo_Municipio = servicios[0];
-            Form.DrawComponent();
+            await Catalogo_Departamento.ChargeMunicipios(editObject, Form);
         },
         hiddenInTable: true
     };
@@ -228,8 +218,19 @@ class Condicion_Laboral_Cliente extends EntityClass {
     ingresos_mensuales = { type: 'number' };
     direccion = { type: 'text' };
     /*Catalogo_Clientes = { type: 'WSELECT', ModelObject: () => new Catalogo_Clientes() };*/
+    Catalogo_Departamento = {
+        type: 'WSELECT', ModelObject: () => new Catalogo_Departamento(), hiddenFilter: true,
+        action: async (editObject, /** @type {WForm} */ Form) => {
+            await Catalogo_Departamento.ChargeMunicipios(editObject, Form);
+
+
+        },
+        hiddenInTable: true
+    };
     Catalogo_Municipio = { type: 'WSELECT', ModelObject: () => new Catalogo_Municipio() };
-    Catalogo_Departamento = { type: 'WSELECT', ModelObject: () => new Catalogo_Departamento() };
+
+
+    //Catalogo_Departamento = { type: 'WSELECT', ModelObject: () => new Catalogo_Departamento() };
 }
 export { Condicion_Laboral_Cliente }
 
@@ -255,11 +256,11 @@ class Transaction_Contratos_ModelComponent extends EntityClass {
         }
     }
     numero_contrato = { type: "number", primary: true };
-    Catalogo_Clientes = { type: 'WSELECT', ModelObject: () => new Catalogo_Clientes() };  
+    Catalogo_Clientes = { type: 'WSELECT', ModelObject: () => new Catalogo_Clientes() };
     fecha_contrato = { type: "date", hiddenFilter: true };
     fecha_cancelar = { type: "date", hiddenInTable: true, hiddenFilter: true };
-    monto = { type: "MONEY", label: "monto $",  hiddenInTable: true, hiddenFilter: true };
-    interes = { type: "MONEY", hiddenInTable: true, hiddenFilter: true, label: "interés $"  };
+    monto = { type: "MONEY", label: "monto $", hiddenInTable: true, hiddenFilter: true };
+    interes = { type: "MONEY", hiddenInTable: true, hiddenFilter: true, label: "interés $" };
     mora = { type: "PERCENTAGE", hiddenInTable: true, hiddenFilter: true };
     estado = { type: "Select", Dataset: ["ACTIVO", "CANCELADO", "ANULADO", "VENCIDO"] };
     fecha_vencimiento = { type: "date", hiddenFilter: true };
@@ -272,11 +273,11 @@ class Transaction_Contratos_ModelComponent extends EntityClass {
     observaciones = { type: "text", hiddenInTable: true, hiddenFilter: true };
     iva = { type: "MONEY", hiddenInTable: true, hiddenFilter: true };
     descuento = { type: "MONEY", hiddenInTable: true, hiddenFilter: true };
-    taza_cambio = { type: "MONEY", hiddenInTable: true, hiddenFilter: true, label: "tasa cambio C$"  };
-    taza_cambio_compra = { type: "MONEY", hiddenInTable: true, hiddenFilter: true , label: "tasa cambio compra C$" };
+    taza_cambio = { type: "MONEY", hiddenInTable: true, hiddenFilter: true, label: "tasa cambio C$" };
+    taza_cambio_compra = { type: "MONEY", hiddenInTable: true, hiddenFilter: true, label: "tasa cambio compra C$" };
     id_agente = { type: "number", hiddenInTable: true, hiddenFilter: true };
     plazo = { type: "number", hiddenInTable: true, hiddenFilter: true };
-    cuotafija = { type: "MONEY", hiddenInTable: true, hiddenFilter: true ,  label: "cuota fija C$" };
+    cuotafija = { type: "MONEY", hiddenInTable: true, hiddenFilter: true, label: "cuota fija C$" };
     cuotafija_dolares = { type: "MONEY", hiddenInTable: true, hiddenFilter: true };
     tasa_hoy = { type: "number", hiddenInTable: true, hiddenFilter: true };
     motivo_anulacion = { type: "text", hiddenInTable: true, hiddenFilter: true };
@@ -286,7 +287,7 @@ class Transaction_Contratos_ModelComponent extends EntityClass {
     Valoracion_empeño_dolares = { type: "MONEY", hiddenInTable: true, hiddenFilter: true };
     tasas_interes = { type: "number", hiddenInTable: true, hiddenFilter: true };
     gestion_crediticia = { type: "PERCENTAGE", hiddenInTable: true, hiddenFilter: true };
-    
+
     fecha = { type: "date", hidden: true, hiddenFilter: true };
     total_pagar_cordobas = { type: "MONEY", hiddenInTable: true, hiddenFilter: true };
     total_pagar_dolares = { type: "MONEY", hiddenInTable: true, hiddenFilter: true };
@@ -320,7 +321,7 @@ class Detail_Prendas_ModelComponent extends EntityClass {
     Descripcion = { type: 'text' };
     Tipo = { type: 'text', hidden: true };
     marca = { type: 'text' };
-    serie = { type: 'text', require : true };
+    serie = { type: 'text', require: true };
     modelo = { type: 'text' };
     monto_aprobado_cordobas = { type: 'money', label: "Monto aprob. cordobas", disabled: true };
     monto_aprobado_dolares = { type: 'money', label: "Monto aprob. dolares", disabled: true };
@@ -338,7 +339,7 @@ class Detail_Prendas_ModelComponent extends EntityClass {
     /**@type {ModelProperty} */
     Detail_Prendas_Vehiculos = {
         type: 'Model',
-        hidden: (element)=> { return element.Detail_Prendas_Vehiculos == null  || element.Detail_Prendas_Vehiculos == undefined },
+        hidden: (element) => { return element.Detail_Prendas_Vehiculos == null || element.Detail_Prendas_Vehiculos == undefined },
         ModelObject: () => new Detail_Prendas_Vehiculos_ModelComponent(),
         EntityModel: () => new Detail_Prendas_Vehiculos()
     };
@@ -379,7 +380,7 @@ class Catalogo_Cambio_Divisa_ModelComponent extends EntityClass {
             this[prop] = props[prop];
         }
     }
-    /**@type {ModelProperty}*/ Id_cambio = { type: 'number', primary: true, hiddenFilter: true  };
+    /**@type {ModelProperty}*/ Id_cambio = { type: 'number', primary: true, hiddenFilter: true };
     /**@type {ModelProperty}*/ Fecha = { type: 'date' };
     /**@type {ModelProperty}*/ Valor_de_compra = { type: 'number', hiddenFilter: true };
     /**@type {ModelProperty}*/ Valor_de_venta = { type: 'number', hiddenFilter: true };
@@ -446,6 +447,25 @@ class Catalogo_Departamento extends EntityClass {
     puntaje = { type: 'number', hiddenInTable: true, hiddenFilter: true };
     clasificacion = { type: 'text', hiddenInTable: true, hiddenFilter: true };
     Catalogo_Nacionalidad = { type: 'WSELECT', ModelObject: () => new Catalogo_Nacionalidad(), hiddenInTable: true };
+
+    static async ChargeMunicipios(editObject, /** @type {WForm} */ Form) {
+        const servicios = await new Catalogo_Municipio({
+            FilterData: [{
+                PropName: "id_departamento", FilterType: "in", Values: [editObject.Catalogo_Departamento.id_departamento.toString()]
+            }]
+        }).Get();
+        Form.ModelObject.Catalogo_Municipio.Dataset = servicios;
+        if (servicios.length == 0) {
+            Form.ModelObject.Catalogo_Municipio.require = false;
+        } else {
+            Form.ModelObject.Catalogo_Municipio.require = true;
+        }
+        //this.Tbl_Servicios_editObject.disabled = false;
+        editObject.Catalogo_Municipio = servicios[0];
+        Form.Controls.Catalogo_Municipio.Dataset = servicios;
+        Form.Controls.Catalogo_Municipio.selectedItems = [servicios[0]];
+        Form.Controls.Catalogo_Municipio.Draw();
+    }
 }
 export { Catalogo_Departamento }
 class Catalogo_Inversores extends EntityClass {
@@ -649,12 +669,12 @@ class Transaccion_Factura extends EntityClass {
     tipo = { type: "text", hidden: true };
     concepto = { type: "text", hiddenFilter: true };
     tasa_cambio = { type: "money", label: "tasa_cambio C$", hiddenFilter: true };
-    Moneda = { type: "text", label : "Moneda",hiddenFilter: true };
-    total = { type: "money" , hiddenFilter: true};    
+    Moneda = { type: "text", label: "Moneda", hiddenFilter: true };
+    total = { type: "money", hiddenFilter: true };
     estado = { type: "select", Dataset: ["ANULADO", "ACTIVO"] };
     id_cliente = { type: "number", hidden: true };
     id_sucursal = { type: "number", hidden: true };
-    fecha = { type: "date" };    
+    fecha = { type: "date" };
     Detalle_Factura_Recibo = { type: 'MasterDetail', label: "Cuotas Pagadas", label: "Detalle recibos", ModelObject: () => new Detalle_Factura_Recibo(), hiddenFilter: true };
     Factura_contrato = { type: 'model', label: "Datos del contrato al momento del pago", ModelObject: () => new Factura_contrato() };
     /**@type {Boolean}*/ IsAnulable;
@@ -696,12 +716,12 @@ class Detalle_Factura_Recibo extends EntityClass {
     }
     id = { type: "number", primary: true };
     id_factura = { type: "number", hidden: true };
-    id_cuota = { type: "number" , hidden: true };
+    id_cuota = { type: "number", hidden: true };
     concepto = { type: "text" };
     total_cuota = { type: "money" };
-    monto_pagado = { type: "money", hidden: true  };
-    capital_restante = { type: "money" , hidden: true };
-    
+    monto_pagado = { type: "money", hidden: true };
+    capital_restante = { type: "money", hidden: true };
+
     tasa_cambio = { type: "money" };
 }
 export { Detalle_Factura_Recibo }

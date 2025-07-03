@@ -1,6 +1,5 @@
 //@ts-check
 import { Catalogo_Cuentas } from "../FrontModel/DBODataBaseModel.js";
-import { Detail_Movimiento } from "../FrontModel/MovimientosCuentas.js";
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js";
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
 import { ColumChart } from "../WDevCore/WComponents/WChartJSComponents.js";
@@ -9,6 +8,8 @@ import { ComponentsManager, ConvertToMoneyString, WRender } from "../WDevCore/WM
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 import { WArrayF } from "../WDevCore/WModules/WArrayF.js";
 import { PageType, WReportComponent } from "../WDevCore/WComponents/WReportComponent.js";
+import { Detail_Movimiento, Detail_Movimiento_ModelComponent } from "../FrontModel/MovimientosCuentas.js";
+import { Movimiento, Movimiento_ModelComponent } from "../FrontModel/MovimientosCuentasReportModel.js";
 
 /**
  * @typedef {Object} ComponentConfig
@@ -17,7 +18,7 @@ import { PageType, WReportComponent } from "../WDevCore/WComponents/WReportCompo
 class Gestion_CuentasView extends HTMLElement {
     /**
      * 
-     * @param {ComponentConfig} props 
+     * @param {ComponentConfig} [props] 
      */
     constructor(props) {
         super();
@@ -43,30 +44,10 @@ class Gestion_CuentasView extends HTMLElement {
         const model = new Catalogo_Cuentas();
         /**@type {Array<Catalogo_Cuentas>} */
         const dataset = await model.Get();
-
-        this.OptionContainer.append(WRender.Create({
-            tagName: 'button', className: 'Block-Primary', innerText: 'ver Movimiento Internos',
-            onclick: () => {
-                // @ts-ignore
-                this.Manager.NavigateFunction("PROPIAS", new GestionCuentaComponent({ Dataset: dataset.filter(c => c.tipo_cuenta == "PROPIA") }));
-            }
-        }))
-        /*this.OptionContainer.append(WRender.Create({
-            tagName: 'button', className: 'Block-Basic', innerText: 'ver Ingresos',
-            onclick: () => {
-                // @ts-ignore
-                this.Manager.NavigateFunction("INGRESOS", new GestionCuentaComponent({ Dataset: dataset.filter(c => c.tipo_cuenta == "EXTERNA") }));
-            }
-        }))*/
-        this.OptionContainer.append(WRender.Create({
-            tagName: 'button', className: 'Block-Secundary', innerText: 'ver Pagos',
-            onclick: () => {
-                // @ts-ignore
-                this.Manager.NavigateFunction("PAGOS", new GestionCuentaComponent({ Dataset: dataset.filter(c => c.tipo_cuenta == "PAGO") }));
-            }
-        }))
-        // @ts-ignore
-        this.Manager.NavigateFunction("PROPIAS", new GestionCuentaComponent({ Dataset: dataset.filter(c => c.tipo_cuenta == "PROPIA") }));
+        this.Manager.NavigateFunction("PROPIAS", new GestionCuentaComponent({
+            // @ts-ignore
+            Dataset: dataset.filter(c => c.tipo_cuenta == "PROPIA")
+        }));
     }
 
     CustomStyle = css`
@@ -80,9 +61,7 @@ class Gestion_CuentasView extends HTMLElement {
 
 }
 customElements.define('w-gestion_cuentas', Gestion_CuentasView);
-// @ts-ignore
-window.addEventListener('load', async () => { MainBody.append(new Gestion_CuentasView()) })
-
+export { Gestion_CuentasView };
 /**
  * @typedef {Object} WCuentaComponentConfig
  * * @property {Array<Catalogo_Cuentas>} [Dataset]
@@ -112,11 +91,12 @@ class GestionCuentaComponent extends HTMLElement {
     Draw = async () => {
         WRender.SetStyle(this, {
             display: "grid",
-            gridTemplateColumns: "200px calc(100% - 220px)",
+            gridTemplateColumns: "150px calc(100% - 170px)",
             gridGap: "20px"
         });
         this.SetOption();
     }
+
 
     SetOption() {
         const elements = [];
@@ -136,14 +116,14 @@ class GestionCuentaComponent extends HTMLElement {
     }
 
     /**
-     * @param {Catalogo_Cuentas} cuenta
+        * @param {Catalogo_Cuentas} cuenta
+        * @returns {Promise<HTMLElement>}
      */
     async detailCuenta(cuenta) {
         let displayType = "dolares";
+        const model = new Movimiento_ModelComponent();
         const detail = WRender.Create({ className: "detail" });
-        /**@type {Array<Detail_Movimiento>} */
-        const movimientos = await new Detail_Movimiento({ id_cuenta: cuenta.id_cuentas }).Get();
-        const filterModel = new Detail_Movimiento({
+        const filterModel = new Detail_Movimiento_ModelComponent({
             id_cuenta: cuenta.id_cuentas,
             debito: undefined,
             credito: undefined,
@@ -156,24 +136,14 @@ class GestionCuentaComponent extends HTMLElement {
         })
         filterModel.fecha.defaultValue = Date.now();
         //console.log(filterModel.fecha.defaultValue);
-        const filterOptions = new WFilterOptions({
-            Dataset: movimientos,
-            ModelObject: filterModel,
-            AutoSetDate: true,
-            UseEntityMethods: true,
-            Display: true,
-            FilterFunction: (DFilt) => {
-                this.buildDetailMovimientos(DFilt, detalle, fecha, debito, creadito, saldo, displayType);
-            }
-        });
-        const movimientosMap = movimientos.map(c => ({
+
+        /*const movimientosMap = movimientos.map(c => ({
             // @ts-ignore
             Caso: c.debito == 0 ? "Credito" : "Debito",
             Mes: c.fecha.getMonthFormatEs(),
             val: 1
         }));
         //TODO REVISAR COLUMNS CART
-        //console.log(movimientos, movimientosMap);
         this.columChartMovimientos = new ColumChart({
             Title: "Movimientos",
             // @ts-ignore
@@ -182,7 +152,7 @@ class GestionCuentaComponent extends HTMLElement {
             EvalValue: "val",
             AttNameEval: "Caso",
             groupParams: ["Mes"]
-        });
+        });*/
         const detalleCuenta = WRender.Create({
             className: "detalle-cuenta",
             children: [
@@ -194,96 +164,51 @@ class GestionCuentaComponent extends HTMLElement {
                 WRender.Create({
                     tagName: 'input', type: 'button', className: 'Btn-Mini', value: 'Movimientos $', onclick: async () => {
                         displayType = "dolares";
-                        this.buildDetailMovimientos(movimientos, detalle, fecha, debito, creadito, saldo, displayType);
+                        model.debito.Currency = "USD";
+                        model.credito.Currency = "USD";
+                        model.saldo.Currency = "USD";
+                        //model.credito.Currency = "USD";
+                        filterOptions.filterFunction();
+                        //this.buildDetailMovimientos(movimientos, detalle, fecha, debito, creadito, saldo, displayType);
                     }
                 }),
                 WRender.Create({
                     tagName: 'input', type: 'button', className: 'Btn-Mini', value: 'Movimientos C$', onclick: async () => {
                         displayType = "cordobas";
-                        this.buildDetailMovimientos(movimientos, detalle, fecha, debito, creadito, saldo, displayType);
+                        model.debito.Currency = "NIO";
+                        model.credito.Currency = "NIO";
+                        model.saldo.Currency = "NIO";
+                        filterOptions.filterFunction();
+                        //this.buildDetailMovimientos(movimientos, detalle, fecha, debito, creadito, saldo, displayType);
 
                     }
                 })
             ]
         });
         const report = new WReportComponent({
-            ModelObject: new Detail_Movimiento(),
-            Dataset: movimientos,
-            //Header: reportHeader,
+            ModelObject: model,
+            Dataset: [],
             PageType: PageType.OFICIO_HORIZONTAL,
             exportXls: true,
+            GroupParams: ["month", "day"],
             exportPdf: true,
             exportPdfApi: true,
-            DocumentViewFirst: true
+            EvalParams: ["debito", "credito"]
         });
-
-
-        const detalle = WRender.Create({ className: "detalle" });
-        const fecha = WRender.Create({ className: "fecha" });
-        const debito = WRender.Create({ className: "debito" });
-        const creadito = WRender.Create({ className: "creadito" });
-        const saldo = WRender.Create({ className: "saldo" });
-        this.buildDetailMovimientos(movimientos, detalle, fecha, debito, creadito, saldo);
-        detail.append(detalleCuenta, filterOptions, //detalle, fecha, debito, creadito, saldo/* , this.columChartMovimientos */,
-            report);
+        const filterOptions = new WFilterOptions({
+            Dataset: [],
+            ModelObject: filterModel,
+            AutoSetDate: true,
+            UseEntityMethods: true,
+            Display: true,
+            FilterFunction: (DFilt) => {
+                report.Config.Dataset = this.MapMovimientos(DFilt, displayType);
+                report.Draw();
+            }
+        });
+        filterOptions.filterFunction();
+        detail.append(detalleCuenta, filterOptions, report);
         return detail;
-    }
-    /**
-     * @param {any[]} movimientos
-     * @param {HTMLElement} detalle
-     * @param {HTMLElement} fecha
-     * @param {HTMLElement} debito
-     * @param {HTMLElement} creadito
-     * @param {HTMLElement} saldo
-     * @param {String} [type]
-     */
-    buildDetailMovimientos(movimientos, detalle, fecha, debito, creadito, saldo, type = "dolares") {
-        const report = new WReportComponent({
-            ModelObject: new Detail_Movimiento(),
-            Dataset: movimientos,
-            //Header: reportHeader,
-            PageType: PageType.OFICIO_HORIZONTAL,
-            exportXls: true,
-            exportPdf: true,
-            exportPdfApi: true,
-            DocumentViewFirst: true,
-            GroupParams: ["Sucursal", "Producto"],
-            EvalParams: ["SubTotal",
-                "Descuento",
-                "Iva",
-                "Total"],
-        });
-
-        console.log(movimientos);
-
-        //console.log(type);
-        detalle.innerHTML = "";
-        fecha.innerHTML = "";
-        debito.innerHTML = "";
-        creadito.innerHTML = "";
-        saldo.innerHTML = "";
-        let debitoProp = type.toLowerCase() == "dolares" ? "debito_dolares" : "debito";
-        let creaditoProp = type.toLowerCase() == "dolares" ? "credito_dolares" : "credito";
-        let montoProp = type.toLowerCase() == "dolares" ? "monto_final_dolares" : "monto_final";
-        let currency = type.toLowerCase() == "dolares" ? "$" : "C$";
-
-        detalle.append(WRender.Create({ className: "header", innerHTML: "Detalle" }));
-        fecha.append(WRender.Create({ className: "header", innerHTML: "Fecha" }));
-        debito.append(WRender.Create({ className: "header", innerHTML: "Egreso" }));
-        creadito.append(WRender.Create({ className: "header", innerHTML: "Ingreso" }));
-        saldo.append(WRender.Create({ className: "header", innerHTML: "Saldo" }));
-        movimientos.filter(movimiento => movimiento.moneda.toLowerCase() == type).forEach(movimiento => {
-            // @ts-ignore
-            detalle.append(WRender.Create({ className: "detail-label", children: [movimiento.Transaction_Movimiento?.concepto] }));
-            fecha.append(WRender.Create({ className: "fecha-label", children: [movimiento.fecha?.toDateFormatEs()] }));
-            debito.append(WRender.Create({ className: "debito-label", children: [currency, "- " + ConvertToMoneyString(movimiento[debitoProp])] }));
-            creadito.append(WRender.Create({ className: "creadito-label", children: [currency, "+ " + ConvertToMoneyString(movimiento[creaditoProp])] }));
-            saldo.append(WRender.Create({ className: "saldo-label", children: [currency, movimiento[montoProp] != null ? ConvertToMoneyString(movimiento[montoProp]) : "0.000"] }));
-        });
-        detalle.append(WRender.Create({ className: "total ", innerHTML: "Total" }));
-        debito.append(WRender.Create({ className: "debito-label total", children: [currency, "- " + ConvertToMoneyString(WArrayF.SumValAtt(movimientos, debitoProp))] }));
-        creadito.append(WRender.Create({ className: "creadito-label total", children: [currency, "+ " + ConvertToMoneyString(WArrayF.SumValAtt(movimientos, creaditoProp))] }));
-        //this.columChartMovimientos
     }
 
     CustomStyle = css`
@@ -292,7 +217,7 @@ class GestionCuentaComponent extends HTMLElement {
         } 
         .detail {
             display: flex;
-flex-direction: column;
+            flex-direction: column;
             grid-template-columns: auto auto auto auto auto;
             row-gap: 20px;
             font-size: 12px;
@@ -311,9 +236,10 @@ flex-direction: column;
 
         .fecha ,
         .debito ,
-        .creadito, .detalle, .saldo {
-            border: solid 1px #e3e3e3;
-            padding: 10px
+        .credito, .detalle, .saldo {
+            position: relative;
+            flex: 1;
+            text-align: left;
         } 
         .header  {
             color: #000;
@@ -323,15 +249,25 @@ flex-direction: column;
             font-weight: bold;
         }
         .debito {
-            text-align: right;   
-            color: red;         
+            text-align: right !important;
+            color: red !important;     
         }
-        .creadito {
-            text-align: right;  
-            color: green;      
+        .debito::before {
+            position: absolute;
+            left: 10px;
+            content: "-"        
+        }
+        .credito {
+            text-align: right !important;
+            color: green !important;
+        }
+        .credito::before {
+            position: absolute;
+            left: 10px;
+            content: "+"        
         }
         .saldo {
-            text-align: right;  
+            text-align: right !important;
         }
         .fecha-label ,.debito-label ,
         .creadito-label, .detail-label, .saldo-label  {
@@ -349,7 +285,16 @@ flex-direction: column;
             font-weight: bold;
             padding-top: 10px;
         }
+        .summary {
+            border-top: solid 8px #3498db;
+            font-weight: bold;        
+        }
     `
+
+    MapMovimientos(movimientos, displayType) {
+        return movimientos.filter(m => m.moneda.toLowerCase() == displayType)
+            .map(m => new Movimiento(m, displayType));
+    }
 }
 customElements.define('w-component', GestionCuentaComponent);
 export { GestionCuentaComponent };

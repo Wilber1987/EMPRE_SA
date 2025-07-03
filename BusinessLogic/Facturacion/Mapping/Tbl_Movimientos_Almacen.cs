@@ -50,7 +50,7 @@ namespace BusinessLogic.Facturacion.Mapping
 				var User = AuthNetCore.User(Identify);
 				var dbUser = new Security_Users { Id_User = User.UserId }.Find<Security_Users>();
 
-				var loteOriginal = new Tbl_Lotes { Id_Lote = this.Id_Lote_Original }.Find<Tbl_Lotes>();
+				var loteOriginal = new Tbl_Lotes { Id_Lote = this.Tbl_Lote_Original?.Id_Lote }.Find<Tbl_Lotes>();
 
 				if (loteOriginal == null)
 				{
@@ -84,15 +84,15 @@ namespace BusinessLogic.Facturacion.Mapping
 					Fecha_Ingreso = DateTime.Now,
 					Lote = $"{loteOriginal.Lote}-MV{DateTime.Now.Ticks}", // Identificador nuevo
 					Id_Detalle_Compra = loteOriginal.Id_Detalle_Compra,
+					Estado = EstadoEnum.ACTIVO,
+					Datos_Producto = loteOriginal.Datos_Producto,
+					EtiquetaLote = loteOriginal.EtiquetaLote,
 					Detalles = $"Lote generado por movimiento desde lote #{loteOriginal.Id_Lote}, sucursal #{loteOriginal.Id_Sucursal}"
 				};
-
 				BeginGlobalTransaction();
-
 				loteDestino.Save();
 				loteOriginal.Cantidad_Existente -= this.Cantidad;
 				loteOriginal.Update();
-
 				Tbl_Transaccion? transaction = new Tbl_Transaccion
 				{
 					Id_Lote = this.Id_Lote_Original,
@@ -109,11 +109,8 @@ namespace BusinessLogic.Facturacion.Mapping
 				this.Id_Lote_Destino = loteDestino.Id_Lote;
 				this.Estado = EstadoEnum.ACTIVO;
 				this.Id_Transaccion = transaction?.Id_Transaccion;
-
 				this.Save();
-
 				CommitGlobalTransaction();
-
 				return new ResponseService()
 				{
 					status = 200,
@@ -141,20 +138,13 @@ namespace BusinessLogic.Facturacion.Mapping
 			{
 				var User = AuthNetCore.User(Identify);
 				var dbUser = new Security_Users { Id_User = User.UserId }.Find<Security_Users>();
-
 				// Buscar movimiento original a través del ID de transacción
 				var movimientoOriginal = new Tbl_Movimientos_Almacen { Id_Transaccion = inst?.Id_Transaccion }
 					.Find<Tbl_Movimientos_Almacen>();
-
 				if (movimientoOriginal == null)
 				{
-					return new ResponseService()
-					{
-						status = 404,
-						message = "Movimiento no encontrado"
-					};
+					return new ResponseService(404, "Movimiento no encontrado");
 				}
-
 				// Obtener transacción original
 				var transactionOriginal = new Tbl_Transaccion
 				{
@@ -166,20 +156,13 @@ namespace BusinessLogic.Facturacion.Mapping
 
 				if (loteOriginal == null || loteDestino == null)
 				{
-					return new ResponseService()
-					{
-						status = 404,
-						message = "Lote original o destino no encontrado"
-					};
+					return new ResponseService(404, "Lote original o destino no encontrado");
 				}
-				
+
 				if (movimientoOriginal.Cantidad > loteDestino.Cantidad_Existente)
 				{
-					return new ResponseService()
-					{
-						status = 404,
-						message = "El movimiento no puede ser revertido ya que las existencias fueron usadas en alguna transacción"
-					};
+					return new ResponseService(404,
+						"El movimiento no puede ser revertido ya que las existencias fueron usadas en alguna transacción");
 				}
 
 				// Revertir cantidades
@@ -191,32 +174,20 @@ namespace BusinessLogic.Facturacion.Mapping
 				transactionOriginal!.Estado = EstadoEnum.ANULADO;
 				transactionOriginal.Descripcion += " TRANSACCIÓN ANULADA: " + inst?.Descripcion;
 				transactionOriginal.Id_User = User.UserId;
-
+				
 				BeginGlobalTransaction();
-
 				loteOriginal.Update();
 				loteDestino.Update();
 				transactionOriginal.Update();
 				movimientoOriginal.Update();
-
 				CommitGlobalTransaction();
-
-				return new ResponseService()
-				{
-					status = 200,
-					message = "Movimiento anulado correctamente"
-				};
+				return new ResponseService(200, "Movimiento anulado correctamente");
 			}
 			catch (Exception ex)
 			{
 				RollBackGlobalTransaction();
 				LoggerServices.AddMessageError("Error al anular movimiento", ex);
-				return new ResponseService()
-				{
-					status = 500,
-					message = "Error al anular movimiento",
-					body = ex
-				};
+				return new ResponseService(500, "Error al anular movimiento", ex);
 			}
 		}
 

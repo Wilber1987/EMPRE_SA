@@ -29,7 +29,6 @@ class Catalogo_Clientes extends EntityClass {
     operadora_celular = { type: 'select', Dataset: ["Tigo", "Claro"], hiddenInTable: true, hiddenFilter: true };
     telefono = { type: 'tel', hiddenInTable: true, hiddenFilter: true };
     direccion = { type: 'text', hiddenInTable: true, hiddenFilter: true };
-    //grupo1 = undefined;
     hora = { type: 'text', hiddenInTable: true, hiddenFilter: true, hidden: true };
     fecha = { type: 'date', hiddenInTable: true, hiddenFilter: true, hidden: true };
     observaciones = { type: 'text', hiddenInTable: true, hiddenFilter: true, hidden: true };

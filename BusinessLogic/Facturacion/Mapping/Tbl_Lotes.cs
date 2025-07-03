@@ -45,7 +45,7 @@ namespace DataBaseModel
 		public static string GenerarLote(string? code = null)
 		{
 
-			string fechaLote = DateTime.Now.ToString("yyyyMMddHHmmss");
+			string fechaLote = DateTime.Now.ToString("yyyyMMdd");
 			string caracteresPermitidos = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 			Random random = new Random();
 			string parteAleatoria = new string(Enumerable.Repeat(caracteresPermitidos, 3)
@@ -194,7 +194,7 @@ namespace DataBaseModel
 			Transaction_Contratos contrato,
 			bool isActive = true)
 		{
-			string codigo = Tbl_Lotes.GenerarLote(contrato.numero_contrato.GetValueOrDefault().ToString("D9"));
+			string codigo = Tbl_Lotes.GenerarLote(contrato.numero_contrato.GetValueOrDefault().ToString());
 			int porcentajesUtilidad = Transactional_Configuraciones.GetBeneficioVentaArticulo();
 			int porcentajesApartado = Transactional_Configuraciones.GetPorcentajesApartado();
 			int Ncuotas = Transactional_Configuraciones.GetNumeroCuotasQuincenales(precio_venta_empeño.GetValueOrDefault());

@@ -100,7 +100,7 @@ namespace Model
 
 			Transaction_Contratos.fecha_contrato = DateTime.Now;
 			Transaction_Contratos.fecha_cancelar = Transaction_Contratos.Tbl_Cuotas.Select(c => c.fecha).ToList().Max();
-			Transaction_Contratos.fecha_vencimiento = Transaction_Contratos.Tbl_Cuotas.Select(c => c.fecha).ToList().Max();//TODO PREGUNTAR
+			Transaction_Contratos.fecha_vencimiento = Transaction_Contratos.Tbl_Cuotas.Select(c => c.fecha).ToList().Max();
 			var valoracion = Transaction_Contratos.Detail_Prendas[0];
 			if (Transaction_Contratos!.tipo!.ToUpper().Equals(Contratos_Type.APARTADO_QUINCENAL.ToString())
 			|| Transaction_Contratos!.tipo!.ToUpper().Equals(Contratos_Type.APARTADO_MENSUAL.ToString()))

@@ -18,7 +18,7 @@ class ClientComponentView extends HTMLElement {
 		this.Draw();
 	}
 
-	ModelCliente = new Catalogo_Clientes({ grupo1: { type: 'title' } });
+	ModelCliente = new Catalogo_Clientes();
 	ModelDatosLaborales = new Condicion_Laboral_Cliente();
 
 	Draw = async () => {

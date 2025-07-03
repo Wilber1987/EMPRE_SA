@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.ResponseCompression;
 using BusinessLogic.Connection;
 using System.Text.Json.Serialization;
+using DataBaseModel;
 
 //SqlADOConexion.IniciarConexion("sa", "zaxscd", ".", "EMPRE_SA");
 
@@ -65,6 +66,8 @@ builder.Services.AddCronJob<DailyCronJob>(options =>
 
 var app = builder.Build();
 new BDConnection().IniciarMainConecction(app.Environment.IsDevelopment());
+//Inicializar parametros
+Transactional_Configuraciones.GetPorcentageMinimoPagoApartadoMensual();
 // builder.Services.AddSession(options =>
 // {
 //     options.Cookie.Name = ".AdventureWorks.Session";

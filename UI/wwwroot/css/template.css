@@ -1,3 +1,45 @@
+@view-transition {
+    navigation: auto;
+}
+
+::view-transition-group(*) {
+    animation-duration: 0.5s;
+}
+
+::view-transition-old(root) {
+    animation: view-transition-new-out 0.5s forwards;
+}
+
+::view-transition-new(root) {
+    animation: view-transition-new-in 0.5s forwards;
+}
+
+@keyframes view-transition-new-out {
+    from {
+        opacity: 1;
+        scale: 1;
+        transform: translateX(0);
+    }
+
+    to {
+        opacity: 0;
+        scale: 0;
+        transform: translateX(-100%);
+    }
+}
+
+@keyframes view-transition-new-in {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
 body {
     margin: 0px;
     padding: 0px;
@@ -191,8 +233,9 @@ body {
     display: flex;
     justify-content: flex-end;
 }
+
 .navIcon {
-    display: none;  
+    display: none;
 }
 
 @media(max-width: 1200px) {
@@ -215,6 +258,7 @@ body {
         top: 0;
         bottom: 0;
     }
+
     .navIcon {
         display: block;
         height: 40px;
@@ -222,6 +266,7 @@ body {
         margin: 0px 20px;
         cursor: pointer;
     }
+
     #Header .navIcon {
         filter: invert(1);
     }
