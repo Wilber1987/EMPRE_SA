@@ -370,7 +370,7 @@ class LotesManagerView extends HTMLElement {
 			new Money((lote.EtiquetaLote.Precio_venta_Apartado_dolares * (parseFloat(this.Porcentaje?.Valor ?? 35) / 100)) * this.TasaCambio.Valor_de_venta, "NIO")}</td>					
 				</tr>
 				<tr>
-					<td colspan="2" class="value-prop">CÓDIGO: ${ lote.Lote }</td>
+					<td colspan="2" class="value-prop">CÓDIGO: ${lote.Lote}</td>
 					<td colspan="2">${lote.EtiquetaLote.Tipo != "CV" ? "ENVIADO A LIQ" : "ENVIADO A LIQ"}</td>
 					<td colspan="2">${new DateTime(lote.Fecha_Ingreso).toDDMMYYYY()}</td>
 				</tr>
@@ -393,18 +393,21 @@ class LotesManagerView extends HTMLElement {
 			<div>$ ${lote.EtiquetaLote?.Precio_venta_Contado_dolares?.toFixed(2)}</div>
 			<div>${lote.EtiquetaLote?.PorcentajesApartado + lote.EtiquetaLote?.PorcentajeAdicional}</div>
 			<div>$ ${lote.EtiquetaLote?.Precio_venta_Apartado_dolares?.toFixed(2)}</div>
-			<div><input type="number"
-				value="${lote.EtiquetaLote?.PorcentajeAdicional}" 
-				max="100" min="0" pattern="\d*" 
-				onchange="${async (ev) => {
-				const value = ev.target.value;
-				lote.EtiquetaLote.PorcentajeAdicional = value;
-				const response = await lote.Update();
-				if (response.status == 200) {
-					location.reload();
-				}
-			}
-			}"></div>
+			<div>
+				<input type="number"
+					value="${lote.EtiquetaLote?.PorcentajeAdicional}" 
+					max="100" min="0" pattern="\d*" 
+					onchange="${async (ev) => {
+						if ( ev.target.value < 0) {
+							ev.target.value = 0;
+						}
+						lote.EtiquetaLote.PorcentajeAdicional = ev.target.value;
+						const response = await lote.Update();
+						if (response.status == 200) {
+							location.reload();
+						}
+					}}">
+					</div>
 			<div><input type="checkbox" onchange="${async (ev) => {
 				WArrayF.AddOrRemove(lote, selectedLotes, ev.target.checked);
 			}}"></div>

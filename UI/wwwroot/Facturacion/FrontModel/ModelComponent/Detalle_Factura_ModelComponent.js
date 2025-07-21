@@ -18,7 +18,7 @@ class Detalle_Factura_ModelComponent extends EntityClass {
 	/**@type {ModelProperty}*/ Id_DetalleFactura = { type: 'number', primary: true };
 	/**@type {ModelProperty}*/ Lote = {
 		require: false,
-		type: 'WSELECT',
+		type: 'WGRIDSELECT',
 		label: "Artículos",
 		ModelObject: () => new Tbl_Lotes_ModelComponent(),
 		EntityModel: new Tbl_Lotes(),
@@ -45,7 +45,11 @@ class Detalle_Factura_ModelComponent extends EntityClass {
 			this.CalculeTotal(detail, form);
 		}
 	};
-	/**@type {ModelProperty}*/ Cantidad = { type: 'number', min: 1 };
+	/**@type {ModelProperty}*/ Cantidad = {
+		type: 'number', min: 1, action: (/**@type {Detalle_Factura} */ detail, /**@type {WForm} */ form) => {
+			this.CalculeTotal(detail, form);
+		}
+	};
 	/**@type {ModelProperty}*/ Precio_Venta = { type: 'money', disabled: true, label: "Pre/Cont. $" };
 	/**@type {ModelProperty}*/ Monto_Descuento = { type: 'money', disabled: true, require: false };
 	/**@type {ModelProperty}*/ Sub_Total = { type: 'money', disabled: true, hidden: true };
