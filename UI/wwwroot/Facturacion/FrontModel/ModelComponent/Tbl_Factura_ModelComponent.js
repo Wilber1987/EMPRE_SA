@@ -306,6 +306,8 @@ class Tbl_Factura_ModelComponent extends EntityClass {
 				const subtotal = detalle.Precio_Venta * cantidadTotal;
 				const totalDescuento = subtotal * (detalle.Descuento / 100);
 				const totalIva = (subtotal - totalDescuento) * 0;
+				console.log(detalle.Lote);
+				
 				lotesMap.push(new Detalle_Factura({
 					Lote: detalle.Lote,
 					Cantidad: cantidadTotal,

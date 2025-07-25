@@ -40,7 +40,7 @@ namespace DataBaseModel
 		[ManyToOne(TableName = "Detalle_Compra", KeyColumn = "Id_Detalle_Compra", ForeignKeyColumn = "Id_Detalle_Compra")]
 		public Detalle_Compra? Detalle_Compra { get; set; }
 		public List<Tbl_Transaccion>? lotes { get; set; }
-		public EstadoEnum? Estado { get;  set; }
+		public EstadoEnum? Estado { get; set; }
 
 		public static string GenerarLote(string? code = null)
 		{
@@ -207,9 +207,9 @@ namespace DataBaseModel
 				Cantidad_Existente = 1,
 				Id_Sucursal = dbUser?.Id_Sucursal,
 				Id_User = dbUser?.Id_User,
-				Fecha_Ingreso = DateTime.Now,				
+				Fecha_Ingreso = DateTime.Now,
 				Datos_Producto = prenda.Transactional_Valoracion,
-				Detalles = $"{prenda.Transactional_Valoracion?.Descripcion}, Marca: {prenda.Transactional_Valoracion?.Marca}, Modelo: {prenda.Transactional_Valoracion?.Modelo}, Existencia perteneciente a vencimineto de contrato No. {contrato.numero_contrato.GetValueOrDefault():D9}",
+				Detalles = $"{prenda.Transactional_Valoracion?.Descripcion},\n{GetLoteDesc(prenda.Transactional_Valoracion)},\n Existencia perteneciente a vencimineto de contrato No. {contrato.numero_contrato.GetValueOrDefault():D9}",
 				Id_Almacen = new Cat_Almacenes().GetAlmacen(dbUser?.Id_Sucursal ?? 0),
 				Lote = codigo,
 				Id_Producto = producto.Id_Producto,
@@ -217,7 +217,7 @@ namespace DataBaseModel
 				EtiquetaLote = new EtiquetaLote
 				{
 					Tipo = "CV",
-					Articulo = $"{prenda.Transactional_Valoracion?.Descripcion}, Marca: {prenda.Transactional_Valoracion?.Marca}, Modelo: {prenda.Transactional_Valoracion?.Modelo}",
+					Articulo = GetLoteDesc(prenda.Transactional_Valoracion),
 					Codigo = codigo,
 					PorcentajesUtilidad = porcentajesUtilidad,
 					PorcentajesApartado = porcentajesApartado,
@@ -226,6 +226,11 @@ namespace DataBaseModel
 					Precio_compra_dolares = prenda.Transactional_Valoracion?.Valoracion_empeño_dolares,
 				}
 			}.Save();
+		}
+
+		public static string GetLoteDesc(Transactional_Valoracion transactional_Valoracion)
+		{
+			return $"{transactional_Valoracion?.Descripcion}\n Marca: {transactional_Valoracion?.Marca}\n Modelo: {transactional_Valoracion?.Modelo}\n Serie: {transactional_Valoracion?.Modelo ?? "-"} ";
 		}
 	}
 

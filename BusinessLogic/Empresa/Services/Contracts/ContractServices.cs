@@ -65,7 +65,7 @@ namespace Model
 			}
 		}
 
-		public  ResponseService DoSaveContract(string seasonKey)
+		public ResponseService DoSaveContract(string seasonKey)
 		{
 			var User = AuthNetCore.User(seasonKey);
 			var dbUser = new Security_Users { Id_User = User.UserId }.Find<Security_Users>();
@@ -82,7 +82,11 @@ namespace Model
 			{
 				if (prenda.serie != null)
 				{
-					List<Detail_Prendas> prendasGuardadas = new Detail_Prendas().Where<Detail_Prendas>(FilterData.Equal("serie", prenda?.serie));
+					List<Detail_Prendas> prendasGuardadas = new Detail_Prendas().Where<Detail_Prendas>(
+						FilterData.Equal("serie", prenda?.serie),
+						FilterData.Distinc("serie", ""),
+						FilterData.NotNull("serie")
+					);
 					foreach (var prendaGuardada in prendasGuardadas)
 					{
 						Transaction_Contratos? contrato = new Transaction_Contratos { numero_contrato = prendaGuardada.numero_contrato }.Find<Transaction_Contratos>();
@@ -106,8 +110,9 @@ namespace Model
 			|| Transaction_Contratos!.tipo!.ToUpper().Equals(Contratos_Type.APARTADO_MENSUAL.ToString()))
 			{
 				valoracion.Catalogo_Categoria.tipo = valoracion.Catalogo_Categoria.tipo;
-				
-			}else if (valoracion.en_manos_de == EnManosDe.ACREEDOR
+
+			}
+			else if (valoracion.en_manos_de == EnManosDe.ACREEDOR
 			&& valoracion.Catalogo_Categoria.tipo.ToUpper() != "Vehículos".ToUpper())
 			{
 				Transaction_Contratos.tipo = Contratos_Type.EMPENO.ToString();

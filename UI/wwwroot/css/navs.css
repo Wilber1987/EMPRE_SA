@@ -60,6 +60,10 @@
     background-color: var(--fourth-color);   
     text-decoration: none;
     color: var(--font-primary-color);
+    text-transform: lowercase;
+}
+.home-menu .menu-item::first-letter{
+    text-transform: uppercase;
 }
 .home-menu .title-collapse {
     display: block;

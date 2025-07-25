@@ -48,8 +48,6 @@ class VentasComponent extends HTMLElement {
         this.CompraContainer.innerHTML = "";
         this.Draw();
     }
-
-
     Draw = async () => {
         this.Intereses = await new Transactional_Configuraciones().getConfiguraciones_Intereses();
         this.Configs = await new Transactional_Configuraciones().getConfiguraciones_Beneficios();

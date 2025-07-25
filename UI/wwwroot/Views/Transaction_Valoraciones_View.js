@@ -5,7 +5,7 @@ import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js";
 import { ComponentsManager, ConvertToMoneyString, html, WRender } from "../WDevCore/WModules/WComponentsTools.js";
 // @ts-ignore
 import { Catalogo_Cambio_Divisa_ModelComponent, Catalogo_Categoria_ModelComponent, Catalogo_Clientes, Catalogo_Estados_Articulos, Transactional_Valoracion_ModelComponent } from "../FrontModel/DBODataBaseModel.js";
-import {  WForm } from "../WDevCore/WComponents/WForm.js";
+import { WForm } from "../WDevCore/WComponents/WForm.js";
 
 
 import { Transactional_Configuraciones } from "../Admin/ADMINISTRATIVE_ACCESSDataBaseModel.js";
@@ -422,7 +422,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
 			onclick: () => this.Manager.NavigateFunction("Searcher", new ValoracionesSearch(this.selectValoracion))
 		}))
 		this.OptionContainer.append(WRender.Create({
-			tagName: 'button', className: 'Block-Fourth', innerText: 'Añadir',
+			tagName: 'button', className: 'Block-Fourth', innerText: 'Añadir / Guardar',
 			onclick: () => {
 				if (!this.valoracionesForm?.Validate()) {
 					return;
@@ -430,18 +430,18 @@ class Transaction_Valoraciones_View extends HTMLElement {
 				if (this.valoresObject.Valoracion_1 <= 0 ||
 					this.valoresObject.Valoracion_3 <= 0 ||
 					this.valoresObject.Valoracion_3 <= 0) {
-					WAlertMessage.Warning("Llene el formulario de valoraciones con montos mayores a 0"); 
+					WAlertMessage.Warning("Llene el formulario de valoraciones con montos mayores a 0");
 					return;
 				}
 				const existVehiculo = this.valoracionesTable?.Dataset.find(p => p.Catalogo_Categoria.id_categoria == 2);
 				if (existVehiculo != undefined && this.valoracionesForm?.FormObject.Catalogo_Categoria.id_categoria != 2) {
-					WAlertMessage.Warning("Anteriormente valoro un vehículo por lo tanto no puede agregar valoraciones de diferente categoría"); 
+					WAlertMessage.Warning("Anteriormente valoro un vehículo por lo tanto no puede agregar valoraciones de diferente categoría");
 					return;
 				}
 
 				const notExistVehiculo = this.valoracionesTable?.Dataset.find(p => p.Catalogo_Categoria.id_categoria != 2);
 				if (notExistVehiculo != undefined && this.valoracionesForm?.FormObject.Catalogo_Categoria.id_categoria == 2) {
-					WAlertMessage.Warning("Anteriormente valoro un artículo distinto de vehículo por lo tanto no puede agregar valoraciones de esta categoría"); 
+					WAlertMessage.Warning("Anteriormente valoro un artículo distinto de vehículo por lo tanto no puede agregar valoraciones de esta categoría");
 					return;
 				}
 				const newValoracion = {};
@@ -466,9 +466,16 @@ class Transaction_Valoraciones_View extends HTMLElement {
 					this.valoracionesForm.FormObject[prop] = undefined;
 				}
 				this.valoracionesForm.DrawComponent();
+				//guardar
+
+				this.valoracionesTable?.Dataset.forEach(element => {
+					element.id_valoracion = null;
+					element.Fecha = new Date();
+				});				
+				this.valoracionModel?.GuardarValoraciones(this.valoracionesTable?.Dataset);				
 			}
 		}))
-		this.OptionContainer.append(WRender.Create({
+		/*this.OptionContainer.append(WRender.Create({
 			tagName: 'button', className: 'Block-Fifth', innerText: 'Guardar valoraciones',
 			onclick: async () => {
 				if (this.valoracionesTable?.Dataset.length == 0) {
@@ -484,13 +491,13 @@ class Transaction_Valoraciones_View extends HTMLElement {
 					WAlertMessage.Connect({ Message: "Valoraciones guardadas correctamente", Type: "warning" }); 
 				}
 			}
-		}))
+		}))*/
 		if (WSecurity.HavePermission(Permissions.GESTION_EMPEÑOS)) {
 			this.OptionContainer.append(WRender.Create({
 				tagName: 'button', className: 'Block-Success', innerText: 'Generar Contrato',
 				onclick: async () => {
 					if (this.valoracionesTable?.Dataset.length == 0) {
-						WAlertMessage.Connect({ Message: "Agregue valoraciones para poder continuar", Type: "warning" });  
+						WAlertMessage.Connect({ Message: "Agregue valoraciones para poder continuar", Type: "warning" });
 						return;
 					}
 					if (this.Cliente?.codigo_cliente == undefined) {
@@ -587,14 +594,14 @@ class Transaction_Valoraciones_View extends HTMLElement {
 					const div = html`<div class="contract-response">
 						${new WPrintExportToolBar({
 						PrintAction: (toolBar) => {
-								toolBar.Print(html`<div>${facturaR.cloneNode(true)}</div>`)
-							}
-						})}
+							toolBar.Print(html`<div>${facturaR.cloneNode(true)}</div>`)
+						}
+					})}
 						${facturaR}        
 					</div>`;
 					document.body.append(new WModalForm({
 						ShadowRoot: false,
-						ObjectModal: div,						
+						ObjectModal: div,
 						ObjectOptions: {
 							SaveFunction: () => {
 								location.href = "/Facturacion/ComprasManager"
