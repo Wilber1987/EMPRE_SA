@@ -105,7 +105,16 @@ class Tbl_Factura_ModelComponent extends EntityClass {
 	/**@type {ModelProperty} */ is_cambio_cordobas = { type: "checkbox", require: false, hiddenFilter: true, hiddenInTable: true, label: "dar cambio en córdobas", hidden: false };
 
 
-	/**@type {ModelProperty}*/ Detalle_Factura = { type: 'MasterDetail', ModelObject: () => new Detalle_Factura_ModelComponent(), action: (/**@type {Tbl_Factura}*/ EditObject, form) => this.CalculeTotal(EditObject, form) };
+	/**@type {ModelProperty}*/ Detalle_Factura = {
+		type: 'MasterDetail',
+		ModelObject: () => new Detalle_Factura_ModelComponent(),
+		action: (/**@type {Tbl_Factura}*/ EditObject, form) => this.CalculeTotal(EditObject, form),
+		Options: {
+			Add: true,
+			Edit: true,
+			Delete: true,
+		}
+	};
 
 
 	/**
@@ -307,7 +316,7 @@ class Tbl_Factura_ModelComponent extends EntityClass {
 				const totalDescuento = subtotal * (detalle.Descuento / 100);
 				const totalIva = (subtotal - totalDescuento) * 0;
 				console.log(detalle.Lote);
-				
+
 				lotesMap.push(new Detalle_Factura({
 					Lote: detalle.Lote,
 					Cantidad: cantidadTotal,

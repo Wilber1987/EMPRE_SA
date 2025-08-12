@@ -21,7 +21,7 @@ namespace BusinessLogic.Empresa.Contratos
         public int? Id_Lote { get; set; }
         public int? Id_Sucursal { get; set; }
         public EstadoEnum? Estado { get; set; }
-        public ActaTypeEnum ActaType { get; set; }
+        public ActaTypeEnum? ActaType { get; set; }
         
         [ManyToOne(TableName = "Detail_Prendas", KeyColumn = "numero_Prenda", ForeignKeyColumn = "Numero_Prenda")]
 		public Detail_Prendas? Detail_Prenda { get; set; }
