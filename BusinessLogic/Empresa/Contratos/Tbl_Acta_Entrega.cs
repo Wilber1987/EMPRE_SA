@@ -22,11 +22,11 @@ namespace BusinessLogic.Empresa.Contratos
         public int? Id_Sucursal { get; set; }
         public EstadoEnum? Estado { get; set; }
         public ActaTypeEnum? ActaType { get; set; }
-        
+
         [ManyToOne(TableName = "Detail_Prendas", KeyColumn = "numero_Prenda", ForeignKeyColumn = "Numero_Prenda")]
-		public Detail_Prendas? Detail_Prenda { get; set; }
-        
-        
+        public Detail_Prendas? Detail_Prenda { get; set; }
+
+
         public bool IsAnulable
         {
             get
@@ -57,11 +57,29 @@ namespace BusinessLogic.Empresa.Contratos
                     Estado = EstadoEnum.ACTIVO,
                     Numero_Prenda = prenda.numero_prenda,
                     Id_Sucursal = dbUser?.Id_Sucursal,
+                    ActaType = TypeAdapter(contrato.tipo),
                     Observaciones = @$"prenda ""{prenda.Descripcion} con serie {prenda.serie}""  entregada a cliente por cancelación de contrato #{contrato.numero_contrato}"
                 }.Save();
             });
         }
-        public ResponseService AnularActa(string Identify,  Transaction_Contratos actaContrato)
+
+        private static ActaTypeEnum? TypeAdapter(Contratos_Type? tipo)
+        {
+            if (tipo == null)
+            {
+                tipo = Contratos_Type.EMPENO;
+            }
+            switch (tipo)
+            {
+                case Contratos_Type.EMPENO: return ActaTypeEnum.EMPENO;
+                case Contratos_Type.EMPENO_VEHICULO: return ActaTypeEnum.EMPENO_VEHICULO;
+                case Contratos_Type.APARTADO_QUINCENAL: return ActaTypeEnum.CONTRATO_QUINCENAL;
+                case Contratos_Type.APARTADO_MENSUAL: return ActaTypeEnum.CONTRATO_MENSUAL;
+                default: return ActaTypeEnum.EMPENO;
+            }
+        }
+
+        public ResponseService AnularActa(string Identify, Transaction_Contratos actaContrato)
         {
             try
             {
@@ -97,48 +115,49 @@ namespace BusinessLogic.Empresa.Contratos
 
         public Tbl_Acta_Entrega? FindTbl_Acta_Entrega(string? Identify)
         {
-           var User = AuthNetCore.User(Identify);
-			var dbUser = new Security_Users { Id_User = User.UserId }.Find<Security_Users>();
-			if (User.isAdmin)
-			{
-				return Find<Tbl_Acta_Entrega>();
-			}
-			else if (AuthNetCore.HavePermission(Identify, APPCORE.Security.Permissions.GESTION_LOTES))
-			{
-				Id_Sucursal = dbUser?.Id_Sucursal;
-				return Find<Tbl_Acta_Entrega>();
-			}
-			else
-			{
-				return Find<Tbl_Acta_Entrega>(
-					FilterData.Equal("Id_Sucursal", dbUser?.Id_Sucursal));
-			}
+            var User = AuthNetCore.User(Identify);
+            var dbUser = new Security_Users { Id_User = User.UserId }.Find<Security_Users>();
+            if (User.isAdmin)
+            {
+                return Find<Tbl_Acta_Entrega>();
+            }
+            else if (AuthNetCore.HavePermission(Identify, APPCORE.Security.Permissions.GESTION_LOTES))
+            {
+                Id_Sucursal = dbUser?.Id_Sucursal;
+                return Find<Tbl_Acta_Entrega>();
+            }
+            else
+            {
+                return Find<Tbl_Acta_Entrega>(
+                    FilterData.Equal("Id_Sucursal", dbUser?.Id_Sucursal));
+            }
         }
 
         public List<Tbl_Acta_Entrega>? GetTbl_Acta_Entrega(string? Identify)
         {
             var User = AuthNetCore.User(Identify);
-			var dbUser = new Security_Users { Id_User = User.UserId }.Find<Security_Users>();
-			if (User.isAdmin)
-			{
-				return Get<Tbl_Acta_Entrega>();
-			}
-			else if (AuthNetCore.HavePermission(Identify, APPCORE.Security.Permissions.GESTION_LOTES))
-			{
-				Id_Sucursal = dbUser?.Id_Sucursal;
-				return Where<Tbl_Acta_Entrega>();
-			}
-			else
-			{
-				return Where<Tbl_Acta_Entrega>(
-					FilterData.Equal("Id_Sucursal", dbUser?.Id_Sucursal)
-				);
-			}
+            var dbUser = new Security_Users { Id_User = User.UserId }.Find<Security_Users>();
+            if (User.isAdmin)
+            {
+                return Get<Tbl_Acta_Entrega>();
+            }
+            else if (AuthNetCore.HavePermission(Identify, APPCORE.Security.Permissions.GESTION_LOTES))
+            {
+                Id_Sucursal = dbUser?.Id_Sucursal;
+                return Where<Tbl_Acta_Entrega>();
+            }
+            else
+            {
+                return Where<Tbl_Acta_Entrega>(
+                    FilterData.Equal("Id_Sucursal", dbUser?.Id_Sucursal)
+                );
+            }
         }
     }
     public enum ActaTypeEnum
     {
-        CONTRATO_QUINCENAL, CONTRATO_MENSUAL
+        CONTRATO_QUINCENAL, CONTRATO_MENSUAL, EMPENO, PRESTAMO,
+        EMPENO_VEHICULO
     }
 
 }

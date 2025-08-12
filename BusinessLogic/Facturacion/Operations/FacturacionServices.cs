@@ -262,7 +262,7 @@ namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 				taza_cambio = factura.Tasa_Cambio_Venta,
 				taza_cambio_compra = factura.Tasa_Cambio_Venta,
 				Catalogo_Clientes = GetCliente(factura.Id_Cliente),
-				tipo = isQuincenal ? Contratos_Type.APARTADO_QUINCENAL.ToString() : Contratos_Type.APARTADO_MENSUAL.ToString(),
+				tipo = isQuincenal ? Contratos_Type.APARTADO_QUINCENAL : Contratos_Type.APARTADO_MENSUAL,
 				gestion_crediticia = 0,
 				monto = factura.Datos_Financiamiento?.Total_Financiado,
 				saldo = factura.Datos_Financiamiento?.Total_Financiado,

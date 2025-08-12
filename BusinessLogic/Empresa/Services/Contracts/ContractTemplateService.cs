@@ -285,7 +285,7 @@ namespace CAPA_NEGOCIO.Services
 
 		public static string GenerateCuotesTableHtml(List<Tbl_Cuotas> listaDatos, Catalogo_Clientes cliente, Transaction_Contratos contrato)
 		{
-			bool aplicaInteres = contrato.tipo != "APARTADO_QUINCENAL";
+			bool aplicaInteres = contrato.tipo !=  Contratos_Type.APARTADO_QUINCENAL;
 			List<Tbl_Cuotas>? objListOrder = listaDatos?.OrderBy(order => order.fecha).ToList();
 			StringBuilder htmlBuilder = new StringBuilder();
 			// Abrir la etiqueta de la tabla con atributos de estilo para bordes y ancho 100%

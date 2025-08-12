@@ -45,7 +45,7 @@ namespace UI.CAPA_NEGOCIO.Empresa.Services.Recibos
 				//templateContent.Add(GenerateReciboHtmlTemplate(factura));
 				List<object> templateContent = [ new
 				{
-					type= contrato?.tipo == Contratos_Type.APARTADO_QUINCENAL.ToString() ? DocType.RECIBO_QUINCENAL.ToString() : DocType.RECIBO.ToString(),
+					type= contrato?.tipo == Contratos_Type.APARTADO_QUINCENAL ? DocType.RECIBO_QUINCENAL.ToString() : DocType.RECIBO.ToString(),
 					body= GenerateReciboHtmlTemplate(factura)
 				}];
 				if (factura?.Factura_contrato?.reestructuracion != 0)
@@ -170,7 +170,7 @@ namespace UI.CAPA_NEGOCIO.Empresa.Services.Recibos
 			var detallePerdidaDoc = factura?.Detalle_Factura_Recibo?.Find(d => d.concepto != null
 				&& d.concepto.Contains("Pago por tramite de perdida de documentos"));
 				
-			string templateContent = contrato?.tipo == Contratos_Type.APARTADO_QUINCENAL.ToString() ? DocumentsData.GetReciboTemplateApartado() : DocumentsData.GetReciboTemplate();
+			string templateContent = contrato?.tipo == Contratos_Type.APARTADO_QUINCENAL ? DocumentsData.GetReciboTemplateApartado() : DocumentsData.GetReciboTemplate();
 				
 			bool isCancelacion = factura?.Factura_contrato?.saldo_actual == 0;
 

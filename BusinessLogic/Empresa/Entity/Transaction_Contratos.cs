@@ -25,7 +25,7 @@ namespace DataBaseModel
 		public int? codigo_cliente { get; set; }
 		public double? saldo { get; set; }
 		public double? abonos { get; set; }
-		public string? tipo { get; set; }
+		public Contratos_Type? tipo { get; set; }
 		public string? entregado { get; set; }
 		public double? interes_actual { get; set; }
 		public string? observaciones { get; set; }
@@ -56,8 +56,8 @@ namespace DataBaseModel
 			{
 				return estado != Contratos_State.ANULADO && estado != Contratos_State.CANCELADO
 				&& DateUtil.IsBefore(fecha, 24)
-				&& tipo != Contratos_Type.APARTADO_QUINCENAL.ToString()
-				&& tipo != Contratos_Type.APARTADO_MENSUAL.ToString();
+				&& tipo != Contratos_Type.APARTADO_QUINCENAL
+				&& tipo != Contratos_Type.APARTADO_MENSUAL;
 			}
 		}
 
@@ -264,7 +264,7 @@ namespace DataBaseModel
 			);
 			foreach (var cuota in cuotas)
 			{
-				if (tipo?.ToUpper() == Contratos_Type.APARTADO_QUINCENAL.ToString() && cuota.mora != 0)
+				if (tipo == Contratos_Type.APARTADO_QUINCENAL && cuota.mora != 0)
 				{
 					cuota.mora = 0;
 					cuota.Update();
