@@ -264,6 +264,11 @@ namespace DataBaseModel
 			);
 			foreach (var cuota in cuotas)
 			{
+				if (tipo?.ToUpper() == Contratos_Type.APARTADO_QUINCENAL.ToString() && cuota.mora != 0)
+				{
+					cuota.mora = 0;
+					cuota.Update();
+				}
 				TimeSpan diferencia = DateTime.Now.Subtract(cuota.fecha.GetValueOrDefault());
 				int diasEnMora = (int)Math.Floor(diferencia.TotalDays);
 				// Si 'diasEnMora' es negativo, significa que la fecha de pago aún no ha llegado, entonces ajustamos a cero
