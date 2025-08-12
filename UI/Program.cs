@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.ResponseCompression;
 using BusinessLogic.Connection;
 using System.Text.Json.Serialization;
 using DataBaseModel;
+using CAPA_NEGOCIO.SystemConfig;
 
 //SqlADOConexion.IniciarConexion("sa", "zaxscd", ".", "EMPRE_SA");
 
@@ -66,6 +67,7 @@ builder.Services.AddCronJob<DailyCronJob>(options =>
 
 var app = builder.Build();
 new BDConnection().IniciarMainConecction(app.Environment.IsDevelopment());
+SystemConfig.isDebug = true;
 //Inicializar parametros
 Transactional_Configuraciones.GetPorcentageMinimoPagoApartadoMensual();
 // builder.Services.AddSession(options =>
