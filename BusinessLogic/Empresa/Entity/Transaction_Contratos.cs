@@ -269,16 +269,20 @@ namespace DataBaseModel
 					cuota.mora = 0;
 					cuota.Update();
 				}
-				TimeSpan diferencia = DateTime.Now.Subtract(cuota.fecha.GetValueOrDefault());
-				int diasEnMora = (int)Math.Floor(diferencia.TotalDays);
-				// Si 'diasEnMora' es negativo, significa que la fecha de pago aún no ha llegado, entonces ajustamos a cero
-				diasEnMora = Math.Max(diasEnMora, 0);
-				var montoMora = cuota.total * ((cuota.Transaction_Contratos?.mora / 100) ?? 0.005) * diasEnMora;
-				if (montoMora > 0)
+				else
 				{
-					cuota.mora = montoMora;
-					cuota.Update();
+					TimeSpan diferencia = DateTime.Now.Subtract(cuota.fecha.GetValueOrDefault());
+					int diasEnMora = (int)Math.Floor(diferencia.TotalDays);
+					// Si 'diasEnMora' es negativo, significa que la fecha de pago aún no ha llegado, entonces ajustamos a cero
+					diasEnMora = Math.Max(diasEnMora, 0);
+					var montoMora = cuota.total * ((cuota.Transaction_Contratos?.mora / 100) ?? 0.005) * diasEnMora;
+					if (montoMora > 0)
+					{
+						cuota.mora = montoMora;
+						cuota.Update();
+					}
 				}
+
 			}
 			var contratoActualizado = Find<Transaction_Contratos>();
 			contratoActualizado?.GetRecibos();
