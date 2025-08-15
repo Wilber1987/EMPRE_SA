@@ -41,12 +41,14 @@ class Detalle_Factura_ModelComponent extends EntityClass {
 		defaultValue: 0,
 		require: false,
 		label: " % de Descuento",
+		IsEditableInGrid: true,
 		action: (/**@type {Detalle_Factura} */ detail, /**@type {WForm} */ form) => {
 			this.CalculeTotal(detail, form);
 		}
 	};
 	/**@type {ModelProperty}*/ Cantidad = {
-		type: 'number', min: 1, action: (/**@type {Detalle_Factura} */ detail, /**@type {WForm} */ form) => {
+		type: 'number', min: 1, IsEditableInGrid: true,
+		action: (/**@type {Detalle_Factura} */ detail, /**@type {WForm} */ form) => {
 			this.CalculeTotal(detail, form);
 		}
 	};
