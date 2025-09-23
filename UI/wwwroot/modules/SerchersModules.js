@@ -86,7 +86,7 @@ export { ValoracionesSearch }
 const clientSearcher = (actions) => {
     const model = new Catalogo_Clientes();
     const TableComponent = new WTableComponent({
-        ModelObject: model, Dataset: [], Options: {
+        ModelObject: model,  Options: {
             Filter: true,
             FilterDisplay: true,
             UserActions: actions

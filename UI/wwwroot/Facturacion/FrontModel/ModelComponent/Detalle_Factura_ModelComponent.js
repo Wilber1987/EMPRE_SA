@@ -18,7 +18,8 @@ class Detalle_Factura_ModelComponent extends EntityClass {
 	/**@type {ModelProperty}*/ Id_DetalleFactura = { type: 'number', primary: true };
 	/**@type {ModelProperty}*/ Lote = {
 		require: false,
-		type: 'WGRIDSELECT',
+		type: 'WSELECT',
+		IsGridDisplay: true,
 		label: "Artículos",
 		ModelObject: () => new Tbl_Lotes_ModelComponent(),
 		EntityModel: new Tbl_Lotes(),

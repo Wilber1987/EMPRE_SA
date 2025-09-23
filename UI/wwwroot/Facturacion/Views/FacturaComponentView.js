@@ -61,7 +61,7 @@ class FacturaComponentView extends HTMLElement {
         this.TasaActual = this.tasasCambio[0];
         if(!this.TimeId) {            
             this.TimeId =  new Date().getTime();
-            console.log("isNew", this.TimeId);
+            //console.log("isNew", this.TimeId);
         }
 
         this.Manager.NavigateFunction("newFactura" + this.TimeId, new VentasComponent({

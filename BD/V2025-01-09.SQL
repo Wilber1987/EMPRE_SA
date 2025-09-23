@@ -30,3 +30,4 @@ ALTER TABLE EMPRE_SA.facturacion.Tbl_Factura ADD Motivo_Anulacion nvarchar(500) 
 ALTER TABLE EMPRE_SA.facturacion.Tbl_Compra ADD Motivo_Anulacion nvarchar(500) NULL;
 
 
+ALTER TABLE EMPRE_SA.dbo.Catalogo_Cuentas ADD Transacciones_Permitidas nvarchar(MAX) NULL;

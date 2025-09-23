@@ -25,7 +25,6 @@ class Ver_RecibosView extends HTMLElement {
 		this.MainComponent = new WTableComponent({
 			EntityModel: new Transaccion_Factura({ Factura_contrato: {} }),
 			ModelObject: new Transaccion_Factura(),
-			Dataset: [],
 			Options: {
 				Filter: true,
 				FilterDisplay: true,

@@ -1,5 +1,6 @@
 using API.Controllers;
 using APPCORE;
+using BusinessLogic.Facturacion.Mapping;
 using CatalogDataBaseModel;
 using ClientDataBaseModel;
 using System;
@@ -117,7 +118,11 @@ namespace DataBaseModel
 		[ManyToOne(TableName = "Categoria_Cuentas", KeyColumn = "id_categoria", ForeignKeyColumn = "id_categoria")]
 		public Categoria_Cuentas? Categoria_Cuentas { get; set; }
 		//externa, propia, pago
-		private static Catalogo_Cuentas? GetCuenta(Security_Users dbUser, Categoria_CuentasEnum categoria, string type)
+		[JsonProp]
+		public List<Transaccion_Permitida>? Transacciones_Permitidas { get; set; }
+		private static Catalogo_Cuentas? GetCuenta(Security_Users dbUser,
+		Categoria_CuentasEnum categoria,
+		string type)
 		{
 			int? idCategoria = GetId_categoria(categoria);
 			Catalogo_Cuentas? cuenta = null;
@@ -184,6 +189,12 @@ namespace DataBaseModel
 			return new Categoria_Cuentas { descripcion = categoria_CuentasEnum.ToString() }.Find<Categoria_Cuentas>()?.id_categoria;
 		}
 	}
+
+	public class Transaccion_Permitida
+	{
+		public TipoMovimientoEnum MyProperty { get; set; }
+	}
+
 	public class Categoria_Cuentas : EntityClass
 	{
 		[PrimaryKey(Identity = true)]
@@ -248,5 +259,5 @@ namespace DataBaseModel
 		//[OneToMany(TableName = "Catalogo_Clientes", KeyColumn = "id_profesion", ForeignKeyColumn = "id_profesion")]
 		//public List<Catalogo_Clientes>? Catalogo_Clientes { get; set; }
 	}
-	
+
 }

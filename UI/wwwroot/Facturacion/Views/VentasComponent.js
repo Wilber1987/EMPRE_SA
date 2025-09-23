@@ -211,13 +211,13 @@ class VentasComponent extends HTMLElement {
         sessionStorage.setItem("Configs", JSON.stringify(this.Configs));
         const ventasModel = new Tbl_Factura_ModelComponent();
         /**analisa EditObject.Detalle_Factura y el elmento Lote de cada detalle factura y detecta si los lotes (id_lote) estan repetidos analisa si la cantidad_existente del primer lote encontrado es suficiente para la sumatoria de la cantidad de cada detalle, si no es asi retorna false, si es asi fusionalos en un solo detalle, seleccionado el primer lote como lote seleccionado */
-        ventasModel.Detalle_Factura.action = (/**@type {Tbl_Factura} */ EditObject, form, control) => {
-            this.CalculeTotal(EditObject, form, ventasModel)
-        }
-        ventasModel.Tipo.action = (/**@type {Tbl_Factura} */ EditObject, form, control) => {
-            ventasModel.TypeAction(EditObject, form);
-            this.CalculeTotal(EditObject, form, ventasModel)
-        }
+        // ventasModel.Detalle_Factura.action = (/**@type {Tbl_Factura} */ EditObject, form, control) => {
+        //     this.CalculeTotal(EditObject, form, ventasModel)
+        // }
+        // ventasModel.Tipo.action = (/**@type {Tbl_Factura} */ EditObject, form, control) => {
+        //     ventasModel.TypeAction(EditObject, form);
+        //     this.CalculeTotal(EditObject, form, ventasModel)
+        // }
 
         if (this.Config.IsActiveCredit == false) {
             ventasModel.Tipo.Dataset = ["VENTA"];
@@ -247,7 +247,7 @@ class VentasComponent extends HTMLElement {
         try {
             //ventasModel.TypeAction(EditObject, form);
             //** @type {Tbl_Factura} */
-            const response = ventasModel.CalculeTotal(EditObject, form);
+            //const response = ventasModel.CalculeTotal(EditObject, form);
             this.TotalesDetailUpdate(EditObject.Sub_Total ?? 0, EditObject.Iva ?? 0, EditObject.Total ?? 0, EditObject.Descuento ?? 0);
             //form.DrawComponent();
         } catch (error) {

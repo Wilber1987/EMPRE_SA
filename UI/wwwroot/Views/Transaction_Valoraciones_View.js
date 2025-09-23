@@ -149,7 +149,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
 		});
 
 		this.CuotasTable = new WTableComponent({
-			Dataset: [],
+			
 			ModelObject: new Tbl_Cuotas_ModelComponent({ Estado: undefined }),
 			paginate: false,
 			AddItemsFromApi: false,

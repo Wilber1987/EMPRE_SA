@@ -9,7 +9,7 @@ class Datos_ConfiguracionView extends HTMLElement {
         super();
         this.TabContainer = WRender.createElement({ type: 'div', props: { class: 'TabContainer', id: 'TabContainer' } })
         this.MainComponent = new WTableComponent({
-            ModelObject: new Datos_Configuracion(), Dataset: [], Options: {
+            ModelObject: new Datos_Configuracion(), Options: {
                 Add: true, UrlAdd: "../api/ApiEntityDBO/saveDatos_Configuracion",
                 //Edit: true, UrlUpdate: "../api/ApiEntityDBO/updateDatos_Configuracion",
                 Search: true, UrlSearch: "../api/ApiEntityDBO/getDatos_Configuracion",
