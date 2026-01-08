@@ -3,9 +3,7 @@ import { ConvertToMoneyString } from "../WDevCore/WModules/WComponentsTools.js";
 
 class Tbl_Cuotas_ModelComponent {
     constructor(props) {
-        for (const prop in props) {
-            this[prop] = props[prop];
-        }
+        Object.assign(this, props);
     }
     /**@type {ModelProperty} */
     fecha = { type: "date",  label: "FECHA" };   

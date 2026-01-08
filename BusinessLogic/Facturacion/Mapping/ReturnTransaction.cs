@@ -25,7 +25,7 @@ namespace BusinessLogic.Facturacion.Mapping
             try
             {
                 var User = AuthNetCore.User(Identify);
-                var dbUser = new Security_Users { Id_User = User.UserId }.Find<Security_Users>();
+                var dbUser = new Business.Security_Users { Id_User = User.UserId }.Find<Security_Users>();
 
                 Tbl_Factura? facturaOriginal = new Tbl_Factura
                 {

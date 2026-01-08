@@ -7,9 +7,7 @@ import { Detalle_Factura } from './Detalle_Factura.js'
 class Cat_Producto extends EntityClass {
     constructor(props) {
         super(props, 'EntityFacturacion');
-        for (const prop in props) {
-            this[prop] = props[prop];
-        }
+        Object.assign(this, props);
     }
    /**@type {Number}*/ Id_Producto;
    /**@type {String}*/ Descripcion;

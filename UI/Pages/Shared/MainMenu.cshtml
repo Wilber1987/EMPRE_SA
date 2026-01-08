@@ -34,7 +34,7 @@
 }
 @if (SecurityController.HavePermission(Identify, Permissions.GESTION_COMPRAS, Permissions.GESTION_VENTAS))
 {
-    <a class="title-collapse" id="GestionFacturaMenu" onclick="changeActive(this)">GESTIÓN DE COMPRAS</a>
+    <a class="title-collapse" id="GestionFacturaCompraMenu" onclick="changeActive(this)">GESTIÓN DE COMPRAS</a>
     <div class="collapse">
         @if (SecurityController.HavePermission(Identify, Permissions.GESTION_COMPRAS))
         {
@@ -48,6 +48,9 @@
                 asp-page="/Facturacion/ComprasManager">Compras realizadas</a>
 
         }
+    </div>
+    <a class="title-collapse" id="GestionFacturaVentasMenu" onclick="changeActive(this)">GESTIÓN DE VENTAS</a>
+    <div class="collapse">
         @if (SecurityController.HavePermission(Identify, Permissions.GESTION_VENTAS))
         {
             <a class="menu-item" id="FacturasVentasView" asp-area="" asp-page="/Facturacion/FacturasComponentView">Ventas</a>
@@ -58,7 +61,6 @@
         }
     </div>
 }
-
 
 @if (SecurityController.HavePermission(Permissions.GESTION_MOVIMIENTOS.ToString(), Identify))
 {

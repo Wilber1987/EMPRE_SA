@@ -4,9 +4,7 @@ import { Cat_Producto }  from './Cat_Producto.js'
 class Cat_Marca extends EntityClass {
    constructor(props) {
        super(props, 'EntityFacturacion');
-       for (const prop in props) {
-           this[prop] = props[prop];
-       }
+       Object.assign(this, props);
    }
    /**@type {Number}*/ Id_Marca;
    /**@type {String}*/ Nombre;

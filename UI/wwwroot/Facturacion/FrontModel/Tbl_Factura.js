@@ -8,35 +8,33 @@ class Tbl_Factura extends EntityClass {
      */
     constructor(props) {
         super(props, 'EntityFacturacion');
-        for (const prop in props) {
-            this[prop] = props[prop];
-        };
+        Object.assign(this, props);
     }
-   /**@type {Number?}*/ Id_Factura;
-   /**@type {String}*/ Tipo;
-   /**@type {String}*/ Concepto;
-   /**@type {String}*/ Codigo_venta;
-   /**@type {String}*/ Serie;
-   /**@type {String}*/ Forma_Pago;
-   /**@type {String}*/ Direccion_Envio;
-   /**@type {Number}*/ Id_Cliente;
-   /**@type {Number}*/ Id_Sucursal;
-   /**@type {Date}*/ Fecha;
-   /**@type {Date}*/ Fecha_Vencimiento;
-   /**@type {String}*/ Observaciones;
-   /**@type {Number}*/ Id_Usuario;
-   /**@type {String}*/ Estado;
-   /**@type {Number}*/ Sub_Total;
-   /**@type {Number}*/ Iva;
-   /**@type {Number}*/ Descuento;
-   /**@type {Number}*/ Tasa_Cambio;
-   /**@type {Number}*/ Tasa_Cambio_Venta;
-   /**@type {Number}*/ Total;
-   /**@type {Array<Detalle_Factura>} OneToMany*/ Detalle_Factura;
-   /**@type {DatosFactura}*/ Datos;
-   /**@type {Catalogo_Clientes}*/ Cliente;
+    /**@type {Number?}*/ Id_Factura;
+    /**@type {String}*/ Tipo;
+    /**@type {String}*/ Concepto;
+    /**@type {String}*/ Codigo_venta;
+    /**@type {String}*/ Serie;
+    /**@type {String}*/ Forma_Pago;
+    /**@type {String}*/ Direccion_Envio;
+    /**@type {Number}*/ Id_Cliente;
+    /**@type {Number}*/ Id_Sucursal;
+    /**@type {Date}*/ Fecha;
+    /**@type {Date}*/ Fecha_Vencimiento;
+    /**@type {String}*/ Observaciones;
+    /**@type {Number}*/ Id_Usuario;
+    /**@type {String}*/ Estado;
+    /**@type {Number}*/ Sub_Total;
+    /**@type {Number}*/ Iva;
+    /**@type {Number}*/ Descuento;
+    /**@type {Number}*/ Tasa_Cambio;
+    /**@type {Number}*/ Tasa_Cambio_Venta;
+    /**@type {Number}*/ Total;
+    /**@type {Array<Detalle_Factura>} OneToMany*/ Detalle_Factura;
+    /**@type {DatosFactura}*/ Datos;
+    /**@type {Catalogo_Clientes}*/ Cliente;
 
-    /**@type {Boolean}*/ is_cambio_cordobas;
+    /**@type {Boolean}*/ Is_cambio_cordobas;
     /**@type {String}*/ Moneda;
     /**@type {Number}*/ Monto_dolares;
     /**@type {Number}*/ cambio_cordobas;
@@ -59,9 +57,7 @@ class Tbl_Factura extends EntityClass {
 export { Tbl_Factura };
 export class DatosFactura {
     constructor(props) {
-        for (const prop in props) {
-            this[prop] = props[prop];
-        }
+        Object.assign(this, props);
     }
     /**@type {String}*/ Nombre_Vendedor;
     /**@type {String}*/ Nombre_Cliente

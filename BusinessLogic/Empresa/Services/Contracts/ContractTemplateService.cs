@@ -45,19 +45,19 @@ namespace CAPA_NEGOCIO.Services
 				return "";
 			}
 			string templateContent = ContractsTemplates.ContractEmpeno;
-			if (model.tipo.Equals(Contratos_Type.EMPENO_VEHICULO.ToString()))
+			if (model.tipo.Equals(Contratos_Type.EMPENO_VEHICULO))
 			{
 				templateContent = ContractsTemplates.ContractEmpenoVehiculo;
 			}
-			else if (model.tipo.Equals(Contratos_Type.PRESTAMO.ToString()))
+			else if (model.tipo.Equals(Contratos_Type.PRESTAMO))
 			{
 				templateContent = ContractsTemplates.ContractPrestamo;
 			}
-			else if (model.tipo.Equals(Contratos_Type.APARTADO_MENSUAL.ToString()))
+			else if (model.tipo.Equals(Contratos_Type.APARTADO_MENSUAL))
 			{
 				templateContent = ContractsTemplates.ContractEmpeno;
 			}
-			else if (model.tipo.Equals(Contratos_Type.APARTADO_QUINCENAL.ToString()))
+			else if (model.tipo.Equals(Contratos_Type.APARTADO_QUINCENAL))
 			{
 				templateContent = ContractsTemplates.ContractQuincenal;
 			}
@@ -104,7 +104,7 @@ namespace CAPA_NEGOCIO.Services
 			renderedHtml = RenderTemplate(renderedHtml, cliente)
 				.Replace("{{municipio}}", cliente.Catalogo_Municipio?.nombre)
 				.Replace("{{departamento}}", cliente.Catalogo_Departamento?.nombre)
-				.Replace("{{tabla_articulos}}", GeneratePrendasTableHtml(model.Detail_Prendas, model.tipo.Equals(Contratos_Type.EMPENO_VEHICULO.ToString())))
+				.Replace("{{tabla_articulos}}", GeneratePrendasTableHtml(model.Detail_Prendas, model.tipo.Equals(Contratos_Type.EMPENO_VEHICULO)))
 				//MORA                
 				.Replace("{{valor_mora}}", "C$ " + NumberUtility.ConvertToMoneyString(model.cuotafija_dolares * mora * model.taza_cambio))
 				.Replace("{{valor_mora_label}}", NumberUtility.NumeroALetras(model.cuotafija_dolares * mora * model.taza_cambio, true, "córdobas"))
@@ -151,11 +151,11 @@ namespace CAPA_NEGOCIO.Services
 
 		public static bool AplicaGastosAdministrativos(Transaction_Contratos model)
 		{
-			return !model.tipo.Equals(Contratos_Type.APARTADO_MENSUAL.ToString()) && !model.tipo.Equals(Contratos_Type.APARTADO_QUINCENAL.ToString());
+			return !model.tipo.Equals(Contratos_Type.APARTADO_MENSUAL) && !model.tipo.Equals(Contratos_Type.APARTADO_QUINCENAL);
 		}
 		public static bool AplicaGastosIntereses(Transaction_Contratos model)
 		{
-			return !model.tipo.Equals(Contratos_Type.APARTADO_QUINCENAL.ToString());
+			return !model.tipo.Equals(Contratos_Type.APARTADO_QUINCENAL);
 		}
 
 		public static string RenderTemplate(string templateContent, object model)

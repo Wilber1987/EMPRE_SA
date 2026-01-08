@@ -30,6 +30,12 @@
             "name": ".NET Core Attach",
             "type": "coreclr",
             "request": "attach"
+        }, {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Iniciar Chrome para localhost",
+            "url": "https://localhost:7010",
+            "webRoot": "${workspaceFolder}"
         }
     ]
 }

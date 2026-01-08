@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using API.Controllers;
 using APPCORE;
 using CAPA_NEGOCIO.Util;
-using CatalogDataBaseModel;
+using Business;
 using DataBaseModel;
 
 namespace BusinessLogic.Empresa.Contratos
@@ -84,7 +84,7 @@ namespace BusinessLogic.Empresa.Contratos
             try
             {
                 var user = AuthNetCore.User(Identify);
-                var dbUser = new Security_Users { Id_User = user.UserId }.Find<Security_Users>();
+                var dbUser = new Business.Security_Users { Id_User = user.UserId }.Find<Security_Users>();
 
                 /* var actaContrato = new Transaction_Contratos
                 {
@@ -116,7 +116,7 @@ namespace BusinessLogic.Empresa.Contratos
         public Tbl_Acta_Entrega? FindTbl_Acta_Entrega(string? Identify)
         {
             var User = AuthNetCore.User(Identify);
-            var dbUser = new Security_Users { Id_User = User.UserId }.Find<Security_Users>();
+            var dbUser = new Business.Security_Users { Id_User = User.UserId }.Find<Security_Users>();
             if (User.isAdmin)
             {
                 return Find<Tbl_Acta_Entrega>();
@@ -136,7 +136,7 @@ namespace BusinessLogic.Empresa.Contratos
         public List<Tbl_Acta_Entrega>? GetTbl_Acta_Entrega(string? Identify)
         {
             var User = AuthNetCore.User(Identify);
-            var dbUser = new Security_Users { Id_User = User.UserId }.Find<Security_Users>();
+            var dbUser = new Business.Security_Users { Id_User = User.UserId }.Find<Security_Users>();
             if (User.isAdmin)
             {
                 return Get<Tbl_Acta_Entrega>();

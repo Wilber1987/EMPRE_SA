@@ -1,7 +1,7 @@
 using API.Controllers;
 using APPCORE;
 using BusinessLogic.Facturacion.Mapping;
-using CatalogDataBaseModel;
+using Business;
 
 namespace DataBaseModel
 {
@@ -29,7 +29,6 @@ namespace DataBaseModel
 				return Cantidad_Existente > 0;
 			}
 		}
-
 		[JsonProp]
 		public Transactional_Valoracion? Datos_Producto { get; set; }
 		[JsonProp]
@@ -68,7 +67,7 @@ namespace DataBaseModel
 				}
 				Tbl_Lotes? loteOriginal = new Tbl_Lotes { Id_Lote = transaccion.Id_Lote }.Find<Tbl_Lotes>();
 				var User = AuthNetCore.User(identify);
-				var dbUser = new Security_Users { Id_User = User.UserId }.Find<Security_Users>();
+				var dbUser = new Business.Security_Users { Id_User = User.UserId }.Find<Security_Users>();
 				if (loteOriginal == null || loteOriginal.Cantidad_Existente < transaccion.Cantidad)
 				{
 					return new ResponseService()
@@ -127,7 +126,7 @@ namespace DataBaseModel
 		private List<Tbl_Lotes> GetLotes(string? Identify, EstadoEnum Estado)
 		{
 			var User = AuthNetCore.User(Identify);
-			var dbUser = new Security_Users { Id_User = User.UserId }.Find<Security_Users>();
+			var dbUser = new Business.Security_Users { Id_User = User.UserId }.Find<Security_Users>();
 			if (User.isAdmin)
 			{
 				return Where<Tbl_Lotes>(

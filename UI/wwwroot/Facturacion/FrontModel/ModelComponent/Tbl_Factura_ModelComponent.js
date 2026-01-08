@@ -20,9 +20,7 @@ import { DateTime } from "../../../WDevCore/WModules/Types/DateTime.js";
 class Tbl_Factura_ModelComponent extends EntityClass {
 	constructor(props) {
 		super(props, 'EntityFacturacion');
-		for (const prop in props) {
-			this[prop] = props[prop];
-		};
+		Object.assign(this, props);;
 	}
 	/**@type {ModelProperty}*/ Id_Factura = { type: 'number', primary: true };
 	/**@type {ModelProperty}*/ Cliente = { type: 'wselect', ModelObject: () => new Catalogo_Clientes(), defaultValue: null, ForeignKeyColumn: "Id_Cliente" };
@@ -34,7 +32,7 @@ class Tbl_Factura_ModelComponent extends EntityClass {
 	};
 	//**@type {ModelProperty}*/ Concepto = { type: 'textarea' };
 	//**@type {ModelProperty}*/ Serie = { type: 'text', hidden: true  };
-	/**@type {ModelProperty}*/ Forma_Pago = { type: 'select', Dataset: ["CONTADO"] };
+	/**@type {ModelProperty}*/ Forma_Pago = { type: 'select', Dataset: ["CONTADO", "TARJETA", "TRANSFERENCIA"] };
 	//**@type {ModelProperty}*/ Direccion_Envio = { type: 'text', hidden: true  };
 	/**@type {ModelProperty}*/ Id_Cliente = { type: 'number', hidden: true };
 	/**@type {ModelProperty}*/ Id_Sucursal = { type: 'number', hidden: true };
@@ -46,15 +44,15 @@ class Tbl_Factura_ModelComponent extends EntityClass {
 				form.ModelObject.Monto_dolares.hidden = false;
 				form.ModelObject.Monto_cordobas.hidden = true;
 
-				form.ModelObject.is_cambio_cordobas.hidden = false;
-				EditObject.is_cambio_cordobas = false;
+				form.ModelObject.Is_cambio_cordobas.hidden = false;
+				EditObject.Is_cambio_cordobas = false;
 				//form?.DrawComponent();
 			} else {
 				form.ModelObject.Monto_dolares.hidden = true;
 				form.ModelObject.Monto_cordobas.hidden = false;
 
-				form.ModelObject.is_cambio_cordobas.hidden = true;
-				EditObject.is_cambio_cordobas = false;
+				form.ModelObject.Is_cambio_cordobas.hidden = true;
+				EditObject.Is_cambio_cordobas = false;
 				//form?.DrawComponent();
 			}
 		}
@@ -102,21 +100,22 @@ class Tbl_Factura_ModelComponent extends EntityClass {
 			//return ConvertToMoneyString(EditObject.cambio_cordobas = EditObject.Monto_cordobas - (EditObject.Total * EditObject.Tasa_Cambio));
 		}
 	};
-	/**@type {ModelProperty} */ is_cambio_cordobas = { type: "checkbox", require: false, hiddenFilter: true, hiddenInTable: true, label: "dar cambio en córdobas", hidden: true };
+	/**@type {ModelProperty} */ Is_cambio_cordobas = { type: "checkbox", require: false, hiddenFilter: true, hiddenInTable: true, label: "dar cambio en córdobas", hidden: true };
 
 
 	/**@type {ModelProperty}*/ Detalle_Factura = {
 		type: 'MasterDetail',
 		ModelObject: () => new Detalle_Factura_ModelComponent(),
-		action: (/**@type {Tbl_Factura}*/ EditObject, form) => this.CalculeTotal(EditObject, form),
+		action: (/**@type {Tbl_Factura}*/ EditObject, /** @type {WForm} */ form) => {
+			this.CalculeTotal(EditObject, form);
+			this.Detalle_Factura.ModelObject.Lote.Dataset = undefined;			
+		},
 		Options: {
-			Add: true,
+			Add: true,			
 			Edit: true,
 			Delete: true,
 		}
 	};
-
-
 	/**
 	 * @param {Tbl_Factura} EditObject
 	 * @param {WForm} form
@@ -125,20 +124,19 @@ class Tbl_Factura_ModelComponent extends EntityClass {
 		WAlertMessage.Clear();
 		switch (EditObject.Tipo) {
 			case "APARTADO_MENSUAL":
-				EditObject.Datos_Financiamiento = new Datos_Financiamiento();
+				EditObject.Datos_Financiamiento = EditObject.Datos_Financiamiento ?? new Datos_Financiamiento();
 				this.PrepareApartadoMensual(EditObject, form);
-
 				this.cambio_cordobas.hidden = true;
 				this.cambio_dolares.hidden = true;
-				this.is_cambio_cordobas.hidden = true;
+				this.Is_cambio_cordobas.hidden = true;
 				break;
 			case "APARTADO_QUINCENAL":
-				EditObject.Datos_Financiamiento = new Datos_Financiamiento();
+				EditObject.Datos_Financiamiento = EditObject.Datos_Financiamiento ?? new Datos_Financiamiento();
 				this.PrepareApartadoQuincenal(EditObject, form);
 
 				this.cambio_cordobas.hidden = true;
 				this.cambio_dolares.hidden = true;
-				this.is_cambio_cordobas.hidden = true;
+				this.Is_cambio_cordobas.hidden = true;
 				break;
 			default:
 				this.Datos_Financiamiento.hidden = true;
@@ -146,13 +144,17 @@ class Tbl_Factura_ModelComponent extends EntityClass {
 
 				this.cambio_cordobas.hidden = false;
 				this.cambio_dolares.hidden = false;
-				this.is_cambio_cordobas.hidden = false;
+				this.Is_cambio_cordobas.hidden = false;
 
 				break;
 		}
 		//this.CalculeTotal(EditObject, form);
 		form.SetOperationValues()
 	}
+	/**
+	 * @param {Tbl_Factura} EditObject
+	 * @param {WForm} form
+	 */
 	PrepareApartadoQuincenal(EditObject, form) {
 		//const categorias = EditObject.Detalle_Factura.flatMap(detalle => detalle.Lote.Datos_Producto.Catalogo_Categoria);
 
@@ -200,6 +202,12 @@ class Tbl_Factura_ModelComponent extends EntityClass {
 
 		this.CreateContrato(contrato, EditObject, interes, tasa);
 	}
+	/**
+	 * @param {ValoracionesTransaction} contrato
+	 * @param {Tbl_Factura} EditObject
+	 * @param {number} interes
+	 * @param {Catalogo_Cambio_Divisa} tasa
+	 */
 	CreateContrato(contrato, EditObject, interes, tasa) {
 		const totalDolares = (EditObject.Total ?? 0) - (EditObject.Monto_dolares ?? 0);
 		const totalCordobas = ((EditObject.Total ?? 0) * EditObject.Tasa_Cambio) - (EditObject.Monto_cordobas ?? 0);
@@ -269,7 +277,7 @@ class Tbl_Factura_ModelComponent extends EntityClass {
 	 */
 	CalculeCambioDolares(EditObject, form) {
 		EditObject.Monto_cordobas = parseFloat((EditObject.Monto_dolares * EditObject.Tasa_Cambio).toFixed(3));
-		console.log(EditObject.Monto_cordobas);
+		//console.log(EditObject.Monto_cordobas);
 		EditObject.cambio_dolares = parseFloat((EditObject.Monto_dolares - EditObject.Total).toFixed(3));
 		EditObject.cambio_cordobas = parseFloat((EditObject.Monto_cordobas - EditObject.Total).toFixed(3));
 		if (EditObject.Moneda == "DOLARES") {
@@ -431,7 +439,8 @@ export class Datos_Financiamiento_ModelComponent {
 		type: 'number', defaultValue: 1, min: 1,
 		pattern: '^[0-9]+$',
 		action: (/**@type {Datos_Financiamiento}*/ EditObject, /**@type {WForm}*/ form) => {
-			form.Config.ParentModel?.DrawComponent();
+			// @ts-ignore
+			//form.Config.ParentModel?.DrawComponent();
 		}
 	};
 	/**@type {ModelProperty} */ Total_Financiado = { type: 'Money', disabled: true };

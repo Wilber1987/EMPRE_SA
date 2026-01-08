@@ -7,7 +7,7 @@ using APPCORE;
 using APPCORE.Services;
 using CAPA_NEGOCIO.Services;
 using CAPA_NEGOCIO.SystemConfig;
-using CatalogDataBaseModel;
+using Business;
 using DataBaseModel;
 
 namespace UI.CAPA_NEGOCIO.Empresa.Services.Recibos
@@ -120,7 +120,7 @@ namespace UI.CAPA_NEGOCIO.Empresa.Services.Recibos
 
 				.Replace("{{ fecha_restructuracion }}", factura?.fecha?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy", new CultureInfo("es-ES")))
 				.Replace("{{ tabla_articulos }}", ContractTemplateService.GeneratePrendasTableHtml(model?.Detail_Prendas,
-					model?.tipo?.Equals(Contratos_Type.EMPENO_VEHICULO.ToString()) == true))
+					model?.tipo?.Equals(Contratos_Type.EMPENO_VEHICULO) == true))
 				.Replace("{{ tbody_amortizacion }}", ContractTemplateService.GenerateCuotesTableHtml(factura?.Factura_contrato?.Datos_Reestructuracion?.Cuotas_reestructuradas,
 					cliente, model));
 

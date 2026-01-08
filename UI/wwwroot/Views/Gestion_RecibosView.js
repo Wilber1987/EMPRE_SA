@@ -2,7 +2,7 @@
 import { Catalogo_Cambio_Divisa_ModelComponent } from "../FrontModel/DBODataBaseModel.js";
 import { Transaction_Contratos } from "../FrontModel/Model.js";
 import { StyleScrolls, StylesControlsV2, StylesControlsV3 } from "../WDevCore/StyleModules/WStyleComponents.js";
-import {  WForm } from "../WDevCore/WComponents/WForm.js";
+import { WForm } from "../WDevCore/WComponents/WForm.js";
 import { ComponentsManager, ConvertToMoneyString, html, WRender } from "../WDevCore/WModules/WComponentsTools.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 import { contratosSearcher } from "../modules/SerchersModules.js";
@@ -81,7 +81,7 @@ class Gestion_RecibosView extends HTMLElement {
         this.CuotaActual = this.ContractData.cuotasPendientes[0];
         this.CuotasPagadas = selectContrato.Tbl_Cuotas?.filter(c => c.Estado?.toUpperCase() == "CANCELADO");
         this.RecibosPagados = selectContrato.Recibos?.filter(c => c.estado?.toUpperCase() == "CANCELADO") ?? [];
-        this.UltimaCuotaPagada = this.CuotasPagadas[this.CuotasPagadas.length - 1];        
+        this.UltimaCuotaPagada = this.CuotasPagadas[this.CuotasPagadas.length - 1];
         this.UltimaReciboPagado = selectContrato.Recibos[0];
 
 
@@ -95,7 +95,7 @@ class Gestion_RecibosView extends HTMLElement {
         FinancialModule.UpdateContractData(selectContrato, this.ContractData);
         this.CuotaActual.interes = this.ContractData.InteresCorriente
 
-        /**@type {Object} */
+        /**@type {Transactional_Configuraciones?} */
         const reestructureConfig = this.Configs?.find(c => c.Nombre == "PUEDE_REESTRUCTURAR");
         this.ContractData = FinancialModule.BuildContractData(this.ContractData, reestructureConfig);
         this.reciboModel = Recibos_ModelComponent.BuildRecibosModel(this.ContractData);
@@ -109,6 +109,50 @@ class Gestion_RecibosView extends HTMLElement {
             ModelObject: this.reciboModel,
             AutoSave: false,
             EditObject: this.Recibo,
+            Groups: [
+                {
+                    Name: "Datos de recibo:", Propertys: [
+
+                        "mora_cordobas",
+                        "interes_demas_cargos_pagar_cordobas",
+                        "mora_interes_cordobas",
+                        "abono_capital_cordobas",
+                        "cuota_pagar_cordobas",
+                        "total_cordobas",
+                        "mora_dolares",
+                        "interes_demas_cargos_pagar_dolares",
+                        "mora_interes_dolares",
+                        "abono_capital_dolares",
+                        "cuota_pagar_dolares",
+                        "total_dolares",
+                        "perdida_de_documento_monto",
+                        "reestructurar_monto",
+                    ]
+                },
+                {
+                    Name: "Opciones", Propertys: [
+                        "fecha_roc",
+                        "paga_cordobas",
+                        "paga_dolares",
+                        "temporal",
+                        "cancelar",
+                        "perdida_de_documento",
+                        "solo_abono",
+                        "solo_interes_mora",
+                        "reestructurar",
+                        "total_apagar_dolares",
+                        "moneda",
+                        "reestructurar_value",
+                        "Is_cambio_cordobas",
+                        "monto_dolares",
+                        "monto_cordobas",
+                        "cambio_cordobas",
+                        "cambio_dolares",
+                        "total_apagar_cordobas"
+                    ]
+                },
+                //{Name: "Datos de recibo:", Propertys: []}
+            ],
             //Options: false,
             // @ts-ignore
             id: "reciboForm",
@@ -116,7 +160,7 @@ class Gestion_RecibosView extends HTMLElement {
             SaveFunction: async (/**@type {Recibos} */ recibo, form) => {
 
                 if (!this.reciboForm?.Validate()) {
-                    WAlertMessage.Warning("Agregue datos para poder continuar"); 
+                    WAlertMessage.Warning("Agregue datos para poder continuar");
                     return;
                 }
                 const nuevoRecibo = new Recibos(this.reciboForm?.FormObject);
@@ -198,7 +242,7 @@ class Gestion_RecibosView extends HTMLElement {
             tagName: 'button', className: 'Block-Primary', innerText: 'Recibo',
             onclick: () => {
                 if (this.ContractData.Contrato.numero_contrato == undefined) {
-                    WAlertMessage.Connect({ Message: "Seleccione un contrato", Type: "warning" });                  
+                    WAlertMessage.Connect({ Message: "Seleccione un contrato", Type: "warning" });
                     return;
                 }
                 this.Manager.NavigateFunction("valoraciones", this.valoracionesContainer);
@@ -208,7 +252,7 @@ class Gestion_RecibosView extends HTMLElement {
             tagName: 'button', className: 'Block-Tertiary', innerText: 'Proyección de pago',
             onclick: () => {
                 if (this.ContractData.Contrato.numero_contrato == undefined) {
-                    WAlertMessage.Connect({ Message: "Seleccione un contrato", Type: "warning" });    
+                    WAlertMessage.Connect({ Message: "Seleccione un contrato", Type: "warning" });
                     return;
                 }
                 this.setProyeccion();
@@ -236,7 +280,7 @@ class Gestion_RecibosView extends HTMLElement {
         reciboModel.perdida_de_documento.hidden = true;
         reciboModel.solo_abono.hidden = true;
         reciboModel.solo_interes_mora.hidden = true;
-        reciboModel.is_cambio_cordobas.hidden = true;
+        reciboModel.Is_cambio_cordobas.hidden = true;
         reciboModel.perdida_de_documento_monto.hidden = true;
         reciboModel.cancelar.hidden = false;
         reciboModel.fecha_roc.hidden = true;
@@ -245,6 +289,7 @@ class Gestion_RecibosView extends HTMLElement {
         reciboModel.paga_cordobas.disabled = true;
         reciboModel.paga_dolares.disabled = true;
         reciboModel.total_apagar_dolares.hidden = true;
+        reciboModel.total_apagar_cordobas.hidden = true;
         reciboModel.monto_dolares.hidden = true;
         reciboModel.monto_cordobas.hidden = true;
         reciboModel.cambio_dolares.hidden = true;
@@ -296,9 +341,9 @@ class Gestion_RecibosView extends HTMLElement {
                 //console.log(diasMora);
                 this.proyeccionDetail.innerHTML = "";
                 // @ts-ignore
-                if (diasMora >  this.vencimientoConfig ?? 0) {
+                if (diasMora > this.vencimientoConfig ?? 0) {
                     this.proyeccionDetail.appendChild(html`<div class="proyeccion-container-detail">
-                        <label class="value-container">NO ES POSIBLE PROYECTAR A MAS DE ${ this.vencimientoConfig} DÍAS</label>
+                        <label class="value-container">NO ES POSIBLE PROYECTAR A MAS DE ${this.vencimientoConfig} DÍAS</label>
                     </div>`);
                     return;
                 }
@@ -311,7 +356,7 @@ class Gestion_RecibosView extends HTMLElement {
                 recibo.total_cordobas = (recibo.tasa_cambio * recibo.total_dolares).toFixed(3);
                 proyeccionContractData.cuotasPendientes[0].mora = montoMora
                 Recibos_ModelComponent.DefineMaxAndMinInForm(form, proyeccionContractData);
-                
+
                 this.proyeccionDetail.appendChild(html`<div class="proyeccion-container-detail">
                     <label class="value-container">
                         DÍAS DE MORA:
@@ -532,6 +577,10 @@ class Gestion_RecibosView extends HTMLElement {
         }
     `;
 
+    /**
+     * @param {{ fecha: string | number | Date; total: number; }} cuota
+     * @param {{ mora: any; }} contrato
+     */
     forceMora(cuota, contrato) {
         const fechaOriginal = new Date(cuota.fecha);
         // @ts-ignore
@@ -558,7 +607,7 @@ class Gestion_RecibosView extends HTMLElement {
                 <div>
                     <div class="DataContainer">
                         <span>Nombre:</span>
-                        <label>${selectContrato.Catalogo_Clientes.primer_nombre  + ' ' + selectContrato.Catalogo_Clientes.segundo_nombre  + ' ' + selectContrato.Catalogo_Clientes.primer_apellido  + ' ' + selectContrato.Catalogo_Clientes.segundo_apellidio   }
+                        <label>${selectContrato.Catalogo_Clientes.primer_nombre + ' ' + selectContrato.Catalogo_Clientes.segundo_nombre + ' ' + selectContrato.Catalogo_Clientes.primer_apellido + ' ' + selectContrato.Catalogo_Clientes.segundo_apellidio}
                     </label>
                     </div>
                     <div class="DataContainer">
@@ -582,27 +631,27 @@ class Gestion_RecibosView extends HTMLElement {
                     <div class="DataContainer">
                         <span>Fecha de contrato:</span>
                         <label>${// @ts-ignore
-                            selectContrato.fecha?.toDateFormatEs() ?? "-"}</label>
+            selectContrato.fecha?.toDateFormatEs() ?? "-"}</label>
                     </div>
                     <div class="DataContainer">
                         <span>F/Último pago:</span>
                         <label>${ // @ts-ignore 
-                        this.UltimaReciboPagado?.fecha?.toDateFormatEs() ?? "-"}</label>
+            this.UltimaReciboPagado?.fecha?.toDateFormatEs() ?? "-"}</label>
                     </div>
                     <div class="DataContainer">
                         <span>F/Última actualización:</span>
                         <label>${ // @ts-ignore 
-                        this.UltimaCuotaPagada?.fecha?.toDateFormatEs() ?? "-"}</label>
+            this.UltimaCuotaPagada?.fecha?.toDateFormatEs() ?? "-"}</label>
                     </div>
                     <div class="DataContainer">
                         <span>F/Próximo pago:</span>
                         <label>${  // @ts-ignore 
-                            this.CuotaActual?.fecha?.toDateFormatEs() ?? "-"}</label>
+            this.CuotaActual?.fecha?.toDateFormatEs() ?? "-"}</label>
                     </div>
                     <div class="DataContainer">
                         <span>Fecha de cancelación:</span>
                         <label>${// @ts-ignore
-                            this.Contrato?.fecha_cancelar?.toDateFormatEs() ?? "-"}</label>
+            this.Contrato?.fecha_cancelar?.toDateFormatEs() ?? "-"}</label>
                     </div>
                </div>
                <div>
@@ -639,7 +688,7 @@ class Gestion_RecibosView extends HTMLElement {
                     </div>
                     <div class="DataContainer">
                         <span>Reestructuraciones:</span>
-                        <label>${selectContrato.reestructurado ?? "-" }</label>
+                        <label>${selectContrato.reestructurado ?? "-"}</label>
                     </div>  
                     <div class="DataContainer">
                         <span>Tasa de cambio compra:</span>
@@ -658,31 +707,29 @@ class Gestion_RecibosView extends HTMLElement {
     }
     CustomFormStyle() {
         return css`
-                .mora_cordobas, .mora_dolares{
-                    color: red !important;
-                } .divForm{
-                    display: grid;
-                    grid-template-columns: repeat(4, calc(24% - 15px));
-                    grid-template-rows: repeat(3, auto);
-                    grid-auto-flow: column;
-                } .ModalElement:nth-child(n + 1):nth-child(-n + 8) {
-                    grid-column: 1/2 !important;
-                } .ModalElement:nth-child(n + 9):nth-child(-n + 15) {                    
-                    grid-column: 2/3 !important;
-                } .ModalElement:nth-child(n + 16):nth-child(-n + 23) {
-                    grid-column: 3/4 !important;
-                }.ModalElement:nth-child(n + 24):nth-child(-n + 32) {
-                    grid-column: 4/5 !important;
-                }  .ModalElement.TITLE:nth-child(1) {
-                    grid-column: 1/3 !important;
-                } .ModalElement.TITLE:nth-child(16){
-                    grid-column: 3/5 !important;
-                } .ModalElement label {
+            .ContainerFormWModal {
+                display: flex;
+                .div {
+                    flex: 1;
+                }
+                .div.formulario {
+                    display: none;
+                }
+                .inputTitle, .password-container label {
+                    padding: 2px;
                     display: block;
-                    width: 100%;
-                    margin: 0px;
-                }`;
+                    text-align: left;
+                    margin: 5px 0 5px 0;
+                    font-size: 12px;
+                    color: var(--font-secundary-color);
+                }
+                .RADIO  {grid-column: span 2}
+            }
+        `;
     }
+    /**
+     * @param {any} body
+     */
     printRecibo(body) {
         const objFra = WRender.Create({
             tagName: "iframe",

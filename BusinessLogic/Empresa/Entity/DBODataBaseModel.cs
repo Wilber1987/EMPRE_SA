@@ -1,7 +1,7 @@
 
 using APPCORE;
 using CAPA_NEGOCIO.Util;
-using CatalogDataBaseModel;
+using Business;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Model;
 using System;
@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Transactions;
 namespace DataBaseModel
 {
 
@@ -224,7 +225,7 @@ namespace DataBaseModel
 		public int? id_sucursal { get; set; } 
 		public int? Id_cuenta_origen { get; set; }
 		public int? Id_cuenta_destino { get; set; }
-
+		public TipoMovimiento? Tipo_Movimiento { get; set; }
 
 		[OneToMany(TableName = "Detail_Movimiento", KeyColumn = "id_movimiento", ForeignKeyColumn = "id_movimiento")]
 		public List<Detail_Movimiento>? Detail_Movimiento { get; set; }

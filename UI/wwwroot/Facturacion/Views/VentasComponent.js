@@ -6,6 +6,7 @@ import { ModalMessage } from "../../WDevCore/WComponents/ModalMessage.js";
 import { ModalVericateAction } from "../../WDevCore/WComponents/ModalVericateAction.js";
 import { WAlertMessage } from "../../WDevCore/WComponents/WAlertMessage.js";
 import { WForm } from "../../WDevCore/WComponents/WForm.js";
+import { ResponseServices } from "../../WDevCore/WModules/CommonModel.js";
 import { ComponentsManager, ConvertToMoneyString, html, WRender } from "../../WDevCore/WModules/WComponentsTools.js";
 import { WOrtograficValidation } from "../../WDevCore/WModules/WOrtograficValidation.js";
 import { css } from "../../WDevCore/WModules/WStyledRender.js";
@@ -21,7 +22,7 @@ import { Tbl_Lotes } from "../FrontModel/Tbl_Lotes.js";
  * @property {Tbl_Factura} [Entity] - Optional entity object
  * @property {Boolean} [IsReturn] - Optional entity object
  * @property {Boolean} [IsActiveCredit] - Optional entity object
- * @property {{ IsDevolucion: boolean, MaxAmount: Number, MinAmount: Number, ArticulosRemplazados: Array,  IsAllArticulosRemplazados: boolean}} [ReturnData]
+ * @property {{ IsDevolucion: boolean, MaxAmount: Number, MinAmount: Number, ArticulosRemplazados: Array<any>,  IsAllArticulosRemplazados: boolean}} [ReturnData]
  */
 
 class VentasComponent extends HTMLElement {
@@ -73,7 +74,7 @@ class VentasComponent extends HTMLElement {
                         "Monto_cordobas",
                         "cambio_dolares",
                         "cambio_cordobas",
-                        "is_cambio_cordobas"
+                        "Is_cambio_cordobas"
                     ],  // Propiedades que pertenecen a este grupo
                     WithAcordeon: false  // Si el grupo debe mostrarse como un acordeón
                 }, {
@@ -101,6 +102,9 @@ class VentasComponent extends HTMLElement {
             this.TotalesDetail
         );
     }
+    /**
+     * @param {Tbl_Factura} factura
+     */
     async SaveVenta(factura) {
         if (!this.FacturaForm?.Validate()) {
             WAlertMessage.Warning("Agregue datos para poder continuar");
@@ -115,10 +119,11 @@ class VentasComponent extends HTMLElement {
         }
         this.append(ModalVericateAction(async () => {
 
-            let response = { status: 400 };
+            let response = new ResponseServices({ status: 400 });
             if (this.Config.saveAction) {
                 response = await this.Config.saveAction(new Tbl_Factura(factura));
             } else {
+                // @ts-ignore
                 response = await new Tbl_Factura(factura).Save();
             }
             if (response.status == 200) {
@@ -223,19 +228,18 @@ class VentasComponent extends HTMLElement {
             ventasModel.Tipo.Dataset = ["VENTA"];
         }
         if (this.Config.ReturnData?.IsDevolucion == true) {
-            ventasModel.Cliente.hidden = true;
-            if (this.Config.ReturnData?.IsAllArticulosRemplazados == true) {
-                ventasModel.Detalle_Factura.Options = {}
+            ventasModel.Cliente.hidden = true;            
+            ventasModel.Moneda.hidden = true;            
+            ventasModel.Detalle_Factura.ModelObject.Descuento.hidden = true;   
+            if (this.Config.ReturnData?.IsAllArticulosRemplazados == true) {             
                 ventasModel.Monto_dolares.hidden = true;
                 ventasModel.Monto_cordobas.hidden = true;
                 ventasModel.cambio_dolares.hidden = true;
                 ventasModel.cambio_cordobas.hidden = true;
-                ventasModel.is_cambio_cordobas.hidden = true;
+                ventasModel.Is_cambio_cordobas.hidden = true;
+                ventasModel.Detalle_Factura.Options = {}
             }
         }
-
-
-
         return ventasModel;
     }
     /**
@@ -245,13 +249,10 @@ class VentasComponent extends HTMLElement {
      */
     CalculeTotal = (EditObject, form, ventasModel) => {
         try {
-            //ventasModel.TypeAction(EditObject, form);
-            //** @type {Tbl_Factura} */
-            //const response = ventasModel.CalculeTotal(EditObject, form);
             this.TotalesDetailUpdate(EditObject.Sub_Total ?? 0, EditObject.Iva ?? 0, EditObject.Total ?? 0, EditObject.Descuento ?? 0);
-            //form.DrawComponent();
         } catch (error) {
             console.error(error);
+            // @ts-ignore
             WAlertMessage.Danger(error);
         }
     }

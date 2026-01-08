@@ -1,5 +1,6 @@
 //@ts-check
 import { Catalogo_Cambio_Divisa } from "../../FrontModel/Catalogo_Cambio_Divisa.js";
+import { Catalogo_Estados_Articulos } from "../../FrontModel/DBODataBaseModel.js";
 import { EntityClass } from "../../WDevCore/WModules/EntityClass.js";
 import { Cat_Almacenes } from './Cat_Almacenes.js';
 import { Cat_Producto } from "./Cat_Producto.js";
@@ -12,9 +13,7 @@ class Tbl_Lotes extends EntityClass {
 	*/
 	constructor(props) {
 		super(props, 'TransactionLotes');
-		for (const prop in props) {
-			this[prop] = props[prop];
-		};
+		Object.assign(this, props);;
 	}
 	/**@type {Number}*/ Id_Lote;
 	/**@type {Number}*/ Id_Producto;
@@ -34,7 +33,8 @@ class Tbl_Lotes extends EntityClass {
 	/**@type {EtiquetaLote} */ EtiquetaLote;
 	/**@type {Detalle_Compra} */ Detalle_Compra;
 	/**@type {Boolean}*/ IsActivo;
-	/**@type {String}*/ Estado
+	/**@type {String}*/ Estado;
+	
 	async DarDeBaja(/**@type {Tbl_Transaccion}*/Transaction) {
 		return await this.SaveData("ApiTransactionLotes/DarDeBaja", Transaction)
 	}
@@ -44,18 +44,20 @@ class Tbl_Lotes extends EntityClass {
 	/**@type {String}*/  get Descripcion() {
 		return `${this.Detalle_Compra.Cat_Producto.Descripcion}`;
 	}
+	/**@type {String}*/  get Estado_Producto() {
+		console.log(this.Datos_Producto.Catalogo_Estados_Articulos.nombre);
+		
+		return `${this.Datos_Producto.Catalogo_Estados_Articulos.nombre}`;
+	}
 }
 export { Tbl_Lotes };
 class Transactional_Valoracion extends EntityClass {
-	/**
-	 * 
-	 * @param {Partial<Transactional_Valoracion>} props 
+	 /** 
+	 * @param {Partial<Transactional_Valoracion>} [props] 
 	 */
 	constructor(props) {
 		super(props, 'TransactionLotes');
-		for (const prop in props) {
-			this[prop] = props[prop];
-		}
+		Object.assign(this, props);
 	}
 	/** @type {Number} */ id_valoracion;
 	/** @type {String} */ Descripcion;
@@ -71,15 +73,20 @@ class Transactional_Valoracion extends EntityClass {
 	/** @type {Number} */ Valoracion_compra_dolares;
 	/** @type {Number} */ Valoracion_empeño_cordobas;
 	/** @type {Number} */ Valoracion_empeño_dolares;
-	/** @type {Object} */ Catalogo_Estados_Articulos;
+	/** @type {Catalogo_Estados_Articulos} */ Catalogo_Estados_Articulos;
 	/** @type {Number} */ Precio_venta_empeño_cordobas;
-	/** @type {Number} */ Precio_venta_empeño_dolares;
-	/** @type {Detail_Valores} */
-	Detail_Valores;
+	/** @type {Number} */ Precio_venta_empeño_cordobas;
+	/** @type {Number} */ id_estado;
+	/** @type {Detail_Valores} */ Detail_Valores;
 
 	GuardarValoraciones = async (valoraciones) => {
 		return await this.SaveData("Transactional_Valoracion/GuardarValoraciones", { valoraciones: valoraciones })
 	}
+	requireReValoracion(dias = 40) {
+        // @ts-ignore
+        return new Date().subtractDays(dias) > new Date(this.Fecha);
+    }
+
 }
 class Detail_Valores {
 	/** @type {Number} */Valoracion_1;

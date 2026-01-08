@@ -5,9 +5,7 @@ import { Detalle_Compra } from './Detalle_Compra.js'
 class Tbl_Compra extends EntityClass {
     constructor(props) {
         super(props, 'EntityFacturacion');
-        for (const prop in props) {
-            this[prop] = props[prop];
-        };
+        Object.assign(this, props);
     }
    /**@type {Number}*/ Id_Compra;
    /**@type {Datos_Compra}*/ Datos_Compra;

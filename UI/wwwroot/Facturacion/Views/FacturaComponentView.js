@@ -112,6 +112,7 @@ class FacturaComponentView extends HTMLElement {
     VerFacturasRealizadas() {
         return new WTableComponent({
             ModelObject: new Tbl_Factura_ModelComponent(),
+            EntityModel: new Tbl_Factura(),
             Options: {
                 Filter: true,
                 UserActions: [

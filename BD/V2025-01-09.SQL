@@ -29,5 +29,11 @@ ALTER TABLE EMPRE_SA.facturacion.Tbl_Compra ADD Observaciones nvarchar(MAX) NULL
 ALTER TABLE EMPRE_SA.facturacion.Tbl_Factura ADD Motivo_Anulacion nvarchar(500) NULL;
 ALTER TABLE EMPRE_SA.facturacion.Tbl_Compra ADD Motivo_Anulacion nvarchar(500) NULL;
 
-
 ALTER TABLE EMPRE_SA.dbo.Catalogo_Cuentas ADD Transacciones_Permitidas nvarchar(MAX) NULL;
+
+ALTER TABLE EMPRE_SA.dbo.Transaction_Movimiento ADD Tipo_Movimiento nvarchar(100) NULL;
+
+ALTER TABLE EMPRE_SA.dbo.Detail_Movimiento ADD CONSTRAINT Detail_Movimiento_FK 
+FOREIGN KEY (id_movimiento) REFERENCES EMPRE_SA.dbo.Transaction_Movimiento(id_movimiento);
+
+--END: EN SERVIDOR

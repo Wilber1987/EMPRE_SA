@@ -124,6 +124,7 @@ class GestionCuentaComponent extends HTMLElement {
         const model = new Movimiento_ModelComponent();
         const detail = WRender.Create({ className: "detail" });
         const filterModel = new Detail_Movimiento_ModelComponent({
+            id_movimiento: undefined,
             id_cuenta: cuenta.id_cuentas,
             debito: undefined,
             credito: undefined,

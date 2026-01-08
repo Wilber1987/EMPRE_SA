@@ -14,6 +14,7 @@ import { WDetailObject } from "../WDevCore/WComponents/WDetailObject.js";
 import { FilterData } from "../WDevCore/WModules/CommonModel.js";
 import { ModalMessage } from "../WDevCore/WComponents/ModalMessage.js";
 import { DateTime } from "../WDevCore/WModules/Types/DateTime.js";
+import { SystemConfigs } from "../Services/SystemConfigs.js";
 class ValoracionesSearch extends HTMLElement {
     constructor(/** @type {Function} */ action,/** @type {Function|undefined} */ secondAction,/** @type {Boolean} */ onlyValids = false) {
         super();
@@ -26,6 +27,7 @@ class ValoracionesSearch extends HTMLElement {
     }
     DrawComponent = async () => {
         const model = new Transactional_Valoracion_ModelComponent({ requiere_valoracion: { type: "TEXT", hiddenFilter: true } });
+        const requiere_valoracion = parseFloat((await SystemConfigs.FindByName("VENCIMIENTO_VALORACION"))?.Valor ?? "40")
         if (this.onlyValids) {
             // @ts-ignore`
             model.FilterData.push(FilterData.Greater("Fecha",new DateTime().subtractDays(40).toISO() ) );
@@ -39,7 +41,7 @@ class ValoracionesSearch extends HTMLElement {
             ModelObject: model,
             Dataset: dataset.map(/**@param {Transactional_Valoracion_ModelComponent} x*/ x => {
                 // @ts-ignore
-                x.requiere_valoracion = x.requireReValoracion() ? "SI" : "NO";
+                x.requiere_valoracion = x.requireReValoracion(requiere_valoracion) ? "SI" : "NO";
                 return x;
             }),
             Options: {

@@ -6,7 +6,7 @@ using API.Controllers;
 using APPCORE;
 using BusinessLogic.Empresa.Contratos;
 using CAPA_NEGOCIO.Util;
-using CatalogDataBaseModel;
+using Business;
 using Transactions;
 
 namespace DataBaseModel
@@ -78,13 +78,12 @@ namespace DataBaseModel
 
 		//[OneToMany(TableName = "Transaccion_Factura", KeyColumn = "numero_contrato", ForeignKeyColumn = "numero_contrato")]
 		public List<Transaccion_Factura>? Recibos { get; set; }
-		public ResponseService Anular(string seasonKey, bool anularIgnoreTransactions = false, bool anularFullCost = false)
+		public ResponseService Anular(string Identify, bool anularIgnoreTransactions = false, bool anularFullCost = false)
 		{
 			try
 			{
 				//BeginGlobalTransaction();
-				var User = AuthNetCore.User(seasonKey);
-				var dbUser = new Security_Users { Id_User = User.UserId }.Find<Security_Users>();
+				var  (User, dbUser) =  Business.Security_Users.GetUserData(Identify);
 				Transaction_Contratos? Transaction_Contratos = new Transaction_Contratos
 				{
 					numero_contrato = this.numero_contrato
@@ -105,7 +104,7 @@ namespace DataBaseModel
 				Transaction_Contratos.motivo_anulacion = this.motivo_anulacion;
 				Transaction_Contratos.estado = Contratos_State.ANULADO;
 				Transaction_Contratos.Update();
-				//CommitGlobalTransaction();
+				//ANULAR
 				var cuentaOrigen = Catalogo_Cuentas.GetCuentaRegistoContratos(dbUser);
 				var cuentaDestino = Catalogo_Cuentas.GetCuentaEgresoContratos(dbUser);
 				Transaction_Movimiento? movimientosAnterior = new Transaction_Movimiento().Find<Transaction_Movimiento>(
@@ -121,8 +120,9 @@ namespace DataBaseModel
 					monto = movimientosAnterior?.moneda == "CORDOBAS" ? Transaction_Contratos.Valoracion_empeño_cordobas : Transaction_Contratos.monto,
 					tasa_cambio = Transaction_Contratos.taza_cambio,
 					tasa_cambio_compra = Transaction_Contratos.taza_cambio_compra,
-					is_transaction = true
-				}.SaveMovimiento(seasonKey);
+					is_transaction = true,
+					Tipo_Movimiento = TipoMovimiento.REEMBOLSO_POR_CONTRATO_ANULADO
+				}.SaveMovimiento(dbUser);
 				return new ResponseService { status = 200, message = "Contrato anulado correctamente" };
 			}
 			catch (Exception ex)

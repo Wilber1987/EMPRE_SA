@@ -16,81 +16,60 @@ class Recibos_ModelComponent extends EntityClass {
         /**@type {ModelProperty} */ this.cambio_cordobas = undefined;
         // @ts-ignore
         /**@type {ModelProperty} */ this.cambio_dolares = undefined;
-        for (const prop in props) {
-            this[prop] = props[prop];
-        };
+        Object.assign(this, props);
 
     }
+
     /**@type {ModelProperty} */ numero_contrato = { type: "number", disabled: true, hidden: true };
-    /**@type {ModelProperty} */ title2 = { type: "title", label: "Datos de recibo:" };
     /**@type {ModelProperty} */ fecha = {
         type: "date", hidden: true
     };
     /**@type {ModelProperty} */ id_recibo = { type: "number", primary: true };
     /**@type {ModelProperty} */ consecutivo = { type: "number", hidden: true, require: false };
+    
+    
     /**@type {ModelProperty} */ mora_cordobas = { type: "MONEY", hiddenInTable: true, disabled: true };
-    /**@type {ModelProperty} */ interes_demas_cargos_pagar_cordobas = { type: "MONEY", hiddenInTable: true, disabled: true, label: "Interes C$" };
-    /**@type {ModelProperty} */ mora_interes_cordobas = { type: "MONEY", hiddenInTable: true, disabled: true, label: "Interes + Mora C$" };
-    /**@type {ModelProperty} */ abono_capital_cordobas = { type: "MONEY", hiddenInTable: true, disabled: true };
-    /**@type {ModelProperty} */ cuota_pagar_cordobas = { type: "MONEY", hiddenInTable: true, disabled: true };
-    /**@type {ModelProperty} */ total_cordobas = { type: "MONEY", hiddenInTable: true, disabled: true };
-    /**@type {ModelProperty} */ perdida_de_documento_monto = { type: "MONEY", disabled: true, defaultValue: 0, require: false };
+    /**@type {ModelProperty} */ mora_dolares = { type: "MONEY", hiddenInTable: true, disabled: true };   
 
-    /**@type {ModelProperty} */ mora_dolares = { type: "MONEY", hiddenInTable: true, disabled: true };
+    
+    /**@type {ModelProperty} */ interes_demas_cargos_pagar_cordobas = { type: "MONEY", hiddenInTable: true, disabled: true, label: "Interes C$" };
     /**@type {ModelProperty} */ interes_demas_cargos_pagar_dolares = { type: "MONEY", hiddenInTable: true, disabled: true, label: "Interes $" };
+        
+    /**@type {ModelProperty} */ mora_interes_cordobas = { type: "MONEY", hiddenInTable: true, disabled: true, label: "Interes + Mora C$" };
     /**@type {ModelProperty} */ mora_interes_dolares = { type: "MONEY", hiddenInTable: true, disabled: true, label: "Interes + Mora $" };
+    
+    /**@type {ModelProperty} */ abono_capital_cordobas = { type: "MONEY", hiddenInTable: true, disabled: true };
     /**@type {ModelProperty} */ abono_capital_dolares = { type: "MONEY", hiddenInTable: true, disabled: true };
+    
+    
+    /**@type {ModelProperty} */ cuota_pagar_cordobas = { type: "MONEY", hiddenInTable: true, disabled: true };
     /**@type {ModelProperty} */ cuota_pagar_dolares = { type: "MONEY", hiddenInTable: true, disabled: true };
+   
+    
+    /**@type {ModelProperty} */ total_cordobas = { type: "MONEY", hiddenInTable: true, disabled: true };
     /**@type {ModelProperty} */ total_dolares = { type: "MONEY", hiddenInTable: true, disabled: true };
+        
+    
+    /**@type {ModelProperty} */ perdida_de_documento_monto = { type: "MONEY", disabled: true, defaultValue: 0, require: false };  
     /**@type {ModelProperty} */ reestructurar_monto = { type: "MONEY", disabled: true, defaultValue: 0, require: false };
     /**@type {ModelProperty} */ //total_parciales = { type: "number", hiddenInTable: true, disabled: true };
+   
+   
     /**@type {ModelProperty} */ fecha_roc = { type: "date", disabled: true, hidden: true };
-    /**@type {ModelProperty} */ title3 = { type: "title", label: "Opciones:" };
-    /**@type {ModelProperty} */ paga_cordobas = { type: "number", hiddenInTable: true };
-    /**@type {ModelProperty} */ paga_dolares = { type: "number", hiddenInTable: true };
-    /**@type {ModelProperty} */ temporal = { type: "checkbox", require: false };
-    /**@type {ModelProperty} */ cancelar = { type: "checkbox", hiddenInTable: true, require: false };
-    /**@type {ModelProperty} */ perdida_de_documento = {
-        type: "checkbox", hiddenInTable: true, require: false, action: (recibo, form) => {
-            if (recibo.perdida_de_documento == true) {
-                recibo.perdida_de_documento_monto = 1;
-            } else {
-                recibo.perdida_de_documento_monto = 0;
-            }
-            form.DrawComponent();
-        }
-    };
-    /**@type {ModelProperty} */ solo_abono = { type: "checkbox", hiddenInTable: true, require: false };
-
-    /**@type {ModelProperty} */ solo_interes_mora = {
-        type: "checkbox", require: false,
-        label: "Solo interés+mora",
-        action: (recibo, form) => { }
-    };
-    /**@type {ModelProperty} */ reestructurar = {
-        type: "checkbox", hidden: true, require: false,
-        action: (recibo, form) => {
-            if (recibo.reestructurar == true) {
-                this.reestructurar_value.hidden = false;
-                //this.reestructurar_monto.hidden = false;  
-                recibo.reestructurar_monto = 1;
-            } else {
-                this.reestructurar_value.hidden = true;
-                //this.reestructurar_monto.hidden = true; 
-                recibo.reestructurar_monto = 0;
-            }
-            form.DrawComponent();
-        }
-    };
-    /**@type {ModelProperty} */ total_apagar_dolares = {
-        type: "text", disabled: true, action: (recibo, form) => {
-
-        }
-    };
 
     /**@type {ModelProperty} */ moneda = { type: "radio", Dataset: ["DOLARES", "CORDOBAS"] };
+  
+   
+    
+    /**@type {ModelProperty} */ paga_cordobas = { type: "number", hiddenInTable: true };
+    /**@type {ModelProperty} */ paga_dolares = { type: "number", hiddenInTable: true };
+   
+    
+    /**@type {ModelProperty} */ total_apagar_cordobas = { type: "text", disabled: true };   
+    /**@type {ModelProperty} */ total_apagar_dolares = { type: "text", disabled: true };
+
+    
     /**@type {ModelProperty} */ reestructurar_value = { type: "number", label: "meses a reestructurar", placeholder: "número de meses ejm. 1", hidden: true, min: 1, require: true };
-    /**@type {ModelProperty} */ is_cambio_cordobas = { type: "checkbox", require: false, label: "dar cambio en córdobas", hidden: false };
 
 
     VerRecibo = async () => {
@@ -279,8 +258,8 @@ class Recibos_ModelComponent extends EntityClass {
                         form.ModelObject.paga_cordobas.disabled = true;
                         form.ModelObject.paga_dolares.disabled = false;
 
-                        form.ModelObject.is_cambio_cordobas.hidden = false;
-                        ObjectF.is_cambio_cordobas = false;
+                        form.ModelObject.Is_cambio_cordobas.hidden = false;
+                        ObjectF.Is_cambio_cordobas = false;
                         ObjectF.cambio_cordobas = ((ObjectF.monto_dolares - ObjectF.paga_dolares) * contractData.tasasCambio[0].Valor_de_compra).toFixed(3);
                         form?.DrawComponent();
                     } else {
@@ -290,8 +269,8 @@ class Recibos_ModelComponent extends EntityClass {
                         form.ModelObject.paga_cordobas.disabled = false;
                         form.ModelObject.paga_dolares.disabled = true;
 
-                        form.ModelObject.is_cambio_cordobas.hidden = true;
-                        ObjectF.is_cambio_cordobas = false;
+                        form.ModelObject.Is_cambio_cordobas.hidden = true;
+                        ObjectF.Is_cambio_cordobas = false;
                         ObjectF.cambio_cordobas = (ObjectF.monto_cordobas - ObjectF.paga_cordobas).toFixed(3);
                         form?.DrawComponent();
                     }
@@ -307,6 +286,7 @@ class Recibos_ModelComponent extends EntityClass {
         FinancialModule.UpdateContractData(contractData.Contrato, contractData);
         form.FormObject.paga_dolares = contractData.pagoActual?.toFixed(3);
         form.FormObject.total_apagar_dolares = contractData.pagoActual?.toFixed(3);
+        form.FormObject.total_apagar_cordobas = contractData.pagoActualCordobas?.toFixed(3);
         form.FormObject.paga_cordobas = contractData.pagoActualCordobas?.toFixed(3);
         form.FormObject.monto_dolares = contractData.pagoActual?.toFixed(3);
         form.FormObject.monto_cordobas = contractData.pagoActualCordobas?.toFixed(3);
@@ -323,5 +303,43 @@ class Recibos_ModelComponent extends EntityClass {
 
         form.DrawComponent();
     }
+    /**@type {ModelProperty} */ cancelar = { type: "checkbox", hiddenInTable: true, require: false };    
+    
+
+     /**@type {ModelProperty} */ perdida_de_documento = {
+        type: "checkbox", hiddenInTable: true, require: false, action: (recibo, form) => {
+            if (recibo.perdida_de_documento == true) {
+                recibo.perdida_de_documento_monto = 1;
+            } else {
+                recibo.perdida_de_documento_monto = 0;
+            }
+            form.DrawComponent();
+        }
+    };
+    /**@type {ModelProperty} */ solo_abono = { type: "checkbox", hiddenInTable: true, require: false };
+
+    /**@type {ModelProperty} */ solo_interes_mora = {
+        type: "checkbox", require: false,
+        label: "Solo interés+mora",
+        action: (recibo, form) => { }
+    };
+    /**@type {ModelProperty} */ reestructurar = {
+        type: "checkbox", hidden: true, require: false,
+        action: (recibo, form) => {
+            if (recibo.reestructurar == true) {
+                this.reestructurar_value.hidden = false;
+                //this.reestructurar_monto.hidden = false;  
+                recibo.reestructurar_monto = 1;
+            } else {
+                this.reestructurar_value.hidden = true;
+                //this.reestructurar_monto.hidden = true; 
+                recibo.reestructurar_monto = 0;
+            }
+            form.DrawComponent();
+        }
+    };
+    /**@type {ModelProperty} */ temporal = { type: "checkbox", require: false };
+    /**@type {ModelProperty} */ Is_cambio_cordobas = { type: "checkbox", require: false, label: "dar cambio en córdobas", hidden: false };
+
 }
 export { Recibos_ModelComponent };

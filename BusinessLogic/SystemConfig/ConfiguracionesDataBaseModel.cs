@@ -169,7 +169,7 @@ namespace DataBaseModel
 	}
 	public enum ConfiguracionesVencimientos
 	{
-		VENCIMINETO_VALORACION, VENCIMIENTO_CONTRATO
+		VENCIMIENTO_VALORACION, VENCIMIENTO_CONTRATO
 	}
 
 	public class Config

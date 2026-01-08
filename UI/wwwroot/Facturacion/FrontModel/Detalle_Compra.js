@@ -6,9 +6,7 @@ import { Tbl_Lotes }  from './Tbl_Lotes.js'
 class Detalle_Compra extends EntityClass {
    constructor(props) {
        super(props, 'EntityFacturacion');
-       for (const prop in props) {
-           this[prop] = props[prop];
-       };
+       Object.assign(this, props);;
        this.Aplica_Iva = undefined;
        this.Precio_Venta = undefined;
    }

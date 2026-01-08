@@ -51,7 +51,7 @@ INSERT INTO EMPRE_SA.administrative_access.Transactional_Configuraciones
 VALUES(N'VENCIMIENTO_CONTRATO', N'Número de días en los que se vence un contrato', N'20', N'NUMBER');
 INSERT INTO EMPRE_SA.administrative_access.Transactional_Configuraciones
 (Nombre, Descripcion, Valor, Tipo_Configuracion)
-VALUES(N'VENCIMINETO_VALORACION', N'Número de dás en las que vence una valoración', N'40', N'NUMBER');
+VALUES(N'VENCIMIENTO_VALORACION', N'Número de dás en las que vence una valoración', N'40', N'NUMBER');
 
 INSERT INTO EMPRE_SA.administrative_access.Transactional_Configuraciones
 ( Nombre, Descripcion, Valor, Tipo_Configuracion)

@@ -7,7 +7,7 @@ using CAPA_NEGOCIO.Services;
 using System.Text;
 using APPCORE.Security;
 using APPCORE;
-using CatalogDataBaseModel;
+using Business;
 
 namespace API.Controllers
 {

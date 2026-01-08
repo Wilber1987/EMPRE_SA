@@ -27,9 +27,9 @@ namespace Transactions
 		public Catalogo_Cuentas? Catalogo_Cuentas_Origen { get; set; }
 		public int? Id_cuenta_destino { get; set; }
 		public Catalogo_Cuentas? Catalogo_Cuentas_Destino { get; set; }
+        public TipoMovimiento? Tipo_Movimiento { get; set; }
 
-
-		public object? Save(string token)
+        public object? Save(string token)
 		{
 			try
 			{
@@ -42,7 +42,8 @@ namespace Transactions
 						message = "No se permite anular un movimiento asociado a una transacción"
 					};
 				}
-				ResponseService response = SaveMovimiento(token);
+				var  (user, dbUser) =  Business.Security_Users.GetUserData(token);
+				ResponseService response = SaveMovimiento(dbUser);
 				if (response.status == 200)
 				{
 					CommitGlobalTransaction();
@@ -75,7 +76,7 @@ namespace Transactions
 			if (!AuthNetCore.HavePermission(Permissions.ADMIN_ACCESS.ToString(), token))
 			{
 				var user = AuthNetCore.User(token);
-				var dbUser = new CatalogDataBaseModel.Security_Users { Id_User = user.UserId }.Find<CatalogDataBaseModel.Security_Users>();
+				var dbUser = new Business.Security_Users { Id_User = user.UserId }.Find<Business.Security_Users>();
 				this.filterData.Add(FilterData.Equal("id_sucursal", dbUser.Id_Sucursal));
 			}
 			return new Transaction_Movimiento()
@@ -111,9 +112,9 @@ namespace Transactions
 			).ToList();
 		}
 
-		public ResponseService SaveMovimiento(string token)
+		public ResponseService SaveMovimiento(Business.Security_Users dbUser)
 		{
-			var user = AuthNetCore.User(token);
+			//var user = AuthNetCore.User(token);
 
 			var cuentaDestino = new Catalogo_Cuentas()
 			{
@@ -175,7 +176,9 @@ namespace Transactions
 						return response;
 					}
 				}
-				if (this.Catalogo_Cuentas_Origen?.id_cuentas == this.Catalogo_Cuentas_Destino?.id_cuentas)
+				if (this.Catalogo_Cuentas_Origen?.id_cuentas == this.Catalogo_Cuentas_Destino?.id_cuentas 
+				&& this.Tipo_Movimiento != TipoMovimiento.COMPRA_DE_MONEDA
+				&& this.Tipo_Movimiento != TipoMovimiento.VENTA_DE_MONEDA)
 				{
 					return new ResponseService()
 					{
@@ -199,12 +202,12 @@ namespace Transactions
 						message = "La cuenta de destino no permite cordobas"
 					};
 				}
-				var dbUser = new CatalogDataBaseModel.Security_Users { Id_User = user.UserId }.Find<CatalogDataBaseModel.Security_Users>();
+				//var dbUser = new Business.Security_Users { Id_User = user.UserId }.Find<Business.Security_Users>();
 				var encabezado = new Transaction_Movimiento()
 				{
 					descripcion = this.descripcion,
 					concepto = this.concepto,
-					id_usuario_crea = user.UserId,
+					id_usuario_crea = dbUser.Id_User,
 					tipo = "pendiente",
 					moneda = this.moneda?.ToUpper(),
 					tasa_cambio = this.tasa_cambio,
@@ -214,6 +217,7 @@ namespace Transactions
 					Id_cuenta_origen = this.Catalogo_Cuentas_Origen?.id_cuentas,
 					Id_cuenta_destino = this.Catalogo_Cuentas_Destino?.id_cuentas,
 					id_sucursal = dbUser?.Id_Sucursal,
+					Tipo_Movimiento = this.Tipo_Movimiento,
 					Detail_Movimiento = new List<Detail_Movimiento>(){
 							new Detail_Movimiento(){
 								catalogo_Cuentas = this.Catalogo_Cuentas_Origen,
@@ -270,7 +274,7 @@ namespace Transactions
 			try
 			{
 
-				var dbUser = new CatalogDataBaseModel.Security_Users { Id_User = item.id_usuario_crea }.Find<CatalogDataBaseModel.Security_Users>();
+				var dbUser = new Business.Security_Users { Id_User = item.id_usuario_crea }.Find<Business.Security_Users>();
 				var constOrigen = item.Detail_Movimiento?.Find(x => x.credito == 0);
 				var constDestino = item.Detail_Movimiento?.Find(x => x.debito == 0);
 				var modelo = new
@@ -323,4 +327,22 @@ namespace Transactions
 			</body>
 			</html>";
 	}
+
+    public enum TipoMovimiento
+    {
+        COMPRA_DE_MONEDA,
+        VENTA_DE_MONEDA,
+        REEMBOLSO_POR_CONTRATO_ANULADO,
+        DESEMBOLSO_POR_CONTRATO,
+        INGRESO_POR_PAGO_DE_RECIBO,
+        DESEMBOLSO_POR_ANULACION_DE_PAGO_DE_RECIBO,
+        DESEMBOLSO_POR_ANULACION_DE_PAGO_DE_FACTURACION,
+        INGRESO_POR_PAGO_DE_FACTURACION,
+		PAGO, //PAGO GENERAL, POR EJEMPLO CUANDO SE PAGA LA LUZ O ALQUILERES
+		INGRESO,//INGRESO GENERAL
+		EGRESO,//EGRESO GENERAL
+		MOVIMIENTO_CUENTA, //PARA EJEMPLIFICAR MOVIMIENTOS DE CAJA
+        DESEMBOLSO_POR_COMPRA,
+        REEMBOLSO_POR_COMPRA_ANULADA
+    }
 }

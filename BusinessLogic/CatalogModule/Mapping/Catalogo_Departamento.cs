@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-namespace CatalogDataBaseModel {
+namespace Business {
    public class Catalogo_Departamento : EntityClass {
        [PrimaryKey(Identity = true)]
        public int? id_departamento { get; set; }

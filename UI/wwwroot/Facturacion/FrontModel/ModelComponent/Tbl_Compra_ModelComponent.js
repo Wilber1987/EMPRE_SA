@@ -7,9 +7,7 @@ import { EntityClass } from "../../../WDevCore/WModules/EntityClass.js";
 class Tbl_Compra_ModelComponent extends EntityClass {
     constructor(props) {
         super(props, 'EntityFacturacion');
-        for (const prop in props) {
-            this[prop] = props[prop];
-        }
+        Object.assign(this, props);
     }
    /**@type {ModelProperty}*/ Id_Compra = { type: 'number', primary: true, hiddenFilter: true };
    /**@type {ModelProperty}*/ Datos_Compra = {

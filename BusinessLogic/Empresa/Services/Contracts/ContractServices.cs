@@ -2,7 +2,7 @@ using System.Transactions;
 using API.Controllers;
 using APPCORE;
 using APPCORE.Services;
-using CatalogDataBaseModel;
+using Business;
 using DataBaseModel;
 using Transactions;
 namespace Model
@@ -15,12 +15,12 @@ namespace Model
 		public string? Moneda { get; set; }
 		/**@type {Number} */
 
-		public ResponseService SaveDataContract(string seasonKey)
+		public ResponseService SaveDataContract(string Identify)
 		{
 			try
 			{
 				new Transactional_Valoracion().GuardarValoraciones(valoraciones);
-				SessionServices.Set("ValoracionesTransaction", this, seasonKey);
+				SessionServices.Set("ValoracionesTransaction", this, Identify);
 				return new ResponseService()
 				{
 					status = 200
@@ -35,12 +35,12 @@ namespace Model
 			}
 		}
 
-		public ResponseService SaveContract(string seasonKey)
+		public ResponseService SaveContract(string Identify)
 		{
 			try
 			{
 				BeginGlobalTransaction();
-				ResponseService response = DoSaveContract(seasonKey);
+				ResponseService response = DoSaveContract(Identify);
 				if (response.status != 200)
 				{
 					RollBackGlobalTransaction();
@@ -65,10 +65,9 @@ namespace Model
 			}
 		}
 
-		public ResponseService DoSaveContract(string seasonKey)
+		public ResponseService DoSaveContract(string Identify)
 		{
-			var User = AuthNetCore.User(seasonKey);
-			var dbUser = new Security_Users { Id_User = User.UserId }.Find<Security_Users>();
+			var  (User, dbUser) =  Business.Security_Users.GetUserData(Identify);
 			var configuraciones = new Transactional_Configuraciones().GetConfig(ConfiguracionesInteresesEnum.MORA_CONTRATOS_EMP.ToString());
 			if (Transaction_Contratos?.Detail_Prendas?.Count == 0)
 			{
@@ -150,11 +149,9 @@ namespace Model
 			};
 			var newContract = Transaction_Contratos.Save();
 			Transaction_Contratos.numero_contrato = ((Transaction_Contratos)newContract)?.numero_contrato;
-
+			//CREACION
 			var cuentaOrigen = Catalogo_Cuentas.GetCuentaEgresoContratos(dbUser);
-
 			var cuentaDestino = Catalogo_Cuentas.GetCuentaRegistoContratos(dbUser);
-
 			if (cuentaDestino == null || cuentaOrigen == null)
 			{
 				return new ResponseService()
@@ -173,14 +170,15 @@ namespace Model
 				monto = Moneda == "CORDOBAS" ? Transaction_Contratos.Valoracion_empeño_cordobas : Transaction_Contratos.monto,
 				tasa_cambio = Transaction_Contratos.taza_cambio,
 				tasa_cambio_compra = Transaction_Contratos.taza_cambio_compra,
-				is_transaction = true
-			}.SaveMovimiento(seasonKey);
+				is_transaction = true,
+				Tipo_Movimiento = TipoMovimiento.DESEMBOLSO_POR_CONTRATO
+			}.SaveMovimiento(dbUser);
 		}
 
-		public ContractServices GetDataContract(string seasonKey)
+		public ContractServices GetDataContract(string Identify)
 		{
 			ContractServices? valoracionesTransaction
-			 = SessionServices.Get<ContractServices>("ValoracionesTransaction", seasonKey);
+			 = SessionServices.Get<ContractServices>("ValoracionesTransaction", Identify);
 			return valoracionesTransaction ?? new ContractServices();
 		}
 

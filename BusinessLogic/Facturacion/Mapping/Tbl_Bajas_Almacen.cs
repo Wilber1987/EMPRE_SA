@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using API.Controllers;
 using APPCORE;
 using CAPA_NEGOCIO.Util;
-using CatalogDataBaseModel;
+using Business;
 using DataBaseModel;
 
 namespace BusinessLogic.Facturacion.Mapping
@@ -39,7 +39,7 @@ namespace BusinessLogic.Facturacion.Mapping
 			try
 			{
 				var User = AuthNetCore.User(Identify);
-				var dbUser = new Security_Users { Id_User = User.UserId }.Find<Security_Users>();
+				var dbUser = new Business.Security_Users { Id_User = User.UserId }.Find<Security_Users>();
 
 				var BajaOriginal = new Tbl_Bajas_Almacen { Id_Transaccion = inst?.Id_Transaccion }.Find<Tbl_Bajas_Almacen>();
 				Tbl_Lotes? loteOriginal = new Tbl_Lotes { Id_Lote = BajaOriginal?.Id_Lote }.Find<Tbl_Lotes>();
@@ -83,7 +83,7 @@ namespace BusinessLogic.Facturacion.Mapping
 		public Tbl_Bajas_Almacen? FindBajas_Almacen(string? Identify)
 		{
 			var User = AuthNetCore.User(Identify);
-			var dbUser = new Security_Users { Id_User = User.UserId }.Find<Security_Users>();
+			var dbUser = new Business.Security_Users { Id_User = User.UserId }.Find<Security_Users>();
 			if (User.isAdmin)
 			{
 				return Find<Tbl_Bajas_Almacen>();
@@ -102,7 +102,7 @@ namespace BusinessLogic.Facturacion.Mapping
 		public List<Tbl_Bajas_Almacen> GetBajas_Almacen(string? Identify)
 		{
 			var User = AuthNetCore.User(Identify);
-			var dbUser = new Security_Users { Id_User = User.UserId }.Find<Security_Users>();
+			var dbUser = new Business.Security_Users { Id_User = User.UserId }.Find<Security_Users>();
 			if (User.isAdmin)
 			{
 				return Get<Tbl_Bajas_Almacen>();

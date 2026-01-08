@@ -9,9 +9,7 @@ class Detalle_Factura extends EntityClass {
     */
     constructor(props) {
         super(props, 'EntityFacturacion');
-        for (const prop in props) {
-            this[prop] = props[prop];
-        }
+        Object.assign(this, props);
     }
     /**@type {Number}*/ Id_DetalleFactura;
     /**@type {Number}*/ Cantidad;

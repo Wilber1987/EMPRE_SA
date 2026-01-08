@@ -2,7 +2,7 @@ import { WRender, ComponentsManager } from "../WDevCore/WModules/WComponentsTool
 import { StylesControlsV2, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js"
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
 import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js"
-import { Transactional_Configuraciones } from "./ADMINISTRATIVE_ACCESSDataBaseModel.js"
+import { Transactional_Configuraciones, Transactional_Configuraciones_ModelComponent } from "./ADMINISTRATIVE_ACCESSDataBaseModel.js"
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { WAjaxTools } from "../WDevCore/WModules/WAjaxTools.js";
 class Transactional_ConfiguracionesView extends HTMLElement {
@@ -11,19 +11,23 @@ class Transactional_ConfiguracionesView extends HTMLElement {
         this.Draw();
     }
     Draw = async () => {
-        const model = new Transactional_Configuraciones();
+        const model = new Transactional_Configuraciones_ModelComponent();
         const dataset = await model.Get();
         this.TabContainer = WRender.createElement({ type: 'div', props: { class: 'TabContainer', id: 'TabContainer' } })
         this.MainComponent = new WTableComponent({
-            ModelObject: model, Dataset: dataset, maxElementByPage: 50, Options: {
-                UrlUpdate: "../api/ApiEntityADMINISTRATIVE_ACCESS/updateTransactional_Configuraciones",
+            ModelObject: model, 
+            EntityModel: new Transactional_Configuraciones(),
+            Dataset: dataset, 
+            maxElementByPage: 50, 
+            Options: {
+                UrlUpdate: "../api/ApiEntityAdministrative_Access/updateTransactional_Configuraciones",
                 //Search: true, 
                 Filter: true, FilterDisplay: true, UserActions: [
                     {
                         name: "Editar", action: (element) => {
                             this.append(new WModalForm({
                                 AutoSave: true,
-                                ModelObject: new Transactional_Configuraciones({
+                                ModelObject: new Transactional_Configuraciones_ModelComponent({
                                     Valor: { type: this.ConfigType(element) }
                                 }),
                                 EditObject: element, ObjectOptions: {

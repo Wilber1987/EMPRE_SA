@@ -3,9 +3,7 @@ import { EntityClass } from "../../WDevCore/WModules/EntityClass.js";
 class Catalogo_Clientes extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
-        for (const prop in props) {
-            this[prop] = props[prop];
-        }
+        Object.assign(this, props);
     }
     codigo_cliente = { type: 'number', primary: true };
     primer_nombre = { type: 'text' };
@@ -40,9 +38,7 @@ export { Catalogo_Clientes }
 class Catalogo_Tipo_Identificacion extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
-        for (const prop in props) {
-            this[prop] = props[prop];
-        }
+        Object.assign(this, props);
     }
     id_tipo_identificacion = { type: 'number', primary: true };
     Descripcion = { type: 'text' };

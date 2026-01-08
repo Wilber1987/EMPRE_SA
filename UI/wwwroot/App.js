@@ -12,3 +12,4 @@
 // class Reconocimiento {
 //     image = { type: "IMG" }
 // }
+

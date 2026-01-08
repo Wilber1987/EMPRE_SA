@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using API.Controllers;
 using APPCORE;
 using BusinessLogic.Facturacion.Mapping;
-using CatalogDataBaseModel;
+using Business;
 using DataBaseModel;
 using DocumentFormat.OpenXml.Office2010.Excel;
 
@@ -45,7 +45,7 @@ namespace BusinessLogic.Facturacion.Operations
         private ResponseService? DoSaveMovimiento(string? Identity, Tbl_Movimientos_Almacen movimiento)
         {
             var User = AuthNetCore.User(Identity);
-			var dbUser = new Security_Users { Id_User = User.UserId }.Find<Security_Users>();			
+			var dbUser = new Business.Security_Users { Id_User = User.UserId }.Find<Security_Users>();			
 			var loteOriginal = new Tbl_Lotes { Id_Lote = movimiento.Id_Lote_Original }.Find<Tbl_Lotes>();
 			var almacenDestino = new Cat_Almacenes { Id_Almacen = movimiento.Tbl_Lote_Destino?.Id_Almacen }.Find<Cat_Almacenes>();
 			var nuevoLote = new Tbl_Lotes()

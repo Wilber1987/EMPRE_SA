@@ -36,12 +36,13 @@ ELIMINAR DATOS DE PRUEBA:
 
 delete from Detail_Prendas_Vehiculos;
 delete from Detail_Prendas;
-DELETE from Detalle_Factura_Recibo ;
-DELETE from Tbl_Cuotas ;
-delete from Recibos ;
-DELETE from Transaction_Contratos ;
+DELETE from Detalle_Factura_Recibo;
+DELETE from Tbl_Cuotas;
+DELETE from Transaction_Contratos;
 DELETE  from Catalogo_Clientes where codigo_cliente  < 4000;
-delete from Detail_Movimiento 
-delete from  Transaction_Movimiento
-delete from Detalle_Factura_Recibo 
-delete from facturacion.Transaccion_Factura 
+delete from Detail_Movimiento;
+delete from  Transaction_Movimiento;
+delete from Detalle_Factura_Recibo;
+delete from facturacion.Transaccion_Factura;
+delete from facturacion.Detalle_Factura;
+delete from facturacion.Tbl_Factura;

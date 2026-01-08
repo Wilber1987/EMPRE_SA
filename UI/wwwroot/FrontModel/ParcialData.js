@@ -3,9 +3,7 @@ import { EntityClass } from "../WDevCore/WModules/EntityClass.js";
 export class ParcialesData extends EntityClass {
     constructor(props) {
         super(props, 'Transactional_Contrato');
-        for (const prop in props) {
-            this[prop] = props[prop];
-        }
+        Object.assign(this, props);
     }
     /**@type {Number} */
     numero_contrato;

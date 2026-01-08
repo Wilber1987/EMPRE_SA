@@ -4,9 +4,7 @@ import { EntityClass } from "../WDevCore/WModules/EntityClass.js";
 class Catalogo_Cambio_Divisa extends EntityClass {
     constructor(props) {
         super(props, 'EntityDbo');
-        for (const prop in props) {
-            this[prop] = props[prop];
-        }
+        Object.assign(this, props);
     }
     /**@type {Number}*/ Id_cambio;
     /**@type {Date}*/ Fecha;

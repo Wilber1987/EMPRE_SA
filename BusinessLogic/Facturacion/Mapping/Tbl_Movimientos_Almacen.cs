@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using API.Controllers;
 using APPCORE;
-using CatalogDataBaseModel;
+using Business;
 using DataBaseModel;
 
 namespace BusinessLogic.Facturacion.Mapping
@@ -48,7 +48,7 @@ namespace BusinessLogic.Facturacion.Mapping
 				}
 
 				var User = AuthNetCore.User(Identify);
-				var dbUser = new Security_Users { Id_User = User.UserId }.Find<Security_Users>();
+				var dbUser = new Business.Security_Users { Id_User = User.UserId }.Find<Security_Users>();
 
 				var loteOriginal = new Tbl_Lotes { Id_Lote = this.Tbl_Lote_Original?.Id_Lote }.Find<Tbl_Lotes>();
 
@@ -137,7 +137,7 @@ namespace BusinessLogic.Facturacion.Mapping
 			try
 			{
 				var User = AuthNetCore.User(Identify);
-				var dbUser = new Security_Users { Id_User = User.UserId }.Find<Security_Users>();
+				var dbUser = new Business.Security_Users { Id_User = User.UserId }.Find<Security_Users>();
 				// Buscar movimiento original a través del ID de transacción
 				var movimientoOriginal = new Tbl_Movimientos_Almacen { Id_Transaccion = inst?.Id_Transaccion }
 					.Find<Tbl_Movimientos_Almacen>();
@@ -195,7 +195,7 @@ namespace BusinessLogic.Facturacion.Mapping
 		public Tbl_Movimientos_Almacen? FindTbl_Movimientos_Almacen(string? Identify)
 		{
 			var User = AuthNetCore.User(Identify);
-			var dbUser = new Security_Users { Id_User = User.UserId }.Find<Security_Users>();
+			var dbUser = new Business.Security_Users { Id_User = User.UserId }.Find<Security_Users>();
 			if (User.isAdmin)
 			{
 				return Find<Tbl_Movimientos_Almacen>();
@@ -215,7 +215,7 @@ namespace BusinessLogic.Facturacion.Mapping
 		public List<Tbl_Movimientos_Almacen>? GetTbl_Movimientos_Almacen(string? Identify)
 		{
 			var User = AuthNetCore.User(Identify);
-			var dbUser = new Security_Users { Id_User = User.UserId }.Find<Security_Users>();
+			var dbUser = new Business.Security_Users { Id_User = User.UserId }.Find<Security_Users>();
 			if (User.isAdmin)
 			{
 				return Get<Tbl_Movimientos_Almacen>();

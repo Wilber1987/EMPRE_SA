@@ -9,9 +9,7 @@ import { Recibos } from "./Recibos.js";
 class Catalogo_Estados_Articulos extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
-        for (const prop in props) {
-            this[prop] = props[prop];
-        }
+        Object.assign(this, props);
     }
     id_estado_articulo = { type: 'number', primary: true };
     nombre = { type: 'text' };
@@ -27,13 +25,11 @@ class Transactional_Valoracion_ModelComponent extends EntityClass {
     }
     /**
      * 
-     * @param {Partial<Transactional_Valoracion_ModelComponent>} props 
+     * @param {Partial<Transactional_Valoracion_ModelComponent>} [props] 
      */
     constructor(props) {
         super(props, 'EntityDBO');
-        for (const prop in props) {
-            this[prop] = props[prop];
-        }
+        Object.assign(this, props);
     }
     /**@type {ModelProperty} */ id_valoracion = { type: 'number', primary: true };
     /**@type {ModelProperty} */ Descripcion = { type: 'textarea' };
@@ -59,7 +55,7 @@ class Transactional_Valoracion_ModelComponent extends EntityClass {
     /**@type {ModelProperty} */ Valoracion_compra_dolares = { type: 'money', hiddenFilter: true };
     /**@type {ModelProperty} */ Valoracion_empeño_cordobas = { type: 'money', hiddenFilter: true };
     /**@type {ModelProperty} */ Valoracion_empeño_dolares = { type: 'money', hiddenFilter: true };
-    /**@type {ModelProperty} */ Catalogo_Estados_Articulos = { type: 'WSELECT', hiddenInTable: true, ModelObject: () => new Catalogo_Estados_Articulos(), hiddenFilter: true };
+    /**@type {ModelProperty} */ Catalogo_Estados_Articulos = { type: 'WSELECT',  ModelObject: () => new Catalogo_Estados_Articulos(), hiddenFilter: true };
     //TASAS DE INTERES
     //Valoracion_empeño_dolares = { type: 'operation' };
 
@@ -76,9 +72,7 @@ export { Transactional_Valoracion_ModelComponent }
 class Catalogo_Agentes extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
-        for (const prop in props) {
-            this[prop] = props[prop];
-        }
+        Object.assign(this, props);
     }
     id_agente = { type: 'number', primary: true };
     identificacion = { type: 'text', hiddenFilter: true };
@@ -94,9 +88,7 @@ export { Catalogo_Agentes }
 class Catalogo_Clasificacion_Cliente extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
-        for (const prop in props) {
-            this[prop] = props[prop];
-        }
+        Object.assign(this, props);
     }
     id_clasificacion = { type: 'number', primary: true };
     Descripcion = { type: 'text' };
@@ -108,9 +100,7 @@ export { Catalogo_Clasificacion_Cliente }
 class Catalogo_Clasificacion_Interes extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
-        for (const prop in props) {
-            this[prop] = props[prop];
-        }
+        Object.assign(this, props);
     }
     id_clasificacion_interes = { type: 'number', primary: true };
     Descripcion = { type: 'text' };
@@ -120,11 +110,12 @@ class Catalogo_Clasificacion_Interes extends EntityClass {
 export { Catalogo_Clasificacion_Interes }
 
 class Catalogo_Clientes extends EntityClass {
+    /**
+    * @param {Partial<Catalogo_Clientes>} props 
+    */
     constructor(props) {
         super(props, 'EntityDBO');
-        for (const prop in props) {
-            this[prop] = props[prop];
-        }
+        Object.assign(this, props);
     }
     codigo_cliente = { type: 'number', primary: true };
     primer_nombre = { type: 'text' };
@@ -192,9 +183,7 @@ export { Catalogo_Clientes }
 class Catalogo_Categoria_ModelComponent extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
-        for (const prop in props) {
-            this[prop] = props[prop];
-        }
+        Object.assign(this, props);
     }
     id_categoria = { type: 'number', primary: true };
     tipo = { type: 'text' };
@@ -207,9 +196,7 @@ export { Catalogo_Categoria_ModelComponent }
 class Condicion_Laboral_Cliente extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
-        for (const prop in props) {
-            this[prop] = props[prop];
-        }
+        Object.assign(this, props);
     }
     id = { type: 'number', primary: true };
     fecha_ingreso = { type: 'date' };
@@ -237,9 +224,7 @@ export { Condicion_Laboral_Cliente }
 class Catalogo_Tipo_Agente extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
-        for (const prop in props) {
-            this[prop] = props[prop];
-        }
+        Object.assign(this, props);
     }
     Id_Tipo_Agente = { type: 'number', primary: true };
     Descripcion = { type: 'text' };
@@ -251,9 +236,7 @@ export { Catalogo_Tipo_Agente }
 class Transaction_Contratos_ModelComponent extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
-        for (const prop in props) {
-            this[prop] = props[prop];
-        }
+        Object.assign(this, props);
     }
     numero_contrato = { type: "number", primary: true };
     Catalogo_Clientes = { type: 'WSELECT', ModelObject: () => new Catalogo_Clientes() };
@@ -312,9 +295,7 @@ export { Notas_de_contrato }
 class Detail_Prendas_ModelComponent extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
-        for (const prop in props) {
-            this[prop] = props[prop];
-        }
+        Object.assign(this, props);
     }
     numero_prenda = { type: 'number', primary: true };
     numero_contrato_OLD = { type: 'number', hidden: true };
@@ -349,9 +330,7 @@ export { Detail_Prendas_ModelComponent }
 class Detail_Prendas_Vehiculos_ModelComponent extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
-        for (const prop in props) {
-            this[prop] = props[prop];
-        }
+        Object.assign(this, props);
     }
     capacidad_cilindros = { type: 'text' };
     cantidad_cilindros = { type: 'text' };
@@ -376,9 +355,7 @@ export { Detail_Prendas_Vehiculos_ModelComponent }
 class Catalogo_Cambio_Divisa_ModelComponent extends EntityClass {
     constructor(props) {
         super(props, 'EntityDbo');
-        for (const prop in props) {
-            this[prop] = props[prop];
-        }
+        Object.assign(this, props);
     }
     /**@type {ModelProperty}*/ Id_cambio = { type: 'number', primary: true, hiddenFilter: true };
     /**@type {ModelProperty}*/ Fecha = { type: 'date' };
@@ -390,9 +367,7 @@ export { Catalogo_Cambio_Divisa_ModelComponent }
 class Catalogo_Cuentas extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
-        for (const prop in props) {
-            this[prop] = props[prop];
-        }
+        Object.assign(this, props);
     }
     id_cuentas = { type: 'number', primary: true };
     nombre = { type: 'text' };
@@ -409,9 +384,7 @@ export { Catalogo_Cuentas }
 class Categoria_Cuentas extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
-        for (const prop in props) {
-            this[prop] = props[prop];
-        }
+        Object.assign(this, props);
     }
     id_categoria = { type: "number", primary: true };
     descripcion = { type: "text" };
@@ -421,9 +394,7 @@ export { Categoria_Cuentas }
 class Permisos_Cuentas extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
-        for (const prop in props) {
-            this[prop] = props[prop];
-        }
+        Object.assign(this, props);
     }
     id_permiso = { type: "number", primary: true };
     Categoria_Cuentas_Origen = { type: 'WSELECT', ModelObject: () => new Categoria_Cuentas() };
@@ -437,9 +408,7 @@ export { Permisos_Cuentas }
 class Catalogo_Departamento extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
-        for (const prop in props) {
-            this[prop] = props[prop];
-        }
+        Object.assign(this, props);
     }
     id_departamento = { type: 'number', primary: true };
     nombre = { type: 'text' };
@@ -449,21 +418,21 @@ class Catalogo_Departamento extends EntityClass {
     Catalogo_Nacionalidad = { type: 'WSELECT', ModelObject: () => new Catalogo_Nacionalidad(), hiddenInTable: true };
 
     static async ChargeMunicipios(editObject, /** @type {WForm} */ Form) {
-        const servicios = await new Catalogo_Municipio({
+        const municipios = await new Catalogo_Municipio({
             FilterData: [{
                 PropName: "id_departamento", FilterType: "in", Values: [editObject.Catalogo_Departamento.id_departamento.toString()]
             }]
         }).Get();
-        Form.ModelObject.Catalogo_Municipio.Dataset = servicios;
-        if (servicios.length == 0) {
+        Form.ModelObject.Catalogo_Municipio.Dataset = municipios;
+        if (municipios.length == 0) {
             Form.ModelObject.Catalogo_Municipio.require = false;
         } else {
             Form.ModelObject.Catalogo_Municipio.require = true;
         }
         //this.Tbl_Servicios_editObject.disabled = false;
-        editObject.Catalogo_Municipio = servicios[0];
-        Form.Controls.Catalogo_Municipio.Dataset = servicios;
-        Form.Controls.Catalogo_Municipio.selectedItems = [servicios[0]];
+        editObject.Catalogo_Municipio = municipios[0];
+        Form.Controls.Catalogo_Municipio.Dataset = municipios;
+        Form.Controls.Catalogo_Municipio.selectedItems = municipios[0] ?  [municipios[0]] : [];
         Form.Controls.Catalogo_Municipio.Draw();
     }
 }
@@ -471,9 +440,7 @@ export { Catalogo_Departamento }
 class Catalogo_Inversores extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
-        for (const prop in props) {
-            this[prop] = props[prop];
-        }
+        Object.assign(this, props);
     }
     id_inversor = { type: 'number', primary: true };
     nombre = { type: 'text' };
@@ -488,9 +455,7 @@ export { Catalogo_Inversores }
 class Catalogo_Municipio extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
-        for (const prop in props) {
-            this[prop] = props[prop];
-        }
+        Object.assign(this, props);
     }
     id_municipio = { type: 'number', primary: true };
     nombre = { type: 'text' };
@@ -500,9 +465,7 @@ export { Catalogo_Municipio }
 class Catalogo_Nacionalidad extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
-        for (const prop in props) {
-            this[prop] = props[prop];
-        }
+        Object.assign(this, props);
     }
     id_nacionalidad = { type: 'number', primary: true };
     nombre = { type: 'text' };
@@ -515,9 +478,7 @@ export { Catalogo_Nacionalidad }
 class Catalogo_Profesiones extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
-        for (const prop in props) {
-            this[prop] = props[prop];
-        }
+        Object.assign(this, props);
     }
     id_profesion = { type: 'number', primary: true };
     nombre = { type: 'text' };
@@ -526,9 +487,7 @@ export { Catalogo_Profesiones }
 class id_tipo_transaccion extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
-        for (const prop in props) {
-            this[prop] = props[prop];
-        }
+        Object.assign(this, props);
     }
     id_tipo_transaccion = { type: 'number', primary: true };
     descripcion = { type: 'text' };
@@ -537,9 +496,7 @@ export { id_tipo_transaccion }
 class Transaction_Contratos_Inversionistas extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
-        for (const prop in props) {
-            this[prop] = props[prop];
-        }
+        Object.assign(this, props);
     }
     numero_cont = { type: 'number', primary: true };
     fecha = { type: 'date' };
@@ -562,9 +519,7 @@ export { Transaction_Contratos_Inversionistas }
 class Transaction_Egresos extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
-        for (const prop in props) {
-            this[prop] = props[prop];
-        }
+        Object.assign(this, props);
     }
     numero_egreso = { type: 'number', primary: true };
     monto = { type: 'number' };
@@ -583,9 +538,7 @@ export { Transaction_Egresos }
 class Transaction_Ingresos extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
-        for (const prop in props) {
-            this[prop] = props[prop];
-        }
+        Object.assign(this, props);
     }
     numero_ingreso = { type: 'number', primary: true };
     monto = { type: 'number' };
@@ -603,9 +556,7 @@ export { Transaction_Ingresos }
 class Transaction_Ingresos_Egresos extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
-        for (const prop in props) {
-            this[prop] = props[prop];
-        }
+        Object.assign(this, props);
     }
     id_transaccion = { type: 'number', primary: true };
     monto_dolares = { type: 'number' };
@@ -625,9 +576,7 @@ export { Transaction_Ingresos_Egresos }
 class Catalogo_Sucursales_ModelComponent extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
-        for (const prop in props) {
-            this[prop] = props[prop];
-        }
+        Object.assign(this, props);
     }
     Id_Sucursal = { type: 'number', primary: true };
     Nombre = { type: 'text' };
@@ -641,9 +590,7 @@ export { Catalogo_Sucursales_ModelComponent }
 class Datos_Configuracion extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
-        for (const prop in props) {
-            this[prop] = props[prop];
-        }
+        Object.assign(this, props);
     }
     Encabezado = { type: 'text' };
     AutoDebito = { type: 'checkbox' };
@@ -658,9 +605,7 @@ export { Datos_Configuracion }
 class Transaccion_Factura extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
-        for (const prop in props) {
-            this[prop] = props[prop];
-        }
+        Object.assign(this, props);
     }
     /**@type {ModelProperty}*/
     Catalogo_Clientes = { type: 'WSELECT', ModelObject: () => new Catalogo_Clientes(), ForeignKeyColumn: "id_cliente", hiddenInTable: true };
@@ -684,9 +629,7 @@ export { Transaccion_Factura }
 
 class Factura_contrato {
     constructor(props) {
-        for (const prop in props) {
-            this[prop] = props[prop];
-        }
+        Object.assign(this, props);
     }
     numero_contrato = { type: "number" };
     cuotas_pendientes = { type: "number" };
@@ -710,9 +653,7 @@ export { Factura_contrato }
 class Detalle_Factura_Recibo extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
-        for (const prop in props) {
-            this[prop] = props[prop];
-        }
+        Object.assign(this, props);
     }
     id = { type: "number", primary: true };
     id_factura = { type: "number", hidden: true };

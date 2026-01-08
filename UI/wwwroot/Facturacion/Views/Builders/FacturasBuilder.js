@@ -369,8 +369,7 @@ export class FacturasBuilder {
 
         .recibo {
             overflow: hidden;
-            height: 135mm; /* A4 height */
-            /* page-break-after: always; Ensure each .page-container starts on a new page*/
+            page-break-after: always;  /* Ensure each .page-container starts on a new page*/
         } 
         .recibo-APARTADO_QUINCENAL {
             height: auto;

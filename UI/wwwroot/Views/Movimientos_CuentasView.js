@@ -11,7 +11,7 @@ import { ComponentsManager, WRender } from "../WDevCore/WModules/WComponentsTool
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 import { Gestion_CuentasView } from "./Gestion_CuentasView.js";
 class Gestion_movimientos_CuentasView extends HTMLElement {
-    constructor(props) {
+    constructor() {
         super();
         this.Draw();
     }
@@ -170,8 +170,14 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
                 modelExterno.Catalogo_Cuentas_Origen.Dataset = this.Cuentas?.filter(x => x.tipo_cuenta == "PROPIA");
                 modelExterno.Catalogo_Cuentas_Destino.Dataset = this.Cuentas?.filter(x => x.tipo_cuenta == "PAGO");
                 // @ts-ignore
-                modelExterno.tasa_cambio = tasaActual.Valor_de_venta;
-                this.append(new WModalForm({ title: "Egreso", ModelObject: modelExterno, AutoSave: true, ObjectOptions: this.ObjectOptionsModal }))
+                //modelExterno.tasa_cambio = tasaActual.Valor_de_venta;
+                this.append(new WModalForm({
+                    title: "Egreso",
+                    ModelObject: modelExterno,
+                    AutoSave: true,
+                    ObjectOptions:
+                        this.ObjectOptionsModal
+                }))
             }
         }))
         //this.Manager?.NavigateFunction("tabla", this.MainComponent)

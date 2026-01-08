@@ -1,6 +1,6 @@
 using API.Controllers;
 using APPCORE.Util;
-using CatalogDataBaseModel;
+using Business;
 using DataBaseModel;
 using Microsoft.Extensions.Configuration;
 
@@ -30,7 +30,7 @@ namespace CAPA_NEGOCIO.SystemConfig
 		public DocumentsData GetDataFragments(String Identity)
 		{
 			var User = AuthNetCore.User(Identity);
-			var dbUser = new Security_Users { Id_User = User.UserId }.Find<Security_Users>();
+			var dbUser = new Business.Security_Users { Id_User = User.UserId }.Find<Security_Users>();
 			var sucursal = new Catalogo_Sucursales() { Id_Sucursal = dbUser?.Id_Sucursal }.Find<Catalogo_Sucursales>();
 			var theme = new SystemConfig();
 			Header = HtmlContentGetter.ReadHtmlFile("header.html", "Resources/BoletinFragments");
@@ -50,7 +50,7 @@ namespace CAPA_NEGOCIO.SystemConfig
 		public static string GetReciboTemplate()
 		{
 			//var User = AuthNetCore.User(Identity);
-			//var dbUser = new Security_Users { Id_User = User.UserId }.Find<Security_Users>();
+			//var dbUser = new Business.Security_Users { Id_User = User.UserId }.Find<Security_Users>();
 			//var sucursal = new Catalogo_Sucursales() { Id_Sucursal = dbUser?.Id_Sucursal }.Find<Catalogo_Sucursales>();
 			//var theme = new SystemConfig();
 
@@ -67,7 +67,7 @@ namespace CAPA_NEGOCIO.SystemConfig
 		public static string GetReciboTemplateApartado()
 		{
 			//var User = AuthNetCore.User(Identity);
-			//var dbUser = new Security_Users { Id_User = User.UserId }.Find<Security_Users>();
+			//var dbUser = new Business.Security_Users { Id_User = User.UserId }.Find<Security_Users>();
 			//var sucursal = new Catalogo_Sucursales() { Id_Sucursal = dbUser?.Id_Sucursal }.Find<Catalogo_Sucursales>();
 			var theme = new SystemConfig();
 			string TEMPLATE = HtmlContentGetter.ReadHtmlFile("reciboApartadoTemplate.html", "Resources/Recibos")

@@ -95,12 +95,28 @@ export class Transaction_Movimiento {
 }
 
 
+export const TipoMovimiento =
+{
+  COMPRA_DE_MONEDA: "COMPRA_DE_MONEDA",
+  VENTA_DE_MONEDA: "VENTA_DE_MONEDA",
+  REEMBOLSO_POR_CONTRATO_ANULADO: "REEMBOLSO_POR_CONTRATO_ANULADO",
+  DESEMBOLSO_POR_CONTRATO: "DESEMBOLSO_POR_CONTRATO",
+  INGRESO_POR_PAGO_DE_RECIBO: "INGRESO_POR_PAGO_DE_RECIBO",
+  DESEMBOLSO_POR_ANULACION_DE_PAGO_DE_RECIBO: "DESEMBOLSO_POR_ANULACION_DE_PAGO_DE_RECIBO",
+  DESEMBOLSO_POR_ANULACION_DE_PAGO_DE_FACTURACION: "DESEMBOLSO_POR_ANULACION_DE_PAGO_DE_FACTURACION",
+  INGRESO_POR_PAGO_DE_FACTURACION: "INGRESO_POR_PAGO_DE_FACTURACION",
+  PAGO: "PAGO",
+  INGRESO: "INGRESO",
+  EGRESO: "EGRESO",
+  MOVIMIENTO_CUENTA: "MOVIMIENTO_CUENTA",
+  DESEMBOLSO_POR_COMPRA: "DESEMBOLSO_POR_COMPRA",
+  REEMBOLSO_POR_COMPRA_ANULADA: "REEMBOLSO_POR_COMPRA_ANULADA",
+}
+
 export class Movimientos_Cuentas extends EntityClass {
   constructor(props) {
     super(props);
-    for (const prop in props) {
-      this[prop] = props[prop];
-    }
+    Object.assign(this, props);
   }
 
   /**@type {number}**/ id_movimiento;
@@ -122,9 +138,7 @@ export class Movimientos_Cuentas extends EntityClass {
 export class Detail_Movimiento extends EntityClass {
   constructor(props) {
     super(props);
-    for (const prop in props) {
-      this[prop] = props[prop];
-    }
+    Object.assign(this, props);
   }
 
   /**@type {number}**/ id_movimiento;
@@ -143,9 +157,7 @@ export class Detail_Movimiento extends EntityClass {
 class Movimientos_Cuentas_ModelComponent extends EntityClass {
   constructor(props) {
     super(props, 'Cuentas');
-    for (const prop in props) {
-      this[prop] = props[prop];
-    }
+    Object.assign(this, props);
   }
 	/**@type {ModelProperty} */ id_movimiento = { type: "number", primary: true }
 	/**@type {ModelProperty} */ Id_cuenta_origen = { type: "number", hidden: true }
@@ -164,7 +176,8 @@ class Movimientos_Cuentas_ModelComponent extends EntityClass {
 	/**@type {ModelProperty} */ tasa_cambio = { type: "money", disabled: true, hiddenFilter: true, hidden: true };
 	//tasa_cambio_compra = { type: "number", disabled: true , hiddenFilter: true};	
 	/**@type {ModelProperty} */ id_usuario_crea = { type: "number", hidden: true, hiddenFilter: true };
-	/**@type {ModelProperty} */ fecha = { type: "datetime", disabled: true, require: false };
+	/**@type {ModelProperty} */ fecha = { type: "datetime", disabled: true, require: false };  
+  /**@type {ModelProperty} */ Tipo_Movimiento = { type: "Select", Dataset: Object.keys(TipoMovimiento) };
 	/**@type {ModelProperty} */ concepto = { type: "textarea" };
 	/**@type {ModelProperty} */ descripcion = { type: "textarea", require: false, hiddenFilter: true, hiddenInTable: true };
 }
@@ -172,11 +185,13 @@ export { Movimientos_Cuentas_ModelComponent }
 
 
 class Detail_Movimiento_ModelComponent extends EntityClass {
+
+  /**
+  * @param {Partial<Detail_Movimiento_ModelComponent>} props 
+  */
   constructor(props) {
     super(props, 'Cuentas');
-    for (const prop in props) {
-      this[prop] = props[prop];
-    };
+    Object.assign(this, props);;
   }
   id_movimiento = { type: "number", primary: true };
   fecha = { type: "date" };

@@ -7,9 +7,7 @@ import { Cat_Categorias_ModelComponent }  from './Cat_Categorias_ModelComponent.
 class Cat_Producto_ModelComponent extends EntityClass {
    constructor(props) {
        super(props, 'EntityFacturacion');
-       for (const prop in props) {
-           this[prop] = props[prop];
-       }
+       Object.assign(this, props);
    }
    /**@type {ModelProperty}*/ Id_Producto = { type: 'number', primary: true };
    /**@type {ModelProperty}*/ Descripcion = { type: 'text' };

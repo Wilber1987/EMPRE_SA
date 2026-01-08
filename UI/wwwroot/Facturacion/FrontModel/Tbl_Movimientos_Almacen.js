@@ -14,9 +14,7 @@ class Tbl_Movimientos_Almacen extends EntityClass {
 
 	constructor(props) {
 		super(props, 'TransactionLotes');
-		for (const prop in props) {
-			this[prop] = props[prop];
-		}
+		Object.assign(this, props);
 	}
 
 	/**@type {number}*/ Id_Movimiento;

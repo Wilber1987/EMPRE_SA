@@ -1,7 +1,7 @@
 using API.Controllers;
 using APPCORE;
 using BusinessLogic.Facturacion.Mapping;
-using CatalogDataBaseModel;
+using Business;
 using ClientDataBaseModel;
 using System;
 using System.Collections.Generic;
@@ -91,8 +91,11 @@ namespace DataBaseModel
 		EMPEÑOS,
 		PRESTAMOS,
 		DESEMBOLSO_CONTRATOS,
-		INGRESOS_EMPENOS
-	}
+		INGRESOS_EMPENOS,
+        PAGOS_FACTURAS_CLIENTES,
+        PAGOS_FACTURAS_PROVEEDORES,
+        INGRESO_COMPRA_DOLARES
+    }
 
 	public class Catalogo_Cuentas : EntityClass
 	{
@@ -137,23 +140,78 @@ namespace DataBaseModel
 			return cuenta;
 		}
 
+		/*LA CUENTA QUE DEBE TOMAR ES LA CUENTA DE DONDE LA EMPRESA SACA EL DINERO DESEMBOLSA PARA PAGAR LOS CONTRATOS, PROPIA*/
 		public static Catalogo_Cuentas? GetCuentaEgresoContratos(Security_Users dbUser)
 		{
 			return GetCuenta(dbUser, Categoria_CuentasEnum.CAJA_GENERAL, "PROPIA");
 		}
+		/*LA CUENTA QUE DEBE TOMAR ES LA CUENTA A DONDE LA EMPRESA PAGA EL DESEMBOLSA PARA PAGAR LOS CONTRATOS, NORMALMENTE LOS CLIENTES, EXTERNA*/
 		public static Catalogo_Cuentas? GetCuentaRegistoContratos(Security_Users dbUser)
 		{
 			return GetCuenta(dbUser, Categoria_CuentasEnum.DESEMBOLSO_CONTRATOS, "EXTERNA");
 		}
-
+		
+		/*LA CUENTA QUE DEBE TOMAR ES LA CUENTA A DONDE LA EMPRESA REGISTRA QUE VIENE EL DINERO DE LOS RESIVOS, NORMALMENTE LOS CLIENTES, EXTERNA
+			* SI UN CLIENTE HACE UN PAGO QUE DEBE SER ANULADO EL DINERO DEBE REGRESAR A EL
+		*/
 		public static Catalogo_Cuentas? GetCuentaEgresoRecibos(Security_Users dbUser)
 		{
 			return GetCuenta(dbUser, Categoria_CuentasEnum.INGRESOS_EMPENOS, "EXTERNA");
 		}
+		/*LA CUENTA QUE DEBE TOMAR ES LA CUENTA A DONDE LA EMPRESA REGISTRA EL DINERO QUE INGRESA DE LOS RECIBIOS
+			* SI UN CLIENTE HACE UN PAGO EL DINERO QUE PAGA SE REGISTRARA EN ESTA CUENTA
+		*/
 		public static Catalogo_Cuentas? GetCuentaIngresoRecibos(Security_Users dbUser)
 		{
 			return GetCuenta(dbUser, Categoria_CuentasEnum.CAJA_1, "PROPIA");
 		}
+
+		/*
+			* LA CUENTA QUE DEBE TOMAR ES LA CUENTA A DONDE LA EMPRESA REGISTRA QUE VIENE EL DINERO DE LAS FACTURAS,
+			 NORMALMENTE LOS CLIENTES, EXTERNA
+			* SI UN CLIENTE HACE UN PAGO QUE DEBE SER ANULADO EL DINERO DEBE REGRESAR A EL
+		*/
+		public static Catalogo_Cuentas? GetCuentaEgresoFacturas(Security_Users dbUser)
+		{
+			return GetCuenta(dbUser, Categoria_CuentasEnum.PAGOS_FACTURAS_CLIENTES, "EXTERNA");
+		}
+		/*LA CUENTA QUE DEBE TOMAR ES LA CUENTA A DONDE LA EMPRESA REGISTRA EL DINERO QUE INGRESA DE LOS RECIBIOS
+			* SI UN CLIENTE HACE UN PAGO EL DINERO QUE PAGA SE REGISTRARA EN ESTA CUENTA
+		*/
+		public static Catalogo_Cuentas? GetCuentaIngresoFacturas(Security_Users dbUser)
+		{
+			return GetCuenta(dbUser, Categoria_CuentasEnum.CAJA_1, "PROPIA");
+		}
+
+			/*
+			* LA CUENTA QUE DEBE TOMAR ES LA CUENTA A DONDE LA EMPRESA REGISTRA QUE VIENE 
+				EL DINERO DE LAS FACTURAS QUE SE PAGAN A LOS PROVEEDORES, NORMALMENTE LOS CLIENTES, PROPIA
+			* SI UN PROVEEDOR SE LE HACE UNA FACTURA QUE DEBE SER ANULADO EL DINERO DEBE REGRESAR A ESTA CUENTA
+		*/
+		public static Catalogo_Cuentas? GetCuentaEgresoFacturasProveedor(Security_Users dbUser)
+		{
+			return GetCuenta(dbUser, Categoria_CuentasEnum.CAJA_1, "PROPIA");
+		}
+		/*LA CUENTA QUE DEBE TOMAR ES LA CUENTA A DONDE LA EMPRESA REGISTRA EL DINERO QUE SE LE PAGA
+			A LOS PROVEEDORES
+			* SI UN PROVEEDORE VENDE UN PRODUCTO EL DINERO QUE SE LE PAGA SE REGISTRARA EN ESTA CUENTA
+		*/
+		public static Catalogo_Cuentas? GetCuentaIngresoFacturasProveedor(Security_Users dbUser)
+		{
+			return GetCuenta(dbUser, Categoria_CuentasEnum.PAGOS_FACTURAS_PROVEEDORES, "EXTERNA");
+		}
+
+		
+        internal static Catalogo_Cuentas? GetCuentaCajaDolares(Security_Users dbUser)
+        {
+            return GetCuenta(dbUser, Categoria_CuentasEnum.CAJA_1, "PROPIA");
+        }
+
+        internal static Catalogo_Cuentas? GetCuentaCajaCordobas(Security_Users dbUser)
+        {
+            return GetCuenta(dbUser, Categoria_CuentasEnum.CAJA_1, "PROPIA");
+        }
+
 
 		private static Catalogo_Cuentas? CrearCuentaSiNoExiste(Security_Users dbUser, int? idCategoria,
 		 Catalogo_Cuentas? cuenta,
@@ -188,7 +246,12 @@ namespace DataBaseModel
 		{
 			return new Categoria_Cuentas { descripcion = categoria_CuentasEnum.ToString() }.Find<Categoria_Cuentas>()?.id_categoria;
 		}
-	}
+
+        internal static Catalogo_Cuentas? GetCuentaIngresoCompraDolares(Security_Users dbUser)
+        {
+            return GetCuenta(dbUser, Categoria_CuentasEnum.INGRESO_COMPRA_DOLARES, "EXTERNA");
+        }
+    }
 
 	public class Transaccion_Permitida
 	{

@@ -1,6 +1,7 @@
 using API.Controllers;
 using APPCORE;
 using CAPA_NEGOCIO.Util;
+using Business;
 using ClientDataBaseModel;
 using System;
 using System.Collections.Generic;
@@ -44,6 +45,12 @@ namespace DataBaseModel
 		{
 		    return Estado != "ANULADO" && Estado != "CANCELADO" && !DateUtil.IsAffterNDays(Fecha, 5);
 		}}		
+		public bool Is_cambio_cordobas { get; set; }
+		//public MonedaEnum?  Moneda { get; set; }
+    	//public double?  Monto_dolares { get; set; }
+    	public double?  Cambio_cordobas { get; set; }
+    	public double?  Cambio_dolares { get; set; }
+    	//public double?  Monto_cordobas { get; set; }
 
 		[JsonProp]
 		public DatosFactura? Datos { get; set; }

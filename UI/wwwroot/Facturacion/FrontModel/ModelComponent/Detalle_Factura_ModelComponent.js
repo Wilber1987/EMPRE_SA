@@ -11,9 +11,7 @@ import { Detalle_Factura } from "../Detalle_Factura.js";
 class Detalle_Factura_ModelComponent extends EntityClass {
 	constructor(props) {
 		super(props, 'EntityFacturacion');
-		for (const prop in props) {
-			this[prop] = props[prop];
-		}
+		Object.assign(this, props);
 	}
 	/**@type {ModelProperty}*/ Id_DetalleFactura = { type: 'number', primary: true };
 	/**@type {ModelProperty}*/ Lote = {

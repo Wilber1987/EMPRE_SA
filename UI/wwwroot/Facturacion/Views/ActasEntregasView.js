@@ -175,6 +175,7 @@ class ActasEntregasView extends HTMLElement {
 			const lote = await new Tbl_Lotes().Find(
 				FilterData.JsonPropEqual("Datos_Producto", "Marca", detail.Lote.Datos_Producto.Marca, "varchar"),
 				FilterData.JsonPropEqual("Datos_Producto", "Modelo", detail.Lote.Datos_Producto.Modelo, "varchar"),
+				FilterData.JsonPropEqual("Datos_Producto", "id_estado", detail.Lote.Datos_Producto.id_estado),
 				FilterData.GreaterEqual("Cantidad_Existente", detail.Cantidad)
 			);
 			if (lote) {

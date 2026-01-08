@@ -1,7 +1,7 @@
 using API.Controllers;
 using APPCORE;
 using CAPA_NEGOCIO.Util;
-using CatalogDataBaseModel;
+using Business;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,13 +54,31 @@ namespace DataBaseModel
 				double? ivaTotal = 0;
 				double? total = 0;
 				Codigo_compra = GenerateCode();
-				var User = AuthNetCore.User(Identify);
-				var dbUser = new Security_Users { Id_User = User.UserId }.Find<Security_Users>();
+				var  (User, dbUser) =  Business.Security_Users.GetUserData(Identify);
 
 				Cat_Proveedor? proveedor = new Cat_Proveedor { Identificacion = Cat_Proveedor?.Identificacion }.Find<Cat_Proveedor>();
 				if (proveedor != null)
 				{
 					Cat_Proveedor = proveedor;
+				} else
+				{
+					if (Cat_Proveedor != null && Cat_Proveedor?.Datos_Proveedor != null  && Cat_Proveedor?.Datos_Proveedor?.codigo_cliente == -1)
+					{
+						var nuevoClienteproveedor = new Catalogo_Clientes
+						{
+							primer_nombre = Cat_Proveedor?.Datos_Proveedor.primer_nombre,
+							segundo_nombre = Cat_Proveedor?.Datos_Proveedor.segundo_nombre,
+							primer_apellido = Cat_Proveedor?.Datos_Proveedor.primer_apellido,
+							segundo_apellidio = Cat_Proveedor?.Datos_Proveedor.segundo_apellidio,
+							direccion = Cat_Proveedor?.Datos_Proveedor.direccion,
+							identificacion = Cat_Proveedor?.Identificacion,
+							id_departamento = Cat_Proveedor?.Datos_Proveedor.Catalogo_Municipio?.id_departamento,
+							id_municipio = Cat_Proveedor?.Datos_Proveedor.Catalogo_Municipio?.id_municipio,
+							id_tipo_identificacion =  Cat_Proveedor?.Datos_Proveedor.Catalogo_Tipo_Identificacion?.id_tipo_identificacion,
+
+						}.Save() as Catalogo_Clientes;
+						Cat_Proveedor!.Datos_Proveedor.codigo_cliente = nuevoClienteproveedor?.codigo_cliente;
+					}
 				}
 				foreach (var detalle in this.Detalle_Compra)
 				{
@@ -97,8 +115,11 @@ namespace DataBaseModel
 				Total = total;
 				var responseCompra = Save();
 				Id_Compra = ((Tbl_Compra?)responseCompra)?.Id_Compra;
-				var cuentaDestino = Catalogo_Cuentas.GetCuentaIngresoRecibos(dbUser);
-				var cuentaOrigen = Catalogo_Cuentas.GetCuentaEgresoRecibos(dbUser);
+
+				//CREAR
+				var cuentaOrigen = Catalogo_Cuentas.GetCuentaEgresoFacturasProveedor(dbUser);
+				var cuentaDestino = Catalogo_Cuentas.GetCuentaIngresoFacturasProveedor(dbUser);
+
 				if (cuentaDestino == null || cuentaOrigen == null)
 				{
 					RollBackGlobalTransaction();
@@ -108,7 +129,7 @@ namespace DataBaseModel
 						message = "Cuentas no configuradas correctamente"
 					};
 				}
-				string detalleT = $"Compra directa de producto, factura: {Id_Compra} al cliente {Cat_Proveedor?.Nombre}";
+				string detalleT = $"Compra directa de producto, factura: {Id_Compra}, cliente: {Cat_Proveedor?.Nombre}";
 				ResponseService response = new Movimientos_Cuentas
 				{
 					Catalogo_Cuentas_Destino = cuentaDestino,
@@ -120,8 +141,9 @@ namespace DataBaseModel
 					tasa_cambio = this.Tasa_Cambio,
 					//tasa_cambio_compra = this.Tasa_Cambio_Venta,
 					is_transaction = true,
+					Tipo_Movimiento = TipoMovimiento.DESEMBOLSO_POR_COMPRA
 
-				}.SaveMovimiento(Identify);
+				}.SaveMovimiento(dbUser);
 				if (response.status == 400) return response;
 				return new ResponseService()
 				{
@@ -188,8 +210,7 @@ namespace DataBaseModel
 		{
 			try
 			{
-				var user = AuthNetCore.User(Identify);
-				var dbUser = new Security_Users { Id_User = user.UserId }.Find<Security_Users>();
+				var  (User, dbUser) =  Business.Security_Users.GetUserData(Identify);
 				var compra = new Tbl_Compra() { Id_Compra = this.Id_Compra }.Find<Tbl_Compra>();
 
 				if (compra == null)
@@ -223,8 +244,9 @@ namespace DataBaseModel
 					compra.Estado = EstadoEnum.ANULADO.ToString();
 					compra.Update();
 				}
-				var cuentaDestino = Catalogo_Cuentas.GetCuentaEgresoRecibos(dbUser);
-				var cuentaOrigen = Catalogo_Cuentas.GetCuentaIngresoRecibos(dbUser);
+				//ANULAR
+				var cuentaOrigen = Catalogo_Cuentas.GetCuentaIngresoFacturasProveedor(dbUser);				
+				var cuentaDestino = Catalogo_Cuentas.GetCuentaEgresoFacturasProveedor(dbUser);
 				if (cuentaDestino == null || cuentaOrigen == null)
 				{
 					RollBackGlobalTransaction();
@@ -246,8 +268,9 @@ namespace DataBaseModel
 					tasa_cambio = this.Tasa_Cambio,
 					//tasa_cambio_compra = this.Tasa_Cambio_Venta,
 					is_transaction = true,
+					Tipo_Movimiento = TipoMovimiento.REEMBOLSO_POR_COMPRA_ANULADA
 
-				}.SaveMovimiento(Identify);
+				}.SaveMovimiento(dbUser);
 				if (response.status == 400) return response;
 
 				CommitGlobalTransaction();

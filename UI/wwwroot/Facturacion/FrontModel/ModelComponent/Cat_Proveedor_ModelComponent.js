@@ -6,9 +6,7 @@ import { Tbl_Compra_ModelComponent } from './Tbl_Compra_ModelComponent.js'
 class Cat_Proveedor_ModelComponent extends EntityClass {
     constructor(props) {
         super(props, 'EntityFacturacion');
-        for (const prop in props) {
-            this[prop] = props[prop];
-        }
+        Object.assign(this, props);
     }
     /**@type {ModelProperty}*/ Id_Proveedor = { type: 'number', primary: true };
     /**@type {ModelProperty}*/ Nombre = { type: 'text' };

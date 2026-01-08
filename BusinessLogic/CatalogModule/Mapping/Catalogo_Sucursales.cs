@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using APPCORE;
-namespace CatalogDataBaseModel {
+namespace Business {
    public class Catalogo_Sucursales : EntityClass
 	{
 		[PrimaryKey(Identity = true)]

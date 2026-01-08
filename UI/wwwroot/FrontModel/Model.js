@@ -5,9 +5,7 @@ import { Catalogo_Clientes, Transaccion_Factura } from "./DBODataBaseModel.js";
 class ValoracionesTransaction extends EntityClass {
 	constructor(props) {
 		super();
-		for (const prop in props) {
-			this[prop] = props[prop];
-		};
+		Object.assign(this, props);;
 		this.Moneda = undefined;
 	}
 	/**@type {Array<Transactional_Valoracion_ModelComponent>} */
@@ -39,9 +37,7 @@ class Tbl_Cuotas extends EntityClass {
 	 */
 	constructor(props) {
 		super();
-		for (const prop in props) {
-			this[prop] = props[prop];
-		}
+		Object.assign(this, props);
 	}
 	/**Datos de la Tbl_cuotas*/
 	/**@type {Date} */
@@ -79,9 +75,7 @@ class Transaction_Contratos extends EntityClass {
 	*/
 	constructor(props) {
 		super(props, 'EntityDBO');
-		for (const prop in props) {
-			this[prop] = props[prop];
-		}
+		Object.assign(this, props);
 		this.Tbl_Cuotas = this.Tbl_Cuotas?.map(c => new Tbl_Cuotas(c));      
 	}
 	/**@type {Number} */numero_contrato;
@@ -201,9 +195,7 @@ export { Detail_Prendas }
 class Catalogo_Categoria extends EntityClass {
 	constructor(props) {
 		super(props, 'EntityDbo');
-		for (const prop in props) {
-			this[prop] = props[prop];
-		}
+		Object.assign(this, props);
 	}
 	/**@type {Number}*/ id_categoria;
 	/**@type {String}*/ tipo;
@@ -219,9 +211,7 @@ export { Catalogo_Categoria }
 class Detail_Prendas_Vehiculos extends EntityClass {
 	constructor(props) {
 		super(props, 'EntityDBO');
-		for (const prop in props) {
-			this[prop] = props[prop];
-		}
+		Object.assign(this, props);
 	}
 	capacidad_cilindros;
 	cantidad_cilindros;

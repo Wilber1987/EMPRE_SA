@@ -5,9 +5,7 @@ import { ModelProperty } from "../../../WDevCore/WModules/CommonModel.js";
 class Lotes_ModelComponent extends EntityClass {
    constructor(props) {
        super(props, 'TransactionLotes');
-       for (const prop in props) {
-           this[prop] = props[prop];
-       }
+       Object.assign(this, props);
    }
    /**@type {ModelProperty}*/ Id_Transaccion = { type: 'number', primary: true };
    /**@type {ModelProperty}*/ Descripcion = { type: 'text' };

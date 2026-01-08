@@ -1,11 +1,12 @@
 using API.Controllers;
 using APPCORE;
 using CAPA_NEGOCIO.Services;
-using CatalogDataBaseModel;
+using Business;
 using DataBaseModel;
 using Model;
 using Transactions;
 using UI.CAPA_NEGOCIO.Empresa.Services.Recibos;
+using BusinessLogic.Facturacion.Operations;
 
 namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 {
@@ -44,7 +45,7 @@ namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 		public ResponseService DoSaveFactura(string? Identity, Tbl_Factura? factura)
 		{
 			var User = AuthNetCore.User(Identity);
-			var dbUser = new Security_Users { Id_User = User.UserId }.Find<Security_Users>();
+			var dbUser = new Business.Security_Users { Id_User = User.UserId }.Find<Security_Users>();
 			if (factura?.Detalle_Factura == null || !factura.Detalle_Factura.Any())
 			{
 				return new ResponseService
@@ -155,7 +156,7 @@ namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 					bool isQuincenal = factura.Tipo == "APARTADO_QUINCENAL";
 					double porcentajeQuincenal = 1 / Transactional_Configuraciones.GetNumeroCuotasQuincenales(factura!.Monto_dolares + factura.Datos_Financiamiento!.Total_Financiado);
 					double porcentajeMensual = Transactional_Configuraciones.GetPorcentageMinimoPagoApartadoMensual() / 100;
-					
+
 
 					if (isQuincenal && factura.Monto_dolares < Math.Round(totalFactura * porcentajeQuincenal, 2))
 					{
@@ -206,8 +207,10 @@ namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 			}
 
 			factura?.Save();
-			var cuentaDestino = Catalogo_Cuentas.GetCuentaIngresoRecibos(dbUser);
-			var cuentaOrigen = Catalogo_Cuentas.GetCuentaEgresoRecibos(dbUser);
+			//CREATE
+			var cuentaOrigen = Catalogo_Cuentas.GetCuentaEgresoFacturas(dbUser);
+			var cuentaDestino = Catalogo_Cuentas.GetCuentaIngresoFacturas(dbUser);
+
 			if (cuentaDestino == null || cuentaOrigen == null)
 			{
 				return new ResponseService()
@@ -227,10 +230,16 @@ namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 				monto = factura?.Total,
 				tasa_cambio = factura?.Tasa_Cambio,
 				//tasa_cambio_compra = factura.Tasa_Cambio_Venta,
+				Tipo_Movimiento = TipoMovimiento.INGRESO_POR_PAGO_DE_FACTURACION,
 				is_transaction = true,
 
-			}.SaveMovimiento(Identity);
+			}.SaveMovimiento(dbUser);
 			if (response.status == 400) return response;
+			var responseMC = MesaCambiariaService.GenerarMovimientosCambiariosFacturacion(dbUser, factura);
+			if (responseMC.status != 200)
+			{
+				return responseMC;
+			}
 			return new ResponseService
 			{
 				status = 200,
@@ -342,7 +351,7 @@ namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 		public ResponseService? AnularFactura(Tbl_Factura factura, string? Identity)
 		{
 			var User = AuthNetCore.User(Identity);
-			var dbUser = new Security_Users { Id_User = User.UserId }.Find<Security_Users>();
+			var dbUser = new Business.Security_Users { Id_User = User.UserId }.Find<Security_Users>();
 			try
 			{
 				BeginGlobalTransaction();
@@ -370,8 +379,9 @@ namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 				}
 				factura!.Estado = EstadoEnum.ANULADO.ToString();
 				factura?.Save();
-				var cuentaDestino = Catalogo_Cuentas.GetCuentaIngresoRecibos(dbUser);
-				var cuentaOrigen = Catalogo_Cuentas.GetCuentaEgresoRecibos(dbUser);
+				//ANULAR
+				var cuentaOrigen = Catalogo_Cuentas.GetCuentaIngresoFacturas(dbUser);
+				var cuentaDestino = Catalogo_Cuentas.GetCuentaEgresoFacturas(dbUser);
 				if (cuentaDestino == null || cuentaOrigen == null)
 				{
 					return new ResponseService()
@@ -380,7 +390,7 @@ namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 						message = "Cuentas no configuradas correctamente"
 					};
 				}
-				string detalleT = $"Snulacion de venta de producto, factura: {factura?.Id_Factura} al cliente {factura?.Cliente?.Nombre_Completo}";
+				string detalleT = $"Snulacion de venta de producto, factura: {factura?.Id_Factura}, cliente: {factura?.Cliente?.Nombre_Completo}";
 				ResponseService responseM = new Movimientos_Cuentas
 				{
 					Catalogo_Cuentas_Destino = cuentaOrigen,
@@ -391,8 +401,9 @@ namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 					monto = factura?.Total,
 					tasa_cambio = factura?.Tasa_Cambio,
 					is_transaction = true,
+					Tipo_Movimiento = TipoMovimiento.DESEMBOLSO_POR_ANULACION_DE_PAGO_DE_FACTURACION
 
-				}.SaveMovimiento(Identity);
+				}.SaveMovimiento(dbUser);
 				if (responseM.status == 400)
 				{
 					RollBackGlobalTransaction();

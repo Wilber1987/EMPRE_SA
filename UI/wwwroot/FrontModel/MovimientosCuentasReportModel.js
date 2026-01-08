@@ -64,9 +64,7 @@ export class Movimiento {
 export class Movimiento_ModelComponent {
     constructor(props) {
         // Cargar propiedades dinámicamente si se proporcionan
-        for (const prop in props) {
-            this[prop] = props[prop];
-        }
+        Object.assign(this, props);
     }
     /**@type {ModelProperty} */  id_movimiento = { type: "number", primary: true };
     /**@type {ModelProperty} */  concepto = { type: "text" };

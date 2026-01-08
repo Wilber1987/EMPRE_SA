@@ -10,9 +10,7 @@ import { ModelProperty } from "../../WDevCore/WModules/CommonModel.js";
 class Tbl_Acta_Entrega extends EntityClass {
 	constructor(props) {
 		super(props, 'TransactionLotes');
-		for (const prop in props) {
-			this[prop] = props[prop];
-		}
+		Object.assign(this, props);
 	}
 
 	/**@type {number}*/ Id_Acta_Entrega;

@@ -8,7 +8,7 @@ import { clientSearcher } from "../modules/SerchersModules.js";
 import { ClientComponentView } from "./ClientComponentView.js";
 
 class Gestion_ClientesView extends HTMLElement {
-    constructor(props) {
+    constructor() {
         super();
         this.Draw();
     }

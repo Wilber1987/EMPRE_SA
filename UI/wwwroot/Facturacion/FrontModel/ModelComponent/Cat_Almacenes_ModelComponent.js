@@ -6,9 +6,7 @@ import { Tbl_Lotes_ModelComponent }  from './Tbl_Lotes_ModelComponent.js'
 class Cat_Almacenes_ModelComponent extends EntityClass {
    constructor(props) {
        super(props, 'EntityFacturacion');
-       for (const prop in props) {
-           this[prop] = props[prop];
-       }
+       Object.assign(this, props);
    }
    /**@type {ModelProperty}*/ Id_Almacen = { type: 'number', primary: true };
    /**@type {ModelProperty}*/ Descripcion = { type: 'text' };

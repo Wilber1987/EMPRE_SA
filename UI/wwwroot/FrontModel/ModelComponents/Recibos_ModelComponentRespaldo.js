@@ -16,9 +16,7 @@ class Recibos_ModelComponent extends EntityClass {
         /**@type {ModelProperty} */ this.cambio_cordobas = undefined;
         // @ts-ignore
         /**@type {ModelProperty} */ this.cambio_dolares = undefined;
-        for (const prop in props) {
-            this[prop] = props[prop];
-        };
+        Object.assign(this, props);
 
     }
     /**@type {ModelProperty} */ numero_contrato = { type: "number", disabled: true, hidden: true };
@@ -90,7 +88,7 @@ class Recibos_ModelComponent extends EntityClass {
 
     /**@type {ModelProperty} */ moneda = { type: "radio", Dataset: ["DOLARES", "CORDOBAS"] };
     /**@type {ModelProperty} */ reestructurar_value = { type: "number", label: "meses a reestructurar", placeholder: "número de meses ejm. 1", hidden: true, min: 1, require: true };
-    /**@type {ModelProperty} */ is_cambio_cordobas = { type: "checkbox", require: false, label: "dar cambio en córdobas", hidden: false };
+    /**@type {ModelProperty} */ Is_cambio_cordobas = { type: "checkbox", require: false, label: "dar cambio en córdobas", hidden: false };
 
 
     VerRecibo = async () => {
@@ -274,8 +272,8 @@ class Recibos_ModelComponent extends EntityClass {
                         form.ModelObject.paga_cordobas.disabled = true;
                         form.ModelObject.paga_dolares.disabled = false;
 
-                        form.ModelObject.is_cambio_cordobas.hidden = false;
-                        ObjectF.is_cambio_cordobas = false;
+                        form.ModelObject.Is_cambio_cordobas.hidden = false;
+                        ObjectF.Is_cambio_cordobas = false;
                         ObjectF.cambio_cordobas = ((ObjectF.monto_dolares - ObjectF.paga_dolares) * contractData.tasasCambio[0].Valor_de_compra).toFixed(3);
                         form?.DrawComponent();
                     } else {
@@ -285,8 +283,8 @@ class Recibos_ModelComponent extends EntityClass {
                         form.ModelObject.paga_cordobas.disabled = false;
                         form.ModelObject.paga_dolares.disabled = true;
 
-                        form.ModelObject.is_cambio_cordobas.hidden = true;
-                        ObjectF.is_cambio_cordobas = false;
+                        form.ModelObject.Is_cambio_cordobas.hidden = true;
+                        ObjectF.Is_cambio_cordobas = false;
                         ObjectF.cambio_cordobas = (ObjectF.monto_cordobas - ObjectF.paga_cordobas).toFixed(3);
                         form?.DrawComponent();
                     }
