@@ -18,8 +18,13 @@ import { DateTime } from "../../../WDevCore/WModules/Types/DateTime.js";
 
 
 class Tbl_Factura_ModelComponent extends EntityClass {
-	constructor(props) {
+	/**
+	 * @param {Partial<Tbl_Factura_ModelComponent>} [props]
+	 * @param {Function} [action]
+	 */
+	constructor(props, action) {
 		super(props, 'EntityFacturacion');
+		this.action = action
 		Object.assign(this, props);;
 	}
 	/**@type {ModelProperty}*/ Id_Factura = { type: 'number', primary: true };
@@ -55,6 +60,9 @@ class Tbl_Factura_ModelComponent extends EntityClass {
 				EditObject.Is_cambio_cordobas = false;
 				//form?.DrawComponent();
 			}
+			if (this.action) {
+				this.action(EditObject, form)
+			}
 		}
 	}
 	/**@type {ModelProperty}*/ Fecha_Vencimiento = { type: 'date', hidden: true };
@@ -72,7 +80,7 @@ class Tbl_Factura_ModelComponent extends EntityClass {
 		hidden: true,
 		ModelObject: new Datos_Financiamiento_ModelComponent(),
 		action: (/**@type {Tbl_Factura}*/ EditObject, /**@type {WForm} */ form) => {
-			//return ConvertToMoneyString(EditObject.cambio_cordobas = EditObject.Monto_cordobas - (EditObject.Total * EditObject.Tasa_Cambio));
+			//return ConvertToMoneyString(EditObject.cambio_cordobas = EditObject.Monto_cordobas - (EditObject.Total * EditObject.Tasa_Cambio_Venta));
 		}
 	};
 
@@ -97,7 +105,7 @@ class Tbl_Factura_ModelComponent extends EntityClass {
 	};
 	/**@type {ModelProperty}*/ cambio_cordobas = {
 		type: 'MONEY', disabled: true, require: false, defaultValue: 0, min: 0, hiddenFilter: true, hiddenInTable: true, action: (/**@type {Tbl_Factura}*/ EditObject, /**@type {WForm} */ form) => {
-			//return ConvertToMoneyString(EditObject.cambio_cordobas = EditObject.Monto_cordobas - (EditObject.Total * EditObject.Tasa_Cambio));
+			//return ConvertToMoneyString(EditObject.cambio_cordobas = EditObject.Monto_cordobas - (EditObject.Total * EditObject.Tasa_Cambio_Venta));
 		}
 	};
 	/**@type {ModelProperty} */ Is_cambio_cordobas = { type: "checkbox", require: false, hiddenFilter: true, hiddenInTable: true, label: "dar cambio en córdobas", hidden: true };
@@ -108,10 +116,10 @@ class Tbl_Factura_ModelComponent extends EntityClass {
 		ModelObject: () => new Detalle_Factura_ModelComponent(),
 		action: (/**@type {Tbl_Factura}*/ EditObject, /** @type {WForm} */ form) => {
 			this.CalculeTotal(EditObject, form);
-			this.Detalle_Factura.ModelObject.Lote.Dataset = undefined;			
+			this.Detalle_Factura.ModelObject.Lote.Dataset = undefined;
 		},
 		Options: {
-			Add: true,			
+			Add: true,
 			Edit: true,
 			Delete: true,
 		}
@@ -210,7 +218,7 @@ class Tbl_Factura_ModelComponent extends EntityClass {
 	 */
 	CreateContrato(contrato, EditObject, interes, tasa) {
 		const totalDolares = (EditObject.Total ?? 0) - (EditObject.Monto_dolares ?? 0);
-		const totalCordobas = ((EditObject.Total ?? 0) * EditObject.Tasa_Cambio) - (EditObject.Monto_cordobas ?? 0);
+		const totalCordobas = ((EditObject.Total ?? 0) * EditObject.Tasa_Cambio_Venta) - (EditObject.Monto_cordobas ?? 0);
 		contrato.valoraciones = EditObject.Detalle_Factura.map(detalle => detalle.Lote.Datos_Producto);
 		contrato.Transaction_Contratos = new Transaction_Contratos({
 			tasas_interes: interes / 100,
@@ -261,11 +269,11 @@ class Tbl_Factura_ModelComponent extends EntityClass {
 	 * @param {WForm} form
 	 */
 	CalculeCambioCordobas(EditObject, form) {
-		EditObject.Monto_dolares = parseFloat((EditObject.Monto_cordobas / EditObject.Tasa_Cambio).toFixed(3));
+		EditObject.Monto_dolares = parseFloat((EditObject.Monto_cordobas / EditObject.Tasa_Cambio_Venta).toFixed(3));
 		EditObject.cambio_dolares = parseFloat((EditObject.Monto_dolares - EditObject.Total).toFixed(3));
-		EditObject.cambio_cordobas = parseFloat((EditObject.Monto_cordobas - (EditObject.Total * EditObject.Tasa_Cambio)).toFixed(3));
+		EditObject.cambio_cordobas = parseFloat((EditObject.Monto_cordobas - (EditObject.Total * EditObject.Tasa_Cambio_Venta)).toFixed(3));
 		if (EditObject.Moneda == "DOLARES") {
-			EditObject.cambio_cordobas = parseFloat(((EditObject.Monto_dolares - EditObject.Total) * EditObject.Tasa_Cambio).toFixed(3));
+			EditObject.cambio_cordobas = parseFloat(((EditObject.Monto_dolares - EditObject.Total) * EditObject.Tasa_Cambio_Venta).toFixed(3));
 		}
 		EditObject.cambio_dolares = EditObject.cambio_dolares < 0 ? 0 : EditObject.cambio_dolares;
 		EditObject.cambio_cordobas = EditObject.cambio_cordobas < 0 ? 0 : EditObject.cambio_cordobas;
@@ -276,7 +284,7 @@ class Tbl_Factura_ModelComponent extends EntityClass {
 	 * @param {WForm} form
 	 */
 	CalculeCambioDolares(EditObject, form) {
-		EditObject.Monto_cordobas = parseFloat((EditObject.Monto_dolares * EditObject.Tasa_Cambio).toFixed(3));
+		EditObject.Monto_cordobas = parseFloat((EditObject.Monto_dolares * EditObject.Tasa_Cambio_Venta).toFixed(3));
 		//console.log(EditObject.Monto_cordobas);
 		EditObject.cambio_dolares = parseFloat((EditObject.Monto_dolares - EditObject.Total).toFixed(3));
 		EditObject.cambio_cordobas = parseFloat((EditObject.Monto_cordobas - EditObject.Total).toFixed(3));
@@ -365,10 +373,19 @@ class Tbl_Factura_ModelComponent extends EntityClass {
 
 				break;
 		}
-		this.CalculeCambioDolares(EditObject, form);
-		this.CalculeCambioCordobas(EditObject, form);
+		if (EditObject.Moneda == "DOLARES") {
+			this.CalculeCambioDolares(EditObject, form);
+			//this.CalculeCambioCordobas(EditObject, form);
+		} else {
+			this.CalculeCambioCordobas(EditObject, form);
+			//this.CalculeCambioDolares(EditObject, form);
+		}
+
 		// @ts-ignore el parent element siempre existe dado este contexto
 		form.parentElement?.parentElement?.CalculeTotal(EditObject);
+		if (this.action) {
+			this.action(EditObject, form)
+		}
 
 		//form?.DrawComponent();
 	}
@@ -383,7 +400,8 @@ class Tbl_Factura_ModelComponent extends EntityClass {
 			// Add your condition logic here
 		}
 		const Configs = JSON.parse(sessionStorage.getItem("Configs") ?? "[]");
-		const Tasa_Cambio = EditObject.Detalle_Factura[0].Lote?.EtiquetaLote?.TasaCambio?.Valor_de_venta;
+		const tasa = this.GetTasa();
+		const Tasa_Cambio = this.GetTasa().Valor_de_venta;
 		const porcentajeMinimoMensual = (Configs.find(c => c.Nombre == "PORCENTAGE_MINIMO_DE_PAGO_APARTADO_MENSUAL").Valor ?? 35) / 100
 		const porcentajeMinimoQuincenal = 1 / (this.GetNumeroCuotasQuincenales(EditObject.Total) + 1);
 		let montoMinimoC = 0;

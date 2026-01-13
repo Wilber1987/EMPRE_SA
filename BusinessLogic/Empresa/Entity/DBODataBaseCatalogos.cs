@@ -94,7 +94,8 @@ namespace DataBaseModel
 		INGRESOS_EMPENOS,
         PAGOS_FACTURAS_CLIENTES,
         PAGOS_FACTURAS_PROVEEDORES,
-        INGRESO_COMPRA_DOLARES
+        INGRESO_COMPRA_DOLARES,
+        INGRESO_BENEFICIO_COMPRA_DOLARES
     }
 
 	public class Catalogo_Cuentas : EntityClass
@@ -250,6 +251,11 @@ namespace DataBaseModel
         internal static Catalogo_Cuentas? GetCuentaIngresoCompraDolares(Security_Users dbUser)
         {
             return GetCuenta(dbUser, Categoria_CuentasEnum.INGRESO_COMPRA_DOLARES, "EXTERNA");
+        }
+
+        internal static Catalogo_Cuentas? GetCuentaIngresoBeneficios(Security_Users dbUser)
+        {
+            return GetCuenta(dbUser, Categoria_CuentasEnum.CAJA_1, "INTERNA");
         }
     }
 

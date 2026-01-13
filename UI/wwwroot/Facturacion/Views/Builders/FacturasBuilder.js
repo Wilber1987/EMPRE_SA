@@ -30,7 +30,7 @@ export class FacturasBuilder {
             return FacturasBuilder.BuildFacturaApartadoMensual(documentsData, response);
         }
         //if () {
-            //return FacturasBuilder.BuildFacturaApartado(documentsData, response);
+        //return FacturasBuilder.BuildFacturaApartado(documentsData, response);
         //}
         return FacturasBuilder.BuildFacturaVenta(documentsData, response.factura);
     }
@@ -127,10 +127,10 @@ export class FacturasBuilder {
                     </div>
                 </div>
                 <div style="text-align: right; margin-top: 5px;">
-                    <p><strong>Total a pagar $:</strong> ${factura.Total.toFixed(2)}</p>
+                    <p><strong>Total a pagar $:</strong> ${ConvertToMoneyString(factura.Total)}</p>
                     <!-- <p><strong>IVA:</strong> ${WOrtograficValidation.es(factura.Moneda ?? "DOLARES")} ${factura.Iva.toFixed(2)}</p> -->
-                    <p><strong>Tasa de cambio:</strong> ${factura.Tasa_Cambio.toFixed(2)}</p>
-                    <p><strong>Total a pagar C$:</strong> ${(factura.Total * factura.Tasa_Cambio).toFixed(2)}</p>
+                    <p><strong>Tasa de cambio:</strong> ${factura.Tasa_Cambio_Venta.toFixed(2)}</p>
+                    <p><strong>Total a pagar C$:</strong> ${ConvertToMoneyString(factura.Total * factura.Tasa_Cambio_Venta)}</p>
                 </div>
             </div>
             <p style="text-align: center; margin-top: 32px; font-size: 14px;">NO SE ACEPTAN DEVOLUCIONES.</p>
@@ -210,8 +210,8 @@ export class FacturasBuilder {
                     </div>                    
                 </div>
                 <div style="text-align: right; margin-top: 5px; flex: 1" class="total-container">               
-                    <p><strong>Total C$:</strong> ${(factura.Total * factura.Tasa_Cambio).toFixed(2)}</p>
-                    <p><strong>Total $:</strong> ${factura.Total.toFixed(2)}</p>
+                    <p><strong>Total C$:</strong> ${ConvertToMoneyString(factura.Total * factura.Tasa_Cambio)}</p>
+                    <p><strong>Total $:</strong> ${ConvertToMoneyString(factura.Total)}</p>
                 </div>
             </div>
             <p style="text-align: center; font-size: 14px;">NO SE ACEPTAN DEVOLUCIONES.</p>
@@ -240,38 +240,43 @@ export class FacturasBuilder {
     }
 
     static BuildFacturaDetail(factura) {
-        return factura.Detalle_Factura.map((/**@type {Detalle_Factura} */ detalle) => WRender.Create({
-            tagName: "tr", children: [
-                WRender.Create({
-                    tagName: "td", style: "padding: 5px;",
-                    innerText: `${detalle.Lote?.Datos_Producto?.Descripcion || 'N/A'}`
-                }),
-                WRender.Create({
-                    tagName: "td", style: "padding: 5px;",
-                    innerText: `${detalle.Lote?.Datos_Producto?.Marca ?? "-"}`
-                }),
-                WRender.Create({
-                    tagName: "td", style: "padding: 5px;",
-                    innerText: `${detalle.Lote?.Datos_Producto?.Modelo ?? "-"}`
-                }),
-                WRender.Create({
-                    tagName: "td", style: "padding: 5px;",
-                    innerText: `${detalle.Lote?.Datos_Producto?.Serie ?? "-"}`
-                }),
-                WRender.Create({
-                    tagName: "td", style: "padding: 5px; text-align: right",
-                    innerText: `${WOrtograficValidation.es(factura.Moneda ?? "DOLARES")} ${ConvertToMoneyString(detalle.Precio_Venta)}`
-                }),
-                WRender.Create({
-                    tagName: "td", style: "padding: 5px; text-align: right",
-                    innerText: `${WOrtograficValidation.es(factura.Moneda ?? "DOLARES")} ${ConvertToMoneyString(detalle.Descuento)}`
-                }),
-                WRender.Create({
-                    tagName: "td", style: "padding: 5px; text-align: right",
-                    innerText: `${WOrtograficValidation.es(factura.Moneda ?? "DOLARES")} ${ConvertToMoneyString(detalle.Total)}`
-                })
-            ]
-        }));
+        return factura.Detalle_Factura.map((/**@type {Detalle_Factura} */ detalle) => {
+            const total = factura.Moneda == "DOLARES" ? detalle.Total : detalle.Total * factura.Tasa_Cambio_Venta
+            const descuento = factura.Moneda == "DOLARES" ? detalle.Descuento : detalle.Descuento * factura.Tasa_Cambio_Venta
+            const montoDetalle = factura.Moneda == "DOLARES" ? detalle.Precio_Venta : detalle.Precio_Venta * factura.Tasa_Cambio_Venta
+            return WRender.Create({
+                tagName: "tr", children: [
+                    WRender.Create({
+                        tagName: "td", style: "padding: 5px;",
+                        innerText: `${detalle.Lote?.Datos_Producto?.Descripcion || 'N/A'}`
+                    }),
+                    WRender.Create({
+                        tagName: "td", style: "padding: 5px;",
+                        innerText: `${detalle.Lote?.Datos_Producto?.Marca ?? "-"}`
+                    }),
+                    WRender.Create({
+                        tagName: "td", style: "padding: 5px;",
+                        innerText: `${detalle.Lote?.Datos_Producto?.Modelo ?? "-"}`
+                    }),
+                    WRender.Create({
+                        tagName: "td", style: "padding: 5px;",
+                        innerText: `${detalle.Lote?.Datos_Producto?.Serie ?? "-"}`
+                    }),
+                    WRender.Create({
+                        tagName: "td", style: "padding: 5px; text-align: right",
+                        innerText: `${WOrtograficValidation.es(factura.Moneda ?? "DOLARES")} ${ConvertToMoneyString(montoDetalle)}`
+                    }),
+                    WRender.Create({
+                        tagName: "td", style: "padding: 5px; text-align: right",
+                        innerText: `${WOrtograficValidation.es(factura.Moneda ?? "DOLARES")} ${ConvertToMoneyString(descuento)}`
+                    }),
+                    WRender.Create({
+                        tagName: "td", style: "padding: 5px; text-align: right",
+                        innerText: `${WOrtograficValidation.es(factura.Moneda ?? "DOLARES")} ${ConvertToMoneyString(total)}`
+                    })
+                ]
+            })
+        });
     }
     static CreateTableDetailCompra(factura) {
         return WRender.Create({
@@ -282,7 +287,10 @@ export class FacturasBuilder {
                         { tagName: "th", style: "padding: 5px;", innerHTML: "Marca" },
                         { tagName: "th", style: "padding: 5px;", innerHTML: "Model" },
                         { tagName: "th", style: "padding: 5px;", innerHTML: "Serie" },
-                        { tagName: "th", style: "padding: 5px; text-align: right;", innerHTML: `Sub Total ${WOrtograficValidation.es(factura.Moneda ?? "DOLARES")}` },
+                        {
+                            tagName: "th", style: "padding: 5px; text-align: right;",
+                            innerHTML: `Sub Total ${WOrtograficValidation.es(factura.Moneda ?? "DOLARES")}`
+                        },
                     ]
                 }),
                 { tagName: "tbody", children: this.BuildFacturaDetailCompra(factura) }
@@ -291,30 +299,35 @@ export class FacturasBuilder {
     }
 
     static BuildFacturaDetailCompra(/**@type {Tbl_Compra} */ factura) {
-        return factura.Detalle_Compra.map((/**@type {Detalle_Compra} */ detalle) => WRender.Create({
-            tagName: "tr", children: [
-                WRender.Create({
-                    tagName: "td", style: "padding: 5px;",
-                    innerText: `${detalle?.Cat_Producto.Descripcion || 'N/A'}`
-                }),
-                WRender.Create({
-                    tagName: "td", style: "padding: 5px;",
-                    innerText: `${detalle?.Cat_Producto?.Cat_Marca?.Descripcion ?? "-"}`
-                }),
-                WRender.Create({
-                    tagName: "td", style: "padding: 5px;",
-                    innerText: `${detalle?.Datos_Producto_Lote?.Modelo ?? "-"}`
-                }),
-                WRender.Create({
-                    tagName: "td", style: "padding: 5px;",
-                    innerText: `${detalle?.Datos_Producto_Lote?.Serie ?? "-"}`
-                }),
-                WRender.Create({
-                    tagName: "td", style: "padding: 5px;",
-                    innerText: `${WOrtograficValidation.es(factura.Moneda ?? "DOLARES")} ${detalle.Total.toFixed(2)}`
-                })
-            ]
-        }));
+
+        return factura.Detalle_Compra.map((/**@type {Detalle_Compra} */ detalle) => {
+            const total = factura.Moneda == "DOLARES" ? detalle.Total : detalle.Total * factura.Tasa_Cambio
+            //const montoDetalle  = factura.Moneda == "DOLARES" ? detalle.Total : detalle.Total *  factura.Tasa_Cambio
+            return WRender.Create({
+                tagName: "tr", children: [
+                    WRender.Create({
+                        tagName: "td", style: "padding: 5px;",
+                        innerText: `${detalle?.Cat_Producto.Descripcion || 'N/A'}`
+                    }),
+                    WRender.Create({
+                        tagName: "td", style: "padding: 5px;",
+                        innerText: `${detalle?.Cat_Producto?.Cat_Marca?.Descripcion ?? "-"}`
+                    }),
+                    WRender.Create({
+                        tagName: "td", style: "padding: 5px;",
+                        innerText: `${detalle?.Datos_Producto_Lote?.Modelo ?? "-"}`
+                    }),
+                    WRender.Create({
+                        tagName: "td", style: "padding: 5px;",
+                        innerText: `${detalle?.Datos_Producto_Lote?.Serie ?? "-"}`
+                    }),
+                    WRender.Create({
+                        tagName: "td", className: "monto", style: "padding: 5px;",
+                        innerText: `${WOrtograficValidation.es(factura.Moneda ?? "DOLARES")} ${ConvertToMoneyString(total)}`
+                    })
+                ]
+            })
+        });
     }
     static style = css`
 
@@ -393,6 +406,9 @@ export class FacturasBuilder {
         }
         .contract {
             page-break-after: always;        
+        }
+        .monto {
+            text-align: right;
         }
         @media print {
             * {

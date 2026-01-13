@@ -56,9 +56,10 @@ namespace Transactions
 		public bool? Is_cambio_cordobas { get; set; }
 		public bool? pago_parcial { get; set; }
 		public List<Tbl_Cuotas>? CuotasReestructuradas { get; private set; }
-		#endregion
+        public bool Is_withMesaCambiaria { get; set; } = true;
+        #endregion
 
-		public ResponseService SaveRecibos(string Identify)
+        public ResponseService SaveRecibos(string Identify)
 		{
 			try
 			{

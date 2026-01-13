@@ -219,6 +219,7 @@ namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 					message = "Cuentas no configuradas correctamente"
 				};
 			}
+			//TODO REVISAR
 			string detalleT = $"Venta de producto, factura: {factura?.Id_Factura} al cliente {factura?.Cliente?.Nombre_Completo}";
 			ResponseService response = new Movimientos_Cuentas
 			{
@@ -227,7 +228,7 @@ namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 				concepto = detalleT,
 				descripcion = detalleT,
 				moneda = factura?.Moneda?.ToUpper(),
-				monto = factura?.Total,
+				monto = factura?.Moneda == "DOLARES" ? factura?.Total : factura?.Total * factura?.Tasa_Cambio_Venta,
 				tasa_cambio = factura?.Tasa_Cambio,
 				//tasa_cambio_compra = factura.Tasa_Cambio_Venta,
 				Tipo_Movimiento = TipoMovimiento.INGRESO_POR_PAGO_DE_FACTURACION,

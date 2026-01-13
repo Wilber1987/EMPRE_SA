@@ -18,7 +18,8 @@ namespace BusinessLogic.Facturacion.Operations
             try
             {
                 // ✅ Solo para: factura en USD y cambio entregado en C$
-                if (factura?.Moneda?.ToUpper() != "CORDOBAS" && factura?.Is_cambio_cordobas == true)
+                if (factura?.Moneda?.ToUpper() != "CORDOBAS"
+                && factura?.Is_cambio_cordobas == true)
                 {
                     // 👇 Opción simple y segura (usa fecha + milisegundos + ID factura)
                     string secuencia = "FACT-" + factura.Id_Factura.GetValueOrDefault().ToString("D9"); // o usa un contador global
@@ -27,7 +28,14 @@ namespace BusinessLogic.Facturacion.Operations
                     // Suponemos que el cliente pagó en USD un monto mayor al valor de la factura
                     double montoFacturaUSD = factura?.Total ?? 0;
                     double montoPagadoUSD = factura?.Monto_dolares ?? 0;
-                    (bool flowControl, ResponseService value) = GenerarMovimientosCambiarios(dbUser, secuencia, moneda, montoFacturaUSD, montoPagadoUSD);
+                    (bool flowControl, ResponseService value) = GenerarMovimientosCambiarios(
+                        dbUser,
+                        secuencia,
+                        moneda,
+                        montoFacturaUSD,
+                        montoPagadoUSD,
+                        factura?.Is_withMesaCambiaria
+                    );
                     if (!flowControl)
                     {
                         return value;
@@ -48,7 +56,8 @@ namespace BusinessLogic.Facturacion.Operations
             try
             {
                 // ✅ Solo para: factura en USD y cambio entregado en C$
-                if (recibo?.moneda?.ToUpper() != "CORDOBAS" && recibo?.Is_cambio_cordobas == true)                {
+                if (recibo?.moneda?.ToUpper() != "CORDOBAS" && recibo?.Is_cambio_cordobas == true)
+                {
                     // 👇 Opción simple y segura (usa fecha + milisegundos + ID factura)
                     string secuencia = "FACT-" + recibo.id_recibo.GetValueOrDefault().ToString("D9"); // o usa un contador global
                     string? moneda = recibo?.moneda?.ToUpper();
@@ -56,7 +65,14 @@ namespace BusinessLogic.Facturacion.Operations
                     // Suponemos que el cliente pagó en USD un monto mayor al valor de la factura
                     double montoFacturaUSD = recibo?.total_apagar_dolares ?? 0;
                     double montoPagadoUSD = recibo?.monto_dolares ?? 0;
-                    (bool flowControl, ResponseService value) = GenerarMovimientosCambiarios(dbUser, secuencia, moneda, montoFacturaUSD, montoPagadoUSD);
+                    (bool flowControl, ResponseService value) = GenerarMovimientosCambiarios(
+                        dbUser,
+                        secuencia,
+                        moneda,
+                        montoFacturaUSD,
+                        montoPagadoUSD,
+                        recibo?.Is_withMesaCambiaria
+                    );
                     if (!flowControl)
                     {
                         return value;
@@ -72,17 +88,24 @@ namespace BusinessLogic.Facturacion.Operations
 
         }
 
+        private static (bool flowControl, ResponseService value) GenerarMovimientosCambiarios(Business.Security_Users dbUser, string secuencia, string moneda, double montoFacturaUSD, double montoPagadoUSD, object is_withMesaCambiaria)
+        {
+            throw new NotImplementedException();
+        }
+
         private static (bool flowControl, ResponseService value) GenerarMovimientosCambiarios(Business.Security_Users dbUser,
             string secuencia,
             string? moneda,
             double montoFacturaUSD,
-            double montoPagadoUSD)
+            double montoPagadoUSD,
+            bool? is_withMesaCambiaria)
         {
             // 1. Obtener tasas vigentes (usa la fecha de la factura o NOW)
             var divisa = new Catalogo_Cambio_Divisa().GetDivisa(MonedaEnum.DOLAR);
             if (divisa == null || divisa.Valor_de_compra <= 0)
                 return (flowControl: false, value: new ResponseService { status = 400, message = "Tasa de compra no disponible" });
             double tasaCompra = divisa.Valor_de_compra!.Value;
+            double tasaVenta = divisa.Valor_de_compra!.Value;
 
             // Mejor aún: combinar con ticks o random corto
             string fechaStr = DateTime.Now.ToString("yyyyMMdd");
@@ -99,7 +122,10 @@ namespace BusinessLogic.Facturacion.Operations
                 return (flowControl: false, value: new ResponseService { status = 200, message = "No hay operación cambiaria" });
 
             // 3. Calcular monto en C$ entregado como cambio
-            double cambioEnCordobas = excedenteUSD * tasaCompra;
+            double cambioEnCordobas = excedenteUSD * (is_withMesaCambiaria.GetValueOrDefault() ? tasaCompra : tasaVenta);
+            double valorRealDolares = excedenteUSD * tasaVenta;
+
+            double beneficio = valorRealDolares - cambioEnCordobas;
 
             // 4. Definir cuentas para operaciones cambiarias (⚠️ clave: cuentas específicas)
             //     Puedes parametrizar o reutilizar, pero idealmente tener:
@@ -130,13 +156,13 @@ namespace BusinessLogic.Facturacion.Operations
                 is_transaction = true,
                 Tipo_Movimiento = TipoMovimiento.COMPRA_DE_MONEDA
             }.SaveMovimiento(dbUser); // ignorar error? o acumular
-            if(responseCompra.status != 200 )
+            if (responseCompra.status != 200)
             {
                 return (false, responseCompra);
             }
 
             // ✅ Movimiento B: VENTA de C$ → salen C$ de caja C$
-            var responseVenta =new Movimientos_Cuentas
+            var responseVenta = new Movimientos_Cuentas
             {
                 Catalogo_Cuentas_Origen = cuentaCajaCordobas,
                 Catalogo_Cuentas_Destino = cuentaIngresoCompraUSD, // o cuenta "cliente virtual", pero mejor usar cuentas reales
@@ -148,9 +174,27 @@ namespace BusinessLogic.Facturacion.Operations
                 is_transaction = true,
                 Tipo_Movimiento = TipoMovimiento.VENTA_DE_MONEDA
             }.SaveMovimiento(dbUser);
-            if(responseVenta.status != 200 )
+            if (responseVenta.status != 200)
             {
                 return (false, responseVenta);
+            }
+
+            if (beneficio > 0)
+            { 
+                var cuentaIngresoBeneficios = Catalogo_Cuentas.GetCuentaIngresoBeneficios(dbUser);   // ← DEBES IMPLEMENTAR
+                // ✅ Movimiento B: VENTA de C$ → salen C$ de caja C$
+                var responseBeneficioVenta = new Movimientos_Cuentas
+                {
+                    Catalogo_Cuentas_Origen = cuentaCajaCordobas,
+                    Catalogo_Cuentas_Destino = cuentaIngresoBeneficios, // o cuenta "cliente virtual", pero mejor usar cuentas reales
+                    concepto = "Venta de C$ (cambio)",
+                    descripcion = $"{conceptoBase} - Entrega de cambio: {cambioEnCordobas:F2} C$ por {excedenteUSD:F2} USD",
+                    moneda = "CORDOBAS",
+                    monto = cambioEnCordobas,
+                    tasa_cambio = tasaCompra,
+                    is_transaction = true,
+                    Tipo_Movimiento = TipoMovimiento.BENEFICIO_VENTA_DE_MONEDA
+                }.SaveMovimiento(dbUser);
             }
             return (flowControl: true, value: new ResponseService(200, "movimientos cambiarios ejecutados"));
         }

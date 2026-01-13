@@ -250,7 +250,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
 		this.valoresModel = {
 			Valoracion_1: {
 				type: "number", label: "Valoración 1 - C$:", action: () => {
-					this.valoresObject.dolares_1 = this.valoresObject.Valoracion_1 / tasasCambio[0].Valor_de_venta;
+					this.valoresObject.dolares_1 = this.Round(this.valoresObject.Valoracion_1 / tasasCambio[0].Valor_de_venta);
 					/** @type {HTMLInputElement|undefined|null} */
 					const control = this.valoresForm?.shadowRoot?.querySelector(".dolares_1");
 					if (control != undefined || control != null) {
@@ -264,7 +264,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
 			},
 			dolares_1: {
 				type: "number", label: "$:", action: () => {
-					this.valoresObject.Valoracion_1 = this.valoresObject.dolares_1 * tasasCambio[0].Valor_de_venta;
+					this.valoresObject.Valoracion_1 = this.Round(this.valoresObject.dolares_1 * tasasCambio[0].Valor_de_venta);
 					/** @type {HTMLInputElement|undefined|null} */
 					const control = this.valoresForm?.shadowRoot?.querySelector(".Valoracion_1");
 					if (control != undefined || control != null) {
@@ -278,7 +278,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
 			},
 			Valoracion_2: {
 				type: "number", label: "Valoración 2 - C$:", action: () => {
-					this.valoresObject.dolares_2 = this.valoresObject.Valoracion_2 / tasasCambio[0].Valor_de_venta;
+					this.valoresObject.dolares_2 = this.Round(this.valoresObject.Valoracion_2 / tasasCambio[0].Valor_de_venta);
 					/** @type {HTMLInputElement|undefined|null} */
 					const control = this.valoresForm?.shadowRoot?.querySelector(".dolares_2");
 					if (control != undefined || control != null) {
@@ -292,7 +292,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
 			},
 			dolares_2: {
 				type: "number", label: "$:", action: () => {
-					this.valoresObject.Valoracion_2 = this.valoresObject.dolares_2 * tasasCambio[0].Valor_de_venta;
+					this.valoresObject.Valoracion_2 = this.Round(this.valoresObject.dolares_2 * tasasCambio[0].Valor_de_venta);
 					/** @type {HTMLInputElement|undefined|null} */
 					const control = this.valoresForm?.shadowRoot?.querySelector(".Valoracion_2");
 					if (control != undefined || control != null) {
@@ -306,7 +306,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
 			},
 			Valoracion_3: {
 				type: "number", label: "Valoración 3 - C$:", action: () => {
-					this.valoresObject.dolares_3 = this.valoresObject.Valoracion_3 / tasasCambio[0].Valor_de_venta;
+					this.valoresObject.dolares_3 = this.Round(this.valoresObject.Valoracion_3 / tasasCambio[0].Valor_de_venta);
 					/** @type {HTMLInputElement|undefined|null} */
 					const control = this.valoresForm?.shadowRoot?.querySelector(".dolares_3");
 					if (control != undefined || control != null) {
@@ -320,7 +320,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
 			},
 			dolares_3: {
 				type: "number", label: "$:", action: () => {
-					this.valoresObject.Valoracion_3 = this.valoresObject.dolares_3 * tasasCambio[0].Valor_de_venta;
+					this.valoresObject.Valoracion_3 = this.Round(this.valoresObject.dolares_3 * tasasCambio[0].Valor_de_venta);
 					/** @type {HTMLInputElement|undefined|null} */
 					const control = this.valoresForm?.shadowRoot?.querySelector(".Valoracion_3");
 					if (control != undefined || control != null) {
@@ -341,6 +341,13 @@ class Transaction_Valoraciones_View extends HTMLElement {
 				}
 			}
 		};
+	}
+	/**
+	* @param {Number} arg 
+	* @returns {Number}
+	*/
+	Round(arg) {
+		return Number(arg.toFixed(3));
 	}
 	promediarValoresDolares(data) {
 		//console.log(data);

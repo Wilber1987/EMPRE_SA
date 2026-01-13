@@ -137,7 +137,7 @@ namespace DataBaseModel
 					concepto = detalleT,
 					descripcion = detalleT,
 					moneda = this.Moneda?.ToUpper(),
-					monto = this.Total,
+					monto = this.Moneda == "DOLARES" ? this.Total :  this.Total *  this.Tasa_Cambio,
 					tasa_cambio = this.Tasa_Cambio,
 					//tasa_cambio_compra = this.Tasa_Cambio_Venta,
 					is_transaction = true,

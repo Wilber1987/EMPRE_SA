@@ -12,7 +12,6 @@ import { WOrtograficValidation } from "../../WDevCore/WModules/WOrtograficValida
 import { css } from "../../WDevCore/WModules/WStyledRender.js";
 import { Tbl_Factura_ModelComponent } from "../FrontModel/ModelComponent/Tbl_Factura_ModelComponent.js";
 import { Tbl_Factura } from "../FrontModel/Tbl_Factura.js";
-import { Tbl_Lotes } from "../FrontModel/Tbl_Lotes.js";
 
 /**
  * @typedef {Object} Config
@@ -150,7 +149,7 @@ class VentasComponent extends HTMLElement {
     */
     TotalesDetailUpdate(subtotal, iva, total, descuento) {
         // @ts-ignore
-        this.Config.Entity.Moneda = this.Config.Entity?.Moneda ?? "CORDOBAS"
+        this.Config.Entity.Moneda = this.Config.Entity?.Moneda ?? "DOLARES"
         // @ts-ignore                
         this.TotalesDetail.innerHTML = "";
         this.TotalesDetail?.append(html`<div class="detail-container">
@@ -214,7 +213,7 @@ class VentasComponent extends HTMLElement {
         sessionStorage.setItem("Intereses", JSON.stringify(this.Intereses));
         sessionStorage.setItem("TasasCambio", JSON.stringify(this.TasasCambio));
         sessionStorage.setItem("Configs", JSON.stringify(this.Configs));
-        const ventasModel = new Tbl_Factura_ModelComponent();
+        const ventasModel = new Tbl_Factura_ModelComponent({}, this.CalculeTotal);
         /**analisa EditObject.Detalle_Factura y el elmento Lote de cada detalle factura y detecta si los lotes (id_lote) estan repetidos analisa si la cantidad_existente del primer lote encontrado es suficiente para la sumatoria de la cantidad de cada detalle, si no es asi retorna false, si es asi fusionalos en un solo detalle, seleccionado el primer lote como lote seleccionado */
         // ventasModel.Detalle_Factura.action = (/**@type {Tbl_Factura} */ EditObject, form, control) => {
         //     this.CalculeTotal(EditObject, form, ventasModel)
@@ -228,10 +227,10 @@ class VentasComponent extends HTMLElement {
             ventasModel.Tipo.Dataset = ["VENTA"];
         }
         if (this.Config.ReturnData?.IsDevolucion == true) {
-            ventasModel.Cliente.hidden = true;            
-            ventasModel.Moneda.hidden = true;            
-            ventasModel.Detalle_Factura.ModelObject.Descuento.hidden = true;   
-            if (this.Config.ReturnData?.IsAllArticulosRemplazados == true) {             
+            ventasModel.Cliente.hidden = true;
+            ventasModel.Moneda.hidden = true;
+            ventasModel.Detalle_Factura.ModelObject.Descuento.hidden = true;
+            if (this.Config.ReturnData?.IsAllArticulosRemplazados == true) {
                 ventasModel.Monto_dolares.hidden = true;
                 ventasModel.Monto_cordobas.hidden = true;
                 ventasModel.cambio_dolares.hidden = true;
@@ -249,7 +248,17 @@ class VentasComponent extends HTMLElement {
      */
     CalculeTotal = (EditObject, form, ventasModel) => {
         try {
-            this.TotalesDetailUpdate(EditObject.Sub_Total ?? 0, EditObject.Iva ?? 0, EditObject.Total ?? 0, EditObject.Descuento ?? 0);
+            if (this.Config.Entity?.Moneda != "DOLARES") {
+                this.TotalesDetailUpdate(
+                    (EditObject.Sub_Total ?? 0) * EditObject.Tasa_Cambio_Venta,
+                    (EditObject.Iva ?? 0) * EditObject.Tasa_Cambio_Venta,
+                    (EditObject.Total ?? 0) * EditObject.Tasa_Cambio_Venta,
+                    (EditObject.Descuento ?? 0) * EditObject.Tasa_Cambio_Venta
+                );
+            } else {
+                this.TotalesDetailUpdate(EditObject.Sub_Total ?? 0, EditObject.Iva ?? 0, EditObject.Total ?? 0, EditObject.Descuento ?? 0);
+            }
+
         } catch (error) {
             console.error(error);
             // @ts-ignore

@@ -62,7 +62,7 @@ namespace DataBaseModel
 
 		[OneToMany(TableName = "Detalle_Factura", KeyColumn = "Id_Factura", ForeignKeyColumn = "Id_Factura")]
 		public List<Detalle_Factura>? Detalle_Factura { get; set; }
-        
+        public bool Is_withMesaCambiaria { get;  set; } = true;
     }
 
 	public class Datos_Financiamiento
