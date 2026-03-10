@@ -302,16 +302,33 @@ class LotesManagerView extends HTMLElement {
 					<div class="etiqueta-header">% utilidad S. Apartado</div>
 					<div class="etiqueta-header">Precio de S. Apartado $</div>
 					<div class="etiqueta-header"><%</div>
-					<div class="etiqueta-header"></div>
+					<div class="etiqueta-header">
+						<button class="Btn-Mini" onclick="${ ()=> {
+							lotes.forEach((/** @type {{ [x: string]: any; }} */ lote) => {
+								WArrayF.AddOrRemove(lote, selectedLotes, true);
+							});
+							etiquetasContainer.querySelectorAll("input").forEach(input => {
+								input.checked = true
+							})							
+						}}">Seleccionar todos</button>
+						<button class="Btn-Mini-Alert" onclick="${ ()=> {
+							lotes.forEach((/** @type {{ [x: string]: any; }} */ lote) => {
+								WArrayF.AddOrRemove(lote, selectedLotes, false);
+							});
+							etiquetasContainer.querySelectorAll("input").forEach(input => {
+								input.checked = false
+							})							
+						}}">Deseleccionar todos</button>
+					</div>
 				</div>`)
-				lotes.forEach(lote => { etiquetasContainer.append(this.CreateEtiqueta(lote, selectedLotes)) })
+				lotes.forEach((/** @type {Tbl_Lotes} */ lote) => { etiquetasContainer.append(this.CreateEtiqueta(lote, selectedLotes)) })
 			}
 		});
 		await filter.filterFunction();
 		const div = html`<div>
 			<div class="OptionContainer">
-				${filter}
-				${new WPrintExportToolBar({ PrintAction: (tool) => this.ImprimirEtiquetas(selectedLotes, tool) })}			
+				${filter}				
+				${new WPrintExportToolBar({ PrintAction: (/** @type {WPrintExportToolBar} */ tool) => this.ImprimirEtiquetas(selectedLotes, tool) })}			
 			</div>	
 			${etiquetasContainer}		
 		</div>`

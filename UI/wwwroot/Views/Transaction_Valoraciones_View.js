@@ -555,7 +555,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
 		}
 		const nuevaCompra = new Tbl_Compra();
 		// @ts-ignore
-		nuevaCompra.Tasa_Cambio = this.tasasCambio[0]?.Valor_de_venta;
+		nuevaCompra.Tasa_Cambio = this.tasasCambio[0]?.Valor_de_compra;
 
 		nuevaCompra.Cat_Proveedor = new Cat_Proveedor({
 			stado: "ACTIVO",

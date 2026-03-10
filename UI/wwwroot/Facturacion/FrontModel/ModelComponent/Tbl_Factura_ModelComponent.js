@@ -25,7 +25,7 @@ class Tbl_Factura_ModelComponent extends EntityClass {
 	constructor(props, action) {
 		super(props, 'EntityFacturacion');
 		this.action = action
-		Object.assign(this, props);;
+		Object.assign(this, props);
 	}
 	/**@type {ModelProperty}*/ Id_Factura = { type: 'number', primary: true };
 	/**@type {ModelProperty}*/ Cliente = { type: 'wselect', ModelObject: () => new Catalogo_Clientes(), defaultValue: null, ForeignKeyColumn: "Id_Cliente" };

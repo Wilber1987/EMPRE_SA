@@ -254,7 +254,7 @@ class FacturacionDasboardView extends HTMLElement {
                                         </div>
                                     </div>
                                 </div>
-                                <div class=" shrink-0 text-sm ">NIO ${process.credito}</div>
+                                <div class="monto shrink-0 text-sm ">NIO ${ConvertToMoneyString(process.credito)}</div>
                                 
                                 <div class="grow">
                                     <div class="relative">
@@ -265,7 +265,7 @@ class FacturacionDasboardView extends HTMLElement {
                                         </div>
                                     </div>
                                 </div>
-                                <div class=" shrink-0 text-sm ">USD ${process.creditoUSD}</div>
+                                <div class="monto shrink-0 text-sm ">USD ${ConvertToMoneyString(process.creditoUSD)}</div>
 
                             </div>                            
                         </div>`)}     
@@ -305,7 +305,13 @@ class FacturacionDasboardView extends HTMLElement {
     CustomStyle = css`
         .component{
            display: block;
-        }           
+        }
+        .monto {
+            text-align: right;
+            flex: 1;
+            width: 95%;
+            box-sizing: border-box;
+        }
     `
 }
 customElements.define('w-facturacion-dasboard', FacturacionDasboardView);

@@ -8,6 +8,8 @@ import { Tbl_Lotes_ModelComponent } from "./Tbl_Lotes_ModelComponent.js";
 import { Tbl_Lotes } from "../Tbl_Lotes.js";
 import { WForm } from "../../../WDevCore/WComponents/WForm.js";
 import { Detalle_Factura } from "../Detalle_Factura.js";
+import { Tbl_Factura } from "../Tbl_Factura.js";
+import { Catalogo_Cambio_Divisa } from "../../../FrontModel/Catalogo_Cambio_Divisa.js";
 class Detalle_Factura_ModelComponent extends EntityClass {
 	constructor(props) {
 		super(props, 'EntityFacturacion');
@@ -57,7 +59,25 @@ class Detalle_Factura_ModelComponent extends EntityClass {
 	/**@type {ModelProperty}*/ Iva = { type: 'money', disabled: true, hidden: true };
 	/**@type {ModelProperty}*/ Total = { type: 'money', disabled: true };
 
+
+	/**@type {ModelProperty}*/ Precio_Venta_cordobas = { type: 'money', disabled: true, label: "Pre/Cont. C$" };
+	/**@type {ModelProperty}*/ Monto_Descuento_cordobas = { type: 'money', disabled: true, require: false };
+	/**@type {ModelProperty}*/ Sub_Total_cordobas = { type: 'money', disabled: true, require: false };
+	//**@type {ModelProperty}*/ Iva_cordobas = { type: 'money',    disabled: true, require: false };
+	/**@type {ModelProperty}*/ Total_cordobas = { type: 'money', disabled: true, require: false };
+	/**
+	* @returns {Catalogo_Cambio_Divisa}
+	*/
+	GetTasa() {
+		return JSON.parse(sessionStorage.getItem("TasasCambio") ?? "{}");
+	}
+	/**
+	 * @param {Tbl_Factura} ParentEntity
+	 * @param {Detalle_Factura} detail
+	 * @param {WForm} form
+	 */
 	UpdateDetalle(ParentEntity, detail, form, updateProps = true) {
+		
 		//TODO AGREGAR  TASA DE CAMBIO
 		switch (ParentEntity.Tipo) {
 			case "VENTA":
@@ -82,6 +102,8 @@ class Detalle_Factura_ModelComponent extends EntityClass {
 
 		detail.Cantidad = detail.Cantidad ?? 1;
 		detail.Descuento = detail.Descuento ?? 0;
+
+		
 		this.CalculeTotal(detail, form);
 	}
 
@@ -96,6 +118,17 @@ class Detalle_Factura_ModelComponent extends EntityClass {
 		detail.Monto_Descuento = parseFloat((subtotal * ((detail.Descuento ?? 0) / 100)).toFixed(2));
 		detail.Iva = 0 //parseFloat((detail.Sub_Total * 0.15).toFixed(2));
 		detail.Total = parseFloat((detail.Sub_Total + detail.Iva).toFixed(2));
+
+		const tasa_Cambio_Venta = this.GetTasa().Valor_de_venta;
+
+		// @ts-ignore
+		detail.Precio_Venta_cordobas = parseFloat((detail.Precio_Venta * tasa_Cambio_Venta).toFixed(2));
+		// @ts-ignore
+		detail.Monto_Descuento_cordobas =  parseFloat((detail.Monto_Descuento * tasa_Cambio_Venta).toFixed(2));
+		// @ts-ignore
+		detail.Sub_Total_cordobas =  parseFloat((detail.Sub_Total * tasa_Cambio_Venta).toFixed(2));
+		// @ts-ignore
+		detail.Total_cordobas =  parseFloat((detail.Total * tasa_Cambio_Venta).toFixed(2));
 		//form.DrawComponent();
 		//console.log(detail);
 	}
