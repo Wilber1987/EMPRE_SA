@@ -482,7 +482,8 @@ class Gestion_RecibosView extends HTMLElement {
             formObject["monto_dolares"] = formObject["paga_dolares"];
             formObject["solo_abono"] = false;
             formObject["cancelar"] = false;
-            formObject["total_apagar_dolares"] = this.ContractData.pagoActual.toFixed(3);;
+            formObject["total_apagar_dolares"] = this.ContractData.pagoActual.toFixed(3);
+            formObject["total_apagar_cordobas"] = this.ContractData.pagoActualCordobas.toFixed(3);
         }
 
     };

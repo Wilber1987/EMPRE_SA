@@ -65,8 +65,8 @@ class Recibos_ModelComponent extends EntityClass {
     /**@type {ModelProperty} */ paga_dolares = { type: "number", hiddenInTable: true };
    
     
-    /**@type {ModelProperty} */ total_apagar_cordobas = { type: "text", disabled: true };   
-    /**@type {ModelProperty} */ total_apagar_dolares = { type: "text", disabled: true };
+    /**@type {ModelProperty} */ total_apagar_cordobas = { type: "text", disabled: true, label : "Total a pagar C$" };   
+    /**@type {ModelProperty} */ total_apagar_dolares = { type: "text", disabled: true , label : "Total a pagar $" };
 
     
     /**@type {ModelProperty} */ reestructurar_value = { type: "number", label: "meses a reestructurar", placeholder: "número de meses ejm. 1", hidden: true, min: 1, require: true };

@@ -52,21 +52,21 @@ class FinancialModule {
         return contrato;
     }
 
-    static getPago = (contrato) => {        
+    static getPago = (/** @type {ValoracionesTransaction} */ contrato) => {
 
         const monto = contrato.Transaction_Contratos.Valoracion_empeño_dolares;
         //console.log(monto);
         const cuotas = contrato.Transaction_Contratos.plazo;
         const tasa = contrato.Transaction_Contratos.tasas_interes;
-        if (tasa == 0)  {
-            return monto / cuotas;	
+        if (tasa == 0) {
+            return monto / cuotas;
         }
         const payment = ((tasa * Math.pow(1 + tasa, cuotas)) * monto) / (Math.pow(1 + tasa, cuotas) - 1);
         //console.log(monto, cuotas, tasa, payment);
-        
+
         return payment;
     }
-    static getPagoValoracion = (valoracion) => {
+    static getPagoValoracion = (/** @type {{ valor_compra_dolares: any; Plazo: number; Tasa_interes: any; }} */ valoracion) => {
         const monto = valoracion.valor_compra_dolares;
         const cuotas = valoracion.Plazo ?? 0;
         const tasa = (valoracion.Tasa_interes ?? 0) / 100;
@@ -75,9 +75,12 @@ class FinancialModule {
         return payment.toString() == "NaN" ? 0 : payment;
     }
 
+    /**
+     * @param {ValoracionesTransaction} contrato
+     */
     static CalculeTotales(contrato) {
         contrato.Transaction_Contratos.Valoracion_compra_cordobas = contrato.Transaction_Contratos.Valoracion_compra_cordobas ?? FinancialModule.round(WArrayF.SumValAtt(contrato.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion_ModelComponent), "Valoracion_compra_cordobas"));
-        contrato.Transaction_Contratos.Valoracion_compra_dolares = contrato.Transaction_Contratos.Valoracion_compra_dolares ??  FinancialModule.round(WArrayF.SumValAtt(contrato.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion_ModelComponent), "Valoracion_compra_dolares"));
+        contrato.Transaction_Contratos.Valoracion_compra_dolares = contrato.Transaction_Contratos.Valoracion_compra_dolares ?? FinancialModule.round(WArrayF.SumValAtt(contrato.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion_ModelComponent), "Valoracion_compra_dolares"));
         contrato.Transaction_Contratos.Valoracion_empeño_cordobas = contrato.Transaction_Contratos.Valoracion_empeño_cordobas ?? FinancialModule.round(WArrayF.SumValAtt(contrato.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion_ModelComponent), "Valoracion_empeño_cordobas"));
         contrato.Transaction_Contratos.Valoracion_empeño_dolares = contrato.Transaction_Contratos.Valoracion_empeño_dolares ?? FinancialModule.round(WArrayF.SumValAtt(contrato.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion_ModelComponent), "Valoracion_empeño_dolares"));
         //contrato.Transaction_Contratos.taza_interes_cargos = contrato.Transaction_Contratos.taza_interes_cargos ?? 0.09
@@ -150,24 +153,27 @@ class FinancialModule {
 
         //TODO BORRAR CICLO DE MORA FORZADA 
         selectContrato.Tbl_Cuotas?.filter(cuota => cuota.Estado == "PENDIENTE")?.forEach(cuota => {
+            if (contractData.diasMora != null && contractData.diasMora > 0) {
+                return
+            }
             // Obtenemos la fecha de pago
             const fechaPago = new Date(cuota.fecha);
-            fechaPago.setHours(0, 0, 0, 0);            
+            fechaPago.setHours(0, 0, 0, 0);
             // Obtenemos la fecha actual
             const ahora = new Date();
-            ahora.setHours(23, 59, 0, 0);        
+            ahora.setHours(23, 59, 0, 0);
             // Calculamos la diferencia en días calendario usando los componentes de la fecha
             // @ts-ignore
             const diferenciaDias = Math.floor((ahora - fechaPago) / (1000 * 60 * 60 * 24));
-        
+
             // Si la diferencia es negativa, ajustamos a cero
             const diasEnMoraFinal = Math.max(diferenciaDias, 0);
-            
+
             if (diasEnMoraFinal > 0 && contractData.diasMora < diasEnMoraFinal) {
                 contractData.diasMora = diasEnMoraFinal;
             }
         });
-        
+
         // @ts-ignore
         const CuotaActual = contractData.cuotasPendientes[0];
         const mora = WArrayF.SumValAtt(contractData.cuotasPendientes, "mora");
@@ -257,7 +263,7 @@ class FinancialModule {
         const diasDeInteresesFinal = Math.max(diferenciaDias, 0);
 
         /**@type {Number} */
-       // const diasDeDiferencia = Math.floor(diferencia / (1000 * 60 * 60 * 24));
+        // const diasDeDiferencia = Math.floor(diferencia / (1000 * 60 * 60 * 24));
         /**@type {Number} */
         const porcentajeInteres = contractData.Contrato.tasas_interes;
         //console.log(diasDeDiferencia, porcentajeInteres);

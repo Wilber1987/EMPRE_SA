@@ -83,7 +83,7 @@ namespace DataBaseModel
 			try
 			{
 				//BeginGlobalTransaction();
-				var  (User, dbUser) =  Business.Security_Users.GetUserData(Identify);
+				var (User, dbUser) = Business.Security_Users.GetUserData(Identify);
 				Transaction_Contratos? Transaction_Contratos = new Transaction_Contratos
 				{
 					numero_contrato = this.numero_contrato
@@ -140,8 +140,10 @@ namespace DataBaseModel
 			}
 			this.plazo += Convert.ToInt32(reestructuracion_value);
 			this.reestructurado += 1;
+			var cuotas = CrearCuotas(this.saldo, reestructuracion_value);
+			this.Tbl_Cuotas?.AddRange(cuotas);
 			this.Update();
-			return CrearCuotas(this.saldo, reestructuracion_value);
+			return cuotas;
 		}
 		public List<Tbl_Cuotas> CrearCuotas(double? monto,
 								 double? plazo,
@@ -187,7 +189,7 @@ namespace DataBaseModel
 
 				if (autoSave)
 				{
-					cuota.Save();
+					var response = cuota.Save();
 				}
 
 				cuotas.Add(cuota);
@@ -271,10 +273,12 @@ namespace DataBaseModel
 				}
 				else
 				{
-					TimeSpan diferencia = DateTime.Now.Subtract(cuota.fecha.GetValueOrDefault());
+					var fechaPago = cuota.fecha.GetValueOrDefault().Date; // 00:00:00
+					var ahora = DateTime.Now.Date.AddHours(23).AddMinutes(59); // 23:59
+					TimeSpan diferencia = ahora - fechaPago;
 					int diasEnMora = (int)Math.Floor(diferencia.TotalDays);
-					// Si 'diasEnMora' es negativo, significa que la fecha de pago aún no ha llegado, entonces ajustamos a cero
 					diasEnMora = Math.Max(diasEnMora, 0);
+
 					var montoMora = cuota.total * ((cuota.Transaction_Contratos?.mora / 100) ?? 0.005) * diasEnMora;
 					if (montoMora > 0)
 					{
