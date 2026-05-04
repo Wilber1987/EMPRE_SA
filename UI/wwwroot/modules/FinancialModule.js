@@ -1,11 +1,16 @@
 //@ts-check
+import { Transactional_Configuraciones } from "../Admin/ADMINISTRATIVE_ACCESSDataBaseModel.js";
 import { Catalogo_Cambio_Divisa } from "../FrontModel/Catalogo_Cambio_Divisa.js";
+import { Transactional_Valoracion_ModelComponent } from "../FrontModel/DBODataBaseModel.js";
 import { Detail_Prendas, Tbl_Cuotas, Transaction_Contratos, ValoracionesTransaction } from "../FrontModel/Model.js";
 import { ParcialesData } from "../FrontModel/ParcialData.js";
 import { Recibos } from "../FrontModel/Recibos.js";
+import { Money } from "../WDevCore/WModules/Types/Money.js";
 
 import { WArrayF } from "../WDevCore/WModules/WArrayF.js";
 
+
+console.log(new Money(0.1).add(0.2).toNumber())
 
 class FinancialModule {
     /**
@@ -19,53 +24,74 @@ class FinancialModule {
             || contrato.valoraciones == undefined) {
             return new ValoracionesTransaction();
         }
-        contrato.Transaction_Contratos = contrato.Transaction_Contratos ?? new Transaction_Contratos();
 
+        contrato.Transaction_Contratos = contrato.Transaction_Contratos ?? new Transaction_Contratos();
         if (withValoraciones) {
             contrato.Transaction_Contratos.Detail_Prendas = contrato.valoraciones.map(
-            // @ts-ignore
-            /**@type {Transactional_Valoracion_ModelComponent}*/valoracion => new Detail_Prendas({
-                Descripcion: valoracion.Descripcion,
-                modelo: valoracion.Modelo,
-                marca: valoracion.Marca,
-                serie: valoracion.Serie,
-                monto_aprobado_cordobas: valoracion.Valoracion_empeño_cordobas,
-                monto_aprobado_dolares: valoracion.Valoracion_empeño_dolares,
-                color: "#000",
-                en_manos_de: tipo_contrato == "EMPEÑO" ? "ACREEDOR" : "DEUDOR",
-                precio_venta: valoracion.Precio_venta_empeño_dolares,
-                Catalogo_Categoria: valoracion.Catalogo_Categoria,
-                Transactional_Valoracion_ModelComponent: valoracion
-            }));
+                (/**@type {Transactional_Valoracion_ModelComponent}*/ valoracion) => new Detail_Prendas({
+                    Descripcion: valoracion.Descripcion,
+                    modelo: valoracion.Modelo,
+                    marca: valoracion.Marca,
+                    serie: valoracion.Serie,
+                    monto_aprobado_cordobas: valoracion.Valoracion_empeño_cordobas,
+                    monto_aprobado_dolares: valoracion.Valoracion_empeño_dolares,
+                    color: "#000",
+                    en_manos_de: tipo_contrato == "EMPEÑO" ? "ACREEDOR" : "DEUDOR",
+                    precio_venta: valoracion.Precio_venta_empeño_dolares,
+                    Catalogo_Categoria: valoracion.Catalogo_Categoria,
+                    Transactional_Valoracion_ModelComponent: valoracion
+                }));
         }
 
         FinancialModule.CalculeTotales(contrato);
-
         FinancialModule.crearCuotas(contrato);
 
-        contrato.Transaction_Contratos.total_pagar_cordobas = (WArrayF.SumValAtt(contrato.Transaction_Contratos.Tbl_Cuotas, "total") * contrato.Transaction_Contratos.taza_cambio);
-        contrato.Transaction_Contratos.total_pagar_dolares = (WArrayF.SumValAtt(contrato.Transaction_Contratos.Tbl_Cuotas, "total"));
-        //console.log(contrato.Transaction_Contratos.total_pagar_cordobas, contrato.Transaction_Contratos.total_pagar_dolares);
+        const totalDolaresMoney = WArrayF.sumMoney(
+            contrato.Transaction_Contratos.Tbl_Cuotas,
+            "total",
+            'USD'
+        );
 
-        contrato.Transaction_Contratos.interes = (WArrayF.SumValAtt(contrato.Transaction_Contratos.Tbl_Cuotas, "interes"));
-        //contrato.Transaction_Contratos.interes_dolares = (WArrayF.SumValAtt(contrato.Transaction_Contratos.Tbl_Cuotas, "interes") / contrato.Transaction_Contratos.taza_cambio);
+        const interesMoney = WArrayF.sumMoney(
+            contrato.Transaction_Contratos.Tbl_Cuotas,
+            "interes",
+            'USD'
+        );
+        const tasaCambio = contrato.Transaction_Contratos.taza_cambio;
+
+        const totalCordobasMoney = totalDolaresMoney.multiply(tasaCambio);
+
+        contrato.Transaction_Contratos.total_pagar_dolares = totalDolaresMoney.toNumber();
+        contrato.Transaction_Contratos.total_pagar_cordobas = totalCordobasMoney.toNumber();
+        contrato.Transaction_Contratos.interes = interesMoney.toNumber();
+
         return contrato;
     }
+    /**
+     * @param {ValoracionesTransaction} contrato
+     */
+    static getPago(contrato) {
+        const monto = new Money(
+            contrato.Transaction_Contratos.Valoracion_empeño_dolares,
+            'USD'
+        );
 
-    static getPago = (/** @type {ValoracionesTransaction} */ contrato) => {
-
-        const monto = contrato.Transaction_Contratos.Valoracion_empeño_dolares;
-        //console.log(monto);
         const cuotas = contrato.Transaction_Contratos.plazo;
         const tasa = contrato.Transaction_Contratos.tasas_interes;
-        if (tasa == 0) {
-            return monto / cuotas;
+
+        if (tasa === 0) {
+            return monto.divide(cuotas).toNumber();
         }
-        const payment = ((tasa * Math.pow(1 + tasa, cuotas)) * monto) / (Math.pow(1 + tasa, cuotas) - 1);
-        //console.log(monto, cuotas, tasa, payment);
+
+        const factor = Math.pow(1 + tasa, cuotas);
+
+        const payment =
+            (tasa * factor * monto.toNumber()) /
+            (factor - 1);
 
         return payment;
     }
+
     static getPagoValoracion = (/** @type {{ valor_compra_dolares: any; Plazo: number; Tasa_interes: any; }} */ valoracion) => {
         const monto = valoracion.valor_compra_dolares;
         const cuotas = valoracion.Plazo ?? 0;
@@ -79,52 +105,100 @@ class FinancialModule {
      * @param {ValoracionesTransaction} contrato
      */
     static CalculeTotales(contrato) {
-        contrato.Transaction_Contratos.Valoracion_compra_cordobas = contrato.Transaction_Contratos.Valoracion_compra_cordobas ?? FinancialModule.round(WArrayF.SumValAtt(contrato.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion_ModelComponent), "Valoracion_compra_cordobas"));
-        contrato.Transaction_Contratos.Valoracion_compra_dolares = contrato.Transaction_Contratos.Valoracion_compra_dolares ?? FinancialModule.round(WArrayF.SumValAtt(contrato.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion_ModelComponent), "Valoracion_compra_dolares"));
-        contrato.Transaction_Contratos.Valoracion_empeño_cordobas = contrato.Transaction_Contratos.Valoracion_empeño_cordobas ?? FinancialModule.round(WArrayF.SumValAtt(contrato.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion_ModelComponent), "Valoracion_empeño_cordobas"));
-        contrato.Transaction_Contratos.Valoracion_empeño_dolares = contrato.Transaction_Contratos.Valoracion_empeño_dolares ?? FinancialModule.round(WArrayF.SumValAtt(contrato.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion_ModelComponent), "Valoracion_empeño_dolares"));
-        //contrato.Transaction_Contratos.taza_interes_cargos = contrato.Transaction_Contratos.taza_interes_cargos ?? 0.09
-        contrato.Transaction_Contratos.tasas_interes = contrato.Transaction_Contratos.tasas_interes ??
-            (parseFloat(contrato.Transaction_Contratos?.Catalogo_Clientes?.Catalogo_Clasificacion_Interes?.porcentaje)
-                + contrato.Transaction_Contratos?.taza_interes_cargos) / 100;
-        contrato.Transaction_Contratos.plazo = contrato.Transaction_Contratos.plazo ?? 1;
-        contrato.Transaction_Contratos.fecha = new Date(contrato.Transaction_Contratos.fecha);
-        contrato.Transaction_Contratos.Catalogo_Clientes = contrato.Transaction_Contratos.Catalogo_Clientes;
-        //contrato.fecha = new Date(contrato.Transaction_Contratos.fecha)
-        contrato.Transaction_Contratos.Tbl_Cuotas = new Array();
-        contrato.Transaction_Contratos.gestion_crediticia = contrato.Transaction_Contratos.gestion_crediticia ?? contrato.Transaction_Contratos.Catalogo_Clientes?.Catalogo_Clasificacion_Interes?.porcentaje ?? 6;
+
+        const prendas = contrato.Transaction_Contratos.Detail_Prendas
+            .map((/** @type {{ Transactional_Valoracion_ModelComponent: any; }} */ p) => p.Transactional_Valoracion_ModelComponent);
+
+        // 💰 SUMAS SEGURAS
+        const compraCordobas = WArrayF.sumMoney(prendas, "Valoracion_compra_cordobas", 'NIO');
+        const compraDolares = WArrayF.sumMoney(prendas, "Valoracion_compra_dolares", 'USD');
+        const empenoCordobas = WArrayF.sumMoney(prendas, "Valoracion_empeño_cordobas", 'NIO');
+        const empenoDolares = WArrayF.sumMoney(prendas, "Valoracion_empeño_dolares", 'USD');
+
+        // 🔁 mantener compatibilidad (number)
+        contrato.Transaction_Contratos.Valoracion_compra_cordobas =
+            contrato.Transaction_Contratos.Valoracion_compra_cordobas ?? compraCordobas.toNumber();
+
+        contrato.Transaction_Contratos.Valoracion_compra_dolares =
+            contrato.Transaction_Contratos.Valoracion_compra_dolares ?? compraDolares.toNumber();
+
+        contrato.Transaction_Contratos.Valoracion_empeño_cordobas =
+            contrato.Transaction_Contratos.Valoracion_empeño_cordobas ?? empenoCordobas.toNumber();
+
+        contrato.Transaction_Contratos.Valoracion_empeño_dolares =
+            contrato.Transaction_Contratos.Valoracion_empeño_dolares ?? empenoDolares.toNumber();
+
+        // 🧠 tasa (NO usar parseFloat)
+        const porcentaje =
+            contrato.Transaction_Contratos?.Catalogo_Clientes
+                // @ts-ignore
+                ?.Catalogo_Clasificacion_Interes?.porcentaje ?? 0;
+
+        const cargos = contrato.Transaction_Contratos?.taza_interes_cargos ?? 0;
+
+        contrato.Transaction_Contratos.tasas_interes =
+            contrato.Transaction_Contratos.tasas_interes ??
+            (Number(porcentaje) + Number(cargos)) / 100;
+
+        // 🔧 defaults
+        contrato.Transaction_Contratos.plazo =
+            contrato.Transaction_Contratos.plazo ?? 1;
+
+        contrato.Transaction_Contratos.fecha =
+            new Date(contrato.Transaction_Contratos.fecha);
+
+        contrato.Transaction_Contratos.Tbl_Cuotas = [];
+
+        contrato.Transaction_Contratos.gestion_crediticia =
+            contrato.Transaction_Contratos.gestion_crediticia ??
+            porcentaje ?? 6;
     }
 
     /**
      * @param {ValoracionesTransaction} contrato
      */
     static crearCuotas(contrato) {
-        contrato.Transaction_Contratos.cuotafija_dolares = this.getPago(contrato);
-        contrato.Transaction_Contratos.cuotafija = contrato.Transaction_Contratos.cuotafija_dolares * contrato.Transaction_Contratos.taza_cambio;
-        // @ts-ignore
-        let capital = (parseFloat(contrato.Transaction_Contratos.Valoracion_empeño_dolares));
-        for (let index = 0; index < contrato.Transaction_Contratos.plazo; index++) {
+        const tasa = contrato.Transaction_Contratos.tasas_interes;
+        const plazo = contrato.Transaction_Contratos.plazo;
+        const tasaCambio = contrato.Transaction_Contratos.taza_cambio;
+        // 💰 usar Money
+        let capital = new Money(
+            contrato.Transaction_Contratos.Valoracion_empeño_dolares,
+            'USD'
+        );
+
+        const cuotaFija = new Money(this.getPago(contrato), 'USD');
+        contrato.Transaction_Contratos.cuotafija_dolares = cuotaFija.toNumber();
+        contrato.Transaction_Contratos.cuotafija = cuotaFija.multiply(tasaCambio).toNumber();
+        for (let index = 0; index < plazo; index++) {
+            const interes = capital.multiply(tasa);
+            let abonoCapital;
+            let cuotaTotal;
+
+            if (index === plazo - 1) {
+                // 🧠 ÚLTIMA CUOTA → AJUSTE FINAL
+                abonoCapital = capital;
+                cuotaTotal = interes.add(abonoCapital);
+            } else {
+                abonoCapital = cuotaFija.subtract(interes);
+                cuotaTotal = cuotaFija;
+            }
+
+            const capitalRestante = capital.subtract(abonoCapital);
             // @ts-ignore
-            const abono_capital = (parseFloat(contrato.Transaction_Contratos.cuotafija_dolares)
-                - (capital * contrato.Transaction_Contratos.tasas_interes));
-            //console.log(abono_capital);
             const cuota = new Tbl_Cuotas({
-                // @ts-ignore
                 fecha: contrato.Transaction_Contratos.fecha.modifyMonth(index + 1),
-                // @ts-ignore
-                total: contrato.Transaction_Contratos.cuotafija_dolares.toFixed(3),
-                // @ts-ignore
-                interes: (capital * contrato.Transaction_Contratos.tasas_interes).toFixed(3),
-                // @ts-ignore
-                abono_capital: abono_capital.toFixed(3),
-                // @ts-ignore
-                capital_restante: (index == contrato.Transaction_Contratos.plazo - 1 ? 0 : (capital - abono_capital)).toFixed(3),
-                // @ts-ignore
-                tasa_cambio: contrato.Transaction_Contratos.taza_cambio
+                total: cuotaTotal.toNumber(),
+                interes: interes.toNumber(),
+                abono_capital: abonoCapital.toNumber(),
+                capital_restante: capitalRestante.toNumber(),
+                tasa_cambio: tasaCambio
             });
-            capital = parseFloat((capital - abono_capital).toFixed(3));
+            capital = capitalRestante;
             contrato.Transaction_Contratos.Tbl_Cuotas.push(cuota);
         }
+        console.log(contrato.Transaction_Contratos.Tbl_Cuotas);
+
     }
     /**
      * 
@@ -140,9 +214,13 @@ class FinancialModule {
     * @param {ContractData} contractData
     */
     static UpdateContractData(selectContrato, contractData) {
+
+        const tasaCambio = contractData.tasasCambio[0].Valor_de_venta;
+
         contractData.cuotasPendientes = selectContrato.Tbl_Cuotas
             .sort((a, b) => a.id_cuota - b.id_cuota)
             .filter(c => c.Estado?.toUpperCase() == "PENDIENTE");
+
         contractData.cuotasPagadas = selectContrato.Tbl_Cuotas
             .sort((a, b) => a.id_cuota - b.id_cuota)
             .filter(c => c.Estado?.toUpperCase() == "CANCELADO");
@@ -150,73 +228,138 @@ class FinancialModule {
         contractData.countPagadas = contractData.cuotasPagadas.length;
         contractData.countPendientes = contractData.cuotasPendientes.length;
 
+        // ---- MORA (igual lógica, no monetaria) ----
+        selectContrato.Tbl_Cuotas
+            ?.filter(c => c.Estado == "PENDIENTE")
+            ?.forEach(cuota => {
 
-        //TODO BORRAR CICLO DE MORA FORZADA 
-        selectContrato.Tbl_Cuotas?.filter(cuota => cuota.Estado == "PENDIENTE")?.forEach(cuota => {
-            if (contractData.diasMora != null && contractData.diasMora > 0) {
-                return
-            }
-            // Obtenemos la fecha de pago
-            const fechaPago = new Date(cuota.fecha);
-            fechaPago.setHours(0, 0, 0, 0);
-            // Obtenemos la fecha actual
-            const ahora = new Date();
-            ahora.setHours(23, 59, 0, 0);
-            // Calculamos la diferencia en días calendario usando los componentes de la fecha
-            // @ts-ignore
-            const diferenciaDias = Math.floor((ahora - fechaPago) / (1000 * 60 * 60 * 24));
+                if (contractData.diasMora != null && contractData.diasMora > 0) return;
 
-            // Si la diferencia es negativa, ajustamos a cero
-            const diasEnMoraFinal = Math.max(diferenciaDias, 0);
+                const fechaPago = new Date(cuota.fecha);
+                fechaPago.setHours(0, 0, 0, 0);
 
-            if (diasEnMoraFinal > 0 && contractData.diasMora < diasEnMoraFinal) {
-                contractData.diasMora = diasEnMoraFinal;
-            }
-        });
+                const ahora = new Date();
+                ahora.setHours(23, 59, 0, 0);
 
-        // @ts-ignore
+                // @ts-ignore
+                const diferenciaDias = Math.floor((ahora - fechaPago) / (1000 * 60 * 60 * 24));
+                const diasEnMoraFinal = Math.max(diferenciaDias, 0);
+
+                if (diasEnMoraFinal > 0 && contractData.diasMora < diasEnMoraFinal) {
+                    contractData.diasMora = diasEnMoraFinal;
+                }
+            });
+
         const CuotaActual = contractData.cuotasPendientes[0];
-        const mora = WArrayF.SumValAtt(contractData.cuotasPendientes, "mora");
-        contractData.MoraActual = mora ?? 0;
-        const saldo_pendiente = selectContrato.saldo;
-        const interesCorriente = FinancialModule.CalcInteresCorriente(CuotaActual, contractData);
-        contractData.InteresCorriente = interesCorriente ?? 0;
-        contractData.InteresCorriente_Cordobas = interesCorriente * contractData.tasasCambio[0].Valor_de_venta;
-        const perdida_de_documento = contractData.Recibo.perdida_de_documento_monto ?? 0;
-        const reestructuracion = contractData.Recibo.reestructurar ?? 0;
-        const total_capital_restante = mora + saldo_pendiente + interesCorriente + perdida_de_documento + reestructuracion;
 
-        contractData.cancelacionValue = mora + saldo_pendiente + interesCorriente + perdida_de_documento + reestructuracion;
-        contractData.cancelacionValueCordobas = contractData.cancelacionValue * contractData.tasasCambio[0].Valor_de_venta;
+        // 💰 MONEY ZONE
+        const mora = WArrayF.sumMoney(contractData.cuotasPendientes, "mora", 'USD');
+        const saldo = new Money(selectContrato.saldo ?? 0, 'USD');
+        const interesCorriente = new Money(
+            FinancialModule.CalcInteresCorriente(CuotaActual, contractData) ?? 0,
+            'USD'
+        );
+
+        const perdidaDocumento = new Money(
+            contractData.Recibo.perdida_de_documento_monto ?? 0,
+            'USD'
+        );
+
+        const reestructuracion = new Money(
+            contractData.Recibo.reestructurar ?? 0,
+            'USD'
+        );
+
+        // 💰 TOTAL
+        const total = mora
+            .add(saldo)
+            .add(interesCorriente)
+            .add(perdidaDocumento)
+            .add(reestructuracion);
+
+        // 🔁 backward compatibility
+        contractData.MoraActual = mora.toNumber();
+        contractData.InteresCorriente = interesCorriente.toNumber();
+
+        contractData.InteresCorriente_Cordobas =
+            interesCorriente.multiply(tasaCambio).toNumber();
+
+        contractData.cancelacionValue = total.toNumber();
+        contractData.cancelacionValueCordobas =
+            total.multiply(tasaCambio).toNumber();
+
+        // ---- LÓGICA DE PAGOS ----
+
+        let pagoMin, pagoMax, pagoActual;
+
         if (contractData.Recibo.cancelar == true) {
-            contractData.pagoMinimoDolares = total_capital_restante;
-            contractData.pagoMaximoDolares = total_capital_restante;
-            contractData.pagoActual = total_capital_restante;
-        } else if (contractData.Recibo.reestructurar == true) {
-            contractData.pagoMinimoDolares = interesCorriente + mora + reestructuracion + perdida_de_documento;
-            contractData.pagoMaximoDolares = total_capital_restante;
-            contractData.pagoActual = interesCorriente + mora + reestructuracion + perdida_de_documento;
-        } else if (contractData.Recibo.solo_interes_mora == true) {
-            contractData.pagoMinimoDolares = interesCorriente + mora + perdida_de_documento;
-            contractData.pagoMaximoDolares = interesCorriente + mora + perdida_de_documento;
-            contractData.pagoActual = contractData.pagoMinimoDolares;
-        } else if (contractData.Recibo.solo_abono == true || contractData.Recibo.pago_parcial == true) {
-            contractData.pagoMinimoDolares = 1 + perdida_de_documento;
-            contractData.pagoMaximoDolares = total_capital_restante;
-            contractData.pagoActual = contractData.pagoMinimoDolares;
-        } else {
-            contractData.pagoMinimoDolares = interesCorriente;
-            contractData.pagoMaximoDolares = total_capital_restante;
-            contractData.pagoActual = CuotaActual.abono_capital + interesCorriente + mora + reestructuracion + perdida_de_documento;
-        }
-        if (contractData.pagoActual > contractData.pagoMaximoDolares) {
-            contractData.pagoMaximoDolares = contractData.pagoActual;
-        }
-        contractData.pagoMinimoCordobas = contractData.pagoMinimoDolares * contractData.tasasCambio[0].Valor_de_venta;
-        contractData.pagoMaximoCordobas = contractData.pagoMaximoDolares * contractData.tasasCambio[0].Valor_de_venta;
-        contractData.pagoActualCordobas = contractData.pagoActual * contractData.tasasCambio[0].Valor_de_venta;
-        console.log(contractData);
 
+            pagoMin = total;
+            pagoMax = total;
+            pagoActual = total;
+
+        } else if (contractData.Recibo.reestructurar == true) {
+
+            pagoMin = interesCorriente
+                .add(mora)
+                .add(reestructuracion)
+                .add(perdidaDocumento);
+
+            pagoMax = total;
+            pagoActual = pagoMin;
+
+        } else if (contractData.Recibo.solo_interes_mora == true) {
+
+            pagoMin = interesCorriente
+                .add(mora)
+                .add(perdidaDocumento);
+
+            pagoMax = pagoMin;
+            pagoActual = pagoMin;
+
+        } else if (
+            contractData.Recibo.solo_abono == true ||
+            contractData.Recibo.pago_parcial == true
+        ) {
+
+            pagoMin = new Money(1, 'USD').add(perdidaDocumento);
+            pagoMax = total;
+            pagoActual = pagoMin;
+
+        } else {
+
+            const abonoCapital = new Money(CuotaActual?.abono_capital ?? 0, 'USD');
+
+            pagoMin = interesCorriente;
+            pagoMax = total;
+
+            pagoActual = abonoCapital
+                .add(interesCorriente)
+                .add(mora)
+                .add(reestructuracion)
+                .add(perdidaDocumento);
+        }
+
+        // clamp
+        if (pagoActual.greaterThan(pagoMax)) {
+            pagoMax = pagoActual;
+        }
+
+        // 🔁 salida compatible
+        contractData.pagoMinimoDolares = pagoMin.toNumber();
+        contractData.pagoMaximoDolares = pagoMax.toNumber();
+        contractData.pagoActual = pagoActual.toNumber();
+
+        contractData.pagoMinimoCordobas =
+            pagoMin.multiply(tasaCambio).toNumber();
+
+        contractData.pagoMaximoCordobas =
+            pagoMax.multiply(tasaCambio).toNumber();
+
+        contractData.pagoActualCordobas =
+            pagoActual.multiply(tasaCambio).toNumber();
+
+        console.log(contractData);
     }
     /**
    * @param {Tbl_Cuotas} cuota 
@@ -224,68 +367,74 @@ class FinancialModule {
    * @returns {Number}
    */
     static CalcInteresCorriente(cuota, contractData) {
-        //this.countPagadas =  this.cuotasPagadas.length;
-        //this.countPendientes = this.cuotasPendientes.length;
-        //console.log(contractData.cuotasPendientes, contractData.cuotasPagadas);
-        /**@type {Number} */
-        const saldo_actual_dolares = contractData.Contrato.saldo;
-        /**@type {Date} */
-        const fechaActual = contractData.Fecha;
+
+        const saldo = new Money(contractData.Contrato.saldo ?? 0, 'USD');
+
+        const fechaActual = new Date(contractData.Fecha);
         fechaActual.setHours(23, 59, 0, 0);
-        // @ts-ignore
-        //const diasDelMesDePago = new Date(contractData.cuota?.fecha).getDate();
 
         const fechaPagoMayorFechaActual = new Date(cuota?.fecha) > fechaActual;
 
-        const cancelarAntesDelPrimerMes = contractData.countPagadas == 0
-            && fechaPagoMayorFechaActual
-            && (contractData.Recibo.cancelar == true || contractData.countPendientes == 1);
+        const cancelarAntesDelPrimerMes =
+            contractData.countPagadas == 0 &&
+            fechaPagoMayorFechaActual &&
+            (contractData.Recibo.cancelar == true || contractData.countPendientes == 1);
 
-        if (cancelarAntesDelPrimerMes
-            || (//contractData.countPagadas > 0 && 
-                contractData.countPendientes > 1
-                && contractData.Recibo.cancelar != true
-                && contractData.Recibo.reestructurar != true)
-            || (contractData.Recibo.reestructurar == true && fechaPagoMayorFechaActual)) {
-            return cuota.interes;
+        if (
+            cancelarAntesDelPrimerMes ||
+            (
+                contractData.countPendientes > 1 &&
+                contractData.Recibo.cancelar != true &&
+                contractData.Recibo.reestructurar != true
+            ) ||
+            (contractData.Recibo.reestructurar == true && fechaPagoMayorFechaActual)
+        ) {
+            return cuota.interes; // 🔁 compatibilidad
         }
-        /**@type {Date} */ // @ts-ignore
-        const fechaEnQueIniciaPeriodo = new Date(cuota?.fecha);
-        fechaEnQueIniciaPeriodo.setHours(0, 0, 0, 0);
-        if (fechaActual < fechaEnQueIniciaPeriodo) {
+
+        const fechaInicio = new Date(cuota?.fecha);
+        fechaInicio.setHours(0, 0, 0, 0);
+
+        if (fechaActual < fechaInicio) {
             return 0;
         }
-        // @ts-ignore
-        //const diferencia = fechaActual - fechaEnQueIniciaPeriodo;
-        // Calculamos la diferencia en días calendario usando los componentes de la fecha
-        const diferenciaDias = Math.floor((fechaActual - fechaEnQueIniciaPeriodo) / (1000 * 60 * 60 * 24));
-        //console.log(diferencia);
-        const diasDeInteresesFinal = Math.max(diferenciaDias, 0);
 
-        /**@type {Number} */
-        // const diasDeDiferencia = Math.floor(diferencia / (1000 * 60 * 60 * 24));
-        /**@type {Number} */
-        const porcentajeInteres = contractData.Contrato.tasas_interes;
-        //console.log(diasDeDiferencia, porcentajeInteres);
-        // @ts-ignore
-        //const diferenciaEntreFechaCreacion = new Date(cuota?.fecha) - fechaEnQueIniciaPeriodo;
-        ///**@type {Number} */
-        // const diasDelMes = (diferenciaEntreFechaCreacion / (1000 * 60 * 60 * 24)) >= 0 ? (diferenciaEntreFechaCreacion / (1000 * 60 * 60 * 24)) : 1;
+        const diferenciaDias = Math.floor(
+            // @ts-ignore
+            (fechaActual - fechaInicio) / (1000 * 60 * 60 * 24)
+        );
 
-        /**@type {Number} */
-        const procentageDiario = porcentajeInteres / 30;
-        //console.log(saldo_actual_dolares, procentageDiario, porcentajeInteres, diasDelMes, saldo_actual_dolares * procentageDiario, diasDeDiferencia);
-        /**@type {Number} */
-        const interesCorriente = (saldo_actual_dolares * procentageDiario * diasDeInteresesFinal) + cuota.interes;
-        //console.log(interesCorriente);
-        /**@type {Number} */
-        const parciales = contractData.parciales?.pagoParciales != undefined && contractData.parciales?.pagoParciales > 0 ? contractData.parciales?.pagoParciales : 0;
-        return interesCorriente - parciales;
+        const dias = Math.max(diferenciaDias, 0);
+
+        const tasa = contractData.Contrato.tasas_interes ?? 0;
+
+        // 💡 tasa diaria (sigue siendo number, correcto)
+        const tasaDiaria = tasa / 30;
+
+        // 💰 INTERÉS = saldo * tasa * días
+        const interesGenerado = saldo
+            .multiply(tasaDiaria)
+            .multiply(dias);
+
+        const interesBase = new Money(cuota?.interes ?? 0, 'USD');
+
+        let totalInteres = interesGenerado.add(interesBase);
+
+        const parcialesValue =
+            contractData.parciales?.pagoParciales > 0
+                ? contractData.parciales.pagoParciales
+                : 0;
+
+        if (parcialesValue > 0) {
+            const parciales = new Money(parcialesValue, 'USD');
+            totalInteres = totalInteres.subtract(parciales);
+        }
+
+        return totalInteres.toNumber(); // 🔁 salida compatible
     }
-
     /**
     * @param {ContractData} contractData
-    * @param {Object} reestructureConfig
+    * @param {Transactional_Configuraciones} [reestructureConfig]
     * @returns {ContractData}
     */
     static BuildContractData(contractData, reestructureConfig) {

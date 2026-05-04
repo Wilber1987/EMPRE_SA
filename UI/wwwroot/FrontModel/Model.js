@@ -144,7 +144,7 @@ class Transaction_Contratos extends EntityClass {
 	/**@type {Number} */ gestion_crediticia;
 	/**@type {Number} */ tasas_interes;
 	/**@type {Number} */ plazo;
-	/**@type {Date} */ fecha;
+	/**@type {DateTime} */ fecha;
 	/**@type {Number} */ total_pagar_cordobas;
 	/**@type {Number} */ total_pagar_dolares;
 	/**@type {Number} */ reestructurado;

@@ -95,7 +95,7 @@ class Gestion_RecibosView extends HTMLElement {
         FinancialModule.UpdateContractData(selectContrato, this.ContractData);
         this.CuotaActual.interes = this.ContractData.InteresCorriente
 
-        /**@type {Transactional_Configuraciones?} */
+        /**@type {Transactional_Configuraciones|undefined} */
         const reestructureConfig = this.Configs?.find(c => c.Nombre == "PUEDE_REESTRUCTURAR");
         this.ContractData = FinancialModule.BuildContractData(this.ContractData, reestructureConfig);
         this.reciboModel = Recibos_ModelComponent.BuildRecibosModel(this.ContractData);
@@ -309,13 +309,6 @@ class Gestion_RecibosView extends HTMLElement {
                 .titleContainer{
                     display: none;
                 }
-                /* .ModalElement:nth-child(2) {
-                    grid-column: span 6;
-
-                }
-                .ModalElement:nth-child(2) input{
-                   max-width: 500px;
-                } */
             `
         });
         this.calculoRecibo(proyeccionContractData.Contrato, this.tasasCambio, proyeccionForm, proyeccionContractData);
@@ -577,27 +570,6 @@ class Gestion_RecibosView extends HTMLElement {
             color: red;
         }
     `;
-
-    /**
-     * @param {{ fecha: string | number | Date; total: number; }} cuota
-     * @param {{ mora: any; }} contrato
-     */
-    forceMora(cuota, contrato) {
-        const fechaOriginal = new Date(cuota.fecha);
-        // @ts-ignore
-        const fechaActual = new Date().addDays(33);
-        fechaOriginal.setHours(0, 0, 0, 0);
-        fechaActual.setHours(0, 0, 0, 0);
-        // @ts-ignore
-        const diferencia = fechaActual - fechaOriginal;
-        const diasDeDiferencia = (diferencia / (1000 * 60 * 60 * 24)) >= 0 ? (diferencia / (1000 * 60 * 60 * 24)) : 0;
-        //console.log(diasDeDiferencia, (diferencia / (1000 * 60 * 60 * 24)) < 0);
-        const montoMora = cuota.total * ((contrato?.mora ?? 0 / 100) ?? 0.005) * diasDeDiferencia;
-        this.diasMora = diasDeDiferencia;
-        //console.log(this.diasMora, fechaActual, fechaOriginal);
-        //console.log(diasDeDiferencia);
-        return montoMora;
-    }
 
     /**
      * @param {Transaction_Contratos} selectContrato
