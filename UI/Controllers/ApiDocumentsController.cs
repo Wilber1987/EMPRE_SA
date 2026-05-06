@@ -1,14 +1,9 @@
 using API.Controllers;
 using CAPA_NEGOCIO.SystemConfig;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc;
 using System.IO;
 using iText.Html2pdf;
 using iText.Kernel.Pdf;
-using iText.Kernel.Pdf;
-using iText.Layout;
-using iText.Html2pdf;
-using iText.Layout.Properties;
 using iText.Kernel.Geom;
 
 

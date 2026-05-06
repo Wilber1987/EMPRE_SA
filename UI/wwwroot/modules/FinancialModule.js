@@ -6,11 +6,7 @@ import { Detail_Prendas, Tbl_Cuotas, Transaction_Contratos, ValoracionesTransact
 import { ParcialesData } from "../FrontModel/ParcialData.js";
 import { Recibos } from "../FrontModel/Recibos.js";
 import { Money } from "../WDevCore/WModules/Types/Money.js";
-
 import { WArrayF } from "../WDevCore/WModules/WArrayF.js";
-
-
-console.log(new Money(0.1).add(0.2).toNumber())
 
 class FinancialModule {
     /**

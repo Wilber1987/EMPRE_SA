@@ -280,7 +280,7 @@ class Transaction_Contratos_ModelComponent extends EntityClass {
     //Catalogo_Agentes = { type: 'WSELECT', ModelObject: () => new Catalogo_Agentes(), hiddenInTable: true, hiddenFilter: true };
     Detail_Prendas = { type: 'MasterDetail', ModelObject: () => new Detail_Prendas_ModelComponent(), hiddenFilter: true };
     Tbl_Cuotas = { type: 'MasterDetail', ModelObject: () => new Tbl_Cuotas_ModelComponent(), hiddenFilter: true };
-    Recibos = { type: 'MasterDetail', ModelObject: () => new Transaccion_Factura(), hiddenFilter: true };
+    Recibos = { type: 'MasterDetail', ModelObject: () => new Transaccion_Recibos_ModelComponent(), hiddenFilter: true };
     Notas = { type: 'MasterDetail', ModelObject: () => new Notas_de_contrato(), hiddenFilter: true };
 }
 export { Transaction_Contratos_ModelComponent }
@@ -602,30 +602,28 @@ export { Datos_Configuracion }
 
 
 
-class Transaccion_Factura extends EntityClass {
+class Transaccion_Recibos_ModelComponent extends EntityClass {
     constructor(props) {
         super(props, 'EntityDBO');
         Object.assign(this, props);
     }
-    /**@type {ModelProperty}*/
-    Catalogo_Clientes = { type: 'WSELECT', ModelObject: () => new Catalogo_Clientes(), ForeignKeyColumn: "id_cliente", hiddenInTable: true };
-    id_factura = { type: "number", primary: true, label: "Número recibo" };
-    Consecutivo = { type: "text" };
-    tipo = { type: "text", hidden: true };
-    concepto = { type: "text", hiddenFilter: true };
-    tasa_cambio = { type: "money", label: "tasa_cambio C$", hiddenFilter: true };
-    Moneda = { type: "text", label: "Moneda", hiddenFilter: true };
-    total = { type: "money", hiddenFilter: true };
-    estado = { type: "select", Dataset: ["ANULADO", "ACTIVO"] };
-    id_cliente = { type: "number", hidden: true };
-    id_sucursal = { type: "number", hidden: true };
-    fecha = { type: "date" };
-    Detalle_Factura_Recibo = { type: 'MasterDetail', label: "Cuotas Pagadas", label: "Detalle recibos", ModelObject: () => new Detalle_Factura_Recibo(), hiddenFilter: true };
-    Factura_contrato = { type: 'model', label: "Datos del contrato al momento del pago", ModelObject: () => new Factura_contrato() };
+    /**@type {ModelProperty}*/ Catalogo_Clientes = { type: 'WSELECT', ModelObject: () => new Catalogo_Clientes(), ForeignKeyColumn: "id_cliente", hiddenInTable: true };
+    /**@type {ModelProperty}*/ id_factura = { type: "number", primary: true, label: "Número recibo" };
+    /**@type {ModelProperty}*/ Consecutivo = { type: "text" };
+    /**@type {ModelProperty}*/ tipo = { type: "text", hidden: true };
+    /**@type {ModelProperty}*/ concepto = { type: "text", hiddenFilter: true };
+    /**@type {ModelProperty}*/ tasa_cambio = { type: "money", label: "tasa_cambio C$", hiddenFilter: true };
+    /**@type {ModelProperty}*/ Moneda = { type: "text", label: "Moneda", hiddenFilter: true };
+    /**@type {ModelProperty}*/ total = { type: "money", hiddenFilter: true };
+    /**@type {ModelProperty}*/ estado = { type: "select", Dataset: ["ANULADO", "ACTIVO"] };
+    /**@type {ModelProperty}*/ id_cliente = { type: "number", hidden: true };
+    /**@type {ModelProperty}*/ id_sucursal = { type: "number", hidden: true };
+    /**@type {ModelProperty}*/ fecha = { type: "date" };
+    /**@type {ModelProperty}*/ Detalle_Factura_Recibo = { type: 'MasterDetail', label: "Cuotas Pagadas", label: "Detalle recibos", ModelObject: () => new Detalle_Factura_Recibo(), hiddenFilter: true };
+    /**@type {ModelProperty}*/ Factura_contrato = { type: 'model', label: "Datos del contrato al momento del pago", ModelObject: () => new Factura_contrato() };
     /**@type {Boolean}*/ IsAnulable;
-
 }
-export { Transaccion_Factura }
+export { Transaccion_Recibos_ModelComponent }
 
 class Factura_contrato {
     constructor(props) {
@@ -638,14 +636,8 @@ class Factura_contrato {
     mora = { type: "money" };
     interes_demas_cargos_pagar = { type: "money" };
     abono_capital = { type: "money" };
-    //proximo_pago_pactado = { type: "date" };
-    //total_parciales = { type: "money" };//todo revisar por que manda valores
-    //tipo = { type: "number" };
-    //tipo_cuenta = { type: "number" };
     total = { type: "money" };
     tasa_cambio = { type: "number" };
-    //reestructuracion = { type: "number" }
-    //Solo_Interes_Mora = { type: "text" }
 
 }
 export { Factura_contrato }

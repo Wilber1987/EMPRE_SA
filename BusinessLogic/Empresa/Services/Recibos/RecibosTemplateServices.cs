@@ -21,7 +21,7 @@ namespace UI.CAPA_NEGOCIO.Empresa.Services.Recibos
 		{
 			try
 			{
-				Transaccion_Factura? factura = new Transaccion_Factura() { id_factura = this.id_recibo }.Find<Transaccion_Factura>();
+				Transaccion_Recibos? factura = new Transaccion_Recibos() { id_factura = this.id_recibo }.Find<Transaccion_Recibos>();
 				var contrato = new Transaction_Contratos() { numero_contrato = factura?.Factura_contrato?.numero_contrato }.Find<Transaction_Contratos>();
 
 				if (factura?.estado == EstadoEnum.ANULADO.ToString())
@@ -82,7 +82,7 @@ namespace UI.CAPA_NEGOCIO.Empresa.Services.Recibos
 			}
 		}
 
-		public string? GenerateReestructureTable(Transaccion_Factura? factura)
+		public string? GenerateReestructureTable(Transaccion_Recibos? factura)
 		{
 			string templateContent = RecibosTemplates.ReestructureTable;
 			Transaction_Contratos? model = new Transaction_Contratos() { numero_contrato = factura?.Factura_contrato?.numero_contrato }.Find<Transaction_Contratos>();
@@ -127,12 +127,12 @@ namespace UI.CAPA_NEGOCIO.Empresa.Services.Recibos
 			return ContractTemplateService.RenderTemplate(templateContent, cliente);
 		}
 
-		public string GenerateReciboHtmlTemplate(Transaccion_Factura? facturaParam)
+		public string GenerateReciboHtmlTemplate(Transaccion_Recibos? facturaParam)
 		{
 			if (facturaParam == null) return "";
 			
 			
-			var factura =  new Transaccion_Factura{ id_factura = facturaParam.id_factura }.Find<Transaccion_Factura>();
+			var factura =  new Transaccion_Recibos{ id_factura = facturaParam.id_factura }.Find<Transaccion_Recibos>();
 			var contrato = new Transaction_Contratos() { numero_contrato = factura?.Factura_contrato?.numero_contrato }.Find<Transaction_Contratos>();
 
 			var dbUser = new Security_Users { Id_User = factura?.id_usuario }.Find<Security_Users>();

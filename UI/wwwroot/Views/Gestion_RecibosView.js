@@ -168,13 +168,13 @@ class Gestion_RecibosView extends HTMLElement {
                 console.log(nuevoRecibo);
                 const response = await recibo.Save(); //this.reciboModel?.Save() // this.reciboModel?.GuardarValoraciones(this.valoracionesTable?.Dataset);
                 if (response.status == 200) {
-                    //location.href = "/PagesViews/Ver_Recibos";
+                    //location.href = "/PagesViews/RecibosManagerView";
                     if (response.message == "Factura temporal") {
                         this.printRecibo(response.body);
                         return;
                     }
                     this.append(ModalVericateAction(() => {
-                        location.href = "/PagesViews/Ver_Recibos?id_Recibo=" + response.body.id_factura;
+                        location.href = "/PagesViews/RecibosManagerView?id_Recibo=" + response.body.id_factura;
                         //location.href = "/PagesViews/Print_Recibo?id_Recibo=" + response.body.id_recibo;
                     }, response.message, false));
                 } else if (response.status == 400) {
@@ -235,7 +235,7 @@ class Gestion_RecibosView extends HTMLElement {
         this.OptionContainer.append(WRender.Create({
             tagName: 'button', className: 'Block-Secundary', innerText: 'Ver Recibos',
             onclick: () => {
-                window.location.href = "/PagesViews/Ver_Recibos";
+                window.location.href = "/PagesViews/RecibosManagerView";
             }
         }));
         this.OptionContainer.append(WRender.Create({

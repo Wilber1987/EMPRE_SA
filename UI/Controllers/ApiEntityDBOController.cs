@@ -519,22 +519,22 @@ namespace API.Controllers
 		{
 			return inst.Update();
 		}
-		//Transaccion_Factura
+		//Transaccion_Recibos
 		[HttpPost]
 		[AuthController]
-		public List<Transaccion_Factura> getTransaccion_Factura(Transaccion_Factura Inst, [FromQuery] SearchData? pageData)
+		public List<Transaccion_Recibos> getTransaccion_Recibos(Transaccion_Recibos Inst, [FromQuery] SearchData? pageData)
 		{
-			return Inst.Where<Transaccion_Factura>(FilterData.Limit(30));
+			return Inst.Where<Transaccion_Recibos>(FilterData.Limit(30));
 		}
 		[HttpPost]
 		[AuthController(Permissions.ADMIN_ACCESS)]
-		public object? saveTransaccion_Factura(Transaccion_Factura inst)
+		public object? saveTransaccion_Recibos(Transaccion_Recibos inst)
 		{
 			return inst.Save();
 		}
 		[HttpPost]
 		[AuthController(Permissions.ADMIN_ACCESS)]
-		public object? updateTransaccion_Factura(Transaccion_Factura inst)
+		public object? updateTransaccion_Recibos(Transaccion_Recibos inst)
 		{
 			return inst.Update();
 		}

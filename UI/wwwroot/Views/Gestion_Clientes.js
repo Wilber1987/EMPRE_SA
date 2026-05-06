@@ -1,5 +1,5 @@
 //@ts-check
-import { Catalogo_Clientes, Transaccion_Factura, Transaction_Contratos_ModelComponent } from "../FrontModel/DBODataBaseModel.js";
+import { Catalogo_Clientes, Transaccion_Recibos_ModelComponent, Transaction_Contratos_ModelComponent } from "../FrontModel/DBODataBaseModel.js";
 import { Transaction_Contratos } from "../FrontModel/Model.js";
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js";
 import { WDetailObject } from "../WDevCore/WComponents/WDetailObject.js";
@@ -54,7 +54,7 @@ class Gestion_ClientesView extends HTMLElement {
             name: "Selecionar",
             action: async (cliente) => {
                 const response = await new Transaction_Contratos({ codigo_cliente: cliente.codigo_cliente }).Get();
-                const responseFactura = await new Transaccion_Factura({ id_cliente: cliente.codigo_cliente }).Get();
+                const responseFactura = await new Transaccion_Recibos_ModelComponent({ id_cliente: cliente.codigo_cliente }).Get();
                 cliente.Transaction_Contratos = response;
                 cliente.Transaction_Factura = responseFactura;
                 this.Manager?.NavigateFunction("Gestion_ClientesDetail" + cliente.codigo_cliente, new WDetailObject({
@@ -62,7 +62,7 @@ class Gestion_ClientesView extends HTMLElement {
                         Transaction_Contratos:
                             { type: "MASTERDETAIL", ModelObject: () => new Transaction_Contratos_ModelComponent(), Dataset: response },
                         Transaction_Factura:
-                            { type: "MASTERDETAIL", label: "Recibos", ModelObject: () => new Transaccion_Factura({ Catalogo_Clientes: undefined }), Dataset: responseFactura }
+                            { type: "MASTERDETAIL", label: "Recibos", ModelObject: () => new Transaccion_Recibos_ModelComponent({ Catalogo_Clientes: undefined }), Dataset: responseFactura }
                     }),
                     ObjectDetail: cliente
                 }))

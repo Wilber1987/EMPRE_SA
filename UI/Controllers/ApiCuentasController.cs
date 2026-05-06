@@ -9,9 +9,10 @@ namespace API.Controllers
 	[ApiController]
 	public class ApiCuentasController : ControllerBase
 	{
+
 		//Movimientos cuentas
 		[HttpPost]
-		 [AuthController(Permissions.GESTION_MOVIMIENTOS)]
+		[AuthController(Permissions.GESTION_MOVIMIENTOS)]
 		public List<Detail_Movimiento> getDetail_Movimiento(Detail_Movimiento Inst)
 		{
 			return Inst.Get<Detail_Movimiento>().OrderBy(p => p.id_movimiento).ToList(); ;
@@ -33,7 +34,7 @@ namespace API.Controllers
 		[HttpPost]
 		[AuthController(Permissions.GESTION_MOVIMIENTOS)]
 		public object? saveMovimientos_Cuentas(Movimientos_Cuentas inst)
-		{			
+		{
 			return inst.Save(HttpContext.Session.GetString("sessionKey"));
 		}
 	}

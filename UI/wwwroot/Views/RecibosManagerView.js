@@ -2,60 +2,61 @@
 import { WRender, ComponentsManager, html } from "../WDevCore/WModules/WComponentsTools.js";
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js"
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
-import { Transaccion_Factura, Catalogo_Cambio_Divisa_ModelComponent } from "../FrontModel/DBODataBaseModel.js"
+import { Transaccion_Recibos_ModelComponent, Catalogo_Cambio_Divisa_ModelComponent } from "../FrontModel/DBODataBaseModel.js"
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 import { WAjaxTools } from "../WDevCore/WModules/WAjaxTools.js";
 import { ModalMessage } from "../WDevCore/WComponents/ModalMessage.js";
 import { ModalVericateAction } from "../WDevCore/WComponents/ModalVericateAction.js";
 import { WPrintExportToolBar } from "../WDevCore/WComponents/WPrintExportToolBar.mjs";
-class Ver_RecibosView extends HTMLElement {
-	constructor(props) {
+import { Transaccion_Recibos } from "../FrontModel/Recibos.js";
+class RecibosManagerView extends HTMLElement {
+	constructor() {
 		super();
 		this.Draw();
 	}
 	Draw = async () => {
 		const tasa = await new Catalogo_Cambio_Divisa_ModelComponent().Get();
 		this.OptionContainer = WRender.Create({ className: "OptionContainer" });
-		this.TabContainer = WRender.createElement({ type: 'div', props: { class: 'TabContainer', id: 'TabContainer' } })
+		this.TabContainer = html`<div id="TabContainer" class="TabContainer"></div>`;
 		const id_Recibo = new URLSearchParams(window.location.search).get('id_Recibo');
 		if (id_Recibo != null) {
 			await this.printRecibo(id_Recibo, tasa);
 		}
 		this.MainComponent = new WTableComponent({
-			EntityModel: new Transaccion_Factura({ Factura_contrato: {} }),
-			ModelObject: new Transaccion_Factura(),
+			EntityModel: new Transaccion_Recibos_ModelComponent({ Factura_contrato: {} }),
+			ModelObject: new Transaccion_Recibos_ModelComponent(),
 			Options: {
 				Filter: true,
 				FilterDisplay: true,
 				UserActions: [
 					{
 						name: "Anular",
-						rendered: (/** @type { Transaccion_Factura } */ factura) => {
+						rendered: (/** @type { Transaccion_Recibos } */ recibo) => {
 							// @ts-ignore
-							return factura.estado != "ANULADO"
+							return recibo.estado != "ANULADO"
 						},
-						action: (factura) => {
-							factura.motivo_anulacion = null
+						action: (/** @type { Transaccion_Recibos } */  recibo) => {
+							recibo.Motivo_Anulacion = null
 							const modal = new WModalForm({
 								ModelObject: {
 									motivo_anulacion: { type: "TEXTAREA" }
-								}, EditObject: factura,
+								}, EditObject: recibo,
 								title: "ANULACIÓN",
 								ObjectOptions: {
 									SaveFunction: async () => {
-										if (factura.estado == "ANULADO") {
+										if (recibo.estado == "ANULADO") {
 											this.append(ModalMessage("Recibo ya esta anulado"));
 											return;
 										}
-										this.append(ModalVericateAction(async (editObject) => {
+										this.append(ModalVericateAction(async () => {
 											const response =
 												await WAjaxTools.PostRequest("../api/ApiRecibos/anularRecibo",
 													{
-														id_recibo: factura.id_factura,
+														id_recibo: recibo.id_factura,
 														tasa_cambio: tasa[0].Valor_de_venta,
 														tasa_cambio_compra: tasa[0].Valor_de_compra,
-														motivo_anulacion: factura.motivo_anulacion
+														Motivo_Anulacion: recibo.Motivo_Anulacion
 													});
 
 											this.append(ModalMessage(response.message, undefined, true));
@@ -67,16 +68,13 @@ class Ver_RecibosView extends HTMLElement {
 							this.append(modal);
 						}
 					}, {
-						name: "Imprimir", action: async (factura) => {
-							//this.append(ModalVericateAction(async () => {
-							const id_factura = factura.id_factura
-							if (factura.estado == "ANULADO") {
+						name: "Imprimir", action: async (/** @type { Transaccion_Recibos } */  recibo) => {
+							const id_factura = recibo.id_factura
+							if (recibo.estado == "ANULADO") {
 								alert("RECIBO ANULADO")
 								return;
 							}
-
-							await this.printRecibo(id_factura, tasa, factura);
-							// }, "¿Esta seguro que desea imprimir este recibo?"))
+							await this.printRecibo(id_factura, tasa, recibo);
 						}
 					}
 				]
@@ -91,8 +89,6 @@ class Ver_RecibosView extends HTMLElement {
 			this.OptionContainer,
 			this.TabContainer
 		);
-
-
 	}
 	SetOption() {
 		this.OptionContainer?.append(WRender.Create({
@@ -104,12 +100,20 @@ class Ver_RecibosView extends HTMLElement {
 	}
 
 
+	/**
+	 * @param {string | number | null} id_factura
+	 * @param {any[]} tasa
+	 * @param {Transaccion_Recibos | undefined} [factura]
+	 */
 	async printRecibo(id_factura, tasa, factura) {
 		const response = await WAjaxTools.PostRequest("../api/ApiRecibos/printRecibo",
 			{ id_recibo: id_factura, tasa_cambio: tasa[0].Valor_de_compra });
 		if (response.status == 200 && response.body.documents != null && response.body.documents != undefined) {
+			/**
+			 * @type {HTMLElement[]}
+			 */
 			const docs = [];
-			response.body.documents.forEach(element => {
+			response.body.documents.forEach((/** @type {{ body: any; type: string; }} */ element) => {
 				const objFra = WRender.Create({
 					// @ts-ignore
 					tagName: "iframe", srcdoc: element.body,
@@ -119,18 +123,9 @@ class Ver_RecibosView extends HTMLElement {
 						maxWidth: element.type == "REESTRUCTURE_TABLE" || element.type == "RECIBO_QUINCENAL" ? "1100px" : "320px"
 					}
 				})
-				/*//console.log(objFra.srcdoc);
-				const print = function () {
-					// @ts-ignore
-					objFra.contentWindow.focus(); // Set focus.
-					// @ts-ignore
-					objFra.contentWindow.print(); // Print it  
-				};
-				const btn = html`<img class="print" src="../WDevCore/Media/print.png"/>`
-				btn.onclick = print*/
 				docs.push(WRender.Create({
 					className: "doc-container", children: [
-						this.PrintIconStyle(response.body),
+						this.PrintIconStyle(),
 						new WPrintExportToolBar({
 							PrintAction: (toolBar) => {
 								toolBar.Print(html`<div class="contract-response">
@@ -148,22 +143,13 @@ class Ver_RecibosView extends HTMLElement {
 					class: "print-container", children: docs
 				})
 			}))
-			// objFra.onload = print
-			//document.body.appendChild(objFra); 
-			// const ventimp = window.open(' ', 'popimpr');
-			// ventimp?.document.write(response.message);
-			// ventimp?.focus();
-			// setTimeout(() => {
-			//     ventimp?.print();
-			//     ventimp?.close();
-			// }, 100);
 		} else if (response.status == 200 && response.message != null) {
 			this.append(ModalMessage(response.message))
 		}
 	}
 
 
-	PrintIconStyle(responseBody) {
+	PrintIconStyle() {
 		return css`
 		   .print {
 			width: 30px;
@@ -195,6 +181,6 @@ class Ver_RecibosView extends HTMLElement {
 		 `;
 	}
 }
-customElements.define('w-datos_configuracion', Ver_RecibosView);
+customElements.define('w-datos_configuracion', RecibosManagerView);
 // @ts-ignore
-window.addEventListener('load', async () => { MainBody.append(new Ver_RecibosView()) })
+window.addEventListener('load', async () => { MainBody.append(new RecibosManagerView()) })

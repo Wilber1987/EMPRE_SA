@@ -124,28 +124,28 @@ namespace API.Controllers
 		{
 			return Inst?.Update();
 		}        
-		//Transaccion_Factura
+		//Transaccion_Recibos
 		[HttpPost]
 		[AuthController]
-		public List<Transaccion_Factura>? getTransaccion_Factura(Transaccion_Factura Inst)
+		public List<Transaccion_Recibos>? getTransaccion_Recibos(Transaccion_Recibos Inst)
 		{
-			return Inst?.Get<Transaccion_Factura>();
+			return Inst?.Get<Transaccion_Recibos>();
 		}
 		[HttpPost]
 		[AuthController]
-		public Transaccion_Factura? findTransaccion_Factura(Transaccion_Factura Inst)
+		public Transaccion_Recibos? findTransaccion_Recibos(Transaccion_Recibos Inst)
 		{
-			return Inst?.Find<Transaccion_Factura>();
+			return Inst?.Find<Transaccion_Recibos>();
 		}
 		[HttpPost]
 		[AuthController]
-		public object? saveTransaccion_Factura(Transaccion_Factura Inst)
+		public object? saveTransaccion_Recibos(Transaccion_Recibos Inst)
 		{
 			return Inst?.Save();
 		}
 		[HttpPost]
 		[AuthController]
-		public object? updateTransaccion_Factura(Transaccion_Factura Inst)
+		public object? updateTransaccion_Recibos(Transaccion_Recibos Inst)
 		{
 			return Inst?.Update();
 		}

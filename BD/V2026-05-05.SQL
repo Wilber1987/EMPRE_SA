@@ -1,0 +1,1 @@
+EXEC EMPRE_SA.sys.sp_rename N'EMPRE_SA.facturacion.Transaccion_Factura', N'Transaccion_Recibos', 'OBJECT';

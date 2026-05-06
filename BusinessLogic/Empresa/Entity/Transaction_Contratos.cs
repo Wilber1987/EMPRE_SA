@@ -77,7 +77,7 @@ namespace DataBaseModel
 		public List<Tbl_Cuotas>? Tbl_Cuotas { get; set; }
 
 		//[OneToMany(TableName = "Transaccion_Factura", KeyColumn = "numero_contrato", ForeignKeyColumn = "numero_contrato")]
-		public List<Transaccion_Factura>? Recibos { get; set; }
+		public List<Transaccion_Recibos>? Recibos { get; set; }
 		public ResponseService Anular(string Identify, bool anularIgnoreTransactions = false, bool anularFullCost = false)
 		{
 			try
@@ -305,7 +305,7 @@ namespace DataBaseModel
 
 		private void GetRecibos()
 		{
-			Recibos = new Transaccion_Factura
+			Recibos = new Transaccion_Recibos
 			{
 				filterData = [new FilterData
 				{
@@ -315,7 +315,7 @@ namespace DataBaseModel
 					PropSQLType = "int",
 					Values = new List<string?> { numero_contrato.GetValueOrDefault().ToString() }
 				}]
-			}.SimpleGet<Transaccion_Factura>();
+			}.SimpleGet<Transaccion_Recibos>();
 		}
 
 		internal void Cancelar(Security_Users? dbUser)

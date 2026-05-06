@@ -1,5 +1,5 @@
 import { EntityClass } from "../WDevCore/WModules/EntityClass.js";
-import { Catalogo_Clientes, Transaccion_Factura } from "./DBODataBaseModel.js";
+import { Catalogo_Clientes, Transaccion_Recibos_ModelComponent } from "./DBODataBaseModel.js";
 
 //@ts-check
 class ValoracionesTransaction extends EntityClass {
@@ -148,7 +148,7 @@ class Transaction_Contratos extends EntityClass {
 	/**@type {Number} */ total_pagar_cordobas;
 	/**@type {Number} */ total_pagar_dolares;
 	/**@type {Number} */ reestructurado;
-	/**@type {Array<Transaccion_Factura>} */ Recibos;
+	/**@type {Array<Transaccion_Recibos_ModelComponent>} */ Recibos;
 	Anular = async () => {
 		return await this.SaveData("Transactional_Contrato/AnularContract", this)
 	}

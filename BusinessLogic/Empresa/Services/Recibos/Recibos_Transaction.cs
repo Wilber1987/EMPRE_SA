@@ -191,7 +191,7 @@ namespace Transactions
 				var cuotasPendiente = contrato.Tbl_Cuotas.Where(c => c.Estado?.ToUpper() == EstadoEnum.PENDIENTE.ToString()).ToList();
 
 				//guardado de factura
-				var factura = new Transaccion_Factura()
+				var factura = new Transaccion_Recibos()
 				{
 					tipo = "RECIBO", //TODO ENUM
 					estado = EstadoEnum.ACTIVO.ToString(),
@@ -593,12 +593,12 @@ namespace Transactions
 			try
 			{
 				var (User, dbUser) = Business.Security_Users.GetUserData(Identify);
-				var factura = new Transaccion_Factura() { id_factura = this.id_recibo }.Find<Transaccion_Factura>();
+				var factura = new Transaccion_Recibos() { id_factura = this.id_recibo }.Find<Transaccion_Recibos>();
 				var contrato = new Transaction_Contratos() { numero_contrato = factura?.Factura_contrato?.numero_contrato }.Find<Transaction_Contratos>();
-				var FacturasActivas = new Transaccion_Factura()
+				var FacturasActivas = new Transaccion_Recibos()
 				{
 					numero_contrato = factura?.Factura_contrato?.numero_contrato
-				}.Where<Transaccion_Factura>(
+				}.Where<Transaccion_Recibos>(
 					FilterData.Equal("estado", EstadoEnum.ACTIVO),
 					FilterData.Greater("id_factura", this.id_recibo)
 				);

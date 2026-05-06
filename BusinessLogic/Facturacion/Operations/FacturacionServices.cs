@@ -328,10 +328,10 @@ namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 		{
 			Transaction_Contratos? contract = new Transaction_Contratos { numero_contrato = factura?.Datos_Financiamiento?.Numero_Contrato }.Find<Transaction_Contratos>();
 			string contractData = contract != null ? ContractTemplateService.GetContractContent(contract) : "";
-			Transaccion_Factura? transaccion_Factura = null;
+			Transaccion_Recibos? transaccion_Recibos = null;
 			if (factura?.Datos_Financiamiento?.Id_recibo != null)
 			{
-				transaccion_Factura = new Transaccion_Factura { id_factura = factura?.Datos_Financiamiento?.Id_recibo }.Find<Transaccion_Factura>();
+				transaccion_Recibos = new Transaccion_Recibos { id_factura = factura?.Datos_Financiamiento?.Id_recibo }.Find<Transaccion_Recibos>();
 			}
 
 			return new ResponseService
@@ -343,7 +343,7 @@ namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 					factura,
 					Contract = contractData,
 					Transaction_Contratos = contract,
-					Recibo = new RecibosTemplateServices().GenerateReciboHtmlTemplate(transaccion_Factura)
+					Recibo = new RecibosTemplateServices().GenerateReciboHtmlTemplate(transaccion_Recibos)
 
 				}
 			};

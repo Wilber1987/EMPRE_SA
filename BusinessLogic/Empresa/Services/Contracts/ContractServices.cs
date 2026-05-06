@@ -203,10 +203,10 @@ namespace Model
 
 		public object GetParcialesData(ParcialesData data)
 		{
-			List<Transaccion_Factura> transaccion_Facturas = new Transaccion_Factura
+			List<Transaccion_Recibos> transaccion_Facturas = new Transaccion_Recibos
 			{
 				numero_contrato = data.numero_contrato
-			}.Get<Transaccion_Factura>();
+			}.Get<Transaccion_Recibos>();
 			List<Detalle_Factura_Recibo> detalle_Factura_Recibos = transaccion_Facturas.Where(t => t.Detalle_Factura_Recibo != null).ToList()
 				.SelectMany(t => t.Detalle_Factura_Recibo).ToList();
 			List<Detalle_Factura_Recibo> detalle_Factura_Recibos_Parciales = detalle_Factura_Recibos
