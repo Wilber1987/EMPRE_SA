@@ -72,10 +72,10 @@ namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 			factura.Id_Sucursal = dbUser?.Id_Sucursal;
 			factura.Id_Cliente = factura.Cliente.codigo_cliente;
 			factura.Estado = EstadoEnum.ACTIVO.ToString();
-			double totalSubTotal = 0;
-			double totalIva = 0;
-			double totalFactura = 0;
-			double totalDescuento = 0;
+			decimal totalSubTotal = 0;
+			decimal totalIva = 0;
+			decimal totalFactura = 0;
+			decimal totalDescuento = 0;
 			factura.Codigo_venta = GenerateCode();
 
 			foreach (var detalle in factura.Detalle_Factura)
@@ -154,37 +154,52 @@ namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 				case "APARTADO_MENSUAL":
 				case "APARTADO_QUINCENAL":
 					bool isQuincenal = factura.Tipo == "APARTADO_QUINCENAL";
-					double porcentajeQuincenal = 1 / Transactional_Configuraciones.GetNumeroCuotasQuincenales(factura!.Monto_dolares + factura.Datos_Financiamiento!.Total_Financiado);
-					double porcentajeMensual = Transactional_Configuraciones.GetPorcentageMinimoPagoApartadoMensual() / 100;
 
+					// ✅ Porcentajes como decimal con literales 'm'
+					decimal porcentajeQuincenal = 1m /
+						Transactional_Configuraciones.GetNumeroCuotasQuincenales(
+							factura!.Monto_dolares + factura.Datos_Financiamiento!.Total_Financiado);
 
-					if (isQuincenal && factura.Monto_dolares < Math.Round(totalFactura * porcentajeQuincenal, 2))
+					decimal porcentajeMensual =
+						Transactional_Configuraciones.GetPorcentageMinimoPagoApartadoMensual() / 100m;
+
+					// ✅ Validación con redondeo financiero consistente (2 decimales, AwayFromZero)
+					if (isQuincenal && factura.Monto_dolares <
+						Math.Round(totalFactura * porcentajeQuincenal, 2, MidpointRounding.AwayFromZero))
 					{
 						return new ResponseService()
 						{
 							status = 400,
-							message = $"El monto debe ser equivalente como minimo al {Math.Round(porcentajeQuincenal, 2) * 100} % del total"
+							message = $"El monto debe ser equivalente como minimo al {Math.Round(porcentajeQuincenal * 100m, 2, MidpointRounding.AwayFromZero)} % del total"
 						};
 					}
-					else if (!isQuincenal && factura.Monto_dolares < Math.Round(totalFactura * porcentajeMensual, 2))
+					else if (!isQuincenal && factura.Monto_dolares <
+						Math.Round(totalFactura * porcentajeMensual, 2, MidpointRounding.AwayFromZero))
 					{
 						return new ResponseService()
 						{
 							status = 400,
-							message = $"El monto debe ser equivalente como minimo al {porcentajeMensual * 100} % del total"
+							message = $"El monto debe ser equivalente como minimo al {Math.Round(porcentajeMensual * 100m, 2, MidpointRounding.AwayFromZero)} % del total"
 						};
 					}
-					double valorMinimoApartadoQuincenal = Transactional_Configuraciones.GetValorMinimoApartadoQuincenal();
+
+					// ✅ Valor mínimo como decimal
+					decimal valorMinimoApartadoQuincenal =
+						Transactional_Configuraciones.GetValorMinimoApartadoQuincenal();
+
 					if (isQuincenal && totalFactura < valorMinimoApartadoQuincenal)
 					{
 						return new ResponseService()
 						{
 							status = 400,
-							message = $"El monto de la factura no puede ser menor a {valorMinimoApartadoQuincenal} en apartados quincenales"
+							message = $"El monto de la factura no puede ser menor a {valorMinimoApartadoQuincenal:C} en apartados quincenales"
 						};
 					}
+
+					// ✅ Asignaciones con tipos consistentes
 					factura.Total_Pagado = factura.Monto_dolares;
 					factura.Total_Financiado = factura.Datos_Financiamiento?.Total_Financiado;
+
 					var (contractResponse, contrato) = GenerarContratoFinanciamiento(Identity, factura, isQuincenal);
 					if (contractResponse.status != 200)
 					{
@@ -195,9 +210,10 @@ namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 						factura.Datos_Financiamiento!.Numero_Contrato = contrato!.Transaction_Contratos?.numero_contrato;
 						contract = contrato.Transaction_Contratos;
 					}
+
 					/* 
-					dado que se generara una transaccion de facturacion se iguala el monto de la 
-					factura al monto total y el contrato sera equivalente al monto financiado
+					Dado que se generará una transacción de facturación, se iguala el monto de la 
+					factura al monto total y el contrato será equivalente al monto financiado
 					*/
 					factura.Total_Pagado = totalFactura;
 					factura.Total = factura.Total_Pagado;
@@ -306,12 +322,12 @@ namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 			return (response, contrato);
 		}
 
-		private double? GetTasaInteresContratoMensual()
+		private decimal? GetTasaInteresContratoMensual()
 		{
 			var Intereses = new Transactional_Configuraciones().GetIntereses();
 			return Intereses
 					.Where(x => !x.Nombre!.Equals(InteresesPrestamosEnum.GASTOS_ADMINISTRATIVOS.ToString()))?
-					.Select(I => Convert.ToDouble(I.Valor)).Sum() / 100;
+					.Select(I => Convert.ToDecimal(I.Valor)).Sum() / 100;
 		}
 
 		private static Catalogo_Clientes? GetCliente(int? id_Cliente)

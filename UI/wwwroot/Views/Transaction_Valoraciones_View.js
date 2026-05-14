@@ -35,6 +35,7 @@ import { WAlertMessage } from "../WDevCore/WComponents/WAlertMessage.js";
 import { WCard } from "../WDevCore/WComponents/WCard.js";
 import { SystemConfigs } from "../Services/SystemConfigs.js";
 import { Catalogo_Clientes_ModelComponent } from "../Facturacion/FrontModel/Catalogo_Clientes.js";
+import { FilterData } from "../WDevCore/WModules/CommonModel.js";
 class Transaction_Valoraciones_View extends HTMLElement {
 	// @ts-ignore
 	constructor(props) {
@@ -55,17 +56,18 @@ class Transaction_Valoraciones_View extends HTMLElement {
 			Valoracion_3: 0, dolares_3: 0,
 		}
 		this.valoracionesDataset = [];
-		this.selectedClientDetail = WRender.Create({ tagName: "label", className: "selected-client" });
-		this.amortizacionResumen = WRender.Create({ tagName: "label", innerText: this.valoracionResumen(0, 0, 0, 0) });
+		this.selectedClientDetail = WRender.Create({ tagName: "div", className: "selected-client" });
+		this.amortizacionResumen = WRender.Create({ tagName: "div", children: [this.valoracionResumen(0, 0, 0, 0)] });
 		this.Draw();
 	}
-	Draw = async () => {
-		this.valoracionesContainer.innerHTML = "";
+	Draw = async () => {		
 		/** @type {Array<Catalogo_Cambio_Divisa>} */
 		this.tasasCambio = await new Catalogo_Cambio_Divisa_ModelComponent().Get();
-		let estadosArticulos = await new Catalogo_Estados_Articulos().Get();
-		estadosArticulos = estadosArticulos.sort(((a, b) => a.id_estado_articulo - b.id_estado_articulo));
-		this.Categorias = await new Catalogo_Categoria_ModelComponent().Get();
+		let estadosArticulos = await new Catalogo_Estados_Articulos().Where(
+			FilterData.IsNull("id_categoria")
+		);
+		this.estadosArticulos = estadosArticulos.sort(((a, b) => a.id_estado_articulo - b.id_estado_articulo));
+		this.Categorias = await new Catalogo_Categoria_ModelComponent().Get()
 		this.Intereses = await new Transactional_Configuraciones().getConfiguraciones_Intereses();
 		this.Beneficios = await new Transactional_Configuraciones().getConfiguraciones_Beneficios();
 		this.InteresBase = WArrayF.SumValAtt(this.Intereses, "Valor");
@@ -134,7 +136,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
 					display: block;
 					width: 100%;
 					margin: 0px;
-				}`
+				}`,
 		});
 
 		this.valoracionesTable = new WTableComponent({
@@ -163,7 +165,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
 			}
 		});
 
-		this.BeneficioDetail = WRender.Create({ className: "beneficios-detail" });
+		this.ValoracionesResumenData = WRender.Create({ className: "valoracion-resumen-data" });
 		this.beneficiosDetailUpdate();
 		this.valoresObject = this.valoresObject ?? {
 			Valoracion_1: 0, dolares_1: 0,
@@ -196,26 +198,26 @@ class Transaction_Valoraciones_View extends HTMLElement {
 		this.TabContainerTables = WRender.Create({ className: "TabContainerTables", id: 'TabContainerTables' });
 		this.ManagerTables = new ComponentsManager({ MainContainer: this.TabContainerTables });
 		this.TableNavigator = new WAppNavigator({
-			NavStyle: "Tab",
+			NavStyle: "tab",
 			Inicialize: true,
 			Elements: [{
 				name: "Amortización de deuda", action: () => {
-					this.ManagerTables?.NavigateFunction("cuotas", this.CuotasTable)
+					return this.CuotasTable;
 				}
 			}, {
 				name: "Valoraciones", action: () => {
-					this.ManagerTables?.NavigateFunction("valoraciones", this.valoracionesTable)
+					return this.valoracionesTable;
 				}
 			}]
 		})
-
 		this.valoracionesContainer.append(
 			this.selectedClientDetail,
+			this.amortizacionResumen,
+			this.ValoracionesResumenData,
 			this.valoracionesForm,
-			this.BeneficioDetail,
 			this.valoresForm,
 			this.multiSelectEstadosArticulos,
-			WRender.Create({ className: "nav-header", children: [this.TableNavigator, this.amortizacionResumen] }),
+			this.TableNavigator,
 			this.TabContainerTables
 		);
 		if (!this.clientSercher) {
@@ -241,10 +243,22 @@ class Transaction_Valoraciones_View extends HTMLElement {
 	 * @param {Number} Valoracion_compra_dolares 
 	 * @param {Number} Valoracion_empeño_cordobas 
 	 * @param {Number} Valoracion_empeño_dolares 
-	 * @returns {string}
+	 * @returns {HTMLElement}
 	 */
-	valoracionResumen(Valoracion_compra_cordobas, Valoracion_compra_dolares, Valoracion_empeño_cordobas, Valoracion_empeño_dolares) {
-		return `Compra C$: ${ConvertToMoneyString(Valoracion_compra_cordobas)} - Compra $: ${ConvertToMoneyString(Valoracion_compra_dolares)} - Empeño C$: ${ConvertToMoneyString(Valoracion_empeño_cordobas)} - Empeño $: ${ConvertToMoneyString(Valoracion_empeño_dolares)}`;
+	valoracionResumen(Valoracion_compra_cordobas, Valoracion_compra_dolares, Valoracion_empeño_cordobas, Valoracion_empeño_dolares) {		
+		if (this.amortizacionResumen) {
+			this.amortizacionResumen.innerHTML = ""
+		}
+		return html`<div class="resumen-container">
+			<span>Compra C$:</span>
+			<span class="money">${ConvertToMoneyString(Valoracion_compra_cordobas)} </span>
+			<span>Compra $:</span>
+			<span class="money">${ConvertToMoneyString(Valoracion_compra_dolares)}</span>
+			<span>Empeño C$:</span>
+			<span class="money">${ConvertToMoneyString(Valoracion_empeño_cordobas)}</span>
+			<span>Empeño $:</span>
+			<span class="money">${ConvertToMoneyString(Valoracion_empeño_dolares)}</span>
+		</div>`;
 	}
 	buildValoresModel(tasasCambio) {
 		this.valoresModel = {
@@ -371,7 +385,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
 	}
 
 	valoracionesModel(tasasCambio, multiSelectEstadosArticulos) {
-		return new Transactional_Valoracion_ModelComponent({
+		const model = new Transactional_Valoracion_ModelComponent({
 			Fecha: { type: 'date', disabled: true },
 			Tasa_de_cambio: { type: 'number', disabled: true, defaultValue: tasasCambio[0].Valor_de_venta },
 			// @ts-ignore
@@ -402,6 +416,18 @@ class Transaction_Valoraciones_View extends HTMLElement {
 				}, hidden: true
 			},
 		});
+		model.Catalogo_Categoria.action = (/**@type {Transactional_Valoracion_ModelComponent} */ categoria) => {
+			if (Array.isArray(categoria.Catalogo_Categoria.Catalogo_Estados_Articulos)) {
+				this.multiSelectEstadosArticulos.Dataset = categoria.Catalogo_Categoria.Catalogo_Estados_Articulos;
+				this.multiSelectEstadosArticulos.selectedItems = [categoria.Catalogo_Categoria.Catalogo_Estados_Articulos[0]]
+			} else {
+				this.multiSelectEstadosArticulos.Dataset = this.estadosArticulos;
+				this.multiSelectEstadosArticulos.selectedItems = [this.estadosArticulos[0]]
+
+			}
+			this.multiSelectEstadosArticulos?.DrawTable();
+		}
+		return model;
 	}
 	/** @return {Number} */
 	calculoCordobas = (porcentaje) => {
@@ -486,7 +512,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
 				}
 				this.valoracionesForm.DrawComponent();
 				//guardar
-				
+
 				for (const element of this.valoracionesTable?.Dataset ?? []) {
 					if (element.requireReValoracion(parseFloat((await SystemConfigs.FindByName("VENCIMIENTO_VALORACION"))?.Valor ?? "40"))) {
 						element.id_valoracion = null;
@@ -496,23 +522,6 @@ class Transaction_Valoraciones_View extends HTMLElement {
 				this.valoracionModel?.GuardarValoraciones(this.valoracionesTable?.Dataset);
 			}
 		}))
-		/*this.OptionContainer.append(WRender.Create({
-			tagName: 'button', className: 'Block-Fifth', innerText: 'Guardar valoraciones',
-			onclick: async () => {
-				if (this.valoracionesTable?.Dataset.length == 0) {
-					WAlertMessage.Connect({ Message: "Agregue valoraciones para poder continuar", Type: "warning" }); 
-					return;
-				}
-				this.valoracionesTable?.Dataset.forEach(element => {
-					element.id_valoracion = null;
-					element.Fecha = new Date();
-				});
-				const valoracionesGuardadas = await this.valoracionModel?.GuardarValoraciones(this.valoracionesTable?.Dataset);
-				if (valoracionesGuardadas?.length > 0) {
-					WAlertMessage.Connect({ Message: "Valoraciones guardadas correctamente", Type: "warning" }); 
-				}
-			}
-		}))*/
 		if (WSecurity.HavePermission(Permissions.GESTION_EMPEÑOS)) {
 			this.OptionContainer.append(WRender.Create({
 				tagName: 'button', className: 'Block-Success', innerText: 'Generar Contrato',
@@ -643,7 +652,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
 					}
 					this.valoracionesDataset = [];
 					this.selectedClientDetail = WRender.Create({ tagName: "label", className: "selected-client" });
-					this.amortizacionResumen = WRender.Create({ tagName: "label", innerText: this.valoracionResumen(0, 0, 0, 0) });
+					this.amortizacionResumen = WRender.Create({ tagName: "label", children: [this.valoracionResumen(0, 0, 0, 0)] });
 					this.Draw();
 				}
 			})
@@ -656,7 +665,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
 			EditObject: { codigo_cliente: -1 },
 			AutoSave: false,
 			ObjectOptions: {
-				SaveFunction: (/** @type {Catalogo_Clientes} */ cliente)=> {
+				SaveFunction: (/** @type {Catalogo_Clientes} */ cliente) => {
 					this.Cliente = cliente;
 					this.GenerateCompra();
 				}
@@ -674,7 +683,10 @@ class Transaction_Valoraciones_View extends HTMLElement {
 			Cliente seleccionado: ${selectCliente.primer_nombre} ${selectCliente.segundo_nombre ?? ''} ${selectCliente.primer_apellido} ${selectCliente.segundo_apellidio ?? ''}
 		`;
 		this.selectedClientDetail.innerHTML = "";
-		this.selectedClientDetail.append(new WCard(selectCliente, new Catalogo_Clientes()))
+		this.selectedClientDetail.append(new WCard(selectCliente, {
+			Nombre_completo: { type: 'text', lable: "Nombre" },
+			identificacion: { type: 'text' }
+		}))
 		this.Manager.NavigateFunction("valoraciones", this.valoracionesContainer);
 		this.beneficiosDetailUpdate();
 	}
@@ -708,6 +720,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
 				this.valoracionesForm.FormObject[prop] = valoracion[prop]
 			}
 			this.valoracionesForm.Config.ModelObject?.Catalogo_Categoria?.action(this.valoracionesForm.FormObject, this.valoracionesForm);
+			this.valoracionesForm.DrawComponent();
 			if (this.valoresForm != undefined) {
 				// @ts-ignore
 				if (!valoracion.requireReValoracion(parseFloat((await SystemConfigs.FindByName("VENCIMIENTO_VALORACION"))?.Valor ?? "40"))) {
@@ -740,7 +753,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
 	}
 	beneficiosDetailUpdate() {
 		// @ts-ignore
-		this.BeneficioDetail.innerHTML = "";
+		this.ValoracionesResumenData.innerHTML = "";
 		const detail = this.valoracionesForm?.FormObject;
 		const beneficioVentaC = this.Beneficios?.find(b => b.Nombre == "BENEFICIO_VENTA_ARTICULO_COMPRADO");
 		const beneficioVentaE = this.Beneficios?.find(b => b.Nombre == "BENEFICIO_VENTA_ARTICULO_EMPENO");
@@ -753,21 +766,23 @@ class Transaction_Valoraciones_View extends HTMLElement {
 		this.valoracionesForm.FormObject.Precio_venta_empeño_dolares = (precio_venta_empeño / this.tasasCambio[0].Valor_de_venta)
 		// @ts-ignore
 		//const moraDolares =  mora / this.tasasCambio[0].Valor_de_venta;    
-		this.BeneficioDetail?.append(html`<div>
-			<h4>BENEFICIOS:</h4>
-			<div class="column-venta">
-				<label>VENTA DE COMPRA</label>
-				<span>C$ ${((detail.Valoracion_compra_cordobas) * (beneficioVentaC.Valor / 100 + 1)).toFixed(3)}</span>
-				<span>$ ${((detail.Valoracion_compra_dolares) * (beneficioVentaC.Valor / 100 + 1)).toFixed(3)}</span>
-			</div>
-			<div class="column-venta">
-				<label>VENTA DE EMPEÑO</label>
-				<span>C$ ${precio_venta_empeño.toString() == "NaN" ? "0.00"
+		this.ValoracionesResumenData?.append(html`<div>			
+			<div class="beneficios-detail">
+				<h4>BENEFICIOS</h4>
+				<div class="column-venta">
+					<label>VENTA DE COMPRA</label>
+					<span>C$ ${((detail.Valoracion_compra_cordobas) * (beneficioVentaC.Valor / 100 + 1)).toFixed(3)}</span>
+					<span>$ ${((detail.Valoracion_compra_dolares) * (beneficioVentaC.Valor / 100 + 1)).toFixed(3)}</span>
+				</div>
+				<div class="column-venta">
+					<label>VENTA DE EMPEÑO</label>
+					<span>C$ ${precio_venta_empeño.toString() == "NaN" ? "0.00"
 				: (precio_venta_empeño *
 					// @ts-ignore
 					this.tasasCambio[0].Valor_de_venta).toFixed(3)}</span>
-				<span>$ ${precio_venta_empeño.toString() == "NaN" ? "0.00"
+					<span>$ ${precio_venta_empeño.toString() == "NaN" ? "0.00"
 				: precio_venta_empeño.toFixed(3)}</span>
+				</div>
 			</div>
 		</div>`);
 		this.multiSelectEstadosArticulos?.SetOperationValues();
@@ -779,7 +794,8 @@ class Transaction_Valoraciones_View extends HTMLElement {
 	 */
 	calculoAmortizacion = () => {
 		if (this.valoracionesTable?.Dataset.length == 0) {
-			this.amortizacionResumen.innerText = this.valoracionResumen(0, 0, 0, 0);
+			this.amortizacionResumen.innerHTML = "";
+			this.amortizacionResumen.append(this.valoracionResumen(0, 0, 0, 0));
 			return new ValoracionesTransaction();
 		}
 		const total = this.valoracionesTable?.Dataset.reduce((sum, value) => (typeof value.Edad == "number" ? sum + value.Edad : sum), 0);
@@ -806,11 +822,11 @@ class Transaction_Valoraciones_View extends HTMLElement {
 			this.CuotasTable.Dataset = contrato.Transaction_Contratos.Tbl_Cuotas;
 			this.CuotasTable?.Draw();
 		}
-		this.amortizacionResumen.innerText = this.valoracionResumen(
+		this.amortizacionResumen.append(this.valoracionResumen(
 			contrato.Transaction_Contratos.Valoracion_compra_cordobas,
 			contrato.Transaction_Contratos.Valoracion_compra_dolares,
 			contrato.Transaction_Contratos.Valoracion_empeño_cordobas,
-			contrato.Transaction_Contratos.Valoracion_empeño_dolares);
+			contrato.Transaction_Contratos.Valoracion_empeño_dolares));
 		return contrato;
 	}
 	/**
@@ -846,7 +862,13 @@ class Transaction_Valoraciones_View extends HTMLElement {
 				grid-template-columns: 100%;
 			}
 		}
-		#valoracionesForm, .multiSelectEstadosArticulos {
+		#valoracionesForm {
+			grid-column: span 3;
+			@media (max-width: 800px) {
+				grid-column: span 1;
+			}
+		}
+		.multiSelectEstadosArticulos {
 			grid-column: span 2;
 			@media (max-width: 800px) {
 				grid-column: span 1;
@@ -855,14 +877,33 @@ class Transaction_Valoraciones_View extends HTMLElement {
 		.beneficios-detail h4 {
 			margin: 0px 10px 5px 10px;
 		}
-		.beneficios-detail {
+		.beneficios-detail, .resumen-container {
 			padding: 10px;
 			border-radius: 10px;
-			border: solid 1px #999;
+			border: solid 1px #bcbdbd;;
 			overflow: hidden;
 			max-height:15px;
 			transition: all 0.7s;
 			cursor: pointer;
+		}
+
+		.resumen-container {
+			display: grid;
+			grid-template-columns: repeat(4, 1fr);
+			gap: 10px 15px;
+			max-height: unset;
+			font-size: 0.8rem;
+			@media(max-width: 600px) {
+				grid-template-columns: repeat(2, 1fr);
+			}
+		}
+
+		.money {
+			font-weight: bold;
+			text-align: right;
+		}
+		w-app-navigator {
+			grid-column: span 3;
 		}
 		.beneficios-detail:hover {
 			max-height:1500px;
@@ -885,8 +926,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
 		#valoracionesTable,
 		#cuotasTable,
 		.TabContainerTables,
-		.nav-header,
-		.selected-client{
+		.nav-header{
 			grid-column: span 3;
 			@media (max-width: 800px) {
 				grid-column: span 1;
@@ -912,10 +952,10 @@ class Transaction_Valoraciones_View extends HTMLElement {
 		} w-filter-option {
 			grid-column: span 2;
 		}    
-		w-card {
+		.selected-client {
 			display: block;
 			border-radius: 10px;
-			border: solid 1px #bcbdbd;
+			border:  solid 1px #bcbdbd;;
 			padding: 10px 30px 10px 10px;
 		}    
 	`

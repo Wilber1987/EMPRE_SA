@@ -93,7 +93,7 @@ namespace DataBaseModel
 			}
 			return find;
 		}        
-        public static int GetNumeroCuotasQuincenales(double? value)
+        public static int GetNumeroCuotasQuincenales(decimal? value)
         {
             if (value >= 61) 
             {
@@ -107,14 +107,14 @@ namespace DataBaseModel
 			}
         }
 
-        public static double GetPorcentageMinimoPagoApartadoMensual()
+        public static decimal GetPorcentageMinimoPagoApartadoMensual()
         {
-            return Convert.ToInt32(GetParam(ConfiguracionesThemeEnum.PORCENTAGE_MINIMO_DE_PAGO_APARTADO_MENSUAL, "35", ConfiguracionesTypeEnum.BENEFICIOS).Valor);
+            return Convert.ToDecimal(GetParam(ConfiguracionesThemeEnum.PORCENTAGE_MINIMO_DE_PAGO_APARTADO_MENSUAL, "35", ConfiguracionesTypeEnum.BENEFICIOS).Valor);
         }
 
-        internal static double GetValorMinimoApartadoQuincenal()
+        internal static decimal GetValorMinimoApartadoQuincenal()
         {
-            return Convert.ToInt32(GetParam(ConfiguracionesThemeEnum.VALOR_MINIMO_APARTADO_QUINCENAL, "10", ConfiguracionesTypeEnum.BENEFICIOS).Valor);
+            return Convert.ToDecimal(GetParam(ConfiguracionesThemeEnum.VALOR_MINIMO_APARTADO_QUINCENAL, "10", ConfiguracionesTypeEnum.BENEFICIOS).Valor);
         }
     }
 

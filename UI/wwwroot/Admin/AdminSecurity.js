@@ -14,16 +14,17 @@ window.addEventListener("load", async () => {
     Main.append(WRender.Create({ tagName: "h3", innerText: "Mantenimiento de Usuarios" }));
     Main.append(new WAppNavigator({
         DarkMode: false,
-        Direction: "row",
         NavStyle: "tab",
+        Inicialize: true,
         Elements: [
+            ElementTab("Usuarios", DOMManager, new Security_Users({
+                Security_Users_Roles: { type: "multiselect", ModelObject: new Security_Roles(), Dataset: Roles }
+            })),
             ElementTab("Roles", DOMManager, new Security_Roles({
                 Security_Permissions_Roles: { type: "multiselect", ModelObject: new Security_Permissions(), Dataset: Permisos }
             })),
             ElementTab("Permisos", DOMManager, new Security_Permissions()),
-            ElementTab("Usuarios", DOMManager, new Security_Users({
-                Security_Users_Roles: { type: "multiselect", ModelObject: new Security_Roles(), Dataset: Roles }
-            })),
+            
         ]
     }));
 });

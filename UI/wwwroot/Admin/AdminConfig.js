@@ -4,19 +4,20 @@ import { DBOCatalogosManagerView } from "./DBOCatalogosManagerView.js";
 import { Transactional_ConfiguracionesView } from './Transactional_ConfiguracionesView.js';
 const DOMManager = new ComponentsManager({ MainContainer: Main, SPAManage: true });
 window.addEventListener("load", async () => {
-    Aside.append(WRender.Create({ tagName: "h3", innerText: "Mantenimiento" }));
-    Aside.append(new WAppNavigator({
+    Main.append(WRender.Create({ tagName: "h3", innerText: "Mantenimiento" }));
+    Main.append(new WAppNavigator({
         DarkMode: false,
-        Direction: "column", Inicialize: true,
+        NavStyle: "tab",
+        Inicialize: true,
         Elements: [
             {
                 name: "Config", action: () => {
-                    DOMManager.NavigateFunction("Transactional_Configuraciones", new Transactional_ConfiguracionesView());
+                    return new Transactional_ConfiguracionesView();
                 }
             },
             {
                 name: "Catalogos", action: () => {
-                    DOMManager.NavigateFunction("DBOCatalogosManagerView", new DBOCatalogosManagerView());
+                    return new DBOCatalogosManagerView();
                 }
             }
         ]

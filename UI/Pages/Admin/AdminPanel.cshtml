@@ -1,0 +1,19 @@
+﻿@page
+@using API.Controllers
+@using APPCORE.Security
+@using DataBaseModel
+@{
+    string identify = HttpContext.Session.GetString("sessionKey");
+    var pageConfig = Config.pageConfig();
+    if (!SecurityController.IsAdmin(HttpContext.Session.GetString("sessionKey")))
+    {
+        Response.Redirect("./login");
+        return;
+    }
+}
+<script type="module">
+   
+</script>
+
+
+

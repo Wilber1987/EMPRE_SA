@@ -21,11 +21,11 @@ namespace DataBaseModel
 		public Datos_Compra? Datos_Compra { get; set; }
 		public int? Id_Proveedor { get; set; }
 		public DateTime? Fecha { get; set; }
-		public double? Tasa_Cambio { get; set; }
+		public decimal? Tasa_Cambio { get; set; }
 		public string? Moneda { get; set; }
-		public double? Sub_Total { get; set; }
-		public double? Iva { get; set; }
-		public double? Total { get; set; }
+		public decimal? Sub_Total { get; set; }
+		public decimal? Iva { get; set; }
+		public decimal? Total { get; set; }
 		public string? Estado { get; set; }
 		public string? Observaciones { get; set; }
 		public bool IsAnulable { get 
@@ -50,9 +50,9 @@ namespace DataBaseModel
 						message = "Ingrese al menos un artículo de compra"
 					};
 				}
-				double? subtotal = 0;
-				double? ivaTotal = 0;
-				double? total = 0;
+				decimal? subtotal = 0;
+				decimal? ivaTotal = 0;
+				decimal? total = 0;
 				Codigo_compra = GenerateCode();
 				var  (User, dbUser) =  Business.Security_Users.GetUserData(Identify);
 
@@ -91,7 +91,7 @@ namespace DataBaseModel
 						};
 					}
 					Cat_Producto.SetProductData(detalle.Cat_Producto);
-					detalle.SubTotal = detalle.Cantidad * detalle.Precio_Unitario;
+					detalle.SubTotal = Convert.ToDecimal(detalle.Cantidad) * detalle.Precio_Unitario;
 					detalle.Iva ??= 0;
 					detalle.Total += detalle.Iva;
 

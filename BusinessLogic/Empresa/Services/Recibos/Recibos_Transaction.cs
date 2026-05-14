@@ -17,65 +17,65 @@ namespace Transactions
 		public int? consecutivo { get; set; }
 		public bool? temporal { get; set; }
 		public int? numero_contrato { get; set; }
-		public double? monto { get; set; }
-		public double? saldo_actual_cordobas { get; set; }
-		public double? saldo_actual_dolares { get; set; }
-		public double? plazo { get; set; }
-		public double? interes_cargos { get; set; }
-		public double? tasa_cambio { get; set; }
-		public double? tasa_cambio_compra { get; set; }
-		public double? interes_demas_cargos_pagar_cordobas { get; set; }
-		public double? interes_demas_cargos_pagar_dolares { get; set; }
-		public double? abono_capital_cordobas { get; set; }
-		public double? abono_capital_dolares { get; set; }
-		public double? cuota_pagar_cordobas { get; set; }
-		public double? cuota_pagar_dolares { get; set; }
-		public double? mora_cordobas { get; set; }
-		public double? mora_dolares { get; set; }
-		public double? mora_interes_cordobas { get; set; }
-		public double? mora_interes_dolares { get; set; }
-		public double? total_cordobas { get; set; }
-		public double? total_dolares { get; set; }
-		public double? total_parciales { get; set; }
+		public decimal? monto { get; set; }
+		public decimal? saldo_actual_cordobas { get; set; }
+		public decimal? saldo_actual_dolares { get; set; }
+		public decimal? plazo { get; set; }
+		public decimal? interes_cargos { get; set; }
+		public decimal? tasa_cambio { get; set; }
+		public decimal? tasa_cambio_compra { get; set; }
+		public decimal? interes_demas_cargos_pagar_cordobas { get; set; }
+		public decimal? interes_demas_cargos_pagar_dolares { get; set; }
+		public decimal? abono_capital_cordobas { get; set; }
+		public decimal? abono_capital_dolares { get; set; }
+		public decimal? cuota_pagar_cordobas { get; set; }
+		public decimal? cuota_pagar_dolares { get; set; }
+		public decimal? mora_cordobas { get; set; }
+		public decimal? mora_dolares { get; set; }
+		public decimal? mora_interes_cordobas { get; set; }
+		public decimal? mora_interes_dolares { get; set; }
+		public decimal? total_cordobas { get; set; }
+		public decimal? total_dolares { get; set; }
+		public decimal? total_parciales { get; set; }
 		public DateTime? fecha_roc { get; set; }
-		public double? paga_cordobas { get; set; }
-		public double? paga_dolares { get; set; }
+		public decimal? paga_cordobas { get; set; }
+		public decimal? paga_dolares { get; set; }
 		public bool? solo_abono { get; set; }
 		public bool? solo_interes_mora { get; set; }
 		public bool? cancelar { get; set; }
 		public bool? reestructurar { get; set; }
-		public double? reestructurar_value { get; set; }
-		public double? total_apagar_dolares { get; set; }
+		public decimal? reestructurar_value { get; set; }
+		public decimal? total_apagar_dolares { get; set; }
 		public string? moneda { get; set; }
 		public string? motivo_anulacion { get; set; }
 		public bool? perdida_de_documento { get; set; }
-		public double? monto_dolares { get; set; }
-		public double? monto_cordobas { get; set; }
-		public double? cambio_dolares { get; set; }
-		public double? cambio_cordobas { get; set; }
+		public decimal? monto_dolares { get; set; }
+		public decimal? monto_cordobas { get; set; }
+		public decimal? cambio_dolares { get; set; }
+		public decimal? cambio_cordobas { get; set; }
 		public bool? Is_cambio_cordobas { get; set; }
 		public bool? pago_parcial { get; set; }
 		public List<Tbl_Cuotas>? CuotasReestructuradas { get; private set; }
-        public bool Is_withMesaCambiaria { get; set; } = true;
-        #endregion
+		public bool Is_withMesaCambiaria { get; set; } = true;
+		#endregion
 
-        public ResponseService SaveRecibos(string Identify)
+		public ResponseService SaveRecibos(string Identify)
 		{
 			try
 			{
 				var (user, dbUser) = Business.Security_Users.GetUserData(Identify);
 				var contrato = new Transaction_Contratos() { numero_contrato = this.numero_contrato }.Find<Transaction_Contratos>();
 				var sucursal = new Catalogo_Sucursales() { Id_Sucursal = dbUser?.Id_Sucursal }.Find<Catalogo_Sucursales>();
+
 				if (contrato == null)
 				{
-					return new ResponseService()
-					{
-						status = 400,
-						message = "Nº contrato no encontrado"
-					};
+					return new ResponseService() { status = 400, message = "Nº contrato no encontrado" };
 				}
+
+				// ✅ Comparación con decimal literal 'm'
 				if (this.cancelar.HasValue && this.cancelar.Value
-					&& Math.Round((Decimal)this.paga_dolares.GetValueOrDefault(), 3) < Math.Round((Decimal)contrato.saldo.GetValueOrDefault(), 3))
+					&& Math.Round(this.paga_dolares.GetValueOrDefault(), 2, MidpointRounding.AwayFromZero)
+					< Math.Round(contrato.saldo.GetValueOrDefault(), 2, MidpointRounding.AwayFromZero))
 				{
 					return new ResponseService()
 					{
@@ -83,11 +83,12 @@ namespace Transactions
 						message = "Para cancelar es necesario un monto de " + contrato.saldo
 					};
 				}
-				double monto = this.paga_dolares.GetValueOrDefault();
+
+				// ✅ Usar decimal en lugar de double para montos
+				decimal monto = this.paga_dolares.GetValueOrDefault();
 				BeginGlobalTransaction();
 
 				var DetallesFacturaRecibos = new List<Detalle_Factura_Recibo>();
-				//SE VALIDA SI AL MONTO SE LE VA A DEBITAR LA REESTRUCTURACION Y LA PERDIDA DE DOCUMENTOS                
 				monto = CalcularGastosAdicionales(contrato, monto, DetallesFacturaRecibos);
 				//respaldos
 				var reestructuradoRespaldo = contrato.reestructurado;
@@ -102,34 +103,76 @@ namespace Transactions
 
 
 				Tbl_Cuotas CuotaActual = cuotasPendientes.Last();
-				double? mora = cuotasPendientes?.Select(c => c.mora).ToList().Sum();
-				double? saldo_pendiente = contrato.saldo;
-				double? interesCorriente = InteresCorriente(CuotaActual, contrato);
-				double? perdida_de_documento_monto = this.perdida_de_documento == true ? 1 : 0;
-				double? reestructuracion_monto = reestructurar_value ?? 0;
-				double? total_capital_restante = mora
-					+ saldo_pendiente
-					+ interesCorriente
-					+ perdida_de_documento_monto
-					+ reestructuracion_monto;
+				// ✅ Variables migradas a decimal para precisión financiera
 
-				double? interesPagado = monto > (mora + interesCorriente) ? interesCorriente
-					: monto > mora ? monto - mora : 0;
-				double? moraPagado = monto > mora ? mora : mora - monto;
+				// ✅ Suma de mora con conversión explícita a decimal
+				decimal? mora = cuotasPendientes?
+					.Where(c => c.mora.HasValue)
+					.Sum(c => (decimal?)c.mora) ?? 0m;
 
-				double? abonoCapital = monto > (mora + interesCorriente) ? (monto - mora - interesCorriente) : 0;
-				double? saldoRespaldo = contrato.saldo;
-				contrato.saldo -= abonoCapital;
-				if (contrato.saldo <= 0.5)
+				decimal? saldo_pendiente = contrato.saldo; // Asumiendo que contrato.saldo ya es decimal?
+
+				// ✅ Interés corriente debe retornar decimal (ver método abajo)
+				decimal? interesCorriente = InteresCorriente(CuotaActual, contrato);
+
+				// ✅ Cargos adicionales con literales decimales
+				decimal? perdida_de_documento_monto = this.perdida_de_documento == true ? 1m : 0m;
+				decimal? reestructuracion_monto = this.reestructurar_value ?? 0m;
+
+				// ✅ Cálculo total con decimal
+				decimal? total_capital_restante =
+					(mora ?? 0m) +
+					(saldo_pendiente ?? 0m) +
+					(interesCorriente ?? 0m) +
+					perdida_de_documento_monto +
+					reestructuracion_monto;
+
+				// ✅ Lógica de distribución de pago corregida y con decimal
+				decimal? interesPagado = 0m;
+				decimal? moraPagado = 0m;
+
+				if (monto >= (mora + interesCorriente))
 				{
-					contrato.saldo = 0;
+					// Paga mora + interés completo + capital
+					moraPagado = mora;
+					interesPagado = interesCorriente;
+				}
+				else if (monto > mora)
+				{
+					// Paga mora completa + parte del interés
+					moraPagado = mora;
+					interesPagado = monto - mora;
+				}
+				else
+				{
+					// Paga solo parte de la mora
+					moraPagado = monto;
+				}
+
+				// ✅ Abono a capital: solo lo que excede mora + interés
+				decimal? abonoCapital = monto > (mora + interesCorriente)
+					? monto - mora - interesCorriente
+					: 0m;
+
+				// ✅ Respaldo y actualización de saldo con decimal
+				decimal? saldoRespaldo = contrato.saldo;
+				contrato.saldo = (contrato.saldo ?? 0m) - abonoCapital;
+
+				// ✅ Comparación con literal decimal 'm'
+				if (contrato.saldo <= 0.5m)
+				{
+					contrato.saldo = 0m;
 					contrato.Cancelar(dbUser);
 
-					var contartosActivos = new Transaction_Contratos { codigo_cliente = contrato.codigo_cliente }.Where<Transaction_Contratos>(
+					var contratosActivos = new Transaction_Contratos
+					{
+						codigo_cliente = contrato.codigo_cliente
+					}.Where<Transaction_Contratos>(
 						FilterData.Equal("estado", Contratos_State.ACTIVO),
 						FilterData.Distinc("numero_contrato", contrato.numero_contrato)
 					);
-					if (contartosActivos.Count == 0)
+
+					if (!contratosActivos.Any())
 					{
 						contrato.Catalogo_Clientes?.ActualizarClasificacionInteres();
 					}
@@ -275,7 +318,21 @@ namespace Transactions
 
 		}
 
-		private Factura_contrato BuildFacturaContrato(Security_Users? dbUser, Transaction_Contratos contrato, int? reestructuradoRespaldo, double? Cuota_Anterior, double? Cuota_Anterior_Cordobas, double? Monto_Anterior, double? Monto_Anterior_Cordobas, int? Plazo_Anterior, int? id_clasificacion_interes_anterior, double? interesPagado, double? moraPagado, double? abonoCapital, double? saldoRespaldo, List<Tbl_Cuotas> cuotasPendiente)
+		private Factura_contrato BuildFacturaContrato(Security_Users? dbUser,
+			Transaction_Contratos contrato,
+			int? reestructuradoRespaldo,
+			decimal? Cuota_Anterior,
+			decimal? Cuota_Anterior_Cordobas,
+			decimal? Monto_Anterior,
+			decimal? Monto_Anterior_Cordobas,
+			int? Plazo_Anterior,
+			int? id_clasificacion_interes_anterior,
+			decimal? interesPagado,
+			decimal?
+			moraPagado,
+			decimal? abonoCapital,
+			decimal? saldoRespaldo,
+			List<Tbl_Cuotas> cuotasPendiente)
 		{
 			return new Factura_contrato()
 			{
@@ -322,9 +379,11 @@ namespace Transactions
 			};
 		}
 
-		private double SoloPagoParcial(Transaction_Contratos contrato, double monto, List<Detalle_Factura_Recibo> DetallesFacturaRecibos, List<Tbl_Cuotas>? cuotasPendientes, Tbl_Cuotas? CuotaActual)
+		private decimal SoloPagoParcial(Transaction_Contratos contrato, decimal monto,
+		List<Detalle_Factura_Recibo> DetallesFacturaRecibos,
+		List<Tbl_Cuotas>? cuotasPendientes, Tbl_Cuotas? CuotaActual)
 		{
-			double montoPago = monto;
+			decimal montoPago = monto;
 			EstadoAnteriorCuota estadoAnteriorCuotaActual = CloneCuota(CuotaActual);
 			CuotaActual.fecha_pago = DateTime.Now;
 			//VERIFICA MORA PENDIENTE
@@ -403,10 +462,10 @@ namespace Transactions
 			return "Pago de cuota contrato No: " + this.numero_contrato?.ToString("D9");
 		}
 
-		private double SoloInteresMora(Transaction_Contratos contrato, double monto,
-		List<Detalle_Factura_Recibo> DetallesFacturaRecibos,
-		List<Tbl_Cuotas>? cuotasPendientes,
-		Tbl_Cuotas? CuotaActual)
+		private decimal SoloInteresMora(Transaction_Contratos contrato, decimal monto,
+			List<Detalle_Factura_Recibo> DetallesFacturaRecibos,
+			List<Tbl_Cuotas>? cuotasPendientes,
+			Tbl_Cuotas? CuotaActual)
 		{
 			EstadoAnteriorCuota estadoAnteriorCuotaActual = CloneCuota(CuotaActual);
 			CuotaActual.fecha_pago = DateTime.Now;
@@ -457,8 +516,7 @@ namespace Transactions
 			return monto;
 		}
 
-		private double AbonoCapital(Transaction_Contratos? contrato,
-		double monto,
+		private decimal AbonoCapital(Transaction_Contratos? contrato, decimal monto,
 		List<Detalle_Factura_Recibo> DetallesFacturaRecibos,
 		List<Tbl_Cuotas>? cuotasPendientes,
 		Tbl_Cuotas? CuotaActual)
@@ -516,14 +574,19 @@ namespace Transactions
 			});
 		}
 
-		private double CancelarCuotaActual(double monto, Tbl_Cuotas CuotaActual, List<Detalle_Factura_Recibo> detallesFacturaRecibos)
+		// ✅ CancelarCuotaActual - versión corregida
+		private decimal CancelarCuotaActual(decimal monto, Tbl_Cuotas CuotaActual,
+			List<Detalle_Factura_Recibo> detallesFacturaRecibos)
 		{
+			if (CuotaActual == null) return monto;
+
 			EstadoAnteriorCuota estadoAnterior = CloneCuota(CuotaActual);
 			CuotaActual.fecha_pago = DateTime.Now;
-			if (monto >= CuotaActual.total && monto > 0)
+
+			if (monto >= CuotaActual.total.GetValueOrDefault() && monto > 0)
 			{
 				CuotaActual.pago_contado = CuotaActual.total;
-				monto -= (double)CuotaActual.total;
+				monto -= CuotaActual.total.GetValueOrDefault(); // ✅ Sin cast a double
 				CuotaActual.Estado = Contratos_State.CANCELADO.ToString();
 			}
 			else
@@ -533,7 +596,7 @@ namespace Transactions
 			}
 
 			AgregarCuotaDetalle(CuotaActual, detallesFacturaRecibos, estadoAnterior,
-			"Pago de cuota del contrato No: " + this.numero_contrato);
+				"Pago de cuota del contrato No: " + this.numero_contrato);
 			CuotaActual.Update();
 			return monto;
 		}
@@ -551,38 +614,35 @@ namespace Transactions
 			};
 		}
 
-		private double CalcularGastosAdicionales(Transaction_Contratos? contrato, double monto, List<Detalle_Factura_Recibo>? DetallesFacturaRecibos)
+		private decimal CalcularGastosAdicionales(Transaction_Contratos? contrato, decimal monto,
+			List<Detalle_Factura_Recibo>? DetallesFacturaRecibos)
 		{
 			if (this.perdida_de_documento == true)
 			{
-				monto = monto - 1;
-				DetallesFacturaRecibos?.Add(
-					new Detalle_Factura_Recibo()
-					{
-						total_cuota = 1,
-						monto_pagado = 1,
-						concepto = "Pago por tramite de perdida de documentos",
-						tasa_cambio = this.tasa_cambio
-					}
-				);
+				monto -= 1m; // ✅ Literal decimal
+				DetallesFacturaRecibos?.Add(new Detalle_Factura_Recibo()
+				{
+					total_cuota = 1m,
+					monto_pagado = 1m,
+					concepto = "Pago por tramite de perdida de documentos",
+					tasa_cambio = this.tasa_cambio
+				});
 			}
 			if (this.reestructurar == true)
 			{
-				monto = monto - 1;
-				DetallesFacturaRecibos?.Add(
-					new Detalle_Factura_Recibo()
-					{
-						total_cuota = 1,
-						monto_pagado = 1,
-						capital_restante = 0,
-						concepto = "Pago por tramite de reestructuración de cuota",
-						tasa_cambio = this.tasa_cambio
-					}
-				);
+				monto -= 1m;
+				DetallesFacturaRecibos?.Add(new Detalle_Factura_Recibo()
+				{
+					total_cuota = 1m,
+					monto_pagado = 1m,
+					capital_restante = 0m,
+					concepto = "Pago por tramite de reestructuración de cuota",
+					tasa_cambio = this.tasa_cambio
+				});
 			}
 			return monto;
 		}
-		private double CalcularReestructurar(Transaction_Contratos? contrato, double monto, List<Detalle_Factura_Recibo>? DetallesFacturaRecibos)
+		private decimal CalcularReestructurar(Transaction_Contratos? contrato, decimal monto, List<Detalle_Factura_Recibo>? DetallesFacturaRecibos)
 		{
 			CuotasReestructuradas = contrato?.Reestructurar(this.reestructurar_value);
 			return monto;
@@ -730,41 +790,59 @@ namespace Transactions
 			}
 		}
 
-		public double? GetPago(Transaction_Contratos contrato)
+		public decimal? GetPago(Transaction_Contratos contrato)
 		{
-			double? monto = contrato.Valoracion_empeño_dolares;
+			decimal? monto = contrato.Valoracion_empeño_dolares;
 			int? cuotas = contrato.plazo;
-			double? tasa = contrato.tasas_interes;
-			double? payment = tasa * Math.Pow(1 + tasa.GetValueOrDefault(), cuotas.GetValueOrDefault()) * monto
-			/ (Math.Pow(1 + tasa.GetValueOrDefault(), cuotas.GetValueOrDefault()) - 1);
-			return payment;
+			decimal? tasa = contrato.tasas_interes;
+
+			if (!monto.HasValue || !tasa.HasValue || !cuotas.HasValue || cuotas.Value <= 0)
+				return null;
+
+			// ✅ Conversión segura: decimal → double para Math.Pow → decimal
+			decimal factor = (decimal)Math.Pow(
+				(double)(1 + tasa.Value),
+				(double)cuotas.Value
+			);
+
+			decimal payment = tasa.Value * factor * monto.Value / (factor - 1);
+
+			// ✅ Redondeo financiero a 2 decimales
+			return Math.Round(payment, 2, MidpointRounding.AwayFromZero);
 		}
-		public double? UpdatePago(Transaction_Contratos contrato, int plazo, double? tasaActual)
+		// ✅ UpdatePago - versión con decimal
+		public decimal? UpdatePago(Transaction_Contratos contrato, int plazo, decimal? tasaActual)
 		{
-			double? monto = contrato.saldo;
-			int? cuotas = plazo;
-			double? tasa = contrato.tasas_interes;
-			double? payment = tasa * Math.Pow(1 + tasa.GetValueOrDefault(), cuotas.GetValueOrDefault()) * monto
-			/ (Math.Pow(1 + tasa.GetValueOrDefault(), cuotas.GetValueOrDefault()) - 1);
-			return payment;
+			if (!contrato.saldo.HasValue || !tasaActual.HasValue || plazo <= 0)
+				return null;
+
+			decimal monto = contrato.saldo.Value;
+			decimal tasa = tasaActual.Value;
+
+			// ✅ Conversión segura para Math.Pow
+			decimal factor = (decimal)Math.Pow(
+				(double)(1 + tasa),
+				(double)plazo
+			);
+
+			decimal payment = tasa * factor * monto / (factor - 1);
+
+			return Math.Round(payment, 2, MidpointRounding.AwayFromZero);
 		}
 
-		public double InteresCorriente(Tbl_Cuotas cuota, Transaction_Contratos Contrato)
+		public decimal? InteresCorriente(Tbl_Cuotas cuota, Transaction_Contratos Contrato)
 		{
-			if (solo_abono == true)
-			{
-				return 0;
-			}
+			if (solo_abono == true) return 0m;
+
 			var cuotasPendientes = Contrato.Tbl_Cuotas
 				.Where(c => c.Estado == "PENDIENTE").ToList().Count;
 			var cuotasPagadas = Contrato.Tbl_Cuotas
 				.Where(c => c.Estado == "CANCELADO").ToList().Count;
 
 			bool fechaPagoMayorFechaActual = cuota?.fecha > DateTime.Now;
-
 			bool cancelarAntesDelPrimerMes = cuotasPagadas == 0
-						&& fechaPagoMayorFechaActual
-						&& (this.cancelar == true || cuotasPendientes == 1);
+				&& fechaPagoMayorFechaActual
+				&& (this.cancelar == true || cuotasPendientes == 1);
 
 			if (cuota != null && ((cancelarAntesDelPrimerMes == true)
 				|| (this.reestructurar == true && fechaPagoMayorFechaActual)
@@ -773,43 +851,79 @@ namespace Transactions
 				return cuota.interes.GetValueOrDefault();
 			}
 
-
-			double saldo_actual_dolares = Contrato.saldo.GetValueOrDefault();
+			decimal saldo_actual_dolares = Contrato.saldo.GetValueOrDefault();
 			DateTime fecha = cuota?.fecha.GetValueOrDefault() ?? DateTime.MinValue;
 			DateTime fechaActual = DateTime.Now;
 
 			TimeSpan diferencia = fechaActual - fecha;
-			double diasDeDiferencia = (int)Math.Floor(diferencia.TotalDays);
-			double porcentajeInteres = Contrato.tasas_interes.GetValueOrDefault();
+			decimal diasDeDiferencia = (decimal)Math.Floor(diferencia.TotalDays);
+			decimal porcentajeInteres = Contrato.tasas_interes.GetValueOrDefault();
 
 			TimeSpan? diferenciaEntreFechaCreacion = cuota?.fecha.GetValueOrDefault() - fecha;
-			double diasDelMes = (diferenciaEntreFechaCreacion.GetValueOrDefault().TotalDays >= 0)
-			? diferenciaEntreFechaCreacion.GetValueOrDefault().TotalDays : 0;
-			if (diasDelMes <= 0)
-			{
-				return 0;
-			}
+			decimal diasDelMes = (decimal)(diferenciaEntreFechaCreacion.GetValueOrDefault().TotalDays >= 0
+				? diferenciaEntreFechaCreacion.GetValueOrDefault().TotalDays
+				: 0);
 
-			double interesCorriente = saldo_actual_dolares
-				* (double)(porcentajeInteres / 30) * diasDeDiferencia + cuota!.interes.GetValueOrDefault();
+			if (diasDelMes <= 0) return 0m;
 
-			return interesCorriente;
+			// ✅ Cálculo con decimal y redondeo final
+			decimal interesCorriente = saldo_actual_dolares
+				* (porcentajeInteres / 30m) * diasDeDiferencia + cuota!.interes.GetValueOrDefault();
+
+			return Math.Round(interesCorriente, 2, MidpointRounding.AwayFromZero);
 		}
 
 		public void CalculateMora()
 		{
-			var cuotas = new Tbl_Cuotas().Where<Tbl_Cuotas>(
-				FilterData.Equal("Estado", EstadoEnum.PENDIENTE),
-				FilterData.Less("fecha", DateTime.Now)
-			);
-			foreach (var cuota in cuotas)
+			try
 			{
-				var montoMora = cuota.total * ((cuota.Transaction_Contratos?.mora / 100) ?? 0.005) * 1;//como el cronjob es diario se va cargando mora cada dia
-				if (montoMora > 0)
+				// ✅ Constantes financieras con decimal literal
+				const decimal PORCENTAJE_MORA_DEFAULT = 0.005m; // 0.5% diario por defecto
+				const decimal DIAS_CALCULO = 1m; // Cronjob diario
+
+				var cuotas = new Tbl_Cuotas().Where<Tbl_Cuotas>(
+					FilterData.Equal("Estado", EstadoEnum.PENDIENTE),
+					FilterData.Less("fecha", DateTime.Now)
+				);
+
+				foreach (var cuota in cuotas)
 				{
-					cuota.mora += montoMora;
-					cuota.Update();
+					// ✅ Validación de null y conversión segura a decimal
+					decimal? totalCuota = cuota.total.HasValue ? cuota.total.Value : null;
+					decimal? tasaMoraContrato = cuota.Transaction_Contratos?.mora.HasValue == true
+						? cuota.Transaction_Contratos.mora.Value
+						: null;
+
+					if (!totalCuota.HasValue || totalCuota <= 0)
+						continue;
+
+					// ✅ Cálculo de mora con decimal y redondeo financiero
+					decimal tasaMoraAplicable = (tasaMoraContrato ?? PORCENTAJE_MORA_DEFAULT) / 100m;
+					decimal montoMora = Math.Round(
+						totalCuota.Value * tasaMoraAplicable * DIAS_CALCULO,
+						2,
+						MidpointRounding.AwayFromZero
+					);
+
+					if (montoMora > 0)
+					{
+						// ✅ Acumulación segura de mora
+						decimal moraActual = cuota.mora.GetValueOrDefault();
+						cuota.mora = Math.Round(moraActual + montoMora, 2, MidpointRounding.AwayFromZero);
+
+						// ✅ Actualización con registro de auditoría (opcional)
+						cuota.Update();
+
+						// 📝 Logging opcional para trazabilidad
+						// Log.Info($"Mora calculada: {montoMora:C} para cuota {cuota.id_cuota}");
+					}
 				}
+			}
+			catch (Exception ex)
+			{
+				// ✅ Manejo de errores con rollback implícito si hay transacción
+				// Log.Error("Error calculando mora: " + ex.Message);
+				throw new ApplicationException("Error al calcular mora en cuotas pendientes", ex);
 			}
 		}
 	}

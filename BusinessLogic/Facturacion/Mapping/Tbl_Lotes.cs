@@ -10,8 +10,8 @@ namespace DataBaseModel
 		[PrimaryKey(Identity = true)]
 		public int? Id_Lote { get; set; }
 		public int? Id_Producto { get; set; }
-		public double? Precio_Venta { get; set; }
-		public double? Precio_Compra { get; set; }
+		public decimal? Precio_Venta { get; set; }
+		public decimal? Precio_Compra { get; set; }
 		public double? Cantidad_Inicial { get; set; }
 		public double? Cantidad_Existente { get; set; }
 		public int? Id_Sucursal { get; set; }
@@ -164,10 +164,10 @@ namespace DataBaseModel
 		Security_Users? dbUser,
 		Transaction_Contratos contrato, bool isActive = true)
 		{
-			double? mora = prenda.Transactional_Valoracion?.Tasa_interes * 2 / 100;
-			double? precio_venta_empeño = (prenda.Transactional_Valoracion?.Valoracion_empeño_dolares)
+			decimal? mora = prenda.Transactional_Valoracion?.Tasa_interes * 2 / 100;
+			decimal? precio_venta_empeño = (prenda.Transactional_Valoracion?.Valoracion_empeño_dolares)
 				* (mora + 1)
-				* (Convert.ToDouble(beneficioVentaE.Valor) / 100 + 1);
+				* (Convert.ToDecimal(beneficioVentaE.Valor) / 100 + 1);
 			Cat_Producto producto = new Cat_Producto
 			{
 				Descripcion = prenda.Descripcion,
@@ -188,7 +188,7 @@ namespace DataBaseModel
 		}
 		public static void SaveLoteByPrenda(Detail_Prendas prenda,
 			Security_Users? dbUser,
-			double? precio_venta_empeño,
+			decimal? precio_venta_empeño,
 			Cat_Producto producto,
 			Transaction_Contratos contrato,
 			bool isActive = true)
@@ -246,55 +246,39 @@ namespace DataBaseModel
 
 		public string? Articulo { get; set; }
 		public string? Tipo { get; set; }
-		public double? Precio_compra_dolares { get; set; }
+		public decimal? Precio_compra_dolares { get; set; }
 		public int? N_Cuotas { get; set; }
 		public string? Codigo { get; set; }
 		public DateTime? Enviado_Liquidacion { get; set; }
-		public double? PorcentajesUtilidad { get; set; }
-		public double? PorcentajesApartado { get; set; }
-		public double? PorcentajeAdicional { get; set; }
+		public decimal? PorcentajesUtilidad { get; set; }
+		public decimal? PorcentajesApartado { get; set; }
+		public decimal? PorcentajeAdicional { get; set; }
 		public Catalogo_Cambio_Divisa? TasaCambio { get; }
 		public List<Transactional_Configuraciones>? Intereses { get; }
 
-		//public double? Precio_venta_Contado_cordobas { }
-		public double? Precio_venta_Contado_dolares
+		//public decimal? Precio_venta_Contado_cordobas { }
+		public decimal? Precio_venta_Contado_dolares
 		{
 			get
 			{
 				return Precio_compra_dolares + (Precio_compra_dolares * ((PorcentajesUtilidad + PorcentajeAdicional) / 100));
 			}
 		}
-		//public double? Precio_venta_Apartado_cordobas { get;  set; }
-		public double? Precio_venta_Apartado_dolares
+		//public decimal? Precio_venta_Apartado_cordobas { get;  set; }
+		public decimal? Precio_venta_Apartado_dolares
 		{
 			get
 			{
 				return Precio_compra_dolares + (Precio_compra_dolares * ((PorcentajesApartado + PorcentajeAdicional) / 100));
 			}
 		}
-		//public double? Apartado_quincenal_cordobas { get; set; }
-		public double? Cuota_apartado_quincenal_dolares { get { return Precio_venta_Apartado_dolares / N_Cuotas; } }
-		//public double? Apartado_mensual_cordobas { get; set; }
-		public double? Cuota_apartado_mensual_dolares
+		//public decimal? Apartado_quincenal_cordobas { get; set; }
+		public decimal? Cuota_apartado_quincenal_dolares { get { return Precio_venta_Apartado_dolares / N_Cuotas; } }
+		//public decimal? Apartado_mensual_cordobas { get; set; }
+		public decimal? Cuota_apartado_mensual_dolares
 		{
-			get;
-			//{
-			//return Precio_compra_dolares * Transactional_Configuraciones.GetPorcentageMinimoPagoApartadoMensual();
-			/*return CuotasModule.GetPago(Precio_venta_Apartado_dolares,
-				N_Cuotas,
-				Intereses.Sum(i => Convert.ToDouble(i.Valor)));*/
-			//}
-			set;
+			get;	set;
 		}
-		/*[OnDeserialized]
-		public void OnDeserializedMethod(StreamingContext context)
-		{
-			// Recalcula las propiedades calculadas
-			var _0 = Precio_venta_Contado_dolares;
-			var _1 = Precio_venta_Apartado_dolares;
-			var _2 = Cuota_apartado_quincenal_dolares;
-			var _3 = Cuota_apartado_mensual_dolares;
-		}*/
 
 	}
 

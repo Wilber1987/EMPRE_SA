@@ -42,12 +42,10 @@ class Tbl_Lotes extends EntityClass {
 		return await this.SaveData("ApiTransactionLotes/AnularTbl_Bajas_Almacen", Transaction)
 	}
 	/**@type {String}*/  get Descripcion() {
-		return `${this.Detalle_Compra.Cat_Producto.Descripcion}`;
+		return `${this.Detalle_Compra?.Cat_Producto.Descripcion ?? ""}`;
 	}
-	/**@type {String}*/  get Estado_Producto() {
-		console.log(this.Datos_Producto.Catalogo_Estados_Articulos.nombre);
-		
-		return `${this.Datos_Producto.Catalogo_Estados_Articulos.nombre}`;
+	/**@type {String}*/  get Estado_Producto() {		
+		return `${this.Datos_Producto?.Catalogo_Estados_Articulos?.nombre ?? ""}`;
 	}
 }
 export { Tbl_Lotes };

@@ -16,8 +16,9 @@ namespace DataBaseModel
 		public int? id_estado_articulo { get; set; }
 		public string? nombre { get; set; }
 		public string? descripcion { get; set; }
-		public double? porcentaje_compra { get; set; }
-		public double? porcentaje_empeno { get; set; }
+		public decimal? porcentaje_compra { get; set; }
+		public decimal? porcentaje_empeno { get; set; }
+		public int? id_categoria { get; set; }
 		// [OneToMany(TableName = "Transactional_Valoracion", KeyColumn = "id_estado_articulo", ForeignKeyColumn = "id_estado")]
 		// public List<Transactional_Valoracion>? Transactional_Valoracion { get; set; }
 	}
@@ -46,7 +47,7 @@ namespace DataBaseModel
 		public int? id_clasificacion { get; set; }
 		public string? Descripcion { get; set; }
 		public string? Estado { get; set; }
-		public double? porcentaje { get; set; }
+		public decimal? porcentaje { get; set; }
 
 		//[OneToMany(TableName = "Catalogo_Clientes", KeyColumn = "id_clasificacion", ForeignKeyColumn = "id_clasificacion")]
 		public List<Catalogo_Clientes>? Catalogo_Clientes { get; set; }
@@ -58,7 +59,7 @@ namespace DataBaseModel
 		public int? id_clasificacion_interes { get; set; }
 		public string? Descripcion { get; set; }
 		public string? Estado { get; set; }
-		public double? porcentaje { get; set; }
+		public Double? porcentaje { get; set; }
 
 		//[OneToMany(TableName = "Catalogo_Clientes", KeyColumn = "id_clasificacion", ForeignKeyColumn = "id_clasificacion")]
 		public List<Catalogo_Clientes>? Catalogo_Clientes { get; set; }
@@ -104,8 +105,8 @@ namespace DataBaseModel
 		public int? id_cuentas { get; set; }
 		public string? nombre { get; set; }
 		public string? tipo_cuenta { get; set; }
-		public double? saldo { get; set; }
-		public double? saldo_dolares { get; set; }
+		public decimal? saldo { get; set; }
+		public decimal? saldo_dolares { get; set; }
 		public bool? permite_cordobas { get; set; }
 		public bool? permite_dolares { get; set; }
 		public int? id_sucursal { get; set; }
@@ -298,6 +299,9 @@ namespace DataBaseModel
 		public int? plazo_limite { get; set; }
 		public int? prioridad { get; set; }
 		public bool? isEditable { get; set; }
+
+		[OneToMany(TableName = "Catalogo_Estados_Articulos", KeyColumn = "id_categoria", ForeignKeyColumn = "id_categoria")]
+		public List<Catalogo_Estados_Articulos>? Catalogo_Estados_Articulos { get; set; }
 	}
 
 

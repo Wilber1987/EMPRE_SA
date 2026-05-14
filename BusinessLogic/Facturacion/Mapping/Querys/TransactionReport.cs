@@ -13,10 +13,10 @@ namespace BusinessLogic.Facturacion.Mapping.Querys
         public string? Nombre { get; set; }
         public string? Moneda { get; set; }
         public TipoMovimiento? Tipo_movimiento { get; set; }
-        public double? Debito { get; set; }
-        public double? Credito { get; set; }
-        public double? Debito_dolares { get; set; }
-        public double? Credito_dolares { get; set; }
+        public decimal? Debito { get; set; }
+        public decimal? Credito { get; set; }
+        public decimal? Debito_dolares { get; set; }
+        public decimal? Credito_dolares { get; set; }
         public override string GetQuery()
         {
             //todo arreglar lo de los filtros

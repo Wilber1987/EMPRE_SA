@@ -70,3 +70,14 @@
             asp-page="/PagesViews/Movimientos_CuentasView">Gestión de Cuentas</a>
     </div>
 }
+
+@if (SecurityController.HavePermission(Identify, Permissions.ADMIN_ACCESS))
+{
+    <a class="title-collapse" id="GestionCuentasMenu" onclick="changeActive(this)">PANEL DE ADMINISTRACIÓN</a>
+    <div class="collapse">        
+        <a class="menu-item" id="AdminPanel"  asp-page="/Admin/AdminPanel">Admin Panel</a>
+        <a class="menu-item" id="Catalogs"  asp-page="/Admin/Catalogs">Catalogos</a>
+        <a class="menu-item" id="Security"  asp-page="/Admin/Security">Seguridad</a>
+    </div>
+}
+

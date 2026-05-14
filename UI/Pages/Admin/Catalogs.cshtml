@@ -16,10 +16,6 @@
 </script>
 @if (SecurityController.IsAdmin(HttpContext.Session.GetString("sessionKey")))
 {
-    <script src="~/Admin/AdminSecurity.js" type="module"></script>
-}
-@if (SecurityController.IsAdmin(HttpContext.Session.GetString("sessionKey")))
-{
     <script  src="~/Admin/AdminConfig.js" type="module"></script>
 }
 

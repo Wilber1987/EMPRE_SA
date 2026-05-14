@@ -129,7 +129,7 @@ namespace Model
 
 			Transaction_Contratos.monto = Transaction_Contratos.Valoracion_empeño_dolares;
 			Transaction_Contratos.saldo = Transaction_Contratos.Valoracion_empeño_dolares;
-			Transaction_Contratos.mora = Convert.ToDouble(configuraciones.Valor);
+			Transaction_Contratos.mora = Convert.ToDecimal(configuraciones.Valor);
 			Transaction_Contratos.estado = Contratos_State.ACTIVO;
 			Transaction_Contratos.Id_User = dbUser?.Id_User;
 			Transaction_Contratos.Tbl_Cuotas?.ForEach(c =>
@@ -140,11 +140,11 @@ namespace Model
 			var Intereses = new Transactional_Configuraciones().GetIntereses();
 			Transaction_Contratos.DesgloseIntereses = new DesgloseIntereses
 			{
-				GASTOS_ADMINISTRATIVOS = Convert.ToDouble(Intereses.Find(c => c.Nombre.Equals(InteresesPrestamosEnum.GASTOS_ADMINISTRATIVOS.ToString()))?.Valor),
-				COMISIONES = Convert.ToDouble(Intereses.Find(c => c.Nombre.Equals(InteresesPrestamosEnum.COMISIONES.ToString()))?.Valor),
-				MANTENIMIENTO_VALOR = Convert.ToDouble(Intereses.Find(c => c.Nombre.Equals(InteresesPrestamosEnum.MANTENIMIENTO_VALOR.ToString()))?.Valor),
-				GASTOS_LEGALES = Convert.ToDouble(Intereses.Find(c => c.Nombre.Equals(InteresesPrestamosEnum.GASTOS_LEGALES.ToString()))?.Valor),
-				INTERES_NETO_CORRIENTE = Convert.ToDouble(Intereses.Find(c => c.Nombre.Equals(InteresesPrestamosEnum.INTERES_NETO_CORRIENTE.ToString()))?.Valor),
+				GASTOS_ADMINISTRATIVOS = Convert.ToDecimal(Intereses.Find(c => c.Nombre.Equals(InteresesPrestamosEnum.GASTOS_ADMINISTRATIVOS.ToString()))?.Valor),
+				COMISIONES = Convert.ToDecimal(Intereses.Find(c => c.Nombre.Equals(InteresesPrestamosEnum.COMISIONES.ToString()))?.Valor),
+				MANTENIMIENTO_VALOR = Convert.ToDecimal(Intereses.Find(c => c.Nombre.Equals(InteresesPrestamosEnum.MANTENIMIENTO_VALOR.ToString()))?.Valor),
+				GASTOS_LEGALES = Convert.ToDecimal(Intereses.Find(c => c.Nombre.Equals(InteresesPrestamosEnum.GASTOS_LEGALES.ToString()))?.Valor),
+				INTERES_NETO_CORRIENTE = Convert.ToDecimal(Intereses.Find(c => c.Nombre.Equals(InteresesPrestamosEnum.INTERES_NETO_CORRIENTE.ToString()))?.Valor),
 				GESTION_CREDITICIA = Transaction_Contratos.gestion_crediticia,
 			};
 			var newContract = Transaction_Contratos.Save();
@@ -212,10 +212,10 @@ namespace Model
 			List<Detalle_Factura_Recibo> detalle_Factura_Recibos_Parciales = detalle_Factura_Recibos
 					.Where(r => r.id_cuota == data.id_cuota && r.concepto.ToUpper().Contains("PAGO PARCIAL")).ToList();
 
-			double pagoParciales = 0;
+			decimal pagoParciales = 0;
 			if (detalle_Factura_Recibos_Parciales.Count != 0)
 			{
-				pagoParciales = detalle_Factura_Recibos_Parciales.Select(c => Convert.ToDouble(c.monto_pagado)).ToList().Sum();
+				pagoParciales = detalle_Factura_Recibos_Parciales.Select(c => Convert.ToDecimal(c.monto_pagado)).ToList().Sum();
 			}
 			return new
 			{

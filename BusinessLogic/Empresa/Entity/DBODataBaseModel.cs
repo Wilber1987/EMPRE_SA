@@ -17,12 +17,12 @@ namespace DataBaseModel
 	{
 		[PrimaryKey(Identity = false)]
 		public int? id_valoracion { get; set; }
-		public double? Valoracion_1 { get; set; }
-		public double? Valoracion_2 { get; set; }
-		public double? Valoracion_3 { get; set; }
-		public double? dolares_1 { get; set; }
-		public double? dolares_2 { get; set; }
-		public double? dolares_3 { get; set; }
+		public decimal? Valoracion_1 { get; set; }
+		public decimal? Valoracion_2 { get; set; }
+		public decimal? Valoracion_3 { get; set; }
+		public decimal? dolares_1 { get; set; }
+		public decimal? dolares_2 { get; set; }
+		public decimal? dolares_3 { get; set; }
 	}
 	public class Transactional_Valoracion : EntityClass
 	{
@@ -32,19 +32,19 @@ namespace DataBaseModel
 		public string? Marca { get; set; }
 		public string? Serie { get; set; }
 		public string? Modelo { get; set; }
-		public double? Tasa_interes { get; set; }
+		public decimal? Tasa_interes { get; set; }
 		public int? Plazo { get; set; }
 		public DateTime? Fecha { get; set; }
-		public double? Tasa_de_cambio { get; set; }
+		public decimal? Tasa_de_cambio { get; set; }
 		public int? id_estado { get; set; }
 		public int? id_categoria { get; set; }
-		public double? Valoracion_compra_cordobas { get; set; }
-		public double? Valoracion_compra_dolares { get; set; }
-		public double? Valoracion_empeño_cordobas { get; set; }
-		public double? Valoracion_empeño_dolares { get; set; }
+		public decimal? Valoracion_compra_cordobas { get; set; }
+		public decimal? Valoracion_compra_dolares { get; set; }
+		public decimal? Valoracion_empeño_cordobas { get; set; }
+		public decimal? Valoracion_empeño_dolares { get; set; }
 
-		public double? Precio_venta_empeño_cordobas { get; set; }
-		public double? Precio_venta_empeño_dolares { get; set; }
+		public decimal? Precio_venta_empeño_cordobas { get; set; }
+		public decimal? Precio_venta_empeño_dolares { get; set; }
 
 
 		[ManyToOne(TableName = "Catalogo_Estados_Articulos", KeyColumn = "id_estado_articulo", ForeignKeyColumn = "id_estado")]
@@ -82,15 +82,15 @@ namespace DataBaseModel
 		public class DesgloseIntereses
 	{
 		//porcentajes de intereses
-		public double? GASTOS_ADMINISTRATIVOS { get; set; }
-		public double? COMISIONES { get; set; }
-		public double? MANTENIMIENTO_VALOR { get; set; }
-		public double? GASTOS_LEGALES { get; set; }
-		public double? INTERES_NETO_CORRIENTE { get; set; }
-		public double? GESTION_CREDITICIA { get; set; }
+		public decimal? GASTOS_ADMINISTRATIVOS { get; set; }
+		public decimal? COMISIONES { get; set; }
+		public decimal? MANTENIMIENTO_VALOR { get; set; }
+		public decimal? GASTOS_LEGALES { get; set; }
+		public decimal? INTERES_NETO_CORRIENTE { get; set; }
+		public decimal? GESTION_CREDITICIA { get; set; }
 		//fin porcentajes de intereses
 
-		public double GetPorcentageInteresesSGC(bool aplicaGastosAdministrativos)
+		public decimal GetPorcentageInteresesSGC(bool aplicaGastosAdministrativos)
 		{
 			return (aplicaGastosAdministrativos ? GASTOS_ADMINISTRATIVOS.GetValueOrDefault() : 0) +
 					COMISIONES.GetValueOrDefault() +
@@ -98,7 +98,7 @@ namespace DataBaseModel
 					GASTOS_LEGALES.GetValueOrDefault() +
 					INTERES_NETO_CORRIENTE.GetValueOrDefault();
 		}
-		public double GetPorcentageIntereses(bool aplicaGastosAdministrativos)
+		public decimal GetPorcentageIntereses(bool aplicaGastosAdministrativos)
 		{
 			return GetPorcentageInteresesSGC(aplicaGastosAdministrativos) + GESTION_CREDITICIA.GetValueOrDefault();
 		}
@@ -123,8 +123,8 @@ namespace DataBaseModel
 		public int? numero_prenda { get; set; }
 		public int? numero_contrato_OLD { get; set; }
 		public string? Descripcion { get; set; }
-		public double? monto_aprobado_cordobas { get; set; }
-		public double? monto_aprobado_dolares { get; set; }
+		public decimal? monto_aprobado_cordobas { get; set; }
+		public decimal? monto_aprobado_dolares { get; set; }
 		public string? Tipo { get; set; }
 		public string? marca { get; set; }
 		public string? serie { get; set; }
@@ -132,15 +132,15 @@ namespace DataBaseModel
 		public string? iva { get; set; }
 		public string? margen { get; set; }
 		public string? estado { get; set; }
-		public double? interesl { get; set; }
-		public double? moral { get; set; }
+		public decimal? interesl { get; set; }
+		public decimal? moral { get; set; }
 		public DateTime? fliquidacion { get; set; }
-		public double? precio_venta { get; set; }
+		public decimal? precio_venta { get; set; }
 		public EnManosDe? en_manos_de { get; set; }
 		public string? color { get; set; }
 		public string? factura { get; set; }
 		public string? tipo_movimiento { get; set; }
-		public double? v_porcentage_etiqueta { get; set; }
+		public decimal? v_porcentage_etiqueta { get; set; }
 		public int? id_categoria { get; set; }
 		public int? id_valoracion { get; set; }
 		public int? numero_contrato { get; set; }
@@ -174,7 +174,7 @@ namespace DataBaseModel
 		public string? defectuoso { get; set; }
 		public DateTime? fecha_aut_descuento { get; set; }
 		public string? defecto { get; set; }
-		public double? porcentage_descuento_maximo { get; set; }
+		public decimal? porcentage_descuento_maximo { get; set; }
 		public string? uso { get; set; }
 		public string? servicio { get; set; }
 		public DateTime? fecha_seguro { get; set; }
@@ -187,8 +187,8 @@ namespace DataBaseModel
 		[PrimaryKey(Identity = true)]
 		public int? numero_cont { get; set; }
 		public DateTime? fecha { get; set; }
-		public double? taza { get; set; }
-		public double? monto_inicial { get; set; }
+		public decimal? taza { get; set; }
+		public decimal? monto_inicial { get; set; }
 		public string? nombre_sustituto { get; set; }
 		public string? identificacion_sustituto { get; set; }
 		public string? direccion_sustituto { get; set; }
@@ -197,9 +197,9 @@ namespace DataBaseModel
 		public int? id_inversor { get; set; }
 		public DateTime? fecha_pago { get; set; }
 		public DateTime? fecha_ultimo_pago { get; set; }
-		public double? saldo { get; set; }
-		public double? montointeres { get; set; }
-		public double? interes { get; set; }
+		public decimal? saldo { get; set; }
+		public decimal? montointeres { get; set; }
+		public decimal? interes { get; set; }
 		public DateTime? fecha_restructura { get; set; }
 		public int? Id_User { get; set; }
 		[ManyToOne(TableName = "Catalogo_Inversores", KeyColumn = "id_inversor", ForeignKeyColumn = "id_inversor")]
@@ -218,9 +218,9 @@ namespace DataBaseModel
 		public DateTime? fecha { get; set; }
 		public string? tipo { get; set; }
 		public string? moneda { get; set; }
-		public double? tasa_cambio { get; set; }
+		public decimal? tasa_cambio { get; set; }
 		public bool? correo_enviado { get; set; }
-		public double? tasa_cambio_compra { get; set; }
+		public decimal? tasa_cambio_compra { get; set; }
 		public bool? is_transaction { get; set; }
 		public int? id_sucursal { get; set; } 
 		public int? Id_cuenta_origen { get; set; }
@@ -235,18 +235,18 @@ namespace DataBaseModel
 		[PrimaryKey(Identity = true)]
 		public int? id_detalle { get; set; }
 		public int? id_movimiento { get; set; }
-		public double? debito { get; set; }
-		public double? debito_dolares { get; set; }
-		public double? credito { get; set; }
-		public double? credito_dolares { get; set; }
-		public double? tasa_cambio { get; set; }
-		public double? tasa_cambio_compra { get; set; }
+		public decimal? debito { get; set; }
+		public decimal? debito_dolares { get; set; }
+		public decimal? credito { get; set; }
+		public decimal? credito_dolares { get; set; }
+		public decimal? tasa_cambio { get; set; }
+		public decimal? tasa_cambio_compra { get; set; }
 		public string? moneda { get; set; }
 
-		public double? monto_inicial { get; set; }
-		public double? monto_final { get; set; }
-		public double? monto_inicial_dolares { get; set; }
-		public double? monto_final_dolares { get; set; }
+		public decimal? monto_inicial { get; set; }
+		public decimal? monto_final { get; set; }
+		public decimal? monto_inicial_dolares { get; set; }
+		public decimal? monto_final_dolares { get; set; }
 		public DateTime? fecha { get; set; }
 		[ManyToOne(TableName = "Transaction_Movimiento", KeyColumn = "id_movimiento", ForeignKeyColumn = "id_movimiento")]
 		public Transaction_Movimiento? Transaction_Movimiento { get; set; }
@@ -305,7 +305,7 @@ namespace DataBaseModel
 		[PrimaryKey(Identity = true)]
 		public int? id_detalle_transaccion { get; set; }
 		public int? id_lote { get; set; }
-		public int? cantidad_afectada { get; set; }
+		public double? cantidad_afectada { get; set; }
 		public int? id_transaccion { get; set; }
 		public int? id_detalle_factura { get; set; }
 	}

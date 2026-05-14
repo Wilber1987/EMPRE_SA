@@ -14,9 +14,9 @@ namespace Transactions
 		public int? id_movimiento { get; set; }
 		public string? descripcion { get; set; }
 		public string? concepto { get; set; }
-		public double? monto { get; set; }
-		public double? tasa_cambio { get; set; }
-		public double? tasa_cambio_compra { get; set; }
+		public decimal? monto { get; set; }
+		public decimal? tasa_cambio { get; set; }
+		public decimal? tasa_cambio_compra { get; set; }
 		public string? moneda { get; set; }
 		public int? id_usuario_crea { get; set; }
 		public DateTime? fecha { get; set; }

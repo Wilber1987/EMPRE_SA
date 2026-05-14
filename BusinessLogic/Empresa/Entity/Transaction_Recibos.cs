@@ -11,17 +11,17 @@ namespace DataBaseModel
         public int? numero_contrato { get; set; }
         public string? tipo { get; set; }
         public string? concepto { get; set; }
-        public double? tasa_cambio { get; set; }
-        public double? total { get; set; }
+        public decimal? tasa_cambio { get; set; }
+        public decimal? total { get; set; }
         public int? id_cliente { get; set; }
         public int? id_sucursal { get; set; }
         public DateTime? fecha { get; set; }
         public int? id_usuario { get; set; }
         public string? estado { get; set; }
         public string? no_factura { get; set; }
-        public double? subtotal { get; set; }
-        public double? iva { get; set; }
-        public double? total_cordobas { get; set; }
+        public decimal? subtotal { get; set; }
+        public decimal? iva { get; set; }
+        public decimal? total_cordobas { get; set; }
         public string? Moneda { get; set; }
         public string? Motivo_Anulacion { get; set; }
         public string? Consecutivo { get; set; }
@@ -48,11 +48,11 @@ namespace DataBaseModel
         public int? id { get; set; }
 
         public int? id_cuota { get; set; }
-        public double? total_cuota { get; set; }
-        public double? monto_pagado { get; set; }
-        public double? capital_restante { get; set; }
+        public decimal? total_cuota { get; set; }
+        public decimal? monto_pagado { get; set; }
+        public decimal? capital_restante { get; set; }
         public string? concepto { get; set; }
-        public double? tasa_cambio { get; set; }
+        public decimal? tasa_cambio { get; set; }
         public int? id_factura { get; set; }
         [JsonProp]
         public EstadoAnteriorCuota? EstadoAnterior { get; set; }
@@ -66,11 +66,11 @@ namespace DataBaseModel
     public class EstadoAnteriorCuota
     {
         public DateTime? fecha_pago { get; set; }
-        public double? pago_contado { get; set; }
+        public decimal? pago_contado { get; set; }
         public string? Estado { get; set; }
-        public double? total { get; set; }
-        public double? interes { get; set; }
-        public double? abono_capital { get; set; }
+        public decimal? total { get; set; }
+        public decimal? interes { get; set; }
+        public decimal? abono_capital { get; set; }
     }
 
     public class Factura_contrato
@@ -78,29 +78,29 @@ namespace DataBaseModel
         public int? numero_contrato { get; set; }
         public int? cuotas_pactadas { get; set; }
         public int? cuotas_pendientes { get; set; }
-        public double? saldo_anterior { get; set; }
-        public double? saldo_actual { get; set; }
-        public double? mora { get; set; }
-        public double? interes_demas_cargos_pagar { get; set; }
+        public decimal? saldo_anterior { get; set; }
+        public decimal? saldo_actual { get; set; }
+        public decimal? mora { get; set; }
+        public decimal? interes_demas_cargos_pagar { get; set; }
         public DateTime? proximo_pago_pactado { get; set; }
-        public double? total_parciales { get; set; }
+        public decimal? total_parciales { get; set; }
         public string? tipo { get; set; }
         public string? tipo_cuenta { get; set; }
-        public double? total { get; set; }
-        public double? tasa_cambio { get; set; }
+        public decimal? total { get; set; }
+        public decimal? tasa_cambio { get; set; }
         public int? id_cliente { get; set; }
         public int? id_clasificacion_interes_anterior { get; set; }
         public int? id_sucursal { get; set; }
-        public double? reestructuracion { get; set; }
-        public double? perdida_de_documento { get; set; }
-        public double? total_pagado { get; set; }
+        public decimal? reestructuracion { get; set; }
+        public decimal? perdida_de_documento { get; set; }
+        public decimal? total_pagado { get; set; }
         public bool? cancel_with_perdida { get; set; }
 
         public bool? Solo_Interes_Mora { get; set; }
         public Datos_Reestructuracion? Datos_Reestructuracion { get; set; }
-        public double? mora_pagado { get; set; }
-        public double? interes_pagado { get; set; }
-        public double? abono_capital { get; set; }
+        public decimal? mora_pagado { get; set; }
+        public decimal? interes_pagado { get; set; }
+        public decimal? abono_capital { get; set; }
         public int? reestructurado_anterior { get; set; }
     }
 
@@ -109,15 +109,15 @@ namespace DataBaseModel
 
         public int? Plazo_Anterior { get; set; }
         public int? Nuevo_Plazo { get; set; }
-        public double? Monto_Anterior { get; set; }
-        public double? Nuevo_Monto { get; set; }
-        public double? Cuota_Anterior { get; set; }
-        public double? Nuevo_Cuota { get; set; }
+        public decimal? Monto_Anterior { get; set; }
+        public decimal? Nuevo_Monto { get; set; }
+        public decimal? Cuota_Anterior { get; set; }
+        public decimal? Nuevo_Cuota { get; set; }
         public List<Tbl_Cuotas>? Cuotas_reestructuradas { get; set; }
-        public double? Cuota_Anterior_Cordobas { get; set; }
-        public double? Nueva_Cuota_Cordobas { get; set; }
-        public double? Monto_Anterior_Cordobas { get; set; }
-        public double? Nuevo_Monto_Cordobas { get; set; }
+        public decimal? Cuota_Anterior_Cordobas { get; set; }
+        public decimal? Nueva_Cuota_Cordobas { get; set; }
+        public decimal? Monto_Anterior_Cordobas { get; set; }
+        public decimal? Nuevo_Monto_Cordobas { get; set; }
     }
 
 }

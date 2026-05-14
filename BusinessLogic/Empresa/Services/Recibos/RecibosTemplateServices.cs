@@ -89,7 +89,7 @@ namespace UI.CAPA_NEGOCIO.Empresa.Services.Recibos
 			List<Transactional_Configuraciones> configuraciones_theme = new Transactional_Configuraciones().GetTheme();
 			var configuraciones_generales = new Transactional_Configuraciones().GetGeneralData();
 			Catalogo_Clientes? cliente = model?.Catalogo_Clientes?.Find<Catalogo_Clientes>();
-			double valorInteres = model?.DesgloseIntereses?.GetPorcentageInteresesSGC(ContractTemplateService.AplicaGastosAdministrativos(model)) ?? 0;
+			decimal valorInteres = model?.DesgloseIntereses?.GetPorcentageInteresesSGC(ContractTemplateService.AplicaGastosAdministrativos(model)) ?? 0;
 
 			Datos_Reestructuracion? datos_Reestructuracion = factura?.Factura_contrato?.Datos_Reestructuracion;
 			templateContent = templateContent
@@ -103,10 +103,10 @@ namespace UI.CAPA_NEGOCIO.Empresa.Services.Recibos
 				.Replace("{{ Valoracion_empeño_dolares }}", NumberUtility.ConvertToMoneyString(datos_Reestructuracion?.Nuevo_Monto))
 				.Replace("{{ cuotafija }}", NumberUtility.ConvertToMoneyString(datos_Reestructuracion?.Nueva_Cuota_Cordobas))
 				.Replace("{{ cuotafija_dolares }}", NumberUtility.ConvertToMoneyString(datos_Reestructuracion?.Nuevo_Cuota))
-				.Replace("{{ plazo }}", NumberUtility.ConvertToMoneyString(datos_Reestructuracion?.Nuevo_Plazo))
+				.Replace("{{ plazo }}", datos_Reestructuracion?.Nuevo_Plazo.ToString())
 
 				.Replace("{{ interes_inicial }}", model?.DesgloseIntereses?.INTERES_NETO_CORRIENTE.ToString())
-				.Replace("{{ sum_intereses }}", (valorInteres + Convert.ToDouble(cliente?.Catalogo_Clasificacion_Interes?.porcentaje - 1)).ToString())
+				.Replace("{{ sum_intereses }}", (valorInteres + Convert.ToDecimal(cliente?.Catalogo_Clasificacion_Interes?.porcentaje - 1)).ToString())
 
 				.Replace("{{ datos_apoderado_vicepresidente }}", configuraciones_generales.Find(c => c.Nombre == GeneralDataEnum.APODERADO_VICEPRESIDENTE.ToString())?.Valor)
 				.Replace("{{ resumen_datos_apoderado_vicepresidente }}", configuraciones_generales.Find(c => c.Nombre == GeneralDataEnum.DATOS_APODERADO_VICEPRESIDENTE.ToString())?.Valor)

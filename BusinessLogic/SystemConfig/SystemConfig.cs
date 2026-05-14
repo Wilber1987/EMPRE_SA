@@ -26,7 +26,7 @@ namespace CAPA_NEGOCIO.SystemConfig
 		public int GetNumeroCuotasQuincenales { get; set; }
 		public int GetBeneficioVentaArticulo { get;set; }
 		public int GetPorcentajesApartado { get;set; }
-		public double GetPorcentageMinimoPagoApartadoMensual { get;set; }
+		public decimal GetPorcentageMinimoPagoApartadoMensual { get;set; }
 		
 		public List<DataBaseModel.Transactional_Configuraciones> configuraciones = new List<DataBaseModel.Transactional_Configuraciones>();
 

@@ -30,16 +30,16 @@ namespace DataBaseModel
 		public int? Id_Usuario { get; set; }
 		public string? Estado { get; set; }
 		public string? Moneda { get; set; }
-		public double? Sub_Total { get; set; }
-		public double? TotalDescuento { get; set; }
-		public double? Iva { get; set; }
-		public double? Tasa_Cambio { get; set; }
-		public double? Tasa_Cambio_Venta { get; set; }
-		public double? Total { get; set; }
-		public double? Total_Pagado { get; set; }
-		public double? Total_Financiado { get; set; }
-		public double? Monto_cordobas { get; set; }
-		public double? Monto_dolares { get; set; }
+		public decimal? Sub_Total { get; set; }
+		public decimal? TotalDescuento { get; set; }
+		public decimal? Iva { get; set; }
+		public decimal? Tasa_Cambio { get; set; }
+		public decimal? Tasa_Cambio_Venta { get; set; }
+		public decimal? Total { get; set; }
+		public decimal? Total_Pagado { get; set; }
+		public decimal? Total_Financiado { get; set; }
+		public decimal? Monto_cordobas { get; set; }
+		public decimal? Monto_dolares { get; set; }
 		public string? Motivo_Anulacion { get; set; }
 		public bool IsAnulable { get 
 		{
@@ -47,10 +47,10 @@ namespace DataBaseModel
 		}}		
 		public bool Is_cambio_cordobas { get; set; }
 		//public MonedaEnum?  Moneda { get; set; }
-    	//public double?  Monto_dolares { get; set; }
-    	public double?  Cambio_cordobas { get; set; }
-    	public double?  Cambio_dolares { get; set; }
-    	//public double?  Monto_cordobas { get; set; }
+    	//public decimal?  Monto_dolares { get; set; }
+    	public decimal?  Cambio_cordobas { get; set; }
+    	public decimal?  Cambio_dolares { get; set; }
+    	//public decimal?  Monto_cordobas { get; set; }
 
 		[JsonProp]
 		public DatosFactura? Datos { get; set; }
@@ -68,12 +68,12 @@ namespace DataBaseModel
 	public class Datos_Financiamiento
 	{
 		public int? Numero_Contrato { get; set; }
-		public double? Total_Financiado { get; set; }
+		public decimal? Total_Financiado { get; set; }
 		public int? Plazo { get; set; }
-		public double? Interes { get; set; }
-		public double? Total_Financiado_Cordobas { get; set; }
-		public double? Cuota_Fija_Dolares { get; set; }
-		public double? Cuota_Fija_Cordobas { get; set; }
+		public decimal? Interes { get; set; }
+		public decimal? Total_Financiado_Cordobas { get; set; }
+		public decimal? Cuota_Fija_Dolares { get; set; }
+		public decimal? Cuota_Fija_Cordobas { get; set; }
         public int? Id_recibo { get;  set; }
     }
 

@@ -26,8 +26,8 @@ namespace BusinessLogic.Facturacion.Operations
                     string? moneda = factura?.Moneda?.ToUpper();
                     // 2. Determinar cuánto USD se "compra" al cliente (excedente pagado)
                     // Suponemos que el cliente pagó en USD un monto mayor al valor de la factura
-                    double montoFacturaUSD = factura?.Total ?? 0;
-                    double montoPagadoUSD = factura?.Monto_dolares ?? 0;
+                    decimal montoFacturaUSD = factura?.Total ?? 0;
+                    decimal montoPagadoUSD = factura?.Monto_dolares ?? 0;
                     (bool flowControl, ResponseService value) = GenerarMovimientosCambiarios(
                         dbUser,
                         secuencia,
@@ -63,8 +63,8 @@ namespace BusinessLogic.Facturacion.Operations
                     string? moneda = recibo?.moneda?.ToUpper();
                     // 2. Determinar cuánto USD se "compra" al cliente (excedente pagado)
                     // Suponemos que el cliente pagó en USD un monto mayor al valor de la factura
-                    double montoFacturaUSD = recibo?.total_apagar_dolares ?? 0;
-                    double montoPagadoUSD = recibo?.monto_dolares ?? 0;
+                    decimal montoFacturaUSD = recibo?.total_apagar_dolares ?? 0;
+                    decimal montoPagadoUSD = recibo?.monto_dolares ?? 0;
                     (bool flowControl, ResponseService value) = GenerarMovimientosCambiarios(
                         dbUser,
                         secuencia,
@@ -88,7 +88,7 @@ namespace BusinessLogic.Facturacion.Operations
 
         }
 
-        private static (bool flowControl, ResponseService value) GenerarMovimientosCambiarios(Business.Security_Users dbUser, string secuencia, string moneda, double montoFacturaUSD, double montoPagadoUSD, object is_withMesaCambiaria)
+        private static (bool flowControl, ResponseService value) GenerarMovimientosCambiarios(Business.Security_Users dbUser, string secuencia, string moneda, decimal montoFacturaUSD, decimal montoPagadoUSD, object is_withMesaCambiaria)
         {
             throw new NotImplementedException();
         }
@@ -96,16 +96,16 @@ namespace BusinessLogic.Facturacion.Operations
         private static (bool flowControl, ResponseService value) GenerarMovimientosCambiarios(Business.Security_Users dbUser,
             string secuencia,
             string? moneda,
-            double montoFacturaUSD,
-            double montoPagadoUSD,
+            decimal montoFacturaUSD,
+            decimal montoPagadoUSD,
             bool? is_withMesaCambiaria)
         {
             // 1. Obtener tasas vigentes (usa la fecha de la factura o NOW)
             var divisa = new Catalogo_Cambio_Divisa().GetDivisa(MonedaEnum.DOLAR);
             if (divisa == null || divisa.Valor_de_compra <= 0)
                 return (flowControl: false, value: new ResponseService { status = 400, message = "Tasa de compra no disponible" });
-            double tasaCompra = divisa.Valor_de_compra!.Value;
-            double tasaVenta = divisa.Valor_de_compra!.Value;
+            decimal tasaCompra = divisa.Valor_de_compra!.Value;
+            decimal tasaVenta = divisa.Valor_de_compra!.Value;
 
             // Mejor aún: combinar con ticks o random corto
             string fechaStr = DateTime.Now.ToString("yyyyMMdd");
@@ -115,17 +115,17 @@ namespace BusinessLogic.Facturacion.Operations
             if (montoPagadoUSD < montoFacturaUSD)
                 return (flowControl: false, value: new ResponseService { status = 400, message = "Monto pagado insuficiente para dar cambio" });
 
-            double excedenteUSD = montoPagadoUSD - montoFacturaUSD;
+            decimal excedenteUSD = montoPagadoUSD - montoFacturaUSD;
 
             // Si no hay excedente, no hay operación cambiaria
-            if (excedenteUSD <= 0.001) // tolerancia para redondeo
+            if (excedenteUSD <= 0.001m) // tolerancia para redondeo
                 return (flowControl: false, value: new ResponseService { status = 200, message = "No hay operación cambiaria" });
 
             // 3. Calcular monto en C$ entregado como cambio
-            double cambioEnCordobas = excedenteUSD * (is_withMesaCambiaria.GetValueOrDefault() ? tasaCompra : tasaVenta);
-            double valorRealDolares = excedenteUSD * tasaVenta;
+            decimal cambioEnCordobas = excedenteUSD * (is_withMesaCambiaria.GetValueOrDefault() ? tasaCompra : tasaVenta);
+            decimal valorRealDolares = excedenteUSD * tasaVenta;
 
-            double beneficio = valorRealDolares - cambioEnCordobas;
+            decimal beneficio = valorRealDolares - cambioEnCordobas;
 
             // 4. Definir cuentas para operaciones cambiarias (⚠️ clave: cuentas específicas)
             //     Puedes parametrizar o reutilizar, pero idealmente tener:

@@ -38,7 +38,9 @@ class Transactional_Valoracion_ModelComponent extends EntityClass {
     /**@type {ModelProperty} */ Modelo = { type: 'text' };
     /**@type {ModelProperty} */ Catalogo_Categoria = {
         type: 'WSELECT',
-        ModelObject: () => new Catalogo_Categoria_ModelComponent(), action: (ObjectF, /**@type {WForm} */ form, InputControl, prop) => {
+        ModelObject: () => new Catalogo_Categoria_ModelComponent(), action: (ObjectF,
+            /**@type {WForm} */ form, 
+            InputControl, prop) => {
             // console.log(ObjectF.Catalogo_Categoria.plazo_limite);
             this.Plazo.max = ObjectF?.Catalogo_Categoria?.plazo_limite ?? 6;
             if (ObjectF.Plazo > this.Plazo.max) {
@@ -175,6 +177,10 @@ class Catalogo_Clientes extends EntityClass {
         hiddenInTable: true
     };
 
+    get Nombre_completo() {
+        return `${this.primer_nombre} ${this.segundo_nombre} ${this.primer_apellido} ${this.segundo_apellidio}` 
+    }
+
 
 }
 export { Catalogo_Clientes }
@@ -190,6 +196,7 @@ class Catalogo_Categoria_ModelComponent extends EntityClass {
     descripcion = { type: 'text', hiddenFilter: true, require: false };
     plazo_limite = { type: 'number' };
     prioridad = { type: 'number', hiddenInTable: true };
+    Catalogo_Estados_Articulos = { type: "MasterDetail", ModelObject: ()=> new Catalogo_Estados_Articulos(), require: false }
 }
 export { Catalogo_Categoria_ModelComponent }
 

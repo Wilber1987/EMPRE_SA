@@ -15,7 +15,7 @@ namespace BusinessLogic.Facturacion.Mapping
     {
         public Tbl_Factura? NuevaFactura { get; set; }
         public List<Detalle_Factura>? ArticulosRemplazados { get; set; }
-        public double? MinAmount { get; set; }
+        public decimal? MinAmount { get; set; }
         public int? Numero_Contrato { get; set; }
         public string? Observaciones { get;  set; }
         public ReturnTypeEnum? ReturnType { get; set; }

@@ -37,7 +37,7 @@ class FacturaComponentView extends HTMLElement {
         this.OptionContainer = WRender.Create({ className: "OptionContainer" });
         this.TabContainer = WRender.Create({ className: "TabContainer", id: 'TabContainer' });
         this.Manager = new ComponentsManager({ MainContainer: this.TabContainer });
-        this.navigator = new WAppNavigator({ Inicialize: true, Elements: this.ElementsNav, })
+        this.navigator = new WAppNavigator({ NavStyle: "tab", Inicialize: true, Elements: this.ElementsNav, })
         this.append(this.CustomStyle, this.OptionContainer, this.navigator, this.TabContainer);
         this.Draw();
     }

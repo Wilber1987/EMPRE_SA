@@ -95,7 +95,7 @@ namespace CAPA_NEGOCIO.Services
 			//var interes = configuraciones.Select(i => Convert.ToInt32(i.Valor)).ToArray().Sum();
 			////LoggerServices.AddMessageInfo("FIN DE GET INTERESE");
 			Catalogo_Clientes? cliente = model.Catalogo_Clientes?.Find<Catalogo_Clientes>();
-			double valorInteres = model.DesgloseIntereses.GetPorcentageInteresesSGC(AplicaGastosAdministrativos(model));
+			decimal valorInteres = model.DesgloseIntereses.GetPorcentageInteresesSGC(AplicaGastosAdministrativos(model));
 
 
 			//var montoMora = model.cuotafija * (model?.mora ?? 0.005) * 1;//como el cronjob es diario se va cargando mora cada dia
@@ -141,7 +141,7 @@ namespace CAPA_NEGOCIO.Services
 
 				.Replace("{{sum_intereses}}", (valorInteres +
 					(!AplicaGastosAdministrativos(model) ? 0 :
-					Convert.ToDouble(cliente.Catalogo_Clasificacion_Interes?.porcentaje - 1))).ToString())
+					Convert.ToDecimal(cliente.Catalogo_Clasificacion_Interes?.porcentaje - 1))).ToString("0"))
 				.Replace("{{dias}}", DateTime.Now.Day.ToString())
 				.Replace("{{mes}}", DateTime.Now.ToString("MMMM"))
 				.Replace("{{anio}}", DateTime.Now.Year.ToString())
