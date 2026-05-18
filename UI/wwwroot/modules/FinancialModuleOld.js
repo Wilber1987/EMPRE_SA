@@ -1,10 +1,12 @@
 //@ts-check
 import { Catalogo_Cambio_Divisa } from "../FrontModel/Catalogo_Cambio_Divisa.js";
-import { Detail_Prendas, Tbl_Cuotas, Transaction_Contratos, ValoracionesTransaction } from "../FrontModel/Model.js";
+import { Detail_Prendas, ValoracionesTransaction } from "../FrontModel/Model.js";
 import { ParcialesData } from "../FrontModel/ParcialData.js";
 import { Recibos } from "../FrontModel/Recibos.js";
 
 import { WArrayF } from "../WDevCore/WModules/WArrayF.js";
+import {Detail_Prendas} from "../FrontModel/Detail_Prendas";
+import {Transaction_Contratos} from "../FrontModel/Transaction_Contratos";
 
 
 class FinancialModule {
@@ -48,7 +50,7 @@ class FinancialModule {
         //console.log(contrato.Transaction_Contratos.total_pagar_cordobas, contrato.Transaction_Contratos.total_pagar_dolares);
 
         contrato.Transaction_Contratos.interes = (WArrayF.SumValAtt(contrato.Transaction_Contratos.Tbl_Cuotas, "interes"));
-        //contrato.Transaction_Contratos.interes_dolares = (WArrayF.SumValAtt(contrato.Transaction_Contratos.Tbl_Cuotas, "interes") / contrato.Transaction_Contratos.taza_cambio);
+        //contrato.Transaction_Contratos.interes_dolares = (WArrayF.SumValAtt(contrato.Transaction_Contratos.Tbl_Cuotas_ModelComponent, "interes") / contrato.Transaction_Contratos.taza_cambio);
         return contrato;
     }
 
@@ -301,7 +303,7 @@ class FinancialModule {
         if (categoria.descripcion != "vehiculos" && fechaVencida) { //TODO REPARAR FECHA QUITAR ESOS 32 DIAS
             canReestructure = true;
         }
-        //console.log(Contrato.Tbl_Cuotas);
+        //console.log(Contrato.Tbl_Cuotas_ModelComponent);
         const existeMora = contractData.Contrato.Tbl_Cuotas?.filter(c => c.Estado == "PENDIENTE" && c.mora != null && c.mora > 0).length > 0;
 
         contractData.canReestructure = canReestructure

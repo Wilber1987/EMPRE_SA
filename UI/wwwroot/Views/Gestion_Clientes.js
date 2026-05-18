@@ -1,11 +1,12 @@
 //@ts-check
-import { Catalogo_Clientes, Transaccion_Recibos_ModelComponent, Transaction_Contratos_ModelComponent } from "../FrontModel/DBODataBaseModel.js";
-import { Transaction_Contratos } from "../FrontModel/Model.js";
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js";
 import { WDetailObject } from "../WDevCore/WComponents/WDetailObject.js";
 import { ComponentsManager, WRender } from "../WDevCore/WModules/WComponentsTools.js";
 import { clientSearcher } from "../modules/SerchersModules.js";
 import { ClientComponentView } from "./ClientComponentView.js";
+import {Transaction_Contratos, Transaction_Contratos_ModelComponent} from "../FrontModel/Transaction_Contratos.js";
+import {Transaccion_Recibos_ModelComponent} from "../FrontModel/Transaction_Recibos.js";
+import {Catalogo_Clientes_ModelComponent} from "../FrontModel/ClientesModel.js";
 
 class Gestion_ClientesView extends HTMLElement {
     constructor() {
@@ -13,7 +14,7 @@ class Gestion_ClientesView extends HTMLElement {
         this.Draw();
     }
     Draw = async () => {
-        const model = new Catalogo_Clientes();
+        const model = new Catalogo_Clientes_ModelComponent();
        
         //const dataset = await model.Get();
 
@@ -58,7 +59,7 @@ class Gestion_ClientesView extends HTMLElement {
                 cliente.Transaction_Contratos = response;
                 cliente.Transaction_Factura = responseFactura;
                 this.Manager?.NavigateFunction("Gestion_ClientesDetail" + cliente.codigo_cliente, new WDetailObject({
-                    ModelObject: new Catalogo_Clientes({
+                    ModelObject: new Catalogo_Clientes_ModelComponent({
                         Transaction_Contratos:
                             { type: "MASTERDETAIL", ModelObject: () => new Transaction_Contratos_ModelComponent(), Dataset: response },
                         Transaction_Factura:

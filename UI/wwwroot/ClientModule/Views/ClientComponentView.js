@@ -1,15 +1,15 @@
 //@ts-check
 
-import { Condicion_Laboral_Cliente } from "../../FrontModel/DBODataBaseModel.js";
-import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../../WDevCore/StyleModules/WStyleComponents";
-import { ModalMessage } from "../../WDevCore/WComponents/ModalMessage";
+import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../../WDevCore/StyleModules/WStyleComponents.js";
+import { ModalMessage } from "../../WDevCore/WComponents/ModalMessage.js";
 import { WAlertMessage } from "../../WDevCore/WComponents/WAlertMessage.js";
 import { WAppNavigator } from "../../WDevCore/WComponents/WAppNavigator.js";
 import { WForm } from "../../WDevCore/WComponents/WForm.js";
-import { ComponentsManager, WRender } from "../../WDevCore/WModules/WComponentsTools";
-import { WOrtograficValidation } from "../../WDevCore/WModules/WOrtograficValidation";
-import { css } from "../../WDevCore/WModules/WStyledRender";
+import { ComponentsManager, WRender } from "../../WDevCore/WModules/WComponentsTools.js";
+import { WOrtograficValidation } from "../../WDevCore/WModules/WOrtograficValidation.js";
+import { css } from "../../WDevCore/WModules/WStyledRender.js";
 import { Catalogo_Clientes } from "../FrontModel/Catalogo_Clientes.js";
+import {Condicion_Laboral_Cliente} from "../../FrontModel/ClientesModel.js";
 
 class ClientComponentView extends HTMLElement {
 	constructor(cliente) {

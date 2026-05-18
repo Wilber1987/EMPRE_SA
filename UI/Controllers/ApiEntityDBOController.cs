@@ -55,6 +55,13 @@ namespace API.Controllers
 			return inst.Update();
 		}
 		[HttpPost]
+		[AuthController(Permissions.ADMIN_ACCESS)]
+		public object? DeleteCatalogo_Clasificacion_Interes(Catalogo_Clasificacion_Interes inst)
+		{
+			return inst.Delete();
+		}
+
+		[HttpPost]
 		[AuthController]
 		public List<Catalogo_Estados_Articulos> getCatalogo_Estados_Articulos(Catalogo_Estados_Articulos Inst, [FromQuery] SearchData? pageData)
 		{
@@ -72,6 +79,13 @@ namespace API.Controllers
 		{
 			return inst.Update();
 		}
+		[HttpPost]
+		[AuthController(Permissions.ADMIN_ACCESS)]
+		public object? DeleteCatalogo_Estados_Articulos(Catalogo_Estados_Articulos inst)
+		{
+			return inst.Delete();
+		}
+
 		//Transactional_Valoracion
 		[HttpPost]
 		[AuthController]
@@ -91,6 +105,13 @@ namespace API.Controllers
 		{
 			return inst.Update();
 		}
+		[HttpPost]
+		[AuthController(Permissions.ADMIN_ACCESS)]
+		public object? DeleteTransactional_Valoracion(Transactional_Valoracion inst)
+		{
+			return inst.Delete();
+		}
+
 		//TODO ELIMINAR A POSTERIOR LO DE LOS AGENTES
 		//Catalogo_Agentes
 		[HttpPost]
@@ -111,6 +132,13 @@ namespace API.Controllers
 		{
 			return inst.Update();
 		}
+		[HttpPost]
+		[AuthController(Permissions.ADMIN_ACCESS)]
+		public object? DeleteCatalogo_Agentes(Catalogo_Agentes inst)
+		{
+			return inst.Delete();
+		}
+
 		//Catalogo_Clasificacion_Cliente
 		[HttpPost]
 		[AuthController]
@@ -130,6 +158,13 @@ namespace API.Controllers
 		{
 			return inst.Update();
 		}
+		[HttpPost]
+		[AuthController(Permissions.ADMIN_ACCESS)]
+		public object? DeleteCatalogo_Clasificacion_Cliente(Catalogo_Clasificacion_Cliente inst)
+		{
+			return inst.Delete();
+		}
+
 		//Catalogo_Clientes
 		[HttpPost]
 		[AuthController]
@@ -149,6 +184,13 @@ namespace API.Controllers
 		{
 			return inst.Update();
 		}
+		[HttpPost]
+		[AuthController(Permissions.ADMIN_ACCESS)]
+		public object? DeleteCatalogo_Clientes(Catalogo_Clientes inst)
+		{
+			return inst.Delete();
+		}
+
 		//Condicion_Laboral_Cliente
 		[HttpPost]
 		[AuthController]
@@ -168,6 +210,13 @@ namespace API.Controllers
 		{
 			return inst.Update();
 		}
+		[HttpPost]
+		[AuthController(Permissions.ADMIN_ACCESS)]
+		public object? DeleteCondicion_Laboral_Cliente(Condicion_Laboral_Cliente inst)
+		{
+			return inst.Delete();
+		}
+
 		//Catalogo_Tipo_Agente
 		[HttpPost]
 		[AuthController]
@@ -187,6 +236,13 @@ namespace API.Controllers
 		{
 			return inst.Update();
 		}
+		[HttpPost]
+		[AuthController(Permissions.ADMIN_ACCESS)]
+		public object? DeleteCatalogo_Tipo_Agente(Catalogo_Tipo_Agente inst)
+		{
+			return inst.Delete();
+		}
+
 		//Catalogo_Tipo_Identificacion
 		[HttpPost]
 		[AuthController]
@@ -206,6 +262,13 @@ namespace API.Controllers
 		{
 			return inst.Update();
 		}
+		[HttpPost]
+		[AuthController(Permissions.ADMIN_ACCESS)]
+		public object? DeleteCatalogo_Tipo_Identificacion(Catalogo_Tipo_Identificacion inst)
+		{
+			return inst.Delete();
+		}
+
 		//Transaction_Contratos
 		[HttpPost]
 		[AuthController]
@@ -214,11 +277,11 @@ namespace API.Controllers
 			return Inst.GetContratos();
 		}
 		[HttpPost]
-        [AuthController]
-        public Transaction_Contratos? findTransaction_Contratos(Transaction_Contratos Inst, [FromQuery] SearchData? pageData)
-        {
-            return Inst.FindAndUpdateContract();
-        }
+		[AuthController]
+		public Transaction_Contratos? findTransaction_Contratos(Transaction_Contratos Inst, [FromQuery] SearchData? pageData)
+		{
+			return Inst.FindAndUpdateContract();
+		}
 		[HttpPost]
 		[AuthController(Permissions.ADMIN_ACCESS)]
 		public object? saveTransaction_Contratos(Transaction_Contratos inst)
@@ -231,6 +294,13 @@ namespace API.Controllers
 		{
 			return inst.Update();
 		}
+		[HttpPost]
+		[AuthController(Permissions.ADMIN_ACCESS)]
+		public object? DeleteTransaction_Contratos(Transaction_Contratos inst)
+		{
+			return inst.Delete();
+		}
+
 		//Detail_Prendas
 		[HttpPost]
 		[AuthController]
@@ -250,6 +320,13 @@ namespace API.Controllers
 		{
 			return inst.Update();
 		}
+		[HttpPost]
+		[AuthController(Permissions.ADMIN_ACCESS)]
+		public object? DeleteDetail_Prendas(Detail_Prendas inst)
+		{
+			return inst.Delete();
+		}
+
 		//Detail_Prendas_Vehiculos
 		[HttpPost]
 		[AuthController]
@@ -269,6 +346,13 @@ namespace API.Controllers
 		{
 			return inst.Update();
 		}
+		[HttpPost]
+		[AuthController(Permissions.ADMIN_ACCESS)]
+		public object? DeleteDetail_Prendas_Vehiculos(Detail_Prendas_Vehiculos inst)
+		{
+			return inst.Delete();
+		}
+
 		//Catalogo_Cambio_Divisa
 		[HttpPost]
 		[AuthController]
@@ -288,6 +372,13 @@ namespace API.Controllers
 		{
 			return inst.Update();
 		}
+		[HttpPost]
+		[AuthController(Permissions.ADMIN_ACCESS)]
+		public object? DeleteCatalogo_Cambio_Divisa(Catalogo_Cambio_Divisa inst)
+		{
+			return inst.Delete();
+		}
+
 		//Catalogo_Cuentas
 		[HttpPost]
 		[AuthController]
@@ -307,6 +398,13 @@ namespace API.Controllers
 		{
 			return inst.Update();
 		}
+		[HttpPost]
+		[AuthController(Permissions.ADMIN_ACCESS)]
+		public object? DeleteCatalogo_Cuentas(Catalogo_Cuentas inst)
+		{
+			return inst.Delete();
+		}
+
 		//Categoria_Cuentas
 		[HttpPost]
 		[AuthController]
@@ -326,6 +424,13 @@ namespace API.Controllers
 		{
 			return inst.Update();
 		}
+		[HttpPost]
+		[AuthController(Permissions.ADMIN_ACCESS)]
+		public object? DeleteCategoria_Cuentas(Categoria_Cuentas inst)
+		{
+			return inst.Delete();
+		}
+
 		//Permisos_Cuentas
 		[HttpPost]
 		[AuthController]
@@ -346,6 +451,14 @@ namespace API.Controllers
 			return inst.Update();
 		}
 
+		[HttpPost]
+		[AuthController(Permissions.ADMIN_ACCESS)]
+		public object? DeletePermisos_Cuentas(Permisos_Cuentas inst)
+		{
+			return inst.Delete();
+		}
+
+
 		//Catalogo_Departamento
 		[HttpPost]
 		[AuthController]
@@ -365,6 +478,13 @@ namespace API.Controllers
 		{
 			return inst.Update();
 		}
+		[HttpPost]
+		[AuthController(Permissions.ADMIN_ACCESS)]
+		public object? DeleteCatalogo_Departamento(Catalogo_Departamento inst)
+		{
+			return inst.Delete();
+		}
+
 		//Catalogo_Inversores
 		[HttpPost]
 		[AuthController]
@@ -384,6 +504,13 @@ namespace API.Controllers
 		{
 			return inst.Update();
 		}
+		[HttpPost]
+		[AuthController(Permissions.ADMIN_ACCESS)]
+		public object? DeleteCatalogo_Inversores(Catalogo_Inversores inst)
+		{
+			return inst.Delete();
+		}
+
 		//Catalogo_Municipio
 		[HttpPost]
 		[AuthController]
@@ -403,6 +530,13 @@ namespace API.Controllers
 		{
 			return inst.Update();
 		}
+		[HttpPost]
+		[AuthController(Permissions.ADMIN_ACCESS)]
+		public object? DeleteCatalogo_Municipio(Catalogo_Municipio inst)
+		{
+			return inst.Delete();
+		}
+
 		//Catalogo_Nacionalidad
 		[HttpPost]
 		[AuthController]
@@ -422,6 +556,13 @@ namespace API.Controllers
 		{
 			return inst.Update();
 		}
+		[HttpPost]
+		[AuthController(Permissions.ADMIN_ACCESS)]
+		public object? DeleteCatalogo_Nacionalidad(Catalogo_Nacionalidad inst)
+		{
+			return inst.Delete();
+		}
+
 		//Catalogo_Profesiones
 		[HttpPost]
 		[AuthController]
@@ -442,6 +583,14 @@ namespace API.Controllers
 			return inst.Update();
 		}
 
+		[HttpPost]
+		[AuthController(Permissions.ADMIN_ACCESS)]
+		public object DeleteCatalogo_Profesiones(Catalogo_Profesiones inst)
+		{
+			return inst.Delete();
+		}
+
+
 		//Transaction_Contratos_Inversionistas
 		[HttpPost]
 		[AuthController]
@@ -461,6 +610,13 @@ namespace API.Controllers
 		{
 			return inst.Update();
 		}
+		[HttpPost]
+		[AuthController(Permissions.ADMIN_ACCESS)]
+		public object? DeleteTransaction_Contratos_Inversionistas(Transaction_Contratos_Inversionistas inst)
+		{
+			return inst.Delete();
+		}
+
 
 		//Catalogo_Sucursales
 		[HttpPost]
@@ -481,6 +637,13 @@ namespace API.Controllers
 		{
 			return inst.Update();
 		}
+		[HttpPost]
+		[AuthController(Permissions.ADMIN_ACCESS)]
+		public object? DeleteCatalogo_Sucursales(Catalogo_Sucursales inst)
+		{
+			return inst.Delete();
+		}
+
 		//Datos_Configuracion
 		[HttpPost]
 		[AuthController]
@@ -500,6 +663,13 @@ namespace API.Controllers
 		{
 			return inst.Update();
 		}
+		[HttpPost]
+		[AuthController(Permissions.ADMIN_ACCESS)]
+		public object? DeleteDatos_Configuracion(Datos_Configuracion inst)
+		{
+			return inst.Delete();
+		}
+
 		//Catalogo_Categoria
 		[HttpPost]
 		[AuthController]
@@ -519,6 +689,13 @@ namespace API.Controllers
 		{
 			return inst.Update();
 		}
+		[HttpPost]
+		[AuthController(Permissions.ADMIN_ACCESS)]
+		public object? DeleteCatalogo_Categoria(Catalogo_Categoria inst)
+		{
+			return inst.Delete();
+		}
+
 		//Transaccion_Recibos
 		[HttpPost]
 		[AuthController]
@@ -538,6 +715,14 @@ namespace API.Controllers
 		{
 			return inst.Update();
 		}
+
+		/*[HttpPost]
+		[AuthController(Permissions.ADMIN_ACCESS)]
+		public object? DeleteTransaccion_Recibos(Transaccion_Recibos inst)
+		{
+			return inst.Delete();
+		}*/
+
 
 	}
 }

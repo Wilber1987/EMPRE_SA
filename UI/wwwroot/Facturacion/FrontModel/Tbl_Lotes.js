@@ -1,11 +1,10 @@
 //@ts-check
-import { Catalogo_Cambio_Divisa } from "../../FrontModel/Catalogo_Cambio_Divisa.js";
-import { Catalogo_Estados_Articulos } from "../../FrontModel/DBODataBaseModel.js";
-import { EntityClass } from "../../WDevCore/WModules/EntityClass.js";
-import { Cat_Almacenes } from './Cat_Almacenes.js';
-import { Cat_Producto } from "./Cat_Producto.js";
-import { Detalle_Compra } from './Detalle_Compra.js';
-import { Tbl_Transaccion } from "./Tbl_Transaction.js";
+import {Catalogo_Cambio_Divisa} from "../../FrontModel/Catalogo_Cambio_Divisa.js";
+import {EntityClass} from "../../WDevCore/WModules/EntityClass.js";
+import {Tbl_Transaccion} from "./Tbl_Transaction.js";
+
+import {Transactional_Valoracion} from "../../FrontModel/Transaction_Valoracion.js";
+
 class Tbl_Lotes extends EntityClass {
 
 	/**
@@ -49,44 +48,8 @@ class Tbl_Lotes extends EntityClass {
 	}
 }
 export { Tbl_Lotes };
-class Transactional_Valoracion extends EntityClass {
-	 /** 
-	 * @param {Partial<Transactional_Valoracion>} [props] 
-	 */
-	constructor(props) {
-		super(props, 'TransactionLotes');
-		Object.assign(this, props);
-	}
-	/** @type {Number} */ id_valoracion;
-	/** @type {String} */ Descripcion;
-	/** @type {String} */ Serie;
-	/** @type {String} */ Marca;
-	/** @type {String} */ Modelo;
-	/** @type {Object} */ Catalogo_Categoria;
-	/** @type {Number} */ Plazo;
-	/** @type {Number} */ Tasa_interes;
-	/** @type {Date} */ Fecha;
-	/** @type {Number} */ Tasa_de_cambio;
-	/** @type {Number} */ Valoracion_compra_cordobas;
-	/** @type {Number} */ Valoracion_compra_dolares;
-	/** @type {Number} */ Valoracion_empeño_cordobas;
-	/** @type {Number} */ Valoracion_empeño_dolares;
-	/** @type {Catalogo_Estados_Articulos} */ Catalogo_Estados_Articulos;
-	/** @type {Number} */ Precio_venta_empeño_cordobas;
-	/** @type {Number} */ Precio_venta_empeño_cordobas;
-	/** @type {Number} */ id_estado;
-	/** @type {Detail_Valores} */ Detail_Valores;
 
-	GuardarValoraciones = async (valoraciones) => {
-		return await this.SaveData("Transactional_Valoracion/GuardarValoraciones", { valoraciones: valoraciones })
-	}
-	requireReValoracion(dias = 40) {
-        // @ts-ignore
-        return new Date().subtractDays(dias) > new Date(this.Fecha);
-    }
-
-}
-class Detail_Valores {
+export class Detail_Valores {
 	/** @type {Number} */Valoracion_1;
 	/** @type {Number} */dolares_1;
 	/** @type {Number} */Valoracion_2;
@@ -94,7 +57,9 @@ class Detail_Valores {
 	/** @type {Number} */Valoracion_3;
 	/** @type {Number} */dolares_3;
 }
-export { Transactional_Valoracion }
+
+
+
 export class EtiquetaLote {
 	/** @type {String} */ Articulo;
 	/** @type {String} */ Tipo;

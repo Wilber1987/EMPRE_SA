@@ -2,10 +2,8 @@
 import { WRender, ComponentsManager } from "../WDevCore/WModules/WComponentsTools.js";
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js"
 import { css } from "../WDevCore/WModules/WStyledRender.js";
-import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
-import { Transaction_Contratos, ValoracionesTransaction } from "../FrontModel/Model.js";
-import {WAjaxTools} from "../WDevCore/WModules/WAjaxTools.js";
-import {WArrayF} from "../WDevCore/WModules/WArrayF.js";
+import { ValoracionesTransaction } from "../FrontModel/Model.js";
+import {Transaction_Contratos} from "../FrontModel/Transaction_Contratos.js";
 
 class Transaction_ContratosViewDetail extends HTMLElement {
     /**
@@ -52,7 +50,7 @@ class Transaction_ContratosViewDetail extends HTMLElement {
     SetOption() {
         this.OptionContainer.append(WRender.Create({
             tagName: 'button', className: 'Block-Primary', innerText: 'Datos contrato',
-            onclick: async () => this.Manager.NavigateFunction("id", undefined ?? WRender.Create({ className: "component" }))
+            onclick: async () => this.Manager.NavigateFunction("id", WRender.Create({ className: "component" }))
         }))
     }
 

@@ -9,11 +9,13 @@ import { WForm } from "../../../WDevCore/WComponents/WForm.js";
 import { Detalle_Factura } from "../Detalle_Factura.js";
 import { WArrayF } from "../../../WDevCore/WModules/WArrayF.js";
 import { FinancialModule } from "../../../modules/FinancialModule.js";
-import { Detail_Prendas, Transaction_Contratos, ValoracionesTransaction } from "../../../FrontModel/Model.js";
+import {  ValoracionesTransaction } from "../../../FrontModel/Model.js";
 import { Catalogo_Cambio_Divisa } from "../../../FrontModel/Catalogo_Cambio_Divisa.js";
 import { ModalMessage } from "../../../WDevCore/WComponents/ModalMessage.js";
 import { WAlertMessage } from "../../../WDevCore/WComponents/WAlertMessage.js";
 import { DateTime } from "../../../WDevCore/WModules/Types/DateTime.js";
+import {Detail_Prendas} from "../../../FrontModel/Detail_Prendas.js";
+import {Transaction_Contratos} from "../../../FrontModel/Transaction_Contratos.js";
 
 
 
@@ -244,7 +246,7 @@ class Tbl_Factura_ModelComponent extends EntityClass {
 					en_manos_de: "ACREEDOR",
 					precio_venta: valoracion?.Precio_venta_empeño_dolares,
 					Catalogo_Categoria: valoracion?.Catalogo_Categoria,
-					Transactional_Valoracion_ModelComponent: valoracion
+					Transactional_Valoracion: valoracion
 				});
 			})
 		});

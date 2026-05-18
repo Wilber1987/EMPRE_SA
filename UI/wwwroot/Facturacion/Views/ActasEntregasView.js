@@ -18,12 +18,12 @@ import { WAlertMessage } from "../../WDevCore/WComponents/WAlertMessage.js";
 import { Tbl_Acta_Entrega, Tbl_Acta_Entrega_ModelComponent } from "../FrontModel/Tbl_Acta_Entrega.js";
 import { VentasComponent } from "./VentasComponent.js";
 import { Tbl_Factura } from "../FrontModel/Tbl_Factura.js";
-import { Transaction_Contratos } from "../../FrontModel/Model.js";
 import { Detalle_Factura } from "../FrontModel/Detalle_Factura.js";
 import { FilterData } from "../../WDevCore/WModules/CommonModel.js";
 import { Detalle_Factura_ModelComponent } from "../FrontModel/ModelComponent/Detalle_Factura_ModelComponent.js";
 import { ReturnTransaction } from "../FrontModel/ReturnTransaction.js";
 import { Catalogo_Cambio_Divisa } from "../../FrontModel/Catalogo_Cambio_Divisa.js";
+import {Transaction_Contratos} from "../../FrontModel/Transaction_Contratos.js";
 
 /**
  * @typedef {Object} LotesConfig
@@ -66,7 +66,7 @@ class ActasEntregasView extends HTMLElement {
 			Options: {
 				Search: false,
 				Filter: true,
-				Add: true,
+				Add: false,
 				Edit: false,
 				FilterDisplay: true,
 				AutoSetDate: false,

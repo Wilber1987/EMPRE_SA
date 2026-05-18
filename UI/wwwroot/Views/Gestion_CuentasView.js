@@ -135,25 +135,7 @@ class GestionCuentaComponent extends HTMLElement {
             monto_inicial_dolares: undefined,
             monto_final_dolares: undefined
         })
-        filterModel.fecha.defaultValue = Date.now();
-        //console.log(filterModel.fecha.defaultValue);
-
-        /*const movimientosMap = movimientos.map(c => ({
-            // @ts-ignore
-            Caso: c.debito == 0 ? "Credito" : "Debito",
-            Mes: c.fecha.getMonthFormatEs(),
-            val: 1
-        }));
-        //TODO REVISAR COLUMNS CART
-        this.columChartMovimientos = new ColumChart({
-            Title: "Movimientos",
-            // @ts-ignore
-            TypeChart: "Line",
-            Dataset: movimientosMap,
-            EvalValue: "val",
-            AttNameEval: "Caso",
-            groupParams: ["Mes"]
-        });*/
+        filterModel.fecha.defaultValue = Date.now();       
         const detalleCuenta = WRender.Create({
             className: "detalle-cuenta",
             children: [

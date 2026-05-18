@@ -2,7 +2,7 @@
 import { WRender, ComponentsManager, html } from "../WDevCore/WModules/WComponentsTools.js";
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js"
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
-import { Transaccion_Recibos_ModelComponent, Catalogo_Cambio_Divisa_ModelComponent } from "../FrontModel/DBODataBaseModel.js"
+import { Catalogo_Cambio_Divisa_ModelComponent } from "../FrontModel/DBODataBaseModel.js"
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 import { WAjaxTools } from "../WDevCore/WModules/WAjaxTools.js";
@@ -10,6 +10,9 @@ import { ModalMessage } from "../WDevCore/WComponents/ModalMessage.js";
 import { ModalVericateAction } from "../WDevCore/WComponents/ModalVericateAction.js";
 import { WPrintExportToolBar } from "../WDevCore/WComponents/WPrintExportToolBar.mjs";
 import { Transaccion_Recibos } from "../FrontModel/Recibos.js";
+import {Transaccion_Recibos_ModelComponent} from "../FrontModel/Transaction_Recibos.js";
+
+
 class RecibosManagerView extends HTMLElement {
 	constructor() {
 		super();

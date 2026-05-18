@@ -2,7 +2,9 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/AppCore" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CAPA_DATOS" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/UI/CSharpAttributes" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/UI/wwwroot/WDevCore" vcs="Git" />
   </component>
 </project>

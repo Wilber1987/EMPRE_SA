@@ -1,5 +1,5 @@
 //@ts-check
-import { Catalogo_Clientes } from "../../FrontModel/DBODataBaseModel.js";
+import { Catalogo_Clientes } from "../../ClientModule/FrontModel/Catalogo_Clientes.js";
 import { EntityClass } from "../../WDevCore/WModules/EntityClass.js";
 import { Detalle_Factura } from './Detalle_Factura.js';
 class Tbl_Factura extends EntityClass {

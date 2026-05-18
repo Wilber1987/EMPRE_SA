@@ -2,13 +2,10 @@
 // @ts-ignore
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js";
 import { ComponentsManager, ConvertToMoneyString, html, WRender } from "../WDevCore/WModules/WComponentsTools.js";
-// @ts-ignore
-import { Catalogo_Cambio_Divisa_ModelComponent, Catalogo_Clientes, Detail_Prendas_ModelComponent, Detail_Prendas_Vehiculos_ModelComponent, Transaction_Contratos_ModelComponent } from "../FrontModel/DBODataBaseModel.js";
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js";
-// @ts-ignore
 import { Transactional_Configuraciones } from "../Admin/ADMINISTRATIVE_ACCESSDataBaseModel.js";
-import { Detail_Prendas, Transaction_Contratos, ValoracionesTransaction } from "../FrontModel/Model.js";
-import { Tbl_Cuotas_ModelComponent } from "../FrontModel/ModelComponents.js";
+import {  ValoracionesTransaction } from "../FrontModel/Model.js";
+import { Tbl_Cuotas_ModelComponent } from "../FrontModel/Tbl_Cuotas_ModelComponent.js";
 import { FinancialModule } from "../modules/FinancialModule.js";
 import { clientSearcher, contratosSearcher, ValoracionesSearch } from "../modules/SerchersModules.js";
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
@@ -17,6 +14,10 @@ import { WArrayF } from "../WDevCore/WModules/WArrayF.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 import { ModalMessage } from "../WDevCore/WComponents/ModalMessage.js";
 import { ModalVericateAction } from "../WDevCore/WComponents/ModalVericateAction.js";
+import {Detail_Prendas, Detail_Prendas_ModelComponent, Detail_Prendas_Vehiculos_ModelComponent} from "../FrontModel/Detail_Prendas.js";
+import {Transaction_Contratos, Transaction_Contratos_ModelComponent} from "../FrontModel/Transaction_Contratos.js";
+import { Catalogo_Cambio_Divisa_ModelComponent } from "../FrontModel/DBODataBaseModel.js";
+import { Catalogo_Clientes_ModelComponent } from "../FrontModel/ClientesModel.js";
 
 /**
  * @typedef {Object} ContratosConfig
@@ -100,7 +101,7 @@ class Transaction_ContratosView extends HTMLElement {
         });
         const fechaCancelacion = WRender.Create({ tagName: 'label', innerText: this.fechaCancelacion() })
         this.inputPlazo = WRender.Create({
-            tagName: 'input', type: 'number', className: "input-contrato", onchange: (ev) => {
+            tagName: 'input', type: 'number', className: "input-contrato", onchange: (/** @type {{ target: { value: any; }; }} */ ev) => {
                 this.entity.Transaction_Contratos.plazo = ev.target.value;
                 this.update();
                 fechaCancelacion.innerText = this.fechaCancelacion()
@@ -110,14 +111,14 @@ class Transaction_ContratosView extends HTMLElement {
             tagName: 'select', class: 'input-contrato', children: [
                 { tagName: 'option', innerText: 'Desembolso en dólares', value: 'DOLARES' },
                 { tagName: 'option', innerText: 'Desembolso en córdoba', value: 'CORDOBAS' }
-            ], onchange: (ev) => {
+            ], onchange: (/** @type {{ target: { value: any; }; }} */ ev) => {
                 this.entity.Moneda = ev.target.value
             }
         });
 
         this.setPlazo();
         this.inputObservacion = WRender.Create({
-            tagName: 'textarea', placeholder: "observaciones...", className: "input-observacion", onchange: (ev) => {
+            tagName: 'textarea', placeholder: "observaciones...", className: "input-observacion", onchange: (/** @type {{ target: { value: any; }; }} */ ev) => {
                 this.entity.Transaction_Contratos.observaciones = ev.target.value;
             }
         });
@@ -140,10 +141,10 @@ class Transaction_ContratosView extends HTMLElement {
      * @returns {Number}
      */
     prioridadEnElPlazo() {
-        const prioridad = this.entity.Transaction_Contratos?.Detail_Prendas?.find(p =>
-            p.Transactional_Valoracion_ModelComponent.Catalogo_Categoria.prioridad ==
+        const prioridad = this.entity.Transaction_Contratos?.Detail_Prendas?.find((/** @type {{ Transactional_Valoracion_ModelComponent: { Catalogo_Categoria: { prioridad: any; }; }; }} */ p) =>
+            p.Transactional_Valoracion.Catalogo_Categoria.prioridad ==
             WArrayF.MinValue(this.entity.Transaction_Contratos.Detail_Prendas.map(
-                sp => sp.Transactional_Valoracion_ModelComponent.Catalogo_Categoria), "prioridad"));
+                (/** @type {Detail_Prendas} */ sp) => sp.Transactional_Valoracion?.Catalogo_Categoria), "prioridad"));
         // @ts-ignore
         return prioridad?.Catalogo_Categoria?.plazo_limite ?? 1
 
@@ -175,7 +176,7 @@ class Transaction_ContratosView extends HTMLElement {
                 if (!this.clientSercher) {
                     this.clientSercher = clientSearcher([{
                         name: "Selecionar",
-                        action: async (cliente) => {
+                        action: async (/** @type {Catalogo_Clientes_ModelComponent} */ cliente) => {
                             this.selectCliente(cliente)
                         }
                     }]);
@@ -198,7 +199,7 @@ class Transaction_ContratosView extends HTMLElement {
 
                 let isVehiculoValidation = true;
                 let isSerieValidation = true;
-                this.entity.Transaction_Contratos.Detail_Prendas.forEach(element => {
+                this.entity.Transaction_Contratos.Detail_Prendas.forEach((/** @type {{ Catalogo_Categoria: { tipo: string; }; Detail_Prendas_Vehiculos: null | undefined; serie: string | null | undefined; }} */ element) => {
                     // @ts-ignore
                     if (element.Catalogo_Categoria.tipo == "Vehículos" &&
                         (element.Detail_Prendas_Vehiculos == undefined
@@ -230,8 +231,8 @@ class Transaction_ContratosView extends HTMLElement {
             }
         }))
     }
-    selectCliente = (/**@type {Catalogo_Clientes} */ selectCliente) => {
-        this.entity.Transaction_Contratos.Catalogo_Clientes = selectCliente;
+    selectCliente = (/**@type {Catalogo_Clientes_ModelComponent} */ selectCliente) => {
+        this.entity.Transaction_Contratos.Catalogo_Clientes_ModelComponent = selectCliente;
         this.update();
         this.Manager.NavigateFunction("valoraciones");
     }
@@ -307,7 +308,7 @@ class Transaction_ContratosView extends HTMLElement {
         </div>`);
         this.Manager.NavigateFunction("valoraciones");
     }
-    clientResumen(/**@type {Catalogo_Clientes} */ selectCliente) {
+    clientResumen(/**@type {Catalogo_Clientes_ModelComponent} */ selectCliente) {
         if (selectCliente == undefined) {
             this.selectedClientDetail.innerHTML = `<div class="detail-container">Seleccionar Cliente</div>`;
             return;
@@ -353,7 +354,7 @@ class Transaction_ContratosView extends HTMLElement {
             monto_aprobado_dolares: valoracion.Valoracion_empeño_dolares,
             en_manos_de: undefined,
             Catalogo_Categoria: valoracion.Catalogo_Categoria,
-            Transactional_Valoracion_ModelComponent: valoracion
+            Transactional_Valoracion: valoracion
         }))
         // @ts-ignore
         this.entity.Transaction_Contratos.taza_cambio = this.tasaActual?.Valor_de_venta;
@@ -381,15 +382,15 @@ class Transaction_ContratosView extends HTMLElement {
         // @ts-ignore
         this.CuotasTable.Dataset = undefined;
         // @ts-ignore
-        this.entity.valoraciones = this.entity.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion_ModelComponent);
+        this.entity.valoraciones = this.entity.Transaction_Contratos.Detail_Prendas.map(p => p.Transactional_Valoracion);
         this.update();
 
     }
     update() {
         FinancialModule.calculoAmortizacion(this.entity);
         if (this.prendasTable != undefined && this.entity.Transaction_Contratos.Detail_Prendas != undefined) {
-            this.entity.Transaction_Contratos?.Detail_Prendas.forEach(detalle => {
-                detalle.monto_aprobado_dolares = detalle.Transactional_Valoracion_ModelComponent.Valoracion_empeño_dolares
+            this.entity.Transaction_Contratos?.Detail_Prendas.forEach((/** @type { Detail_Prendas }} */ detalle) => {
+                detalle.monto_aprobado_dolares = detalle.Transactional_Valoracion?.Valoracion_empeño_dolares
             })
             this.prendasTable.Dataset = this.entity.Transaction_Contratos.Detail_Prendas;
             this.prendasTable?.DrawTable();
@@ -453,6 +454,9 @@ customElements.define('w-transaction_contratos', Transaction_ContratosView);
 export { Transaction_ContratosView };
 
 class MainContract extends HTMLElement {
+    /**
+     * @param { ValoracionesTransaction } contrato
+     */
     constructor(contrato) {
         super();
         // FinancialModule.calculoAmortizacion(contrato);     
@@ -475,7 +479,7 @@ class MainContract extends HTMLElement {
     ElementsNav = [
         {
             name: "Contratos", action: () => {
-                this.Manager.NavigateFunction("contratos", contratosSearcher((contrato) => {
+                this.Manager.NavigateFunction("contratos", contratosSearcher((/** @type {Transaction_Contratos} */ contrato) => {
                     location.href = "/PagesViews/Transaction_ContratosViewDetail?numero_contrato=" + contrato.numero_contrato;
                 }, (/** @type {Transaction_Contratos} */ contrato) => {
                     const modal = new WModalForm({
@@ -485,7 +489,7 @@ class MainContract extends HTMLElement {
                         title: "ANULACIÓN DE CONTRATO",
                         ObjectOptions: {
                             SaveFunction: async () => {
-                                this.append(ModalVericateAction(async (editObject) => {
+                                this.append(ModalVericateAction(async (/** @type {any} */ editObject) => {
                                     console.log(contrato, editObject);
                                     const response = await new Transaction_Contratos(contrato).Anular();
                                     this.append(ModalMessage(response.message));

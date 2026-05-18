@@ -149,75 +149,125 @@ namespace DataBaseModel
 			return cuotas;
 		}
 
-		// ✅ CORREGIDO: Firma con decimal y lógica consistente
 		public List<Tbl_Cuotas> CrearCuotas(decimal? monto,
-										 decimal? plazo,
-										 bool autoSave = true,
-										 bool quincenal = false)
+									decimal? plazo,
+									bool autoSave = true,
+									bool quincenal = false)
 		{
 			var tasasCambio = new Catalogo_Cambio_Divisa()
 				.Get<Catalogo_Cambio_Divisa>()[0]
-				.Valor_de_venta; // Asumo que ya es decimal en BD
+				.Valor_de_venta;
 
-			// ✅ CORREGIDO: Cálculo con decimal
 			this.cuotafija_dolares = GetPago(monto, plazo);
 			this.cuotafija = this.cuotafija_dolares * this.taza_cambio;
 
-			var capital = monto ?? 0m;
-			List<Tbl_Cuotas> cuotas = new List<Tbl_Cuotas>();
+			decimal capital = monto ?? 0m;
+			decimal cuotaFija = this.cuotafija_dolares ?? 0m;
+			decimal tasa = this.tasas_interes ?? 0m;
+
+			List<Tbl_Cuotas> cuotas = new();
 			DateTime fechaC = fecha.GetValueOrDefault();
 			int totalCuotas = Convert.ToInt32(plazo ?? 0);
 
-			for (var index = 0; index < totalCuotas; index++)
+			for (int index = 0; index < totalCuotas; index++)
 			{
-				fechaC = quincenal ? fechaC.AddDays(15) : fechaC.AddMonths(1);
+				fechaC = quincenal
+					? fechaC.AddDays(15)
+					: fechaC.AddMonths(1);
 
-				// ✅ CORREGIDO: Todas las operaciones con decimal
-				var interesPeriodo = capital * (this.tasas_interes ?? 0m);
-				var abono_capital = (this.cuotafija_dolares ?? 0m) - interesPeriodo;
-				var capitalRestante = capital - abono_capital;
+				decimal interesPeriodo;
+				decimal abonoCapital;
+				decimal cuotaTotal = cuotaFija;
+
+				if (index == totalCuotas - 1)
+				{
+					// ✅ ÚLTIMA CUOTA: AJUSTE FINAL
+					abonoCapital = capital;
+					// mantener cuota fija:
+					// cuota = interes + capital
+					interesPeriodo = cuotaFija - abonoCapital;
+				}
+				else
+				{
+					interesPeriodo = Math.Round(
+						capital * tasa,
+						2,
+						MidpointRounding.AwayFromZero
+					);
+
+					abonoCapital = cuotaFija - interesPeriodo;
+				}
+				decimal capitalRestante = capital - abonoCapital;
+
+				// Evitar negativos por residuos
+				if (capitalRestante < 0)
+					capitalRestante = 0m;
 
 				var cuota = new Tbl_Cuotas
 				{
 					Estado = EstadoEnum.PENDIENTE.ToString(),
 					fecha = fechaC,
-					total = this.cuotafija_dolares,
-					interes = Math.Round(interesPeriodo, 4), // Redondeo a 4 decimales
-					abono_capital = Math.Round(abono_capital, 4),
-					capital_restante = capitalRestante < 0 ? 0 : Math.Round(capitalRestante, 4),
+					// ✅ SIEMPRE fija
+					total = cuotaTotal,
+					interes = Math.Round(
+						interesPeriodo,
+						2,
+						MidpointRounding.AwayFromZero
+					),
+					abono_capital = Math.Round(
+						abonoCapital,
+						2,
+						MidpointRounding.AwayFromZero
+					),
+					capital_restante = Math.Round(
+						capitalRestante,
+						2,
+						MidpointRounding.AwayFromZero
+					),
 					tasa_cambio = tasasCambio,
 					numero_contrato = this.numero_contrato
 				};
-				capital = capitalRestante > 0 ? capitalRestante : 0;
-
+				capital = capitalRestante;
 				if (autoSave) cuota.Save();
+
 				cuotas.Add(cuota);
 			}
+
 			return cuotas;
 		}
 
-		// ✅ CORREGIDO: Función de pago con manejo seguro de decimal/double
 		private decimal? GetPago(decimal? monto, decimal? cuotas)
 		{
-			if (monto == null || cuotas == null || cuotas == 0) return null;
+			if (monto == null || cuotas == null || cuotas == 0)
+				return null;
 
 			var tasa = this.tasas_interes ?? 0m;
 
 			if (tasa == 0)
 			{
-				return Math.Round(monto.Value / cuotas.Value, 4);
+				return Math.Round(
+					monto.Value / cuotas.Value,
+					2,
+					MidpointRounding.AwayFromZero
+				);
 			}
 
-			// ✅ CORREGIDO: Conversión controlada para Math.Pow
 			double tasaDouble = Convert.ToDouble(tasa);
 			double cuotasDouble = Convert.ToDouble(cuotas);
 			double montoDouble = Convert.ToDouble(monto);
 
-			double paymentDouble = tasaDouble * Math.Pow(1 + tasaDouble, cuotasDouble) * montoDouble
-				/ (Math.Pow(1 + tasaDouble, cuotasDouble) - 1);
+			double factor = Math.Pow(1 + tasaDouble, cuotasDouble);
 
-			// ✅ Retorno convertido a decimal con redondeo financiero
-			return (decimal)Math.Round(paymentDouble, 4, MidpointRounding.AwayFromZero);
+			double payment =
+				(tasaDouble * factor * montoDouble) /
+				(factor - 1);
+
+			// ✅ cuota monetaria = 2 decimales
+			return Math.Round(
+				(decimal)payment,
+				2,
+				MidpointRounding.AwayFromZero
+			);
 		}
 
 		// ✅ CORREGIDO: Cálculo de mora con literales decimal

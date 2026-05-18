@@ -1,12 +1,15 @@
 //@ts-check
 import { Transactional_Configuraciones } from "../Admin/ADMINISTRATIVE_ACCESSDataBaseModel.js";
 import { Catalogo_Cambio_Divisa } from "../FrontModel/Catalogo_Cambio_Divisa.js";
-import { Transactional_Valoracion_ModelComponent } from "../FrontModel/DBODataBaseModel.js";
-import { Detail_Prendas, Tbl_Cuotas, Transaction_Contratos, ValoracionesTransaction } from "../FrontModel/Model.js";
+import {  ValoracionesTransaction } from "../FrontModel/Model.js";
 import { ParcialesData } from "../FrontModel/ParcialData.js";
 import { Recibos } from "../FrontModel/Recibos.js";
 import { Money } from "../WDevCore/WModules/Types/Money.js";
 import { WArrayF } from "../WDevCore/WModules/WArrayF.js";
+import {Transactional_Valoracion} from "../FrontModel/Transaction_Valoracion.js";
+import {Detail_Prendas} from "../FrontModel/Detail_Prendas.js";
+import {Transaction_Contratos} from "../FrontModel/Transaction_Contratos.js";
+import { Tbl_Cuotas } from "../FrontModel/Tbl_Cuotas_ModelComponent.js";
 
 class FinancialModule {
     /**
@@ -24,7 +27,7 @@ class FinancialModule {
         contrato.Transaction_Contratos = contrato.Transaction_Contratos ?? new Transaction_Contratos();
         if (withValoraciones) {
             contrato.Transaction_Contratos.Detail_Prendas = contrato.valoraciones.map(
-                (/**@type {Transactional_Valoracion_ModelComponent}*/ valoracion) => new Detail_Prendas({
+                (/**@type {Transactional_Valoracion}*/ valoracion) => new Detail_Prendas({
                     Descripcion: valoracion.Descripcion,
                     modelo: valoracion.Modelo,
                     marca: valoracion.Marca,
@@ -35,7 +38,7 @@ class FinancialModule {
                     en_manos_de: tipo_contrato == "EMPEÑO" ? "ACREEDOR" : "DEUDOR",
                     precio_venta: valoracion.Precio_venta_empeño_dolares,
                     Catalogo_Categoria: valoracion.Catalogo_Categoria,
-                    Transactional_Valoracion_ModelComponent: valoracion
+                    Transactional_Valoracion: valoracion
                 }));
         }
 
@@ -103,8 +106,7 @@ class FinancialModule {
     static CalculeTotales(contrato) {
 
         const prendas = contrato.Transaction_Contratos.Detail_Prendas
-            .map((/** @type {{ Transactional_Valoracion_ModelComponent: any; }} */ p) => p.Transactional_Valoracion_ModelComponent);
-
+            .map((/** @type {{ Transactional_Valoracion: any; }} */ p) => p.Transactional_Valoracion);
         // 💰 SUMAS SEGURAS
         const compraCordobas = WArrayF.sumMoney(prendas, "Valoracion_compra_cordobas", 'NIO');
         const compraDolares = WArrayF.sumMoney(prendas, "Valoracion_compra_dolares", 'USD');
@@ -162,20 +164,24 @@ class FinancialModule {
             contrato.Transaction_Contratos.Valoracion_empeño_dolares,
             'USD'
         );
-
         const cuotaFija = new Money(this.getPago(contrato), 'USD');
         contrato.Transaction_Contratos.cuotafija_dolares = cuotaFija.toNumber();
         contrato.Transaction_Contratos.cuotafija = cuotaFija.multiply(tasaCambio).toNumber();
         for (let index = 0; index < plazo; index++) {
-            const interes = capital.multiply(tasa);
+            let interes = capital.multiply(tasa);
             let abonoCapital;
             let cuotaTotal;
-
             if (index === plazo - 1) {
-                // 🧠 ÚLTIMA CUOTA → AJUSTE FINAL
+                // última cuota: mantener cuota fija
                 abonoCapital = capital;
-                cuotaTotal = interes.add(abonoCapital);
+
+                // recalcular interés para que:
+                // cuota fija = interés + capital
+                interes = cuotaFija.subtract(abonoCapital);
+
+                cuotaTotal = cuotaFija; // ✅ sigue fija
             } else {
+                interes = capital.multiply(tasa);
                 abonoCapital = cuotaFija.subtract(interes);
                 cuotaTotal = cuotaFija;
             }
@@ -193,8 +199,6 @@ class FinancialModule {
             capital = capitalRestante;
             contrato.Transaction_Contratos.Tbl_Cuotas.push(cuota);
         }
-        console.log(contrato.Transaction_Contratos.Tbl_Cuotas);
-
     }
     /**
      * 
@@ -446,7 +450,7 @@ class FinancialModule {
         if (categoria.descripcion != "vehiculos" && fechaVencida) { //TODO REPARAR FECHA QUITAR ESOS 32 DIAS
             canReestructure = true;
         }
-        //console.log(Contrato.Tbl_Cuotas);
+        //console.log(Contrato.Tbl_Cuotas_ModelComponent);
         const existeMora = contractData.Contrato.Tbl_Cuotas?.filter(c => c.Estado == "PENDIENTE" && c.mora != null && c.mora > 0).length > 0;
 
         contractData.canReestructure = canReestructure

@@ -1,6 +1,6 @@
 //@ts-check
 import { Catalogo_Tipo_Identificacion } from "../ClientModule/FrontModel/Catalogo_Clientes.js";
-import { Catalogo_Cambio_Divisa_ModelComponent, Catalogo_Categoria_ModelComponent, Catalogo_Clasificacion_Cliente, Catalogo_Clasificacion_Interes, Catalogo_Cuentas, Catalogo_Departamento, Catalogo_Estados_Articulos, Catalogo_Municipio, Catalogo_Nacionalidad, Catalogo_Profesiones, Catalogo_Sucursales_ModelComponent, Permisos_Cuentas } from "../FrontModel/DBODataBaseModel.js";
+import { Catalogo_Cambio_Divisa_ModelComponent, Catalogo_Categoria_ModelComponent, Catalogo_Cuentas, Catalogo_Departamento, Catalogo_Estados_Articulos, Catalogo_Estados_Articulos_ModelComponent, Catalogo_Municipio, Catalogo_Nacionalidad, Catalogo_Profesiones, Catalogo_Sucursales_ModelComponent, Permisos_Cuentas } from "../FrontModel/DBODataBaseModel.js";
 import { StylesControlsV2, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js";
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js";
@@ -8,6 +8,7 @@ import { EntityClass } from "../WDevCore/WModules/EntityClass.js";
 import { ComponentsManager, html, WRender } from "../WDevCore/WModules/WComponentsTools.js";
 import { WOrtograficValidation } from "../WDevCore/WModules/WOrtograficValidation.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
+import {Catalogo_Clasificacion_Cliente, Catalogo_Clasificacion_Interes} from "../FrontModel/ClientesModel.js";
 class DBOCatalogosManagerView extends HTMLElement {
     constructor() {
         super();              
@@ -18,18 +19,22 @@ class DBOCatalogosManagerView extends HTMLElement {
             this.CustomStyle
         );
     }
-    /** @param {EntityClass} Model*/
-    NavigateFunction = async (Model) => {
-        const data = await Model.Get();
+    /** 
+     * @param {EntityClass} Model
+     * @param {EntityClass} [Entity]
+    */
+    NavigateFunction = async (Model, Entity) => {
         const mainComponent = new WTableComponent({
             ModelObject: Model,
-            Dataset: data,
-            AutoSave: true,
+            EntityModel: Entity,
+            AutoSave: true,           
             Options: {
                 Add: true,
                 Edit: true,
+                AutoSetDate: false,
                 Filter: true,
-                FilterDisplay: true
+                FilterDisplay: true,
+                Delete: true
             }
         })
         return html`<div class="catalogo-container">
@@ -97,7 +102,7 @@ class DBOCatalogosManagerView extends HTMLElement {
                 }
             }, {
                 name: WOrtograficValidation.es('Catalogo_Estados_Articulos'), action: async () => {
-                    return this.NavigateFunction(new Catalogo_Estados_Articulos())
+                    return this.NavigateFunction(new Catalogo_Estados_Articulos_ModelComponent(), new Catalogo_Estados_Articulos())
                 }
             }, {
                 name: WOrtograficValidation.es('Catalogo_Categoria'), action: async () => {

@@ -1,6 +1,5 @@
 //@ts-check
 import { Catalogo_Cambio_Divisa_ModelComponent } from "../FrontModel/DBODataBaseModel.js";
-import { Transaction_Contratos } from "../FrontModel/Model.js";
 import { StyleScrolls, StylesControlsV2, StylesControlsV3 } from "../WDevCore/StyleModules/WStyleComponents.js";
 import { WForm } from "../WDevCore/WComponents/WForm.js";
 import { ComponentsManager, ConvertToMoneyString, html, WRender } from "../WDevCore/WModules/WComponentsTools.js";
@@ -12,13 +11,13 @@ import { WOrtograficValidation } from "../WDevCore/WModules/WOrtograficValidatio
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { Transactional_Configuraciones } from "../Admin/ADMINISTRATIVE_ACCESSDataBaseModel.js";
 import { ContractData, FinancialModule } from "../modules/FinancialModule.js";
-import { Detail_Prendas, Tbl_Cuotas } from "../FrontModel/Model.js";
 import { Catalogo_Cambio_Divisa } from "../FrontModel/Catalogo_Cambio_Divisa.js";
 import { ParcialesData } from "../FrontModel/ParcialData.js";
-import { DateTime } from "../WDevCore/WModules/Types/DateTime.js";
 import { ModalMessage } from "../WDevCore/WComponents/ModalMessage.js";
 import { ModalVericateAction } from "../WDevCore/WComponents/ModalVericateAction.js";
 import { WAlertMessage } from "../WDevCore/WComponents/WAlertMessage.js";
+import {Detail_Prendas} from "../FrontModel/Detail_Prendas.js";
+import {Transaction_Contratos} from "../FrontModel/Transaction_Contratos.js";
 
 class Gestion_RecibosView extends HTMLElement {
     // @ts-ignore
@@ -414,7 +413,7 @@ class Gestion_RecibosView extends HTMLElement {
             let mora_interes_cordobas = 0;
 
 
-            //console.log(contrato.Tbl_Cuotas, cuota);
+            //console.log(contrato.Tbl_Cuotas_ModelComponent, cuota);
             if (cuota != null) {
                 fecha = cuota.fecha;
                 primeraCuotaConCapitalMayorACero = cuota.total;

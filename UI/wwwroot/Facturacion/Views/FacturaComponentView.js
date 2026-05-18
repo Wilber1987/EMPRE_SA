@@ -14,10 +14,10 @@ import { Tbl_Factura_ModelComponent } from "../FrontModel/ModelComponent/Tbl_Fac
 import { Tbl_Factura } from "../FrontModel/Tbl_Factura.js";
 import { FacturasBuilder } from "./Builders/FacturasBuilder.js";
 import { VentasComponent } from "./VentasComponent.js";
-import { Transaction_Contratos } from "../../FrontModel/Model.js";
 import { ModalVericateAction } from "../../WDevCore/WComponents/ModalVericateAction.js";
 import { ModalMessage } from "../../WDevCore/WComponents/ModalMessage.js";
 import { WAlertMessage } from "../../WDevCore/WComponents/WAlertMessage.js";
+import {Transaction_Contratos} from "../../FrontModel/Transaction_Contratos.js";
 
 /**
  * @typedef {Object} FacturacionConfig

@@ -19,8 +19,12 @@ namespace DataBaseModel
 		public decimal? porcentaje_compra { get; set; }
 		public decimal? porcentaje_empeno { get; set; }
 		public int? id_categoria { get; set; }
-		// [OneToMany(TableName = "Transactional_Valoracion", KeyColumn = "id_estado_articulo", ForeignKeyColumn = "id_estado")]
-		// public List<Transactional_Valoracion>? Transactional_Valoracion { get; set; }
+		public decimal? Porcentaje_venta_compra { get; set; }
+		public decimal? Porcentaje_venta_empeno { get; set; }
+
+
+		[ManyToOne(TableName = "Catalogo_Categoria", KeyColumn = "id_categoria", ForeignKeyColumn = "id_categoria")]
+		public Catalogo_Categoria? Catalogo_Categoria { get; set; }
 	}
 
 
@@ -93,11 +97,11 @@ namespace DataBaseModel
 		PRESTAMOS,
 		DESEMBOLSO_CONTRATOS,
 		INGRESOS_EMPENOS,
-        PAGOS_FACTURAS_CLIENTES,
-        PAGOS_FACTURAS_PROVEEDORES,
-        INGRESO_COMPRA_DOLARES,
-        INGRESO_BENEFICIO_COMPRA_DOLARES
-    }
+		PAGOS_FACTURAS_CLIENTES,
+		PAGOS_FACTURAS_PROVEEDORES,
+		INGRESO_COMPRA_DOLARES,
+		INGRESO_BENEFICIO_COMPRA_DOLARES
+	}
 
 	public class Catalogo_Cuentas : EntityClass
 	{
@@ -152,7 +156,7 @@ namespace DataBaseModel
 		{
 			return GetCuenta(dbUser, Categoria_CuentasEnum.DESEMBOLSO_CONTRATOS, "EXTERNA");
 		}
-		
+
 		/*LA CUENTA QUE DEBE TOMAR ES LA CUENTA A DONDE LA EMPRESA REGISTRA QUE VIENE EL DINERO DE LOS RESIVOS, NORMALMENTE LOS CLIENTES, EXTERNA
 			* SI UN CLIENTE HACE UN PAGO QUE DEBE SER ANULADO EL DINERO DEBE REGRESAR A EL
 		*/
@@ -185,11 +189,11 @@ namespace DataBaseModel
 			return GetCuenta(dbUser, Categoria_CuentasEnum.CAJA_1, "PROPIA");
 		}
 
-			/*
-			* LA CUENTA QUE DEBE TOMAR ES LA CUENTA A DONDE LA EMPRESA REGISTRA QUE VIENE 
-				EL DINERO DE LAS FACTURAS QUE SE PAGAN A LOS PROVEEDORES, NORMALMENTE LOS CLIENTES, PROPIA
-			* SI UN PROVEEDOR SE LE HACE UNA FACTURA QUE DEBE SER ANULADO EL DINERO DEBE REGRESAR A ESTA CUENTA
-		*/
+		/*
+		* LA CUENTA QUE DEBE TOMAR ES LA CUENTA A DONDE LA EMPRESA REGISTRA QUE VIENE 
+			EL DINERO DE LAS FACTURAS QUE SE PAGAN A LOS PROVEEDORES, NORMALMENTE LOS CLIENTES, PROPIA
+		* SI UN PROVEEDOR SE LE HACE UNA FACTURA QUE DEBE SER ANULADO EL DINERO DEBE REGRESAR A ESTA CUENTA
+	*/
 		public static Catalogo_Cuentas? GetCuentaEgresoFacturasProveedor(Security_Users dbUser)
 		{
 			return GetCuenta(dbUser, Categoria_CuentasEnum.CAJA_1, "PROPIA");
@@ -203,16 +207,16 @@ namespace DataBaseModel
 			return GetCuenta(dbUser, Categoria_CuentasEnum.PAGOS_FACTURAS_PROVEEDORES, "EXTERNA");
 		}
 
-		
-        internal static Catalogo_Cuentas? GetCuentaCajaDolares(Security_Users dbUser)
-        {
-            return GetCuenta(dbUser, Categoria_CuentasEnum.CAJA_1, "PROPIA");
-        }
 
-        internal static Catalogo_Cuentas? GetCuentaCajaCordobas(Security_Users dbUser)
-        {
-            return GetCuenta(dbUser, Categoria_CuentasEnum.CAJA_1, "PROPIA");
-        }
+		internal static Catalogo_Cuentas? GetCuentaCajaDolares(Security_Users dbUser)
+		{
+			return GetCuenta(dbUser, Categoria_CuentasEnum.CAJA_1, "PROPIA");
+		}
+
+		internal static Catalogo_Cuentas? GetCuentaCajaCordobas(Security_Users dbUser)
+		{
+			return GetCuenta(dbUser, Categoria_CuentasEnum.CAJA_1, "PROPIA");
+		}
 
 
 		private static Catalogo_Cuentas? CrearCuentaSiNoExiste(Security_Users dbUser, int? idCategoria,
@@ -249,16 +253,16 @@ namespace DataBaseModel
 			return new Categoria_Cuentas { descripcion = categoria_CuentasEnum.ToString() }.Find<Categoria_Cuentas>()?.id_categoria;
 		}
 
-        internal static Catalogo_Cuentas? GetCuentaIngresoCompraDolares(Security_Users dbUser)
-        {
-            return GetCuenta(dbUser, Categoria_CuentasEnum.INGRESO_COMPRA_DOLARES, "EXTERNA");
-        }
+		internal static Catalogo_Cuentas? GetCuentaIngresoCompraDolares(Security_Users dbUser)
+		{
+			return GetCuenta(dbUser, Categoria_CuentasEnum.INGRESO_COMPRA_DOLARES, "EXTERNA");
+		}
 
-        internal static Catalogo_Cuentas? GetCuentaIngresoBeneficios(Security_Users dbUser)
-        {
-            return GetCuenta(dbUser, Categoria_CuentasEnum.CAJA_1, "INTERNA");
-        }
-    }
+		internal static Catalogo_Cuentas? GetCuentaIngresoBeneficios(Security_Users dbUser)
+		{
+			return GetCuenta(dbUser, Categoria_CuentasEnum.CAJA_1, "INTERNA");
+		}
+	}
 
 	public class Transaccion_Permitida
 	{
@@ -299,6 +303,8 @@ namespace DataBaseModel
 		public int? plazo_limite { get; set; }
 		public int? prioridad { get; set; }
 		public bool? isEditable { get; set; }
+		public bool? IsForVehiculo { get; set; }
+
 
 		[OneToMany(TableName = "Catalogo_Estados_Articulos", KeyColumn = "id_categoria", ForeignKeyColumn = "id_categoria")]
 		public List<Catalogo_Estados_Articulos>? Catalogo_Estados_Articulos { get; set; }

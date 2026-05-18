@@ -112,12 +112,12 @@ namespace Model
 
 			}
 			else if (valoracion.en_manos_de == EnManosDe.ACREEDOR
-			&& valoracion.Catalogo_Categoria.tipo.ToUpper() != "Vehículos".ToUpper())
+			&& valoracion.Catalogo_Categoria?.IsForVehiculo != true)
 			{
 				Transaction_Contratos.tipo = Contratos_Type.EMPENO;
 			}
 			else if (valoracion.en_manos_de == EnManosDe.ACREEDOR
-			 && valoracion.Catalogo_Categoria.tipo.ToUpper() == "Vehículos".ToUpper())
+			 && valoracion.Catalogo_Categoria?.IsForVehiculo == true)
 			{
 
 				Transaction_Contratos.tipo = Contratos_Type.EMPENO_VEHICULO;

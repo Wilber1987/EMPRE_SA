@@ -4,7 +4,8 @@ import { EntityClass } from "../../../WDevCore/WModules/EntityClass.js";
 import { ModelProperty } from "../../../WDevCore/WModules/CommonModel.js";
 import { Cat_Almacenes_ModelComponent } from './Cat_Almacenes_ModelComponent.js'
 import { Detalle_Compra_ModelComponent } from './Detalle_Compra_ModelComponent.js'
-import { Transactional_Valoracion_ModelComponent } from "../../../FrontModel/DBODataBaseModel.js";
+
+import {Transactional_Valoracion_ModelComponent} from "../../../FrontModel/Transaction_Valoracion.js";
 class Tbl_Lotes_ModelComponent extends EntityClass {
     constructor(props) {
         super(props, 'TransactionLotes');

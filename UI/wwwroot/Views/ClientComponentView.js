@@ -1,5 +1,4 @@
 //@ts-check
-import { Catalogo_Clientes, Condicion_Laboral_Cliente } from "../FrontModel/DBODataBaseModel.js";
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js";
 import { ModalMessage } from "../WDevCore/WComponents/ModalMessage.js";
 import { ModalVericateAction } from "../WDevCore/WComponents/ModalVericateAction.js";
@@ -9,6 +8,8 @@ import { WForm } from "../WDevCore/WComponents/WForm.js";
 import { ComponentsManager, WRender } from "../WDevCore/WModules/WComponentsTools.js";
 import { WOrtograficValidation } from "../WDevCore/WModules/WOrtograficValidation.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
+import {Condicion_Laboral_Cliente, Catalogo_Clientes_ModelComponent} from "../FrontModel/ClientesModel.js";
+
 class ClientComponentView extends HTMLElement {
     constructor(cliente) {
         super();
@@ -16,7 +17,7 @@ class ClientComponentView extends HTMLElement {
         this.Draw();
     }
 
-    ModelCliente = new Catalogo_Clientes();
+    ModelCliente = new Catalogo_Clientes_ModelComponent();
     ModelDatosLaborales = new Condicion_Laboral_Cliente();
 
     Draw = async () => {
@@ -74,8 +75,8 @@ class ClientComponentView extends HTMLElement {
 
                 this.append(ModalVericateAction(async () => {
                     if (this.cliente.codigo_cliente == null || this.cliente.codigo_cliente == undefined) {
-                        ///**@type {Catalogo_Clientes} */
-                        const result = await new Catalogo_Clientes(this.cliente).Save();
+                        ///**@type {Catalogo_Clientes_ModelComponent} */
+                        const result = await new Catalogo_Clientes_ModelComponent(this.cliente).Save();
 
                         if (result?.codigo_cliente != null) {
                             this.cliente.codigo_cliente = result?.codigo_cliente;
@@ -87,7 +88,7 @@ class ClientComponentView extends HTMLElement {
                             this.append(ModalMessage("Error al guardar intentelo nuevamente"));
                         }
                     } else {
-                        const result = await new Catalogo_Clientes(this.cliente).Update();
+                        const result = await new Catalogo_Clientes_ModelComponent(this.cliente).Update();
                         this.append(ModalMessage(WOrtograficValidation.es(result.message)));
                     }
                 }, "¿Desea guardar los datos?"));

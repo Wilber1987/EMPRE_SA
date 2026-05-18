@@ -37,9 +37,9 @@ ELIMINAR DATOS DE PRUEBA:
 delete from Detail_Prendas_Vehiculos;
 delete from Detail_Prendas;
 DELETE from Detalle_Factura_Recibo;
-DELETE from Tbl_Cuotas;
+DELETE from Tbl_Cuotas_ModelComponent;
 DELETE from Transaction_Contratos;
-DELETE  from Catalogo_Clientes where codigo_cliente  < 4000;
+DELETE  from Catalogo_Clientes_ModelComponent where codigo_cliente  < 4000;
 delete from Detail_Movimiento;
 delete from  Transaction_Movimiento;
 delete from Detalle_Factura_Recibo;

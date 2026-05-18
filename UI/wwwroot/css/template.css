@@ -137,21 +137,24 @@ body {
 }
 
 #Aside a {
-    padding: 10px 10px 10px 30px;
+    padding: 5px 5px 5px 30px;
     display: block;
     color: var(--font-fourth-color);
     cursor: pointer;
     text-decoration: none;
     font-weight: 600;
-    text-transform: uppercase;
-
+    text-transform: lowercase;
     margin: 0px;
     font-weight: 500;
-    font-size: 11px;
+    font-size: 0.85rem;
     line-height: 1.43;
     display: block;
     white-space: nowrap;
 
+}
+
+#Aside a::first-letter {
+    text-transform: uppercase;
 }
 
 #Aside a.active {

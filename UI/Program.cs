@@ -67,7 +67,8 @@ builder.Services.AddCronJob<DailyCronJob>(options =>
 
 var app = builder.Build();
 new BDConnection().IniciarMainConecction(app.Environment.IsDevelopment());
-SystemConfig.isDebug = true;
+new ContractServices().Vencimientos();
+SystemConfig.isDebug = app.Environment.IsDevelopment();
 //Inicializar parametros
 Transactional_Configuraciones.GetPorcentageMinimoPagoApartadoMensual();
 // builder.Services.AddSession(options =>

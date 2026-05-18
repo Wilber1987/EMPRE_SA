@@ -198,3 +198,150 @@
    at System.Data.Common.DbDataAdapter.Fill(DataSet dataSet)
    at APPCORE.GDatosAbstract.<>c__DisplayClass37_0.<TraerDatosSQL>b__0() in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\BDCore\Abstracts\GDatosAbstract.cs:line 327
    at APPCORE.GDatosAbstract.ExecuteWithRetry(Func`1 operation, Int32 maxRetries) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\BDCore\Abstracts\GDatosAbstract.cs:line 242
+[5/17/2026 4:15:40 PM] ERROR: Max retries reached. Operation failed.: Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite, String method)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior)
+   at System.Data.SqlClient.SqlCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   at APPCORE.GDatosAbstract.<>c__DisplayClass36_0.<TraerDatosSQL>b__0() in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\BDCore\Abstracts\GDatosAbstract.cs:line 364
+   at APPCORE.GDatosAbstract.ExecuteWithRetry(Func`1 operation, Int32 maxRetries) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\BDCore\Abstracts\GDatosAbstract.cs:line 312
+[5/17/2026 4:15:40 PM] Transaction failed and connection restarted.: Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite, String method)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior)
+   at System.Data.SqlClient.SqlCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   at APPCORE.GDatosAbstract.<>c__DisplayClass36_0.<TraerDatosSQL>b__0() in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\BDCore\Abstracts\GDatosAbstract.cs:line 364
+   at APPCORE.GDatosAbstract.ExecuteWithRetry(Func`1 operation, Int32 maxRetries) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\BDCore\Abstracts\GDatosAbstract.cs:line 312
+[5/17/2026 4:15:40 PM] Transaction failed and connection restarted.: Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite, String method)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior)
+   at System.Data.SqlClient.SqlCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   at APPCORE.GDatosAbstract.<>c__DisplayClass36_0.<TraerDatosSQL>b__0() in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\BDCore\Abstracts\GDatosAbstract.cs:line 364
+   at APPCORE.GDatosAbstract.ExecuteWithRetry(Func`1 operation, Int32 maxRetries) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\BDCore\Abstracts\GDatosAbstract.cs:line 312
+   at APPCORE.GDatosAbstract.TraerDatosSQL(String queryString, IDbConnection dbConnection, IDbTransaction dbTransaction, List`1 parameters) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\BDCore\Abstracts\GDatosAbstract.cs:line 356
+   at APPCORE.BDCore.Abstracts.WDataMapper.BuildTable(EntityClass Inst, String& CondSQL, Boolean isSimpleFind) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\BDCore\DataMapper.cs:line 560
+[5/17/2026 4:15:40 PM] ERROR: BuildTable 
+
+ Transaction_Contratos 
+
+ @tipo_1 = EMPENO
+@tipo_2 = EMPENO_VEHICULO
+@estado_3 = ACTIVO 
+ SELECT  numero_contrato,fecha_contrato,fecha_cancelar,monto,interes,mora,estado,fecha_vencimiento,codigo_cliente,saldo,abonos,tipo,observaciones,iva,descuento,taza_cambio,taza_cambio_compra,plazo,cuotafija,tasa_hoy,motivo_anulacion,Valoracion_compra_dolares,Valoracion_compra_cordobas,Valoracion_empeño_cordobas,Valoracion_empeño_dolares,tasas_interes,gestion_crediticia,cuotafija_dolares,fecha,total_pagar_cordobas,total_pagar_dolares,interes_dolares,Id_User,reestructurado, DesgloseIntereses = JSON_QUERY(DesgloseIntereses), Notas = JSON_QUERY(Notas),Catalogo_Clientes = JSON_QUERY((SELECT  hora,tipoc,valor_cliente,solo_acreedor,promedio,id_clasificacion,id_clasificacion_interes,Catalogo_Clasificacion_Cliente = JSON_QUERY((SELECT  id_clasificacion,Descripcion,Estado FROM dbo.Catalogo_Clasificacion_Cliente as MNS_R_A_D   IsDeleted != 1  AND   id_clasificacion = ZCW_O_H_L.id_clasificacion  ORDER BY id_clasificacion DESC FOR JSON PATH,  ROOT('object')),'$.object[0]'),Catalogo_Clasificacion_Interes = JSON_QUERY((SELECT  id_clasificacion_interes,Descripcion,Estado,porcentaje FROM dbo.Catalogo_Clasificacion_Interes as RNL_E_S_E   IsDeleted != 1  AND   id_clasificacion_interes = ZCW_O_H_L.id_clasificacion_interes  ORDER BY id_clasificacion_interes DESC FOR JSON PATH,  ROOT('object')),'$.object[0]'),codigo_cliente,primer_nombre,segundo_nombre,primer_apellido,segundo_apellidio,id_tipo_identificacion,identificacion,sexo,fecha_nacimiento,id_profesion,id_departamento,id_municipio,correo,telefono,direccion,fecha,observaciones,estado_civil,tipo_firma,operadora_celular,Catalogo_Departamento = JSON_QUERY((SELECT  id_departamento,nombre,id_nacionalidad,ponderacion,puntaje,clasificacion,Catalogo_Nacionalidad = JSON_QUERY((SELECT  id_nacionalidad,nombre,nacionalidad,ponderacion,puntaje,clasificacion FROM dbo.Catalogo_Nacionalidad as KXY_E_O_V   IsDeleted != 1  AND   id_nacionalidad = IGM_W_L_P.id_nacionalidad  ORDER BY id_nacionalidad DESC FOR JSON PATH,  ROOT('object')),'$.object[0]') FROM dbo.Catalogo_Departamento as IGM_W_L_P   IsDeleted != 1  AND   id_departamento = ZCW_O_H_L.id_departamento  ORDER BY id_departamento DESC FOR JSON PATH,  ROOT('object')),'$.object[0]'),Catalogo_Municipio = JSON_QUERY((SELECT  id_municipio,nombre,id_departamento,Catalogo_Departamento = JSON_QUERY((SELECT  id_departamento,nombre,id_nacionalidad,ponderacion,puntaje,clasificacion FROM dbo.Catalogo_Departamento as UUH_Z_T_X   IsDeleted != 1  AND   id_departamento = JGE_E_Q_J.id_departamento  ORDER BY id_departamento DESC FOR JSON PATH,  ROOT('object')),'$.object[0]') FROM dbo.Catalogo_Municipio as JGE_E_Q_J   IsDeleted != 1  AND   id_municipio = ZCW_O_H_L.id_municipio  ORDER BY id_municipio DESC FOR JSON PATH,  ROOT('object')),'$.object[0]'),Catalogo_Profesiones = JSON_QUERY((SELECT  id_profesion,nombre FROM dbo.Catalogo_Profesiones as LMJ_W_G_C   IsDeleted != 1  AND   id_profesion = ZCW_O_H_L.id_profesion  ORDER BY id_profesion DESC FOR JSON PATH,  ROOT('object')),'$.object[0]'),Catalogo_Tipo_Identificacion = JSON_QUERY((SELECT  id_tipo_identificacion,Descripcion,Estado FROM dbo.Catalogo_Tipo_Identificacion as ZML_M_F_G   IsDeleted != 1  AND   id_tipo_identificacion = ZCW_O_H_L.id_tipo_identificacion  ORDER BY id_tipo_identificacion DESC FOR JSON PATH,  ROOT('object')),'$.object[0]'),Condicion_Laboral_Cliente = (SELECT  id,id_cliente,fecha_ingreso,ocupacion_cargo,ingresos_mensuales,direccion,id_municipio,id_departamento,nombre_empresa,Catalogo_Clientes = JSON_QUERY((SELECT  codigo_cliente,primer_nombre,segundo_nombre,primer_apellido,segundo_apellidio,id_tipo_identificacion,identificacion,sexo,fecha_nacimiento,id_profesion,id_departamento,id_municipio,correo,telefono,direccion,fecha,observaciones,estado_civil,tipo_firma,operadora_celular FROM dbo.Catalogo_Clientes as NUP_D_J_L   IsDeleted != 1  AND   codigo_cliente = HIF_R_E_T.id_cliente  ORDER BY codigo_cliente DESC FOR JSON PATH,  ROOT('object')),'$.object[0]'),Catalogo_Departamento = JSON_QUERY((SELECT  id_departamento,nombre,id_nacionalidad,ponderacion,puntaje,clasificacion FROM dbo.Catalogo_Departamento as DVS_Q_U_V   IsDeleted != 1  AND   id_departamento = HIF_R_E_T.id_departamento  ORDER BY id_departamento DESC FOR JSON PATH,  ROOT('object')),'$.object[0]'),Catalogo_Municipio = JSON_QUERY((SELECT  id_municipio,nombre,id_departamento FROM dbo.Catalogo_Municipio as IMJ_G_S_Q   IsDeleted != 1  AND   id_municipio = HIF_R_E_T.id_municipio  ORDER BY id_municipio DESC FOR JSON PATH,  ROOT('object')),'$.object[0]') FROM dbo.Condicion_Laboral_Cliente as HIF_R_E_T   IsDeleted != 1  AND   id_cliente = ZCW_O_H_L.codigo_cliente  ORDER BY id DESC FOR JSON PATH) FROM dbo.Catalogo_Clientes as ZCW_O_H_L   IsDeleted != 1  AND   codigo_cliente = BBK_K_H_W.codigo_cliente  ORDER BY codigo_cliente DESC FOR JSON PATH,  ROOT('object')),'$.object[0]'),Security_Users = JSON_QUERY((SELECT  Id_Sucursal,Id_User,Nombres,Estado,Descripcion,Password,Mail,Token,Token_Date,Token_Expiration_Date,Security_Users_Roles = (SELECT  Id_Role,Id_User,Estado,Security_Role = JSON_QUERY((SELECT  Id_Role,Descripcion,Estado FROM security.Security_Roles as ZGS_V_G_L   IsDeleted != 1  AND   Id_Role = NFM_Z_W_A.Id_Role  ORDER BY Id_Role DESC FOR JSON PATH,  ROOT('object')),'$.object[0]') FROM security.Security_Users_Roles as NFM_Z_W_A   IsDeleted != 1  AND   Id_User = EGR_H_T_X.Id_User  ORDER BY Id_Role DESC FOR JSON PATH),Tbl_Profiles = (SELECT  Id_Perfil,Nombres,Apellidos,FechaNac,IdUser,Sexo,Foto,DNI,Correo_institucional,Estado FROM security.Tbl_Profile as AON_P_X_B   IsDeleted != 1  AND   IdUser = EGR_H_T_X.Id_User  ORDER BY Id_Perfil DESC FOR JSON PATH) FROM security.Security_Users as EGR_H_T_X   IsDeleted != 1  AND   Id_User = BBK_K_H_W.Id_User  ORDER BY Id_User DESC FOR JSON PATH,  ROOT('object')),'$.object[0]'),Detail_Prendas = (SELECT  numero_prenda,numero_contrato_OLD,Descripcion,monto_aprobado_cordobas,monto_aprobado_dolares,Tipo,marca,serie,modelo,iva,margen,estado,interesl,moral,fliquidacion,precio_venta,en_manos_de,color,factura,tipo_movimiento,v_porcentage_etiqueta,id_categoria,id_valoracion,numero_contrato,Detail_Prendas_Vehiculos = JSON_QUERY((SELECT  numero_prenda,capacidad_cilindros,cantidad_cilindros,cantidad_pasajeros,year_vehiculo,montor,chasis,placa,circuacion,defectuoso,fecha_aut_descuento,defecto,porcentage_descuento_maximo,uso,servicio,fecha_seguro,combustible FROM dbo.Detail_Prendas_Vehiculos as QXV_L_Q_V   IsDeleted != 1  AND   numero_prenda = RBK_P_F_F.numero_prenda  ORDER BY numero_prenda DESC FOR JSON PATH,  ROOT('object') ),'$.object[0]'),Catalogo_Categoria = JSON_QUERY((SELECT  id_categoria,tipo,descripcion,plazo_limite,prioridad,isEditable,Catalogo_Estados_Articulos = (SELECT  id_estado_articulo,nombre,descripcion,porcentaje_compra,porcentaje_empeno,id_categoria FROM dbo.Catalogo_Estados_Articulos as AIQ_F_Q_R   IsDeleted != 1  AND   id_categoria = OYK_B_S_Y.id_categoria  ORDER BY id_estado_articulo DESC FOR JSON PATH) FROM dbo.Catalogo_Categoria as OYK_B_S_Y   IsDeleted != 1  AND   id_categoria = RBK_P_F_F.id_categoria  ORDER BY id_categoria DESC FOR JSON PATH,  ROOT('object')),'$.object[0]'),Transactional_Valoracion = JSON_QUERY((SELECT  id_valoracion,Descripcion,Marca,Serie,Modelo,Tasa_interes,Plazo,Fecha,Tasa_de_cambio,id_estado,id_categoria,Valoracion_compra_cordobas,Valoracion_compra_dolares,Valoracion_empeño_cordobas,Valoracion_empeño_dolares,Precio_venta_empeño_cordobas,Precio_venta_empeño_dolares,Catalogo_Estados_Articulos = JSON_QUERY((SELECT  id_estado_articulo,nombre,descripcion,porcentaje_compra,porcentaje_empeno,id_categoria FROM dbo.Catalogo_Estados_Articulos as RHR_F_K_W   IsDeleted != 1  AND   id_estado_articulo = HRJ_T_I_I.id_estado  ORDER BY id_estado_articulo DESC FOR JSON PATH,  ROOT('object')),'$.object[0]'),Catalogo_Categoria = JSON_QUERY((SELECT  id_categoria,tipo,descripcion,plazo_limite,prioridad,isEditable FROM dbo.Catalogo_Categoria as JKP_T_G_K   IsDeleted != 1  AND   id_categoria = HRJ_T_I_I.id_categoria  ORDER BY id_categoria DESC FOR JSON PATH,  ROOT('object')),'$.object[0]'),Detail_Valores = JSON_QUERY((SELECT  id_valoracion,Valoracion_1,Valoracion_2,Valoracion_3,dolares_1,dolares_2,dolares_3 FROM dbo.Detail_Valores as GTA_X_C_U   IsDeleted != 1  AND   id_valoracion = HRJ_T_I_I.id_valoracion  ORDER BY id_valoracion DESC FOR JSON PATH,  ROOT('object') ),'$.object[0]') FROM dbo.Transactional_Valoracion as HRJ_T_I_I   IsDeleted != 1  AND   id_valoracion = RBK_P_F_F.id_valoracion  ORDER BY id_valoracion DESC FOR JSON PATH,  ROOT('object')),'$.object[0]') FROM dbo.Detail_Prendas as RBK_P_F_F   IsDeleted != 1  AND   numero_contrato = BBK_K_H_W.numero_contrato  ORDER BY numero_prenda DESC FOR JSON PATH),Tbl_Cuotas = (SELECT  id_cuota,fecha,total,interes,abono_capital,capital_restante,mora,fecha_pago,pago_contado,descuento,tasa_cambio,numero_contrato,Estado,Transaction_Contratos = JSON_QUERY((SELECT  numero_contrato,fecha_contrato,fecha_cancelar,monto,interes,mora,estado,fecha_vencimiento,codigo_cliente,saldo,abonos,tipo,observaciones,iva,descuento,taza_cambio,taza_cambio_compra,plazo,cuotafija,tasa_hoy,motivo_anulacion,Valoracion_compra_dolares,Valoracion_compra_cordobas,Valoracion_empeño_cordobas,Valoracion_empeño_dolares,tasas_interes,gestion_crediticia,cuotafija_dolares,fecha,total_pagar_cordobas,total_pagar_dolares,interes_dolares,Id_User,reestructurado, DesgloseIntereses = JSON_QUERY(DesgloseIntereses), Notas = JSON_QUERY(Notas),Catalogo_Clientes = JSON_QUERY((SELECT  hora,tipoc,valor_cliente,solo_acreedor,promedio,id_clasificacion,id_clasificacion_interes,codigo_cliente,primer_nombre,segundo_nombre,primer_apellido,segundo_apellidio,id_tipo_identificacion,identificacion,sexo,fecha_nacimiento,id_profesion,id_departamento,id_municipio,correo,telefono,direccion,fecha,observaciones,estado_civil,tipo_firma,operadora_celular FROM dbo.Catalogo_Clientes as OXU_U_S_Z   IsDeleted != 1  AND   codigo_cliente = RTS_K_P_Z.codigo_cliente  ORDER BY codigo_cliente DESC FOR JSON PATH,  ROOT('object')),'$.object[0]'),Security_Users = JSON_QUERY((SELECT  Id_Sucursal,Id_User,Nombres,Estado,Descripcion,Password,Mail,Token,Token_Date,Token_Expiration_Date FROM security.Security_Users as ZOB_I_V_T   IsDeleted != 1  AND   Id_User = RTS_K_P_Z.Id_User  ORDER BY Id_User DESC FOR JSON PATH,  ROOT('object')),'$.object[0]'),Detail_Prendas = (SELECT  numero_prenda,numero_contrato_OLD,Descripcion,monto_aprobado_cordobas,monto_aprobado_dolares,Tipo,marca,serie,modelo,iva,margen,estado,interesl,moral,fliquidacion,precio_venta,en_manos_de,color,factura,tipo_movimiento,v_porcentage_etiqueta,id_categoria,id_valoracion,numero_contrato FROM dbo.Detail_Prendas as LHG_E_G_R   IsDeleted != 1  AND   numero_contrato = RTS_K_P_Z.numero_contrato  ORDER BY numero_prenda DESC FOR JSON PATH),Tbl_Cuotas = (SELECT  id_cuota,fecha,total,interes,abono_capital,capital_restante,mora,fecha_pago,pago_contado,descuento,tasa_cambio,numero_contrato,Estado FROM dbo.Tbl_Cuotas as XCA_S_L_K   IsDeleted != 1  AND   numero_contrato = RTS_K_P_Z.numero_contrato  ORDER BY id_cuota DESC FOR JSON PATH) FROM dbo.Transaction_Contratos as RTS_K_P_Z   IsDeleted != 1  AND   numero_contrato = QFJ_D_H_Q.numero_contrato  ORDER BY numero_contrato DESC FOR JSON PATH,  ROOT('object')),'$.object[0]') FROM dbo.Tbl_Cuotas as QFJ_D_H_Q   IsDeleted != 1  AND   numero_contrato = BBK_K_H_W.numero_contrato  ORDER BY id_cuota DESC FOR JSON PATH) FROM dbo.Transaction_Contratos as BBK_K_H_W   WHERE  (  tipo  =  @tipo_1  or  tipo  =  @tipo_2 )  AND  estado  =  @estado_3    ORDER BY numero_contrato DESC: Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+Incorrect syntax near 'IsDeleted'.
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite, String method)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior)
+   at System.Data.SqlClient.SqlCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   at APPCORE.GDatosAbstract.<>c__DisplayClass36_0.<TraerDatosSQL>b__0() in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\BDCore\Abstracts\GDatosAbstract.cs:line 364
+   at APPCORE.GDatosAbstract.ExecuteWithRetry(Func`1 operation, Int32 maxRetries) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\BDCore\Abstracts\GDatosAbstract.cs:line 312
+   at APPCORE.GDatosAbstract.TraerDatosSQL(String queryString, IDbConnection dbConnection, IDbTransaction dbTransaction, List`1 parameters) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\BDCore\Abstracts\GDatosAbstract.cs:line 356
+   at APPCORE.BDCore.Abstracts.WDataMapper.BuildTable(EntityClass Inst, String& CondSQL, Boolean isSimpleFind) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\BDCore\DataMapper.cs:line 560

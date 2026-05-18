@@ -4,19 +4,28 @@ import { WRender, ComponentsManager } from "../WDevCore/WModules/WComponentsTool
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js"
 // @ts-ignore
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js"
-import { Catalogo_Clientes, Notas_de_contrato, Transaction_Contratos_ModelComponent, Transactional_Valoracion_ModelComponent } from "../FrontModel/DBODataBaseModel.js"
 // @ts-ignore
 import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
-import { Tbl_Cuotas, Transaction_Contratos, ValoracionesTransaction } from "../FrontModel/Model.js";
-import { Tbl_Cuotas_ModelComponent } from "../FrontModel/ModelComponents.js";
+import { Tbl_Cuotas_ModelComponent } from "../FrontModel/Tbl_Cuotas_ModelComponent.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { WDetailObject } from "../WDevCore/WComponents/WDetailObject.js";
 import { FilterData } from "../WDevCore/WModules/CommonModel.js";
 import { ModalMessage } from "../WDevCore/WComponents/ModalMessage.js";
 import { DateTime } from "../WDevCore/WModules/Types/DateTime.js";
 import { SystemConfigs } from "../Services/SystemConfigs.js";
+import {Transactional_Valoracion_ModelComponent} from "../FrontModel/Transaction_Valoracion.js";
+import {
+    Notas_de_contrato,
+    Transaction_Contratos,
+    Transaction_Contratos_ModelComponent
+} from "../FrontModel/Transaction_Contratos.js";
+import { Catalogo_Clientes, Catalogo_Clientes_ModelComponent } from "../FrontModel/ClientesModel.js";
 class ValoracionesSearch extends HTMLElement {
-    constructor(/** @type {Function} */ action,/** @type {Function|undefined} */ secondAction,/** @type {Boolean} */ onlyValids = false) {
+    /**
+     * @param {(valoracion: import("../FrontModel/Transaction_Valoracion.js").Transactional_Valoracion) => Promise<void>} action
+     * @param {undefined} [secondAction]
+     */
+    constructor( action, secondAction, onlyValids = false) {
         super();
         this.TabContainer = WRender.Create({ className: "TabContainer", id: 'TabContainer' });
         this.Manager = new ComponentsManager({ MainContainer: this.TabContainer, SPAManage: false });
@@ -58,7 +67,7 @@ class ValoracionesSearch extends HTMLElement {
             Dataset: dataset,
             ModelObject: model,
             Display: true,
-            FilterFunction: (DFilt) => {
+            FilterFunction: (/** @type {any[]} */ DFilt) => {
                 // @ts-ignore
                 this.MainComponent.Dataset = DFilt.map(x => {
                     // @ts-ignore
@@ -82,13 +91,15 @@ customElements.define('w-component', ValoracionesSearch);
 export { ValoracionesSearch }
 /**
  * 
- * @param { Array } actions 
+ * @param { Array<Object<String, any>> } actions 
  * @returns { HTMLElement }
  */
 const clientSearcher = (actions) => {
     const model = new Catalogo_Clientes();
     const TableComponent = new WTableComponent({
-        ModelObject: model,  Options: {
+        ModelObject: new  Catalogo_Clientes_ModelComponent(),  
+        EntityModel: model,  
+        Options: {
             Filter: true,
             FilterDisplay: true,
             UserActions: actions
@@ -108,7 +119,7 @@ const contratosSearcher = (action, anularAction, withNotas = false) => {
     const model = new Transaction_Contratos_ModelComponent();
     model.Tbl_Cuotas.ModelObject = () => new Tbl_Cuotas_ModelComponent({
         Estado: {
-            type: "operation", action: (/** @type {Tbl_Cuotas} */ cuota) => {
+            type: "operation", action: (/** @type {Tbl_Cuotas_ModelComponent} */ cuota) => {
                 if (cuota.total == cuota.pago_contado) {
                     return "CANCELADA";
                 } else if (cuota.pago_contado > 0) {

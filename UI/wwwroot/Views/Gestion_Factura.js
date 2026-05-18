@@ -3,7 +3,7 @@
 import { ComponentsManager, WRender, html } from "../WDevCore/WModules/WComponentsTools.js";
 // @ts-ignore
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js";
-//import {  Catalogo_Cambio_Dolar, Catalogo_Clientes,  Detail_Prendas_Vehiculos_ModelComponent, Transaction_Contratos_ModelComponent } from "../FrontModel/DBODataBaseModel.js"
+//import {  Catalogo_Cambio_Dolar, Catalogo_Clientes_ModelComponent,  Detail_Prendas_Vehiculos_ModelComponent, Transaction_Contratos_ModelComponent } from "../FrontModel/DBODataBaseModel.js"
 //import {  Detalle_Factura, Tbl_Factura, Detail_Factura_ModelComponent, Cat_Proveedor  } from "../FrontModel/FacturacionModel.js"
 // @ts-ignore
 import { Tbl_Compra_ModelComponent } from "../Facturacion/FrontModel/ModelComponent/Tbl_Compra_ModelComponent.js";

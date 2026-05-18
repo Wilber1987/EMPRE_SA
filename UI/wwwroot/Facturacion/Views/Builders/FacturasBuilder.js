@@ -1,6 +1,5 @@
 //@ts-check
 
-import { Transaction_Contratos } from "../../../FrontModel/Model.js";
 import { DateTime } from "../../../WDevCore/WModules/Types/DateTime.js";
 import { ConvertToMoneyString, html, WRender } from "../../../WDevCore/WModules/WComponentsTools.js";
 import { WOrtograficValidation } from "../../../WDevCore/WModules/WOrtograficValidation.js";
@@ -10,6 +9,7 @@ import { Detalle_Factura } from "../../FrontModel/Detalle_Factura.js";
 import { DocumentsData } from "../../FrontModel/DocumentsData.js";
 import { Tbl_Compra } from "../../FrontModel/Tbl_Compra.js";
 import { Tbl_Factura } from "../../FrontModel/Tbl_Factura.js";
+import {Transaction_Contratos} from "../../../FrontModel/Transaction_Contratos.js";
 
 export class FacturasBuilder {
     /**

@@ -131,7 +131,7 @@ namespace DataBaseModel
 		public string? modelo { get; set; }
 		public string? iva { get; set; }
 		public string? margen { get; set; }
-		public string? estado { get; set; }
+		public EstadoEnum? estado { get; set; }
 		public decimal? interesl { get; set; }
 		public decimal? moral { get; set; }
 		public DateTime? fliquidacion { get; set; }
