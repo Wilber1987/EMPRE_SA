@@ -826,7 +826,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
 		this.valoracionesForm.FormObject.Precio_venta_empeño_dolares = (precio_venta_empeño / this.tasasCambio[0].Valor_de_venta)
 		// @ts-ignore
 		//const moraDolares =  mora / this.tasasCambio[0].Valor_de_venta;    
-		this.ValoracionesResumenData?.append(html`<button class="Block-Secundary" onclick="${() => {
+		this.ValoracionesResumenData?.append(html`<button class="Block-Secundary btnBeneficio" onclick="${() => {
 			const beneficios = html`<div>
 					<div class= "column-venta" >
 						<h3>VENTA DE COMPRA</h3>
@@ -847,9 +847,30 @@ class Transaction_Valoraciones_View extends HTMLElement {
 				ObjectModal: beneficios
 			}))
 		}}">Beneficio</button>`);
+		this.ValoracionesResumenData?.append(html`<button class="Block-Secundary" onclick="${() => {
+			this.printDocument('/documents/formatoInspeccionAutos.html');
+		}}">F/Autos</button>`)
+		this.ValoracionesResumenData?.append(html`<button class="Block-Secundary" onclick="${() => {
+			this.printDocument('/documents/formatoInspeccionMotos.html');
+		}}">F/Motos</button>`)
 		this.multiSelectEstadosArticulos?.SetOperationValues();
 		this.UpdateEstadosArticulos(this.valoracionSeleccionada)
 	}
+	printDocument = (/** @type {string | URL | undefined} */ url) => {
+		const printWindow = window.open(url, '_blank');
+
+		if (!printWindow) return;
+
+		printWindow.onload = () => {
+			printWindow.focus();
+			printWindow.print();
+
+			// opcional: cerrar después
+			printWindow.onafterprint = () => {
+				printWindow.close();
+			};
+		};
+	};
 	/**
 	 * 
 	 * @returns {ValoracionesTransaction}
@@ -1019,7 +1040,16 @@ class Transaction_Valoraciones_View extends HTMLElement {
 			border-radius: 10px;
 			border:  solid 1px #bcbdbd;;
 			padding: 10px 30px 10px 10px;
-		}    
+		}   
+		.valoracion-resumen-data {
+			display: grid;
+			grid-template-columns: repeat(2, 1fr);
+			gap: 5px;
+		} 
+		.btnBeneficio {
+			grid-column: span 2;
+			max-width: unset !important;
+		}
 	`
 }
 customElements.define('w-valoraciones-view', Transaction_Valoraciones_View);
