@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caja General - Sistema de Transacciones</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/@fontsource/inter@5.0.19/index.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        #processingInterface {
+            display: grid;
+            grid-template-columns: calc(100% - 520px) 500px;
+            gap: 10px;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .denom-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Custom scrollbar for clean look */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 text-slate-800 h-screen flex flex-col overflow-hidden">
+
+    <!-- Header -->
+    <header class="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between shadow-sm z-10">
+        <div class="flex items-center gap-3">
+            <div class="bg-blue-600 text-white p-2 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </div>
+            <div>
+                <h1 class="text-xl font-bold text-slate-900">Caja General</h1>
+                <p class="text-xs text-slate-500">Sistema de Gestión de Desembolsos e Ingresos</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <div class="text-right hidden sm:block">
+                <p class="text-sm font-semibold text-slate-700">Cajero: Will</p>
+                <p class="text-xs text-slate-500">Turno: Mañana</p>
+            </div>
+            <div class="h-10 w-10 bg-slate-200 rounded-full flex items-center justify-center text-slate-600 font-bold">W
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 overflow-hidden flex flex-col lg:flex-row">
+
+        <!-- Left Panel: Order List -->
+        <aside class="w-full lg:w-1/5 bg-white border-r border-slate-200 flex flex-col">
+            <div class="p-4 border-b border-slate-100">
+                <div class="relative">
+                    <input type="text" id="searchInput" placeholder="Buscar por código de orden..."
+                        class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-400 absolute left-3 top-2.5"
+                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </div>
+            </div>
+            <div class="flex-1 overflow-y-auto p-4 space-y-3" id="orderListContainer">
+                <!-- Orders injected via JS -->
+            </div>
+        </aside>
+
+        <!-- Right Panel: Processing Area -->
+        <section class="flex-1 bg-slate-50 overflow-y-auto p-4 lg:p-8 relative">
+
+            <!-- Empty State -->
+            <div id="emptyState" class="h-full flex flex-col items-center justify-center text-slate-400">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-4 opacity-50" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                </svg>
+                <p class="text-lg font-medium">Seleccione una orden para procesar</p>
+                <p class="text-sm">Las órdenes pendientes aparecen en el panel izquierdo.</p>
+            </div>
+
+            <!-- Processing Interface -->
+            <div id="processingInterface" class="hidden  mx-auto space-y-6 fade-in">
+
+                <div class="transactionData">
+                    <!-- Order Header Card -->
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span id="orderTypeBadge"
+                                        class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">EMPEÑO</span>
+                                    <span id="orderDirectionBadge"
+                                        class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-800">DESEMBOLSO</span>
+                                </div>
+                                <h2 class="text-2xl font-bold text-slate-900" id="orderIdDisplay">EMP-2026-001</h2>
+                                <p class="text-slate-500 text-sm flex items-center gap-1 mt-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                    </svg>
+                                    <span id="clientNameDisplay">Juan Pérez</span>
+                                </p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm text-slate-500">Monto Base de la Orden</p>
+                                <p class="text-3xl font-bold text-slate-900" id="baseAmountDisplay">$100.00 USD</p>
+                            </div>
+                        </div>
+                        <div
+                            class="bg-slate-50 rounded-lg p-3 border border-slate-200 text-sm text-slate-600 flex items-start gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0"
+                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span>Esta orden fue generada en SAC. El monto original está en USD. Seleccione el método de
+                                liquidación a continuación.</span>
+                        </div>
+                    </div>
+
+                    <!-- Liquidation Method Selection -->
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                        <h3 class="text-lg font-semibold text-slate-900 mb-4">1. Método de Liquidación</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <button onclick="app.setLiquidationMode('USD')" id="btnModeUSD"
+                                class="liquidation-btn p-4 rounded-lg border-2 border-slate-200 hover:border-blue-500 hover:bg-blue-50 transition-all text-left group">
+                                <div class="font-semibold text-slate-900 group-hover:text-blue-700">Solo Dólares (USD)
+                                </div>
+                                <div class="text-sm text-slate-500 mt-1">Entrega o cobro 100% en moneda estadounidense.
+                                </div>
+                            </button>
+                            <button onclick="app.setLiquidationMode('NIO')" id="btnModeNIO"
+                                class="liquidation-btn p-4 rounded-lg border-2 border-slate-200 hover:border-blue-500 hover:bg-blue-50 transition-all text-left group">
+                                <div class="font-semibold text-slate-900 group-hover:text-blue-700">Solo Córdobas (NIO)
+                                </div>
+                                <div class="text-sm text-slate-500 mt-1">Conversión total a moneda local (Tasa: <span
+                                        id="displayRate">36.50</span>).</div>
+                            </button>
+                            <button onclick="app.setLiquidationMode('MIXED')" id="btnModeMIXED"
+                                class="liquidation-btn p-4 rounded-lg border-2 border-slate-200 hover:border-blue-500 hover:bg-blue-50 transition-all text-left group">
+                                <div class="font-semibold text-slate-900 group-hover:text-blue-700">Mixto / Mesa
+                                    Cambiaria</div>
+                                <div class="text-sm text-slate-500 mt-1">Dividir el monto entre USD y NIO.</div>
+                            </button>
+                        </div>
+
+                        <!-- Mixed Mode Inputs -->
+                        <div id="mixedInputs"
+                            class="hidden mt-6 p-4 bg-amber-50 border border-amber-200 rounded-lg fade-in">
+                            <h4 class="text-sm font-semibold text-amber-900 mb-3 flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                                </svg>
+                                Distribución del Monto (Mesa Cambiaria)
+                            </h4>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-medium text-amber-800 mb-1">Monto a liquidar en
+                                        USD</label>
+                                    <div class="relative">
+                                        <span class="absolute left-3 top-2 text-slate-500">$</span>
+                                        <input type="number" id="mixedUsdAmount" step="0.01"
+                                            class="w-full pl-7 pr-3 py-2 border border-amber-300 rounded-md focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-sm"
+                                            oninput="app.updateMixedAmounts()">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-amber-800 mb-1">Monto a liquidar en
+                                        NIO</label>
+                                    <div class="relative">
+                                        <span class="absolute left-3 top-2 text-slate-500">C$</span>
+                                        <input type="number" id="mixedNioAmount" step="0.01"
+                                            class="w-full pl-7 pr-3 py-2 border border-amber-300 rounded-md focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-sm"
+                                            oninput="app.updateMixedAmounts()">
+                                    </div>
+                                </div>
+                            </div>
+                            <p id="mixedValidationMsg" class="text-xs mt-2 font-medium"></p>
+                        </div>
+                    </div>
+
+                    <!-- Action Button -->
+                    <div class="flex justify-end pt-4 pb-8">
+                        <button id="processBtn" onclick="app.processTransaction()" disabled
+                            class="px-8 py-3 bg-slate-300 text-slate-500 font-semibold rounded-lg shadow-sm cursor-not-allowed transition-all flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            Procesar Transacción
+                        </button>
+                    </div>
+
+                </div>
+
+                <!-- Denominations Interface -->
+                <div id="denominationsSection"
+                    class="hidden bg-white rounded-xl shadow-sm border border-slate-200 p-6 fade-in">
+                    <h3 class="text-lg font-semibold text-slate-900 mb-4">2. Registro de Denominaciones</h3>
+
+                    <!-- USD Denominations -->
+                    <div id="usdDenomContainer" class="mb-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <h4 class="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-green-500"></span> Dólares (USD)
+                            </h4>
+                            <div class="text-sm">
+                                Requerido: <span class="font-bold text-slate-900" id="targetUsdDisplay">$0.00</span> |
+                                Contado: <span class="font-bold" id="countedUsdDisplay">$0.00</span>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-3 sm:grid-cols-3 gap-3" id="usdDenomGrid">
+                            <!-- Generated by JS -->
+                        </div>
+                    </div>
+
+                    <!-- NIO Denominations -->
+                    <div id="nioDenomContainer" class="hidden">
+                        <div class="flex items-center justify-between mb-3">
+                            <h4 class="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-blue-500"></span> Córdobas (NIO)
+                            </h4>
+                            <div class="text-sm">
+                                Requerido: <span class="font-bold text-slate-900" id="targetNioDisplay">C$0.00</span> |
+                                Contado: <span class="font-bold" id="countedNioDisplay">C$0.00</span>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-4 sm:grid-cols-3 gap-3" id="nioDenomGrid">
+                            <!-- Generated by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Validation Status -->
+                    <div id="validationStatus"
+                        class="mt-6 p-4 rounded-lg border bg-red-50 border-red-200 flex items-center gap-3 transition-colors">
+                        <svg id="statusIcon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-500" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <div>
+                            <p id="statusTitle" class="font-semibold text-red-800 text-sm">Monto no coincide</p>
+                            <p id="statusDesc" class="text-xs text-red-600">Revise las denominaciones ingresadas.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <!-- Success Modal -->
+    <div id="successModal"
+        class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 text-center fade-in">
+            <div
+                class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+            </div>
+            <h3 class="text-2xl font-bold text-slate-900 mb-2">¡Transacción Exitosa!</h3>
+            <p class="text-slate-600 mb-6">La orden <span id="successOrderId"
+                    class="font-semibold text-slate-900"></span> ha sido procesada correctamente y el arqueo de
+                denominaciones ha sido registrado.</p>
+            <button onclick="app.closeModal()"
+                class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors">
+                Aceptar y Nueva Operación
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Mock Data
+        const mockOrders = [
+            { id: 'EMP-2026-001', type: 'EMPEÑO', direction: 'DESEMBOLSO', amountUSD: 100.00, client: 'Juan Pérez', status: 'PENDIENTE' },
+            { id: 'COMP-2026-002', type: 'COMPRA', direction: 'DESEMBOLSO', amountUSD: 250.00, client: 'María López', status: 'PENDIENTE' },
+            { id: 'VTA-2026-003', type: 'VENTA', direction: 'INGRESO', amountUSD: 50.00, client: 'Carlos Ruiz', status: 'PENDIENTE' },
+            { id: 'SER-2026-004', type: 'SERVICIO', direction: 'INGRESO', amountUSD: 15.00, client: 'Ana García', status: 'PENDIENTE' }
+        ];
+
+        const exchangeRate = 36.50;
+        const usdDenoms = [100, 50, 20, 10, 5, 1];
+        const nioDenoms = [500, 200, 100, 50, 20, 10, 5, 1];
+
+        // Application State
+        const appState = {
+            selectedOrder: null,
+            liquidationMode: null, // 'USD', 'NIO', 'MIXED'
+            targetUsd: 0,
+            targetNio: 0,
+            countedUsd: 0,
+            countedNio: 0,
+            denomCounts: {
+                USD: {},
+                NIO: {}
+            }
+        };
+
+        // Initialize denomination counts
+        usdDenoms.forEach(d => appState.denomCounts.USD[d] = 0);
+        nioDenoms.forEach(d => appState.denomCounts.NIO[d] = 0);
+
+        const app = {
+            init: () => {
+                app.renderOrderList();
+                document.getElementById('searchInput').addEventListener('input', (e) => {
+                    app.renderOrderList(e.target.value);
+                });
+            },
+
+            renderOrderList: (filter = '') => {
+                const container = document.getElementById('orderListContainer');
+                container.innerHTML = '';
+
+                const filtered = mockOrders.filter(o =>
+                    o.id.toLowerCase().includes(filter.toLowerCase()) ||
+                    o.client.toLowerCase().includes(filter.toLowerCase())
+                );
+
+                filtered.forEach(order => {
+                    const isDesembolso = order.direction === 'DESEMBOLSO';
+                    const colorClass = isDesembolso ? 'bg-red-50 text-red-700 border-red-200' : 'bg-green-50 text-green-700 border-green-200';
+                    const icon = isDesembolso
+                        ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />'
+                        : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />';
+
+                    const div = document.createElement('div');
+                    div.className = `p-4 rounded-lg border ${colorClass} cursor-pointer hover:shadow-md transition-all fade-in`;
+                    div.onclick = () => app.selectOrder(order);
+                    div.innerHTML = `
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="font-bold text-sm">${order.id}</span>
+                            <span class="text-xs font-semibold px-2 py-0.5 rounded bg-white/60">${order.type}</span>
+                        </div>
+                        <div class="flex justify-between items-end">
+                            <div>
+                                <p class="text-xs opacity-80 mb-1">${order.client}</p>
+                                <p class="font-bold text-lg">$${order.amountUSD.toFixed(2)}</p>
+                            </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                ${icon}
+                            </svg>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+            },
+
+            selectOrder: (order) => {
+                appState.selectedOrder = order;
+                appState.liquidationMode = null;
+                appState.targetUsd = 0;
+                appState.targetNio = 0;
+                appState.countedUsd = 0;
+                appState.countedNio = 0;
+
+                // Reset counts
+                usdDenoms.forEach(d => appState.denomCounts.USD[d] = 0);
+                nioDenoms.forEach(d => appState.denomCounts.NIO[d] = 0);
+
+                // Update UI
+                document.getElementById('emptyState').classList.add('hidden');
+                document.getElementById('processingInterface').classList.remove('hidden');
+
+                document.getElementById('orderIdDisplay').textContent = order.id;
+                document.getElementById('clientNameDisplay').textContent = order.client;
+                document.getElementById('baseAmountDisplay').textContent = `$${order.amountUSD.toFixed(2)} USD`;
+
+                const typeBadge = document.getElementById('orderTypeBadge');
+                typeBadge.textContent = order.type;
+                typeBadge.className = `px-2.5 py-0.5 rounded-full text-xs font-semibold ${order.type === 'EMPEÑO' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'}`;
+
+                const dirBadge = document.getElementById('orderDirectionBadge');
+                dirBadge.textContent = order.direction;
+                dirBadge.className = `px-2.5 py-0.5 rounded-full text-xs font-semibold ${order.direction === 'DESEMBOLSO' ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`;
+
+                // Reset UI sections
+                document.querySelectorAll('.liquidation-btn').forEach(btn => {
+                    btn.classList.remove('border-blue-500', 'bg-blue-50', 'ring-2', 'ring-blue-200');
+                    btn.classList.add('border-slate-200');
+                });
+                document.getElementById('mixedInputs').classList.add('hidden');
+                document.getElementById('denominationsSection').classList.add('hidden');
+
+                app.updateValidation();
+            },
+
+            setLiquidationMode: (mode) => {
+                appState.liquidationMode = mode;
+
+                // Update button styles
+                document.querySelectorAll('.liquidation-btn').forEach(btn => {
+                    btn.classList.remove('border-blue-500', 'bg-blue-50', 'ring-2', 'ring-blue-200');
+                    btn.classList.add('border-slate-200');
+                });
+
+                const activeBtn = document.getElementById(`btnMode${mode}`);
+                activeBtn.classList.remove('border-slate-200');
+                activeBtn.classList.add('border-blue-500', 'bg-blue-50', 'ring-2', 'ring-blue-200');
+
+                // Show/hide mixed inputs
+                const mixedInputs = document.getElementById('mixedInputs');
+                if (mode === 'MIXED') {
+                    mixedInputs.classList.remove('hidden');
+                    document.getElementById('mixedUsdAmount').value = '';
+                    document.getElementById('mixedNioAmount').value = '';
+                    appState.targetUsd = 0;
+                    appState.targetNio = 0;
+                } else {
+                    mixedInputs.classList.add('hidden');
+                    if (mode === 'USD') {
+                        appState.targetUsd = appState.selectedOrder.amountUSD;
+                        appState.targetNio = 0;
+                    } else if (mode === 'NIO') {
+                        appState.targetUsd = 0;
+                        appState.targetNio = appState.selectedOrder.amountUSD * exchangeRate;
+                    }
+                }
+                document.getElementById('mixedUsdAmount').addEventListener("change", (ev) => {
+                    const amount = parseFloat(ev.target.value);
+                    const amountCordobas = (appState.selectedOrder.amountUSD - amount) * 36.5
+                    document.getElementById('mixedNioAmount').value = amountCordobas.toFixed(2);
+                })
+
+                document.getElementById('denominationsSection').classList.remove('hidden');
+                app.renderDenominationGrids();
+                app.updateValidation();
+            },
+
+            updateMixedAmounts: () => {
+                const usdVal = parseFloat(document.getElementById('mixedUsdAmount').value) || 0;
+                const nioVal = parseFloat(document.getElementById('mixedNioAmount').value) || 0;
+
+                appState.targetUsd = usdVal;
+                appState.targetNio = nioVal;
+
+                const totalEquivalentUsd = usdVal + (nioVal / exchangeRate);
+                const orderUsd = appState.selectedOrder.amountUSD;
+                const diff = Math.abs(totalEquivalentUsd - orderUsd);
+
+                const msgEl = document.getElementById('mixedValidationMsg');
+                if (diff < 0.01) {
+                    msgEl.textContent = '✓ Distribución correcta';
+                    msgEl.className = 'text-xs mt-2 font-medium text-green-700';
+                } else {
+                    msgEl.textContent = `⚠ La suma equivale a $${totalEquivalentUsd.toFixed(2)} USD (Debe ser $${orderUsd.toFixed(2)})`;
+                    msgEl.className = 'text-xs mt-2 font-medium text-red-700';
+                }
+
+                app.renderDenominationGrids();
+                app.updateValidation();
+            },
+
+            renderDenominationGrids: () => {
+                const usdContainer = document.getElementById('usdDenomContainer');
+                const nioContainer = document.getElementById('nioDenomContainer');
+
+                document.getElementById('targetUsdDisplay').textContent = `$${appState.targetUsd.toFixed(2)}`;
+                document.getElementById('targetNioDisplay').textContent = `C$${appState.targetNio.toFixed(2)}`;
+
+                if (appState.liquidationMode === 'NIO') {
+                    usdContainer.classList.add('hidden');
+                    nioContainer.classList.remove('hidden');
+                } else if (appState.liquidationMode === 'USD') {
+                    usdContainer.classList.remove('hidden');
+                    nioContainer.classList.add('hidden');
+                } else {
+                    usdContainer.classList.remove('hidden');
+                    nioContainer.classList.remove('hidden');
+                }
+
+                // Render USD Grid
+                const usdGrid = document.getElementById('usdDenomGrid');
+                usdGrid.innerHTML = '';
+                usdDenoms.forEach(denom => {
+                    const count = appState.denomCounts.USD[denom];
+                    const subtotal = count * denom;
+                    usdGrid.innerHTML += app.createDenomCard('USD', denom, count, subtotal);
+                });
+
+                // Render NIO Grid
+                const nioGrid = document.getElementById('nioDenomGrid');
+                nioGrid.innerHTML = '';
+                nioDenoms.forEach(denom => {
+                    const count = appState.denomCounts.NIO[denom];
+                    const subtotal = count * denom;
+                    nioGrid.innerHTML += app.createDenomCard('NIO', denom, count, subtotal);
+                });
+            },
+
+            createDenomCard: (currency, denom, count, subtotal) => {
+                const isDisabled = count === 0 && ((currency === 'USD' && appState.targetUsd === 0) || (currency === 'NIO' && appState.targetNio === 0));
+                const opacityClass = isDisabled ? 'opacity-40 pointer-events-none' : 'opacity-100';
+                const symbol = currency === 'USD' ? '$' : 'C$';
+
+                return `
+                    <div class="bg-slate-50 border border-slate-200 rounded-lg p-3 flex flex-col items-center ${opacityClass} transition-all">
+                        <span class="text-lg font-bold text-slate-700 mb-2">${symbol}${denom}</span>
+                        <div class="flex items-center gap-2 w-full">
+                            <button onclick="app.updateDenom('${currency}', ${denom}, -1)" class="denom-btn w-8 h-8 rounded bg-white border border-slate-300 text-slate-600 font-bold hover:bg-slate-100 flex items-center justify-center">-</button>
+                            <input type="number" value="${count}" readonly class="w-full text-center bg-transparent font-semibold text-slate-900 border-none focus:ring-0 p-0" />
+                            <button onclick="app.updateDenom('${currency}', ${denom}, 1)" class="denom-btn w-8 h-8 rounded bg-blue-600 text-white font-bold hover:bg-blue-700 flex items-center justify-center shadow-sm">+</button>
+                        </div>
+                        <span class="text-xs text-slate-500 mt-2 font-medium">${symbol}${subtotal.toFixed(2)}</span>
+                    </div>
+                `;
+            },
+
+            updateDenom: (currency, denom, change) => {
+                const newCount = appState.denomCounts[currency][denom] + change;
+                if (newCount < 0) return;
+
+                appState.denomCounts[currency][denom] = newCount;
+                app.calculateTotals();
+                app.renderDenominationGrids();
+                app.updateValidation();
+            },
+
+            calculateTotals: () => {
+                appState.countedUsd = usdDenoms.reduce((sum, d) => sum + (appState.denomCounts.USD[d] * d), 0);
+                appState.countedNio = nioDenoms.reduce((sum, d) => sum + (appState.denomCounts.NIO[d] * d), 0);
+
+                document.getElementById('countedUsdDisplay').textContent = `$${appState.countedUsd.toFixed(2)}`;
+                document.getElementById('countedNioDisplay').textContent = `C$${appState.countedNio.toFixed(2)}`;
+            },
+
+            updateValidation: () => {
+                const statusDiv = document.getElementById('validationStatus');
+                const statusIcon = document.getElementById('statusIcon');
+                const statusTitle = document.getElementById('statusTitle');
+                const statusDesc = document.getElementById('statusDesc');
+                const processBtn = document.getElementById('processBtn');
+
+                // Check if mixed amounts are valid first
+                if (appState.liquidationMode === 'MIXED') {
+                    const totalEquivalentUsd = appState.targetUsd + (appState.targetNio / exchangeRate);
+                    const orderUsd = appState.selectedOrder.amountUSD;
+                    if (Math.abs(totalEquivalentUsd - orderUsd) > 0.01) {
+                        app.setValidationState(false, 'Distribución de montos incorrecta', 'La suma de USD y NIO debe equivaler al monto total de la orden.', statusDiv, statusIcon, statusTitle, statusDesc, processBtn);
+                        return;
+                    }
+                }
+
+                const usdMatch = Math.abs(appState.countedUsd - appState.targetUsd) < 0.01;
+                const nioMatch = Math.abs(appState.countedNio - appState.targetNio) < 0.01;
+
+                // Special case: if target is 0, counted must be 0
+                const usdValid = (appState.targetUsd === 0 && appState.countedUsd === 0) || usdMatch;
+                const nioValid = (appState.targetNio === 0 && appState.countedNio === 0) || nioMatch;
+
+                if (usdValid && nioValid && appState.liquidationMode !== null) {
+                    app.setValidationState(true, 'Monto correcto', 'Las denominaciones coinciden exactamente con el monto requerido.', statusDiv, statusIcon, statusTitle, statusDesc, processBtn);
+                } else {
+                    let diffUsd = appState.countedUsd - appState.targetUsd;
+                    let diffNio = appState.countedNio - appState.targetNio;
+                    let msg = 'Revise las denominaciones ingresadas.';
+                    if (Math.abs(diffUsd) > 0.01) msg += ` Diferencia USD: ${diffUsd > 0 ? '+' : ''}$${diffUsd.toFixed(2)}.`;
+                    if (Math.abs(diffNio) > 0.01) msg += ` Diferencia NIO: ${diffNio > 0 ? '+' : ''}C$${diffNio.toFixed(2)}.`;
+
+                    app.setValidationState(false, 'Monto no coincide', msg, statusDiv, statusIcon, statusTitle, statusDesc, processBtn);
+                }
+            },
+
+            setValidationState: (isValid, title, desc, statusDiv, icon, titleEl, descEl, btn) => {
+                if (isValid) {
+                    statusDiv.className = 'mt-6 p-4 rounded-lg border bg-green-50 border-green-200 flex items-center gap-3 transition-colors';
+                    icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />';
+                    icon.classList.remove('text-red-500');
+                    icon.classList.add('text-green-500');
+                    titleEl.className = 'font-semibold text-green-800 text-sm';
+                    descEl.className = 'text-xs text-green-600';
+
+                    btn.disabled = false;
+                    btn.className = 'px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md cursor-pointer transition-all flex items-center gap-2 transform hover:scale-105';
+                } else {
+                    statusDiv.className = 'mt-6 p-4 rounded-lg border bg-red-50 border-red-200 flex items-center gap-3 transition-colors';
+                    icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />';
+                    icon.classList.remove('text-green-500');
+                    icon.classList.add('text-red-500');
+                    titleEl.className = 'font-semibold text-red-800 text-sm';
+                    descEl.className = 'text-xs text-red-600';
+
+                    btn.disabled = true;
+                    btn.className = 'px-8 py-3 bg-slate-300 text-slate-500 font-semibold rounded-lg shadow-sm cursor-not-allowed transition-all flex items-center gap-2';
+                }
+                titleEl.textContent = title;
+                descEl.textContent = desc;
+            },
+
+            processTransaction: () => {
+                document.getElementById('successOrderId').textContent = appState.selectedOrder.id;
+                document.getElementById('successModal').classList.remove('hidden');
+
+                // Remove processed order from mock data
+                const index = mockOrders.findIndex(o => o.id === appState.selectedOrder.id);
+                if (index > -1) {
+                    mockOrders.splice(index, 1);
+                }
+            },
+
+            closeModal: () => {
+                document.getElementById('successModal').classList.add('hidden');
+                document.getElementById('processingInterface').classList.add('hidden');
+                document.getElementById('emptyState').classList.remove('hidden');
+                document.getElementById('searchInput').value = '';
+                app.renderOrderList();
+                appState.selectedOrder = null;
+            }
+        };
+
+        // Start
+        document.addEventListener('DOMContentLoaded', app.init);
+    </script>
+</body>
+
+</html>

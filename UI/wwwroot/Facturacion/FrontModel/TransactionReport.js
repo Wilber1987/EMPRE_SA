@@ -48,7 +48,7 @@ export class TransactionReport_ModelComponent extends EntityClass {
         super()
         Object.assign(this, props);
     }
-    /**@type {ModelProperty} */ Id_sucursal = { type: "NUMBER", primary: true };
+    /**@type {ModelProperty} */ Id_sucursal = { type: "NUMBER", primary: true};
     /**@type {ModelProperty} */ Nombre = { type: "TEXT" };
     /**@type {ModelProperty} */ Moneda = { type: "TEXT" };
     /**@type {ModelProperty} */ Tipo_movimiento = { type: "TEXT" };

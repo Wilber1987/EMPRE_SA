@@ -31,7 +31,7 @@ namespace API.Controllers
 		{
 			return AuthNetCore.HavePermission(Permissions.ADMIN_ACCESS.ToString(), identfy);
 		}       
-		public static bool HavePermission(string permission, string identfy)
+		public static bool HavePermission(string? permission, string identfy)
 		{
 			return AuthNetCore.HavePermission(permission, identfy);
 		}

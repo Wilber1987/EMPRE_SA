@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Caja - Apertura y Cierre</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/@fontsource/inter@5.0.19/index.min.css" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .denom-btn:active { transform: scale(0.95); }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 h-screen flex flex-col overflow-hidden">
+
+    <!-- Header -->
+    <header class="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between shadow-sm z-10">
+        <div class="flex items-center gap-3">
+            <div class="bg-indigo-600 text-white p-2 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                </svg>
+            </div>
+            <div>
+                <h1 class="text-xl font-bold text-slate-900">Control de Caja</h1>
+                <p class="text-xs text-slate-500">Módulo de Apertura y Cierre Diario</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-6">
+            <div class="text-right hidden sm:block">
+                <p class="text-sm font-semibold text-slate-700" id="headerCashier">Cajero: Will</p>
+                <p class="text-xs text-slate-500" id="headerDate">Cargando fecha...</p>
+            </div>
+            <div class="h-10 w-10 bg-indigo-100 text-indigo-700 rounded-full flex items-center justify-center font-bold border border-indigo-200">W</div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 overflow-y-auto p-4 lg:p-8" id="mainContainer">
+        <!-- Content injected via JS -->
+    </main>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 text-center fade-in">
+            <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+            </div>
+            <h3 class="text-2xl font-bold text-slate-900 mb-2" id="modalTitle">¡Éxito!</h3>
+            <p class="text-slate-600 mb-6" id="modalMessage">La operación se ha completado correctamente.</p>
+            <button onclick="cajaApp.closeModal()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg transition-colors">
+                Aceptar
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const usdDenoms = [100, 50, 20, 10, 5, 1];
+        const nioDenoms = [500, 200, 100, 50, 20, 10, 5, 1];
+
+        const cajaApp = {
+            state: {
+                view: 'apertura', // 'apertura', 'dashboard', 'cierre'
+                cashier: 'Will',
+                dateStr: new Date().toLocaleDateString('es-NI', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }),
+                timeStr: new Date().toLocaleTimeString('es-NI', { hour: '2-digit', minute: '2-digit' }),
+                apertura: {
+                    usd: {}, nio: {}, totalUsd: 0, totalNio: 0, time: ''
+                },
+                teorico: {
+                    usd: 1250.00,
+                    nio: 5475.00
+                },
+                cierre: {
+                    usd: {}, nio: {}, totalUsd: 0, totalNio: 0, notes: ''
+                }
+            },
+
+            init() {
+                usdDenoms.forEach(d => { 
+                    this.state.apertura.usd[d] = 0; 
+                    this.state.cierre.usd[d] = 0; 
+                });
+                nioDenoms.forEach(d => { 
+                    this.state.apertura.nio[d] = 0; 
+                    this.state.cierre.nio[d] = 0; 
+                });
+
+                // Pre-fill apertura with standard float for demo
+                this.state.apertura.usd[100] = 2; // $200
+                this.state.apertura.nio[100] = 10; // C$1000
+                this.calculateTotals('apertura');
+
+                this.updateHeader();
+                this.render();
+                setInterval(() => this.updateHeader(), 60000);
+            },
+
+            updateHeader() {
+                document.getElementById('headerDate').textContent = this.state.dateStr + ' | ' + new Date().toLocaleTimeString('es-NI', { hour: '2-digit', minute: '2-digit' });
+            },
+
+            calculateTotals(context) {
+                let totalUsd = 0;
+                let totalNio = 0;
+                usdDenoms.forEach(d => totalUsd += (this.state[context].usd[d] * d));
+                nioDenoms.forEach(d => totalNio += (this.state[context].nio[d] * d));
+                
+                this.state[context].totalUsd = totalUsd;
+                this.state[context].totalNio = totalNio;
+            },
+
+            updateDenom(context, currency, denom, change) {
+                const newCount = this.state[context][currency.toLowerCase()][denom] + change;
+                if (newCount < 0) return;
+                
+                this.state[context][currency.toLowerCase()][denom] = newCount;
+                this.calculateTotals(context);
+                this.render();
+            },
+
+            updateNotes(value) {
+                this.state.cierre.notes = value;
+            },
+
+            setView(view) {
+                this.state.view = view;
+                this.render();
+            },
+
+            confirmApertura() {
+                if (this.state.apertura.totalUsd === 0 && this.state.apertura.totalNio === 0) {
+                    alert('El fondo de caja no puede estar en cero.');
+                    return;
+                }
+                this.state.apertura.time = new Date().toLocaleTimeString('es-NI', { hour: '2-digit', minute: '2-digit' });
+                this.showModal('Caja Abierta', `La caja ha sido abierta exitosamente a las ${this.state.apertura.time} con un fondo de $${this.state.apertura.totalUsd.toFixed(2)} y C$${this.state.apertura.totalNio.toFixed(2)}.`);
+                setTimeout(() => {
+                    this.closeModal();
+                    this.setView('dashboard');
+                }, 2000);
+            },
+
+            confirmCierre() {
+                this.showModal('Cierre Registrado', 'El arqueo de caja ha sido guardado y el reporte diario ha sido generado correctamente.');
+                setTimeout(() => {
+                    this.closeModal();
+                    // Reset for demo purposes
+                    this.state.view = 'apertura';
+                    this.state.cierre.totalUsd = 0;
+                    this.state.cierre.totalNio = 0;
+                    usdDenoms.forEach(d => this.state.cierre.usd[d] = 0);
+                    nioDenoms.forEach(d => this.state.cierre.nio[d] = 0);
+                    this.state.cierre.notes = '';
+                    this.render();
+                }, 2500);
+            },
+
+            showModal(title, message) {
+                document.getElementById('modalTitle').textContent = title;
+                document.getElementById('modalMessage').textContent = message;
+                document.getElementById('successModal').classList.remove('hidden');
+            },
+
+            closeModal() {
+                document.getElementById('successModal').classList.add('hidden');
+            },
+
+            createDenomCard(context, currency, denom) {
+                const count = this.state[context][currency.toLowerCase()][denom];
+                const subtotal = count * denom;
+                const symbol = currency === 'USD' ? '$' : 'C$';
+                const isZeroTarget = (currency === 'USD' && this.state.teorico.usd === 0) || (currency === 'NIO' && this.state.teorico.nio === 0);
+                const opacityClass = (count === 0 && isZeroTarget && context === 'cierre') ? 'opacity-40' : 'opacity-100';
+
+                return `
+                    <div class="bg-slate-50 border border-slate-200 rounded-lg p-3 flex flex-col items-center ${opacityClass} transition-all">
+                        <span class="text-lg font-bold text-slate-700 mb-2">${symbol}${denom}</span>
+                        <div class="flex items-center gap-2 w-full">
+                            <button onclick="cajaApp.updateDenom('${context}', '${currency}', ${denom}, -1)" class="denom-btn w-8 h-8 rounded bg-white border border-slate-300 text-slate-600 font-bold hover:bg-slate-100 flex items-center justify-center shadow-sm">-</button>
+                            <input type="number" value="${count}" readonly class="w-full text-center bg-transparent font-semibold text-slate-900 border-none focus:ring-0 p-0" />
+                            <button onclick="cajaApp.updateDenom('${context}', '${currency}', ${denom}, 1)" class="denom-btn w-8 h-8 rounded bg-indigo-600 text-white font-bold hover:bg-indigo-700 flex items-center justify-center shadow-sm">+</button>
+                        </div>
+                        <span class="text-xs text-slate-500 mt-2 font-medium">${symbol}${subtotal.toFixed(2)}</span>
+                    </div>
+                `;
+            },
+
+            render() {
+                const container = document.getElementById('mainContainer');
+                
+                if (this.state.view === 'apertura') {
+                    container.innerHTML = this.renderAperturaView();
+                } else if (this.state.view === 'dashboard') {
+                    container.innerHTML = this.renderDashboardView();
+                } else if (this.state.view === 'cierre') {
+                    container.innerHTML = this.renderCierreView();
+                }
+            },
+
+            renderAperturaView() {
+                return `
+                    <div class="max-w-4xl mx-auto space-y-6 fade-in">
+                        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                            <h2 class="text-xl font-bold text-slate-900 mb-2">Apertura de Caja</h2>
+                            <p class="text-slate-500 text-sm mb-6">Ingrese el fondo inicial de billetes y monedas para iniciar la jornada laboral.</p>
+                            
+                            <div class="space-y-8">
+                                <!-- USD Section -->
+                                <div>
+                                    <div class="flex items-center justify-between mb-3">
+                                        <h3 class="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                                            <span class="w-2 h-2 rounded-full bg-green-500"></span> Dólares (USD)
+                                        </h3>
+                                        <span class="text-lg font-bold text-slate-900">Total: $${this.state.apertura.totalUsd.toFixed(2)}</span>
+                                    </div>
+                                    <div class="grid grid-cols-3 sm:grid-cols-6 gap-3">
+                                        ${usdDenoms.map(d => this.createDenomCard('apertura', 'USD', d)).join('')}
+                                    </div>
+                                </div>
+
+                                <!-- NIO Section -->
+                                <div>
+                                    <div class="flex items-center justify-between mb-3">
+                                        <h3 class="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                                            <span class="w-2 h-2 rounded-full bg-blue-500"></span> Córdobas (NIO)
+                                        </h3>
+                                        <span class="text-lg font-bold text-slate-900">Total: C$${this.state.apertura.totalNio.toFixed(2)}</span>
+                                    </div>
+                                    <div class="grid grid-cols-4 sm:grid-cols-8 gap-3">
+                                        ${nioDenoms.map(d => this.createDenomCard('apertura', 'NIO', d)).join('')}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-8 pt-6 border-t border-slate-200 flex justify-end">
+                                <button onclick="cajaApp.confirmApertura()" class="px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg shadow-md transition-all flex items-center gap-2 transform hover:scale-105">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
+                                    </svg>
+                                    Confirmar Apertura de Caja
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            },
+
+            renderDashboardView() {
+                return `
+                    <div class="max-w-5xl mx-auto space-y-6 fade-in">
+                        <!-- Status Banner -->
+                        <div class="bg-green-50 border border-green-200 rounded-xl p-4 flex items-center gap-4">
+                            <div class="bg-green-100 p-2 rounded-full">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-green-900">Caja Abierta</h3>
+                                <p class="text-sm text-green-700">Jornada iniciada a las ${this.state.apertura.time}. Fondo inicial: $${this.state.apertura.totalUsd.toFixed(2)} / C$${this.state.apertura.totalNio.toFixed(2)}</p>
+                            </div>
+                        </div>
+
+                        <!-- Stats Grid -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                                <p class="text-sm text-slate-500 mb-1">Total Ingresos del Día</p>
+                                <p class="text-2xl font-bold text-green-600">C$ 8,450.00</p>
+                                <p class="text-xs text-slate-400 mt-1">6 transacciones</p>
+                            </div>
+                            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                                <p class="text-sm text-slate-500 mb-1">Total Egresos del Día</p>
+                                <p class="text-2xl font-bold text-red-600">$ 420.00</p>
+                                <p class="text-xs text-slate-400 mt-1">8 transacciones</p>
+                            </div>
+                            <div class="bg-indigo-50 p-6 rounded-xl shadow-sm border border-indigo-200">
+                                <p class="text-sm text-indigo-700 mb-1 font-semibold">Saldo Teórico Actual</p>
+                                <p class="text-2xl font-bold text-indigo-900">$ ${this.state.teorico.usd.toFixed(2)}</p>
+                                <p class="text-lg font-semibold text-indigo-800">C$ ${this.state.teorico.nio.toFixed(2)}</p>
+                            </div>
+                        </div>
+
+                        <!-- Recent Activity Mock -->
+                        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
+                                <h3 class="font-semibold text-slate-900">Últimos Movimientos</h3>
+                                <button class="text-sm text-indigo-600 hover:text-indigo-800 font-medium">Ver todo</button>
+                            </div>
+                            <div class="divide-y divide-slate-100">
+                                <div class="px-6 py-3 flex justify-between items-center hover:bg-slate-50">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs font-bold">ING</div>
+                                        <div>
+                                            <p class="text-sm font-medium text-slate-900">Venta #VTA-2026-003</p>
+                                            <p class="text-xs text-slate-500">14:32 PM • Carlos Ruiz</p>
+                                        </div>
+                                    </div>
+                                    <span class="text-sm font-semibold text-green-600">+ C$ 1,825.00</span>
+                                </div>
+                                <div class="px-6 py-3 flex justify-between items-center hover:bg-slate-50">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center text-xs font-bold">EGS</div>
+                                        <div>
+                                            <p class="text-sm font-medium text-slate-900">Desembolso #EMP-2026-001</p>
+                                            <p class="text-xs text-slate-500">11:15 AM • Juan Pérez</p>
+                                        </div>
+                                    </div>
+                                    <span class="text-sm font-semibold text-red-600">- $ 100.00</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end pt-4">
+                            <button onclick="cajaApp.setView('cierre')" class="px-8 py-3 bg-slate-900 hover:bg-slate-800 text-white font-semibold rounded-lg shadow-md transition-all flex items-center gap-2 transform hover:scale-105">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                                </svg>
+                                Iniciar Cierre de Caja
+                            </button>
+                        </div>
+                    </div>
+                `;
+            },
+
+            renderCierreView() {
+                const diffUsd = this.state.cierre.totalUsd - this.state.teorico.usd;
+                const diffNio = this.state.cierre.totalNio - this.state.teorico.nio;
+
+                const getDiffUI = (diff) => {
+                    if (diff > 0.01) return { class: 'text-amber-600 bg-amber-50 border-amber-200', label: 'Sobrante', value: `+$${diff.toFixed(2)}` };
+                    if (diff < -0.01) return { class: 'text-red-600 bg-red-50 border-red-200', label: 'Faltante', value: `-$${Math.abs(diff).toFixed(2)}` };
+                    return { class: 'text-green-600 bg-green-50 border-green-200', label: 'Cuadrado', value: '$0.00' };
+                };
+
+                const uiUsd = getDiffUI(diffUsd);
+                const uiNio = getDiffUI(diffNio);
+                // Adjust currency symbol for NIO
+                if (uiNio.value !== '$0.00') uiNio.value = uiNio.value.replace('$', 'C$');
+
+                const isBalanced = (Math.abs(diffUsd) < 0.01) && (Math.abs(diffNio) < 0.01);
+
+                return `
+                    <div class="max-w-5xl mx-auto space-y-6 fade-in">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h2 class="text-2xl font-bold text-slate-900">Cierre de Caja</h2>
+                                <p class="text-slate-500 text-sm">Realice el arqueo físico y compárelo con el saldo del sistema.</p>
+                            </div>
+                            <button onclick="cajaApp.setView('dashboard')" class="text-sm text-slate-500 hover:text-slate-700 flex items-center gap-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+                                Volver al Dashboard
+                            </button>
+                        </div>
+
+                        <!-- Comparison Summary -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- USD Comparison -->
+                            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+                                <h3 class="font-semibold text-slate-900 mb-4 flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-green-500"></span> Dólares (USD)
+                                </h3>
+                                <div class="space-y-3">
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-slate-500">Saldo en Sistema:</span>
+                                        <span class="font-semibold">$${this.state.teorico.usd.toFixed(2)}</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-slate-500">Conteo Físico:</span>
+                                        <span class="font-semibold">$${this.state.cierre.totalUsd.toFixed(2)}</span>
+                                    </div>
+                                    <div class="pt-3 border-t border-slate-100 flex justify-between items-center">
+                                        <span class="text-sm font-medium text-slate-700">Diferencia:</span>
+                                        <span class="px-3 py-1 rounded-full text-sm font-bold border ${uiUsd.class}">
+                                            ${uiUsd.label}: ${uiUsd.value}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- NIO Comparison -->
+                            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+                                <h3 class="font-semibold text-slate-900 mb-4 flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-blue-500"></span> Córdobas (NIO)
+                                </h3>
+                                <div class="space-y-3">
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-slate-500">Saldo en Sistema:</span>
+                                        <span class="font-semibold">C$${this.state.teorico.nio.toFixed(2)}</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-slate-500">Conteo Físico:</span>
+                                        <span class="font-semibold">C$${this.state.cierre.totalNio.toFixed(2)}</span>
+                                    </div>
+                                    <div class="pt-3 border-t border-slate-100 flex justify-between items-center">
+                                        <span class="text-sm font-medium text-slate-700">Diferencia:</span>
+                                        <span class="px-3 py-1 rounded-full text-sm font-bold border ${uiNio.class}">
+                                            ${uiNio.label}: ${uiNio.value}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Physical Count Inputs -->
+                        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                            <h3 class="text-lg font-semibold text-slate-900 mb-4">Arqueo Físico de Denominaciones</h3>
+                            
+                            <div class="space-y-8">
+                                <div>
+                                    <div class="flex items-center justify-between mb-3">
+                                        <h4 class="text-sm font-semibold text-slate-700">Dólares (USD)</h4>
+                                        <span class="text-sm font-bold text-slate-900">Subtotal: $${this.state.cierre.totalUsd.toFixed(2)}</span>
+                                    </div>
+                                    <div class="grid grid-cols-3 sm:grid-cols-6 gap-3">
+                                        ${usdDenoms.map(d => this.createDenomCard('cierre', 'USD', d)).join('')}
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="flex items-center justify-between mb-3">
+                                        <h4 class="text-sm font-semibold text-slate-700">Córdobas (NIO)</h4>
+                                        <span class="text-sm font-bold text-slate-900">Subtotal: C$${this.state.cierre.totalNio.toFixed(2)}</span>
+                                    </div>
+                                    <div class="grid grid-cols-4 sm:grid-cols-8 gap-3">
+                                        ${nioDenoms.map(d => this.createDenomCard('cierre', 'NIO', d)).join('')}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Notes -->
+                        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                            <h3 class="text-sm font-semibold text-slate-900 mb-2">Observaciones del Cierre</h3>
+                            <p class="text-xs text-slate-500 mb-3">Opcional. Justifique cualquier diferencia o evento relevante de la jornada.</p>
+                            <textarea 
+                                oninput="cajaApp.updateNotes(this.value)"
+                                class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm resize-none" 
+                                rows="3" 
+                                placeholder="Ej: Se realizó un gasto menor de $5.00 autorizado por gerencia sin ticket formal...">${this.state.cierre.notes}</textarea>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="flex justify-end gap-4 pt-4 pb-8">
+                            <button onclick="cajaApp.setView('dashboard')" class="px-6 py-3 bg-white border border-slate-300 text-slate-700 font-semibold rounded-lg hover:bg-slate-50 transition-all">
+                                Cancelar
+                            </button>
+                            <button 
+                                onclick="cajaApp.confirmCierre()" 
+                                class="px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg shadow-md transition-all flex items-center gap-2 transform hover:scale-105 ${!isBalanced ? 'ring-2 ring-amber-400 ring-offset-2' : ''}">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                                Finalizar Cierre e Imprimir Reporte
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => cajaApp.init());
+    </script>
+</body>
+</html>
+

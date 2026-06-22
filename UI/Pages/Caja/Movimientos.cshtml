@@ -1,0 +1,41 @@
+@page
+@using API.Controllers
+@using APPCORE.Security
+@{
+    if (!SecurityController.Auth(HttpContext.Session.GetString("sessionKey")))
+    {
+        Response.Redirect("../Security/login");
+        return;
+    }
+    @if (!SecurityController.HavePermission(HttpContext.Session.GetString("sessionKey"),
+    Permissions.GESTION_VENTAS, Permissions.GESTION_RECIBOS))//todo
+    {
+        Response.Redirect("../Security/login");
+        return;
+    }
+}
+<script type="module">
+    import { WTransactionProcessor } from "/Caja/WTransactionProcessor.js";
+    import { Order } from "/Caja/Model/Order.js";
+
+
+
+    window.onload = () => {
+        // Crear instancia
+        const entity = new Order();
+        entity.LoadMockData();
+        const processor = new WTransactionProcessor({
+            entity: entity,
+            action: (order) => {
+                console.log("Orden procesada:", order);
+                // Aquí puedes manejar la lógica post-procesamiento
+            }
+        });
+
+        // Añadir al DOM
+        MainBody.appendChild(processor);
+    }
+
+    
+</script>
+<div id="MainBody" class="app-container"></div>

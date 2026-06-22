@@ -527,7 +527,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
 					return;
 				}
 
-				const notExistVehiculo = this.valoracionesTable?.Dataset.every(p => p.Catalogo_Categoria.id_categoria.IsForVehiculo != true);
+				const notExistVehiculo = this.valoracionesTable?.Dataset.length != 0 && this.valoracionesTable?.Dataset.every(p => p.Catalogo_Categoria.id_categoria.IsForVehiculo != true);
 				if (notExistVehiculo && this.valoracionesForm?.FormObject.Catalogo_Categoria.IsForVehiculo == true) {
 					WAlertMessage.Warning("Anteriormente valoro un artículo distinto de vehículo por lo tanto no puede agregar valoraciones de esta categoría");
 					return;
