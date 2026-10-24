@@ -1,5 +1,5 @@
 //@ts-check
-import { Catalogo_Cuentas } from "../FrontModel/DBODataBaseModel.js";
+
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js";
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
 import { ColumChart } from "../WDevCore/WComponents/WChartJSComponents.js";
@@ -9,7 +9,8 @@ import { css } from "../WDevCore/WModules/WStyledRender.js";
 import { WArrayF } from "../WDevCore/WModules/WArrayF.js";
 import { PageType, WReportComponent } from "../WDevCore/WComponents/WReportComponent.js";
 import { Detail_Movimiento, Detail_Movimiento_ModelComponent } from "../FrontModel/MovimientosCuentas.js";
-import { Movimiento, Movimiento_ModelComponent } from "../FrontModel/MovimientosCuentasReportModel.js";
+import { Movimiento, Movimiento_ModelComponent } from "../FrontModel/MovimientosCuentasReportModelOld.js";
+import { Catalogo_Cuentas_ModelComponent } from "../FrontModel/Catalogo_Cuentas.js";
 
 /**
  * @typedef {Object} ComponentConfig
@@ -41,8 +42,8 @@ class Gestion_CuentasView extends HTMLElement {
     }
 
     SetOption = async () => {
-        const model = new Catalogo_Cuentas();
-        /**@type {Array<Catalogo_Cuentas>} */
+        const model = new Catalogo_Cuentas_ModelComponent();
+        /**@type {Array<Catalogo_Cuentas_ModelComponent>} */
         const dataset = await model.Get();
         this.Manager.NavigateFunction("PROPIAS", new GestionCuentaComponent({
             // @ts-ignore
@@ -64,7 +65,7 @@ customElements.define('w-gestion_cuentas', Gestion_CuentasView);
 export { Gestion_CuentasView };
 /**
  * @typedef {Object} WCuentaComponentConfig
- * * @property {Array<Catalogo_Cuentas>} [Dataset]
+ * * @property {Array<Catalogo_Cuentas_ModelComponent>} [Dataset]
  */
 class GestionCuentaComponent extends HTMLElement {
     /**
@@ -116,7 +117,7 @@ class GestionCuentaComponent extends HTMLElement {
     }
 
     /**
-        * @param {Catalogo_Cuentas} cuenta
+        * @param {Catalogo_Cuentas_ModelComponent} cuenta
         * @returns {Promise<HTMLElement>}
      */
     async detailCuenta(cuenta) {

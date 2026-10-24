@@ -1,4 +1,5 @@
 using APPCORE;
+using Business;
 using CAPA_NEGOCIO.Util;
 using DataBaseModel;
 
@@ -22,7 +23,7 @@ namespace DataBaseModel
         public decimal? subtotal { get; set; }
         public decimal? iva { get; set; }
         public decimal? total_cordobas { get; set; }
-        public string? Moneda { get; set; }
+        public MonedaEnum? Moneda { get; set; }
         public string? Motivo_Anulacion { get; set; }
         public string? Consecutivo { get; set; }
 

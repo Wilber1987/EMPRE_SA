@@ -16,8 +16,14 @@ import { ParcialesData } from "../FrontModel/ParcialData.js";
 import { ModalMessage } from "../WDevCore/WComponents/ModalMessage.js";
 import { ModalVericateAction } from "../WDevCore/WComponents/ModalVericateAction.js";
 import { WAlertMessage } from "../WDevCore/WComponents/WAlertMessage.js";
-import {Detail_Prendas} from "../FrontModel/Detail_Prendas.js";
-import {Transaction_Contratos} from "../FrontModel/Transaction_Contratos.js";
+import { Detail_Prendas } from "../FrontModel/Detail_Prendas.js";
+import { Transaction_Contratos } from "../FrontModel/Transaction_Contratos.js";
+import { FilterData, OrderData } from "../WDevCore/WModules/CommonModel.js";
+import { DirectionEnum, EstadoOrden, MonedaEnum, Orden_Movimiento, TipoMovimiento } from "../Caja/Model/Order_Movimiento.js";
+import { Denominacion_Catalogo } from "../Caja/Model/Denominacion_Catalogo.js";
+import { Money } from "../WDevCore/WModules/Types/Money.js";
+import { WOrderProcessorComponent } from "../Caja/WOrderProcessorComponent.js";
+import { CuentasCompras } from "../FrontModel/CuentasCompras.js";
 
 class Gestion_RecibosView extends HTMLElement {
     // @ts-ignore
@@ -51,8 +57,15 @@ class Gestion_RecibosView extends HTMLElement {
         this.tasasCambio = await new Catalogo_Cambio_Divisa_ModelComponent().Get();
         this.ContractData.tasasCambio = this.tasasCambio
         this.SetOption();
+        //console.log(this.contratosSearcher);        
+        /**@type {Array<Denominacion_Catalogo>} */
+        this.denoms = await new Denominacion_Catalogo({ OrderData: [OrderData.Desc("valor")] }).Get();
+
+
         if (!this.contratosSearcher) {
-            this.contratosSearcher = contratosSearcher(this.selectContrato);
+            this.contratosSearcher = contratosSearcher(this.selectContrato, undefined, undefined, [
+                FilterData.Equal("estado", "ACTIVO")
+            ]);
         }
         this.Manager.NavigateFunction("buscar-contrato", this.contratosSearcher);
         this.append(
@@ -138,6 +151,7 @@ class Gestion_RecibosView extends HTMLElement {
                         "perdida_de_documento",
                         "solo_abono",
                         "solo_interes_mora",
+                        "pago_parcial",
                         "reestructurar",
                         "total_apagar_dolares",
                         "moneda",
@@ -156,32 +170,8 @@ class Gestion_RecibosView extends HTMLElement {
             // @ts-ignore
             id: "reciboForm",
             // @ts-ignore
-            SaveFunction: async (/**@type {Recibos} */ recibo, form) => {
-
-                if (!this.reciboForm?.Validate()) {
-                    WAlertMessage.Warning("Agregue datos para poder continuar");
-                    return;
-                }
-                const nuevoRecibo = new Recibos(this.reciboForm?.FormObject);
-                // @ts-ignore
-                console.log(nuevoRecibo);
-                const response = await recibo.Save(); //this.reciboModel?.Save() // this.reciboModel?.GuardarValoraciones(this.valoracionesTable?.Dataset);
-                if (response.status == 200) {
-                    //location.href = "/PagesViews/RecibosManagerView";
-                    if (response.message == "Factura temporal") {
-                        this.printRecibo(response.body);
-                        return;
-                    }
-                    this.append(ModalVericateAction(() => {
-                        location.href = "/PagesViews/RecibosManagerView?id_Recibo=" + response.body.id_factura;
-                        //location.href = "/PagesViews/Print_Recibo?id_Recibo=" + response.body.id_recibo;
-                    }, response.message, false));
-                } else if (response.status == 400) {
-                    this.append(ModalVericateAction(() => {
-                        location.href = "/PagesViews/Gestion_Recibos";
-                    }, response.message, false));
-                }
-            }, CustomStyle: this.CustomFormStyle()
+            SaveFunction: this.SaveRecibo,
+            CustomStyle: this.CustomFormStyle()
         });
 
         this.contratoDetail = WRender.Create({ className: "info-header-contrato" });
@@ -197,20 +187,96 @@ class Gestion_RecibosView extends HTMLElement {
         );
         this.calculoRecibo(selectContrato, this.tasasCambio, this.reciboForm, this.ContractData);
     }
+    SaveRecibo = async (/**@type {Recibos} */ recibo) => {
+        this.CambioMonedaView(recibo)
+
+        //DoSaveRecibo(recibo);
+    }
+
+    DoSaveRecibo = async (/** @type {Recibos} */ recibo, /** @type {WModalForm} */ modal) => {
+        if (!this.reciboForm?.Validate()) {
+            WAlertMessage.Warning("Agregue datos para poder continuar");
+            return;
+        }
+        const response = await recibo.Save(); //this.reciboModel?.Save() // this.reciboModel?.GuardarValoraciones(this.valoracionesTable?.Dataset);
+        if (response.status == 200) {
+            //location.href = "/PagesViews/RecibosManagerView";
+            if (modal) {
+                modal.close();
+            }
+            if (response.message == "Factura temporal") {
+                this.printRecibo(response.body);
+                return;
+            }
+            this.append(ModalVericateAction(() => {
+                location.href = "/PagesViews/RecibosManagerView?id_Recibo=" + response.body.id_factura;
+                //location.href = "/PagesViews/Print_Recibo?id_Recibo=" + response.body.id_recibo;
+            }, response.message, false));
+        } else if (response.status == 400) {
+            this.append(ModalVericateAction(() => {
+                location.href = "/PagesViews/Gestion_Recibos";
+            }, response.message, false));
+        }
+    }
+
+    async CambioMonedaView(/**@type {Recibos} */ recibo) {
+        //const liquidationMode = MONEDA_ENTRADA == MonedaEnum.DOLARES ? ;
+
+        const MONEDA_ENTRADA = recibo.moneda;
+        const Monto = recibo.moneda == MonedaEnum.DOLARES ? new Money(recibo.paga_dolares) : new Money(recibo.paga_cordobas);
+
+        const cuentasCompras = await new CuentasCompras().Find();
+        const order = new Orden_Movimiento({
+            descripcion: ``,
+            direccion: DirectionEnum.INGRESO,
+            concepto: "Pago de cuota del contrato #" + recibo.numero_contrato,
+            monto: Monto.Round(),
+            tasa_cambio: this.tasasCambio[0].Valor_de_venta,
+            tasa_cambio_compra: this.tasasCambio[0].Valor_de_compra,
+            moneda: MONEDA_ENTRADA,
+            Tipo_Movimiento: TipoMovimiento.INGRESO_POR_PAGO_DE_RECIBO,
+            requiere_aprobacion: false,
+            estado: EstadoOrden.PENDIENTE,
+            tipo_documento_origen: "RECIBO",
+			Id_cuenta_destino: cuentasCompras.Id_cuenta_destino,
+			Id_cuenta_origen: cuentasCompras.Id_cuenta_origen
+            
+        })
+        recibo.OrdenData = order;
+
+        const orderProcessor = new WOrderProcessorComponent({
+            entity: order,
+            denominaciones: this.denoms ?? [],
+            liquidationMode: order.direccion ?? DirectionEnum.INGRESO,
+            isFlexibleLiquidationModeActive: true,
+            SaveFunction: ()=> {
+                document.body.append(ModalVericateAction(()=> {
+                    this.DoSaveRecibo(recibo, modal);
+                }, "¿Desea guardar el recibo?"))
+            }
+        })
+        const modal = new WModalForm({
+            ObjectModal: orderProcessor,
+            FullScreen: true
+        })
+
+        document.body.append(modal);
+    }
 
 
     /**
      * @param {Array<Detail_Prendas>} Detail_Prendas
-     * @returns {String}
+     * @returns {String|undefined}
      */
     GetCategoriaContrato = (Detail_Prendas) => {
+        /**@type {Detail_Prendas} */// @ts-ignore
         const isVehiculo = Detail_Prendas.find(p => p.Catalogo_Categoria.descripcion == "vehiculos");
-        if (isVehiculo) return isVehiculo?.Catalogo_Categoria.descripcion;
-
+        if (isVehiculo) return isVehiculo?.Catalogo_Categoria?.descripcion;
+        /**@type {Detail_Prendas} */// @ts-ignore
         const isElectronico = Detail_Prendas.find(p => p.Catalogo_Categoria.descripcion == "electronico");
-        if (isElectronico) return isElectronico?.Catalogo_Categoria.descripcion;
+        if (isElectronico) return isElectronico?.Catalogo_Categoria?.descripcion;
 
-        return Detail_Prendas[0].Catalogo_Categoria.descripcion;
+        return Detail_Prendas[0]?.Catalogo_Categoria?.descripcion;
     };
     /**
      *

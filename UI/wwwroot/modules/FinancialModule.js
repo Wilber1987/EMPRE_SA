@@ -35,7 +35,7 @@ class FinancialModule {
                     monto_aprobado_cordobas: valoracion.Valoracion_empeño_cordobas,
                     monto_aprobado_dolares: valoracion.Valoracion_empeño_dolares,
                     color: "#000",
-                    en_manos_de: tipo_contrato == "EMPEÑO" ? "ACREEDOR" : "DEUDOR",
+                    en_manos_de: FinancialModule.GetTipoContrato(tipo_contrato),
                     precio_venta: valoracion.Precio_venta_empeño_dolares,
                     Catalogo_Categoria: valoracion.Catalogo_Categoria,
                     Transactional_Valoracion: valoracion
@@ -63,8 +63,19 @@ class FinancialModule {
         contrato.Transaction_Contratos.total_pagar_dolares = totalDolaresMoney.toNumber();
         contrato.Transaction_Contratos.total_pagar_cordobas = totalCordobasMoney.toNumber();
         contrato.Transaction_Contratos.interes = interesMoney.toNumber();
-
         return contrato;
+    }
+    /**
+     * @param {string} tipo_contrato
+     */
+    static GetTipoContrato(tipo_contrato) {
+        //EMPENO, PRESTAMO, EMPENO_VEHICULO, APARTADO_QUINCENAL, APARTADO_MENSUAL
+        switch (tipo_contrato) {
+            case "EMPEÑO": case "EMPENO": case "EMPENO_VEHICULO": case  "APARTADO_QUINCENAL":  case "APARTADO_MENSUAL":
+                return "ACREEDOR"        
+            default:
+                return "DEUDOR"
+        }
     }
     /**
      * @param {ValoracionesTransaction} contrato
@@ -454,7 +465,7 @@ class FinancialModule {
         const existeMora = contractData.Contrato.Tbl_Cuotas?.filter(c => c.Estado == "PENDIENTE" && c.mora != null && c.mora > 0).length > 0;
 
         contractData.canReestructure = canReestructure
-        contractData.canPagoParcial = fechaVencida
+        contractData.canPagoParcial = fechaVencida && contractData.Contrato.tipo == "PRESTAMO"
         contractData.min = 1
         // @ts-ignore
         contractData.max = categoria.plazo_limite - plazo

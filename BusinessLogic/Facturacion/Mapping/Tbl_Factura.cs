@@ -28,8 +28,8 @@ namespace DataBaseModel
 		public DateTime? Fecha_Vencimiento { get; set; }
 		public string? Observaciones { get; set; }
 		public int? Id_Usuario { get; set; }
-		public string? Estado { get; set; }
-		public string? Moneda { get; set; }
+		public EstadoEnum? Estado { get; set; }
+		public MonedaEnum? Moneda { get; set; }
 		public decimal? Sub_Total { get; set; }
 		public decimal? TotalDescuento { get; set; }
 		public decimal? Iva { get; set; }
@@ -43,7 +43,7 @@ namespace DataBaseModel
 		public string? Motivo_Anulacion { get; set; }
 		public bool IsAnulable { get 
 		{
-		    return Estado != "ANULADO" && Estado != "CANCELADO" && !DateUtil.IsAffterNDays(Fecha, 5);
+		    return Estado != EstadoEnum.ANULADO && Estado !=  EstadoEnum.CANCELADO   && !DateUtil.IsAffterNDays(Fecha, 5);
 		}}		
 		public bool Is_cambio_cordobas { get; set; }
 		//public MonedaEnum?  Moneda { get; set; }

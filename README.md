@@ -34,15 +34,29 @@ cel: 85777676
 
 ELIMINAR DATOS DE PRUEBA: 
 
+delete from transactions.Orden_Movimiento; 
+delete from transactions.Inventario_Denominacion_Caja;
+delete from transactions.Corte_Caja; 
+delete from facturacion.Tbl_Bajas_Almacen   ;
+delete from facturacion.Tbl_Movimientos_Almacen    ;
+delete from facturacion.Tbl_Transaccion   ;
+delete from facturacion.Tbl_Lotes  ;
+delete from Detail_Valores  ;
+delete from Transactional_Valoracion ;
 delete from Detail_Prendas_Vehiculos;
+delete from Tbl_Acta_Entrega;
 delete from Detail_Prendas;
 DELETE from Detalle_Factura_Recibo;
-DELETE from Tbl_Cuotas_ModelComponent;
+DELETE from Tbl_Cuotas;
 DELETE from Transaction_Contratos;
-DELETE  from Catalogo_Clientes_ModelComponent where codigo_cliente  < 4000;
+--DELETE  from Catalogo_Clientes where codigo_cliente  < 4000;
 delete from Detail_Movimiento;
 delete from  Transaction_Movimiento;
 delete from Detalle_Factura_Recibo;
-delete from facturacion.Transaccion_Factura;
+delete from facturacion.Transaccion_Recibos;
 delete from facturacion.Detalle_Factura;
 delete from facturacion.Tbl_Factura;
+delete from facturacion.Detalle_Compra ;
+delete from facturacion.Tbl_Compra ;
+
+

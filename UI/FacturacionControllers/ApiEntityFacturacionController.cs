@@ -1,5 +1,6 @@
 
 using APPCORE;
+using Business;
 using BusinessLogic.Facturacion.Mapping;
 using DataBaseModel;
 using Microsoft.AspNetCore.Http;
@@ -192,19 +193,19 @@ namespace API.Controllers
 		public object? saveTbl_Compra(Tbl_Compra Inst)
 		{
 			//return Inst?.Save();
-			return Inst?.SaveCompra(HttpContext.Session.GetString("sessionKey"));
+			return ComprasServices.SaveCompra(Inst, HttpContext.Session.GetString("sessionKey"));
 		}
 		[HttpPost]
 		[AuthController]
-		public object? updateTbl_Compra(Tbl_Compra Inst)
+		public ResponseService? updateTbl_Compra(Tbl_Compra Inst)
 		{
 			return Inst?.Update();
 		}
 		[HttpPost]
 		[AuthController]
-		public object? anularCompra(Tbl_Compra Inst)
+		public ResponseService? anularCompra(Tbl_Compra Inst)
 		{            
-			return Inst?.AnularCompra(HttpContext.Session.GetString("sessionKey"));
+			return ComprasServices.AnularCompra(Inst,HttpContext.Session.GetString("sessionKey"));
 		}
 		//Cat_Almacenes
 		[HttpPost]

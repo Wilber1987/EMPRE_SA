@@ -8,6 +8,8 @@ using BusinessLogic.Empresa.Contratos;
 using CAPA_NEGOCIO.Util;
 using Business;
 using Transactions;
+using BusinessLogic.Empresa.Entity;
+using BusinessLogic.Empresa.Transactions;
 
 namespace DataBaseModel
 {
@@ -81,59 +83,120 @@ namespace DataBaseModel
 		public ResponseService Anular(string Identify, bool anularIgnoreTransactions = false, bool anularFullCost = false)
 		{
 			try
-			{
-				//BeginGlobalTransaction();
-				var (User, dbUser) = Business.Security_Users.GetUserData(Identify);
-				Transaction_Contratos? Transaction_Contratos = new Transaction_Contratos
-				{
-					numero_contrato = this.numero_contrato
-				}.Find<Transaction_Contratos>();
-				if (Transaction_Contratos == null)
-				{
-					return new ResponseService { status = 403, message = "Contrato no existe" };
-				}
-				var cuotasPagadas = Transaction_Contratos.Tbl_Cuotas.Where(c => c.Estado?.ToUpper() == "CANCELADO").ToList();
-				if (cuotasPagadas.Count > 0 && !anularIgnoreTransactions)
-				{
-					return new ResponseService { status = 403, message = "Contrato no puede ser anulado debido a que ya se realizaron transacciones en el (pago de cuotas)" };
-				}
-				if (IsAnulable && !anularIgnoreTransactions)
-				{
-					return new ResponseService { status = 403, message = "Fecha límite para anulación a caducado" };
-				}
-				Transaction_Contratos.motivo_anulacion = this.motivo_anulacion;
-				Transaction_Contratos.estado = Contratos_State.ANULADO;
-				Transaction_Contratos.Update();
-				//ANULAR
-				var cuentaOrigen = Catalogo_Cuentas.GetCuentaRegistoContratos(dbUser);
-				var cuentaDestino = Catalogo_Cuentas.GetCuentaEgresoContratos(dbUser);
-				Transaction_Movimiento? movimientosAnterior = new Transaction_Movimiento().Find<Transaction_Movimiento>(
-					FilterData.Equal("concepto", "Desembolso de monto para, contrato No: " + Transaction_Contratos.numero_contrato)
-				);
-				ResponseService response = new Movimientos_Cuentas
-				{
-					Catalogo_Cuentas_Destino = cuentaDestino,
-					Catalogo_Cuentas_Origen = cuentaOrigen,
-					concepto = "Reembolso de monto para anulación de contrato No: " + Transaction_Contratos.numero_contrato,
-					descripcion = motivo_anulacion,
-					moneda = movimientosAnterior?.moneda,
-					monto = movimientosAnterior?.moneda == "CORDOBAS" ? Transaction_Contratos.Valoracion_empeño_cordobas : Transaction_Contratos.monto,
-					tasa_cambio = Transaction_Contratos.taza_cambio,
-					tasa_cambio_compra = Transaction_Contratos.taza_cambio_compra,
-					is_transaction = true,
-					Tipo_Movimiento = TipoMovimiento.REEMBOLSO_POR_CONTRATO_ANULADO
-				}.SaveMovimiento(dbUser);
-				return new ResponseService { status = 200, message = "Contrato anulado correctamente" };
-			}
-			catch (Exception ex)
+            {
+                //BeginGlobalTransaction();
+                var (User, dbUser) = Business.Security_Users.GetUserData(Identify);
+                return DoAnular(anularIgnoreTransactions, dbUser);
+            }
+            catch (Exception ex)
 			{
 				//RollBackGlobalTransaction();
 				return new ResponseService { status = 500, message = ex.Message };
 			}
 		}
 
-		// ✅ CORREGIDO: Parámetros ahora son decimal?
-		public List<Tbl_Cuotas> Reestructurar(decimal? reestructuracion_value)
+        public ResponseService DoAnular(bool anularIgnoreTransactions, Security_Users? dbUser)
+        {
+            Transaction_Contratos? Transaction_Contratos = new Transaction_Contratos
+            {
+                numero_contrato = this.numero_contrato
+            }.Find<Transaction_Contratos>();
+            if (Transaction_Contratos == null)
+            {
+                return new ResponseService { status = 403, message = "Contrato no existe" };
+            }
+            var cuotasPagadas = Transaction_Contratos.Tbl_Cuotas.Where(c => c.Estado?.ToUpper() == "CANCELADO").ToList();
+            if (cuotasPagadas.Count > 0 && !anularIgnoreTransactions)
+            {
+                return new ResponseService { status = 403, message = "Contrato no puede ser anulado debido a que ya se realizaron transacciones en el (pago de cuotas)" };
+            }
+            if (IsAnulable && !anularIgnoreTransactions)
+            {
+                return new ResponseService { status = 403, message = "Fecha límite para anulación a caducado" };
+            }
+            Transaction_Contratos.motivo_anulacion = this.motivo_anulacion;
+            Transaction_Contratos.estado = Contratos_State.ANULADO;
+            Transaction_Contratos.Update();
+            //ANULAR
+            var cuentaOrigen = Catalogo_Cuentas.GetCuentaRegistoContratos(dbUser);
+            var cuentaDestino = Catalogo_Cuentas.GetCuentaEgresoContratos(dbUser);
+            Transaction_Movimiento? movimientosAnterior = new Transaction_Movimiento().Find<Transaction_Movimiento>(
+                FilterData.Equal("concepto", "Desembolso de monto para, contrato No: " + Transaction_Contratos.numero_contrato)
+            );
+            /*ResponseService response = new Movimientos_Cuentas
+            {
+                Catalogo_Cuentas_Destino = cuentaDestino,
+                Catalogo_Cuentas_Origen = cuentaOrigen,
+                concepto = "Reembolso de monto para anulación de contrato No: " + Transaction_Contratos.numero_contrato,
+                descripcion = motivo_anulacion,
+                moneda = movimientosAnterior?.moneda,
+                monto = movimientosAnterior?.moneda == MonedaEnum.CORDOBAS ? Transaction_Contratos.Valoracion_empeño_cordobas : Transaction_Contratos.monto,
+                tasa_cambio = Transaction_Contratos.taza_cambio,
+                tasa_cambio_compra = Transaction_Contratos.taza_cambio_compra,
+                is_transaction = true,
+                Tipo_Movimiento = TipoMovimiento.REEMBOLSO_POR_CONTRATO_ANULADO
+            }.SaveMovimiento(dbUser);*/
+
+            var existingOrder = new Orden_Movimiento().Find<Orden_Movimiento>(
+                FilterData.Equal("id_documento_origen", numero_contrato),
+                FilterData.Equal("tipo_documento_origen", "CONTRATO"),
+                FilterData.Equal("direccion", DirectionEnum.EGRESO),
+                FilterData.Equal("estado", EstadoOrden.EJECUTADA)
+            );
+            if (existingOrder != null)
+            {
+                var orden = new Orden_Movimiento()
+                {
+                    id_documento_origen = Transaction_Contratos.numero_contrato,
+                    tipo_documento_origen = "CONTRATO",
+                    descripcion = $"Reembolso de monto para anulación de contrato No: #{Transaction_Contratos.numero_contrato}",
+                    concepto = $"Reembolso de monto para anulación de contrato No: #{Transaction_Contratos.numero_contrato}",
+                    monto = movimientosAnterior?.moneda == MonedaEnum.CORDOBAS ? Transaction_Contratos.Valoracion_empeño_cordobas : Transaction_Contratos.monto,
+                    moneda = movimientosAnterior?.moneda,
+                    Cliente = $"{Transaction_Contratos.Catalogo_Clientes?.identificacion} - ${Transaction_Contratos.Catalogo_Clientes?.Nombre_Completo}",
+                    tasa_cambio = Transaction_Contratos.taza_cambio,
+                    Id_cuenta_origen = cuentaOrigen?.id_cuentas,
+                    Id_cuenta_destino = cuentaDestino?.id_cuentas,
+                    id_sucursal = dbUser.Id_Sucursal,
+                    Tipo_Movimiento = TipoMovimiento.REEMBOLSO_POR_CONTRATO_ANULADO,
+                    direccion = DirectionEnum.INGRESO,
+                    requiere_aprobacion = existingOrder != null  // la anulacion de un contrato requiere ejecucion manual si la orden original ya fue procesada
+                };
+
+                var ordenResponse = orden.DoSaveOrder(dbUser);
+
+                if (ordenResponse.status != 200)
+                {
+                    //RollBackGlobalTransaction();
+                    return ordenResponse;
+                }
+
+                // if (existingOrder == null)
+                // {
+                // 	var responseDoAprobaryEjecutarOrder = OrdersOperations.DoAprobaryEjecutarOrder(orden, dbUser);
+                // 	if (responseDoAprobaryEjecutarOrder.status != 200)
+                // 	{
+                // 		//RollBackGlobalTransaction();
+                // 		return responseDoAprobaryEjecutarOrder;
+                // 	}
+                // }
+            }
+            else
+            {
+                var existingOrderPendiente = new Orden_Movimiento().Find<Orden_Movimiento>(
+                    FilterData.Equal("id_documento_origen", numero_contrato),
+                    FilterData.Equal("tipo_documento_origen", "CONTRATO"),
+                    FilterData.Equal("direccion", DirectionEnum.EGRESO),
+                    FilterData.Equal("estado", EstadoOrden.PENDIENTE)
+                );
+                existingOrderPendiente?.Delete();
+            }
+
+            return new ResponseService { status = 200, message = "Contrato anulado correctamente" };
+        }
+
+        // ✅ CORREGIDO: Parámetros ahora son decimal?
+        public List<Tbl_Cuotas> Reestructurar(decimal? reestructuracion_value)
 		{
 			if (this.reestructurado == null)
 			{
@@ -320,6 +383,10 @@ namespace DataBaseModel
 		{
 			try
 			{
+				if (tipo == Contratos_Type.PRESTAMO)
+				{
+					return;
+				}
 				var VencimientoConfig = new Transactional_Configuraciones().GetConfig(ConfiguracionesVencimientos.VENCIMIENTO_CONTRATO.ToString());
 				var cuotasPendientes = new Tbl_Cuotas { numero_contrato = numero_contrato, Estado = EstadoEnum.PENDIENTE.ToString() }.Get<Tbl_Cuotas>();
 				if (cuotasPendientes.Count == 0)

@@ -7,6 +7,8 @@ using Model;
 using Transactions;
 using UI.CAPA_NEGOCIO.Empresa.Services.Recibos;
 using BusinessLogic.Facturacion.Operations;
+using BusinessLogic.Empresa.Entity;
+using BusinessLogic.Empresa.Transactions;
 
 namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 {
@@ -71,7 +73,7 @@ namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 			factura.Id_User = User.UserId;
 			factura.Id_Sucursal = dbUser?.Id_Sucursal;
 			factura.Id_Cliente = factura.Cliente.codigo_cliente;
-			factura.Estado = EstadoEnum.ACTIVO.ToString();
+			factura.Estado = EstadoEnum.PENDIENTE;
 			decimal totalSubTotal = 0;
 			decimal totalIva = 0;
 			decimal totalFactura = 0;
@@ -237,21 +239,24 @@ namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 			}
 			//TODO REVISAR
 			string detalleT = $"Venta de producto, factura: {factura?.Id_Factura} al cliente {factura?.Cliente?.Nombre_Completo}";
-			ResponseService response = new Movimientos_Cuentas
+			
+			var ordenResponse = new Orden_Movimiento()
 			{
-				Catalogo_Cuentas_Destino = cuentaDestino,
-				Catalogo_Cuentas_Origen = cuentaOrigen,
-				concepto = detalleT,
+				id_documento_origen = factura?.Id_Factura,
+				tipo_documento_origen = "FACTURA",
 				descripcion = detalleT,
-				moneda = factura?.Moneda?.ToUpper(),
-				monto = factura?.Moneda == "DOLARES" ? factura?.Total : factura?.Total * factura?.Tasa_Cambio_Venta,
+				concepto = detalleT,
+				monto = factura?.Total,
+				moneda = factura?.Moneda,
+				Cliente = $"{factura?.Cliente?.identificacion} - ${factura?.Cliente?.Nombre_Completo}",
 				tasa_cambio = factura?.Tasa_Cambio,
-				//tasa_cambio_compra = factura.Tasa_Cambio_Venta,
+				Id_cuenta_origen = cuentaOrigen?.id_cuentas,
+				Id_cuenta_destino = cuentaDestino?.id_cuentas,
 				Tipo_Movimiento = TipoMovimiento.INGRESO_POR_PAGO_DE_FACTURACION,
-				is_transaction = true,
-
-			}.SaveMovimiento(dbUser);
-			if (response.status == 400) return response;
+				direccion = DirectionEnum.INGRESO,
+				requiere_aprobacion = true  // Los INGRESOS POR FACTURA siempre requieren aprobación
+			}.DoSaveOrder(dbUser);
+			if (ordenResponse.status != 200) return ordenResponse;
 			var responseMC = MesaCambiariaService.GenerarMovimientosCambiariosFacturacion(dbUser, factura);
 			if (responseMC.status != 200)
 			{
@@ -372,30 +377,7 @@ namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 			try
 			{
 				BeginGlobalTransaction();
-				if (factura?.Datos_Financiamiento?.Numero_Contrato != null)
-				{
-					Transaction_Contratos? contract = new Transaction_Contratos
-					{
-						numero_contrato = factura?.Datos_Financiamiento?.Numero_Contrato,
-						motivo_anulacion = factura?.Motivo_Anulacion
-					};
-					ResponseService? response = contract?.Anular(Identity);
-					if (response?.status != 200)
-					{
-						RollBackGlobalTransaction();
-						return response;
-					}
-				}
-				if (factura?.Datos_Financiamiento?.Id_recibo != null)
-				{
-					new Recibos_Transactions
-					{
-						id_recibo = factura?.Datos_Financiamiento?.Id_recibo,
-						motivo_anulacion = factura?.Motivo_Anulacion
-					}.AnularFactura(Identity);
-				}
-				factura!.Estado = EstadoEnum.ANULADO.ToString();
-				factura?.Save();
+
 				//ANULAR
 				var cuentaOrigen = Catalogo_Cuentas.GetCuentaIngresoFacturas(dbUser);
 				var cuentaDestino = Catalogo_Cuentas.GetCuentaEgresoFacturas(dbUser);
@@ -408,23 +390,75 @@ namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 					};
 				}
 				string detalleT = $"Snulacion de venta de producto, factura: {factura?.Id_Factura}, cliente: {factura?.Cliente?.Nombre_Completo}";
-				ResponseService responseM = new Movimientos_Cuentas
-				{
-					Catalogo_Cuentas_Destino = cuentaOrigen,
-					Catalogo_Cuentas_Origen = cuentaDestino,
-					concepto = detalleT,
-					descripcion = detalleT,
-					moneda = factura?.Moneda?.ToUpper(),
-					monto = factura?.Total,
-					tasa_cambio = factura?.Tasa_Cambio,
-					is_transaction = true,
-					Tipo_Movimiento = TipoMovimiento.DESEMBOLSO_POR_ANULACION_DE_PAGO_DE_FACTURACION
 
-				}.SaveMovimiento(dbUser);
-				if (responseM.status == 400)
+
+				var existingOrder = new Orden_Movimiento().Find<Orden_Movimiento>(
+					FilterData.Equal("id_documento_origen", factura?.Id_Factura),
+					FilterData.Equal("tipo_documento_origen", "FACTURA"),
+					FilterData.Equal("direccion", DirectionEnum.INGRESO),
+					FilterData.Equal("estado", EstadoOrden.EJECUTADA)
+				);
+				if (existingOrder != null)
 				{
-					RollBackGlobalTransaction();
-					return responseM;
+					var existingOrderAnulacion = new Orden_Movimiento().Find<Orden_Movimiento>(
+						FilterData.Equal("id_documento_origen", factura?.Id_Factura),
+						FilterData.Equal("tipo_documento_origen", "FACTURA"),
+						FilterData.Equal("direccion", DirectionEnum.EGRESO),
+						FilterData.Equal("Tipo_Movimiento", TipoMovimiento.DESEMBOLSO_POR_ANULACION_DE_PAGO_DE_FACTURACION),
+						FilterData.Equal("estado", EstadoOrden.PENDIENTE)
+					);
+					if (existingOrderAnulacion != null)
+					{
+						RollBackGlobalTransaction();
+						return new ResponseService()
+						{
+							status = 400,
+							message = "Ya existe una orden de anulación pendiente",
+							body = factura
+						};
+					}
+					var orden = new Orden_Movimiento()
+					{
+						id_documento_origen = factura?.Id_Factura,
+						tipo_documento_origen = "FACTURA",
+						descripcion = detalleT,
+						concepto = detalleT,
+						monto = factura?.Total,
+						id_sucursal = dbUser.Id_Sucursal,
+						moneda = factura?.Moneda,
+						Cliente = $"{factura?.Cliente?.identificacion} - ${factura?.Cliente?.Nombre_Completo}",
+						tasa_cambio = factura?.Tasa_Cambio,
+						Id_cuenta_origen = cuentaOrigen?.id_cuentas,
+						Id_cuenta_destino = cuentaDestino?.id_cuentas,
+						Tipo_Movimiento = TipoMovimiento.DESEMBOLSO_POR_ANULACION_DE_PAGO_DE_FACTURACION,
+						direccion = DirectionEnum.EGRESO,
+						requiere_aprobacion = existingOrder != null  // Los EGRESO POR FACTURA siempre requieren aprobación si la orden origina ya fue ejecutada
+					};
+
+					var ordenResponse = orden.DoSaveOrder(dbUser);
+
+					if (ordenResponse.status != 200)
+					{
+						RollBackGlobalTransaction();
+						return ordenResponse;
+					}
+
+				}
+				else
+				{
+					var existingOrderPendiente = new Orden_Movimiento().Find<Orden_Movimiento>(
+						FilterData.Equal("id_documento_origen", factura?.Id_Factura),
+						FilterData.Equal("tipo_documento_origen", "FACTURA"),
+						FilterData.Equal("direccion", DirectionEnum.INGRESO),
+						FilterData.Equal("estado", EstadoOrden.PENDIENTE)
+					);
+					existingOrderPendiente?.Delete();
+					(bool flowControl, ResponseService? value) = DoAnulacionFactura(factura, dbUser);
+					if (!flowControl)
+					{
+						RollBackGlobalTransaction();
+						return value;
+					}
 				}
 				CommitGlobalTransaction();
 				return new ResponseService
@@ -438,6 +472,47 @@ namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 				RollBackGlobalTransaction();
 				throw;
 			}
+		}
+
+		public (bool flowControl, ResponseService value) DoAnulacionFactura(Tbl_Factura factura, Security_Users dbUser)
+		{
+			if (factura?.Datos_Financiamiento?.Numero_Contrato != null)
+			{
+				Transaction_Contratos? contract = new Transaction_Contratos
+				{
+					numero_contrato = factura?.Datos_Financiamiento?.Numero_Contrato,
+					motivo_anulacion = factura?.Motivo_Anulacion
+				};
+				ResponseService? response = contract?.DoAnular(false, dbUser);
+				if (response?.status != 200)
+				{
+					return (flowControl: false, value: response);
+				}
+			}
+			if (factura?.Datos_Financiamiento?.Id_recibo != null)
+			{
+				var response = new RecibosServices
+				{
+					id_recibo = factura?.Datos_Financiamiento?.Id_recibo,
+					motivo_anulacion = factura?.Motivo_Anulacion
+				}.DoAnular(dbUser);
+				if (response.status != 200)
+				{
+					return (flowControl: false, value: response);
+				}
+			}
+			factura!.Estado = EstadoEnum.ANULADO;
+			foreach (var detalle in factura.Detalle_Factura ?? [])
+			{
+				var loteOriginal = detalle.Lote?.Find<Tbl_Lotes>();
+				if (loteOriginal != null)
+				{
+					loteOriginal.Cantidad_Existente += detalle.Cantidad;
+					loteOriginal.Update();
+				}
+			}
+			factura?.Save();
+			return (flowControl: true, value: null);
 		}
 	}
 }

@@ -14,7 +14,7 @@ namespace Business
         public decimal? Valor_de_compra { get; set; }
         public decimal? Valor_de_venta { get; set; }
         public MonedaEnum? Moneda { get; set; }
-        public Catalogo_Cambio_Divisa? GetDivisa(MonedaEnum? moneda = MonedaEnum.DOLAR)
+        public Catalogo_Cambio_Divisa? GetDivisa(MonedaEnum? moneda = MonedaEnum.DOLARES)
         {
             return new Catalogo_Cambio_Divisa{ Moneda = moneda }.Get<Catalogo_Cambio_Divisa>()[0];
         }
@@ -22,6 +22,6 @@ namespace Business
 
     public enum MonedaEnum
     {
-        DOLAR
+        DOLARES, CORDOBAS
     } 
 }

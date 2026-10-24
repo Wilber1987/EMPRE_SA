@@ -1,3 +1,4 @@
+import { Orden_Movimiento } from "../Caja/Model/Order_Movimiento.js";
 import { Catalogo_Clientes } from "../ClientModule/FrontModel/Catalogo_Clientes.js";
 import { EntityClass } from "../WDevCore/WModules/EntityClass.js";
 class Recibos extends EntityClass {
@@ -45,6 +46,7 @@ class Recibos extends EntityClass {
     /**@type {Number}*/ paga_dolares;
     /**@type {Boolean}*/ solo_abono;
     /**@type {Boolean}*/ cancelar;
+    /**@type {Orden_Movimiento}*/ OrdenData;
 }
 export { Recibos }
 
@@ -95,4 +97,5 @@ export class Transaccion_Recibos extends EntityClass {
     Factura_contrato;
     /** @type {Array<Detalle_Factura_Recibo>|null} */
     Detalle_Factura_Recibo;
+    /**@type {Orden_Movimiento}*/ OrdenData;
 }

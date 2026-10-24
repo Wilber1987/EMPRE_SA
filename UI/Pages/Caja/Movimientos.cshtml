@@ -15,22 +15,13 @@
     }
 }
 <script type="module">
-    import { WTransactionProcessor } from "/Caja/WTransactionProcessor.js";
-    import { Order } from "/Caja/Model/Order.js";
+    import { WCajasView } from "/Caja/WCajasView.js";
 
 
 
     window.onload = () => {
         // Crear instancia
-        const entity = new Order();
-        entity.LoadMockData();
-        const processor = new WTransactionProcessor({
-            entity: entity,
-            action: (order) => {
-                console.log("Orden procesada:", order);
-                // Aquí puedes manejar la lógica post-procesamiento
-            }
-        });
+        const processor = new WCajasView();
 
         // Añadir al DOM
         MainBody.appendChild(processor);

@@ -4,5 +4,6 @@ public enum EstadoEnum
     INACTIVO,
     ANULADO,
     PENDIENTE,
-    VENCIDO
+    VENCIDO,
+    CANCELADO
 }

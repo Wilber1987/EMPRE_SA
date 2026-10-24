@@ -11,14 +11,12 @@ using System.Globalization;
 using Org.BouncyCastle.Bcpg;
 using APPCORE;
 using APPCORE.Services;
+using CAPA_NEGOCIO.SystemConfig;
 
 namespace CAPA_NEGOCIO.Services
 {
 	public class ContractTemplateService
 	{
-
-		
-
 
 		public static void generaPDF(Transaction_Contratos model)
 		{
@@ -51,7 +49,7 @@ namespace CAPA_NEGOCIO.Services
 			}
 			else if (model.tipo.Equals(Contratos_Type.PRESTAMO))
 			{
-				templateContent = ContractsTemplates.ContractPrestamo;
+				templateContent = DocumentsData.GetContratosEmpenoDataFragments();
 			}
 			else if (model.tipo.Equals(Contratos_Type.APARTADO_MENSUAL))
 			{
@@ -67,26 +65,26 @@ namespace CAPA_NEGOCIO.Services
 			var configuraciones_generales = new Transactional_Configuraciones().GetGeneralData();
 
 			//var configuraciones = new Transactional_Configuraciones().GetIntereses();
-			templateContent = templateContent.Replace("{{cuotafija}}", NumberUtility.ConvertToMoneyString(model.cuotafija))
-				.Replace("{{numero_contrato}}", model.numero_contrato?.ToString("D9"))
-				.Replace("{{datos_apoderado}}", configuraciones_generales.Find(c => c.Nombre.Equals(GeneralDataEnum.APODERADO.ToString()))?.Valor)
-				.Replace("{{resumen_datos_apoderado}}", configuraciones_generales.Find(c => c.Nombre.Equals(GeneralDataEnum.DATOS_APODERADO.ToString()))?.Valor)
-				.Replace("{{firma}}", configuraciones_generales.Find(c => c.Nombre.Equals(GeneralDataEnum.FIRMA_DIGITAL_APODERADO.ToString()))?.Valor)
-				.Replace("{{logo}}", "data:image/png;base64," + configuraciones_theme.Find(c => c.Nombre.Equals(ConfiguracionesThemeEnum.LOGO.ToString()))?.Valor)
-				.Replace("{{titulo}}", configuraciones_theme.Find(c => c.Nombre == ConfiguracionesThemeEnum.TITULO.ToString())?.Valor)
-				.Replace("{{subtitulo}}", configuraciones_theme.Find(c => c.Nombre == ConfiguracionesThemeEnum.SUB_TITULO.ToString())?.Valor)
-				.Replace("{{info_tel}}", configuraciones_theme.Find(c => c.Nombre == ConfiguracionesThemeEnum.INFO_TEL.ToString())?.Valor)
-				.Replace("{{fecha_contrato_label}}", model.fecha_contrato?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy \"a las\" h:mm tt", new CultureInfo("es-ES")))
-				.Replace("{{fecha_contrato_label_corta}}", model.fecha_contrato?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy", new CultureInfo("es-ES")))
-				.Replace("{{fecha_primera_cuota}}", fechaPrimeraCuota?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy", new CultureInfo("es-ES")))
-				.Replace("{{fecha_ultima_cuota}}", fechaUltimaCuota?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy", new CultureInfo("es-ES")))
-				.Replace("{{cuotafija_label}}", NumberUtility.NumeroALetras(model.cuotafija, true, "córdobas"))
-				.Replace("{{cuotafija_dolares}}", NumberUtility.ConvertToMoneyString(model.cuotafija_dolares))
-				.Replace("{{cuotafija_dolares_label}}", NumberUtility.NumeroALetras(model.cuotafija_dolares, true, "dólares"))
-				.Replace("{{Valoracion_empeño_cordobas}}", NumberUtility.ConvertToMoneyString(model.Valoracion_empeño_cordobas))
-				.Replace("{{Valoracion_empeño_cordobas_label}}", NumberUtility.NumeroALetras(model.Valoracion_empeño_cordobas, true, "córdobas"))
-				.Replace("{{Valoracion_empeño_dolares}}", NumberUtility.ConvertToMoneyString(model.Valoracion_empeño_dolares))
-				.Replace("{{Valoracion_empeño_dolares_label}}", NumberUtility.NumeroALetras(model.Valoracion_empeño_dolares, true, "dólares"));
+			templateContent = templateContent.Replace("{{ cuotafija }}", NumberUtility.ConvertToMoneyString(model.cuotafija))
+				.Replace("{{ numero_contrato }}", model.numero_contrato?.ToString("D9"))
+				.Replace("{{ datos_apoderado }}", configuraciones_generales.Find(c => c.Nombre.Equals(GeneralDataEnum.APODERADO.ToString()))?.Valor)
+				.Replace("{{ resumen_datos_apoderado }}", configuraciones_generales.Find(c => c.Nombre.Equals(GeneralDataEnum.DATOS_APODERADO.ToString()))?.Valor)
+				.Replace("{{ firma }}", configuraciones_generales.Find(c => c.Nombre.Equals(GeneralDataEnum.FIRMA_DIGITAL_APODERADO.ToString()))?.Valor)
+				.Replace("{{ logo }}", "data:image/png;base64," + configuraciones_theme.Find(c => c.Nombre.Equals(ConfiguracionesThemeEnum.LOGO.ToString()))?.Valor)
+				.Replace("{{ titulo }}", configuraciones_theme.Find(c => c.Nombre == ConfiguracionesThemeEnum.TITULO.ToString())?.Valor)
+				.Replace("{{ subtitulo }}", configuraciones_theme.Find(c => c.Nombre == ConfiguracionesThemeEnum.SUB_TITULO.ToString())?.Valor)
+				.Replace("{{ info_tel }}", configuraciones_theme.Find(c => c.Nombre == ConfiguracionesThemeEnum.INFO_TEL.ToString())?.Valor)
+				.Replace("{{ fecha_contrato_label }}", model.fecha_contrato?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy \"a las\" h:mm tt", new CultureInfo("es-ES")))
+				.Replace("{{ fecha_contrato_label_corta }}", model.fecha_contrato?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy", new CultureInfo("es-ES")))
+				.Replace("{{ fecha_primera_cuota }}", fechaPrimeraCuota?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy", new CultureInfo("es-ES")))
+				.Replace("{{ fecha_ultima_cuota }}", fechaUltimaCuota?.ToString("dddd, d \"del\" \"mes\" \"de\" MMMM \"del\" \"año\" yyyy", new CultureInfo("es-ES")))
+				.Replace("{{ cuotafija_label }}", NumberUtility.NumeroALetras(model.cuotafija, true, "córdobas"))
+				.Replace("{{ cuotafija_dolares }}", NumberUtility.ConvertToMoneyString(model.cuotafija_dolares))
+				.Replace("{{ cuotafija_dolares_label }}", NumberUtility.NumeroALetras(model.cuotafija_dolares, true, "dólares"))
+				.Replace("{{ Valoracion_empeño_cordobas }}", NumberUtility.ConvertToMoneyString(model.Valoracion_empeño_cordobas))
+				.Replace("{{ Valoracion_empeño_cordobas_label }}", NumberUtility.NumeroALetras(model.Valoracion_empeño_cordobas, true, "córdobas"))
+				.Replace("{{ Valoracion_empeño_dolares }}", NumberUtility.ConvertToMoneyString(model.Valoracion_empeño_dolares))
+				.Replace("{{ Valoracion_empeño_dolares_label }}", NumberUtility.NumeroALetras(model.Valoracion_empeño_dolares, true, "dólares"));
 
 			var renderedHtml = RenderTemplate(templateContent, model);
 
@@ -102,50 +100,50 @@ namespace CAPA_NEGOCIO.Services
 			var mora = model.mora / 100;
 
 			renderedHtml = RenderTemplate(renderedHtml, cliente)
-				.Replace("{{municipio}}", cliente.Catalogo_Municipio?.nombre)
-				.Replace("{{departamento}}", cliente.Catalogo_Departamento?.nombre)
-				.Replace("{{tabla_articulos}}", GeneratePrendasTableHtml(model.Detail_Prendas, model.tipo.Equals(Contratos_Type.EMPENO_VEHICULO)))
+				.Replace("{{ municipio }}", cliente.Catalogo_Municipio?.nombre)
+				.Replace("{{ departamento }}", cliente.Catalogo_Departamento?.nombre)
+				.Replace("{{ tabla_articulos }}", GeneratePrendasTableHtml(model.Detail_Prendas, model.tipo.Equals(Contratos_Type.EMPENO_VEHICULO)))
 				//MORA                
-				.Replace("{{valor_mora}}", "C$ " + NumberUtility.ConvertToMoneyString(model.cuotafija_dolares * mora * model.taza_cambio))
-				.Replace("{{valor_mora_label}}", NumberUtility.NumeroALetras(model.cuotafija_dolares * mora * model.taza_cambio, true, "córdobas"))
+				.Replace("{{ valor_mora }}", "C$ " + NumberUtility.ConvertToMoneyString(model.cuotafija_dolares * mora * model.taza_cambio))
+				.Replace("{{ valor_mora_label }}", NumberUtility.NumeroALetras(model.cuotafija_dolares * mora * model.taza_cambio, true, "córdobas"))
 
 				/*INTERESES*/
-				.Replace("{{interes_demas_cargos}}", model.gestion_crediticia.ToString() ?? "6")
-				.Replace("{{interes_demas_cargos_label}}", NumberUtility.NumeroALetras(
+				.Replace("{{ interes_demas_cargos }}", model.gestion_crediticia.ToString() ?? "6")
+				.Replace("{{ interes_demas_cargos_label }}", NumberUtility.NumeroALetras(
 					Convert.ToDecimal(model.gestion_crediticia.ToString() ?? "")))
 
-				.Replace("{{interes_gastos_administrativos}}", AplicaGastosAdministrativos(model) ?
+				.Replace("{{ interes_gastos_administrativos }}", AplicaGastosAdministrativos(model) ?
 					model.DesgloseIntereses.GASTOS_ADMINISTRATIVOS.ToString() : "0")
-				.Replace("{{interes_gastos_administrativos_label}}", NumberUtility.NumeroALetras(AplicaGastosAdministrativos(model) ?
+				.Replace("{{ interes_gastos_administrativos_label }}", NumberUtility.NumeroALetras(AplicaGastosAdministrativos(model) ?
 					Convert.ToDecimal(model.DesgloseIntereses.GASTOS_ADMINISTRATIVOS.ToString()) : 0))
 
-				.Replace("{{interes_gastos_legales}}",
+				.Replace("{{ interes_gastos_legales }}",
 					model.DesgloseIntereses.GASTOS_LEGALES.ToString())
-				.Replace("{{interes_gastos_legales_label}}", NumberUtility.NumeroALetras(
+				.Replace("{{ interes_gastos_legales_label }}", NumberUtility.NumeroALetras(
 					Convert.ToDecimal(model.DesgloseIntereses.GASTOS_LEGALES.ToString())))
 
-				.Replace("{{interes_comisiones_label}}", NumberUtility.NumeroALetras(
+				.Replace("{{ interes_comisiones_label }}", NumberUtility.NumeroALetras(
 					Convert.ToDecimal(model.DesgloseIntereses.COMISIONES.ToString())))
-				.Replace("{{interes_comisiones}}",
+				.Replace("{{ interes_comisiones }}",
 					model.DesgloseIntereses.COMISIONES.ToString())
 
-				.Replace("{{interes_mantenimiento_valor_label}}", NumberUtility.NumeroALetras(
+				.Replace("{{ interes_mantenimiento_valor_label }}", NumberUtility.NumeroALetras(
 					Convert.ToDecimal(model.DesgloseIntereses.MANTENIMIENTO_VALOR.ToString())))
-				.Replace("{{interes_mantenimiento_valor}}",
+				.Replace("{{ interes_mantenimiento_valor }}",
 					model.DesgloseIntereses.MANTENIMIENTO_VALOR.ToString())
 
-				.Replace("{{interes_inicial_label}}", NumberUtility.NumeroALetras(
+				.Replace("{{ interes_inicial_label }}", NumberUtility.NumeroALetras(
 					Convert.ToDecimal(model.DesgloseIntereses.INTERES_NETO_CORRIENTE.ToString())))
-				.Replace("{{interes_inicial}}",
+				.Replace("{{ interes_inicial }}",
 					model.DesgloseIntereses.INTERES_NETO_CORRIENTE.ToString())
 
-				.Replace("{{sum_intereses}}", (valorInteres +
+				.Replace("{{ sum_intereses }}", (valorInteres +
 					(!AplicaGastosAdministrativos(model) ? 0 :
 					Convert.ToDecimal(cliente.Catalogo_Clasificacion_Interes?.porcentaje - 1))).ToString("0"))
-				.Replace("{{dias}}", DateTime.Now.Day.ToString())
-				.Replace("{{mes}}", DateTime.Now.ToString("MMMM"))
-				.Replace("{{anio}}", DateTime.Now.Year.ToString())
-				.Replace("{{tbody_amortizacion}}", GenerateCuotesTableHtml(model.Tbl_Cuotas, cliente, model));
+				.Replace("{{ dias }}", DateTime.Now.Day.ToString())
+				.Replace("{{ mes }}", DateTime.Now.ToString("MMMM"))
+				.Replace("{{ anio }}", DateTime.Now.Year.ToString())
+				.Replace("{{ tbody_amortizacion }}", GenerateCuotesTableHtml(model.Tbl_Cuotas, cliente, model));
 			return renderedHtml;
 		}
 
@@ -166,7 +164,7 @@ namespace CAPA_NEGOCIO.Services
 			{
 				string propertyName = property.Name;
 				object propertyValue = property.GetValue(model, null);
-				string placeholder = "{{" + propertyName + "}}";
+				string placeholder = "{{ " + propertyName + " }}";
 				if (propertyValue != null)
 				{
 					renderedTemplate = renderedTemplate.Replace(placeholder, propertyValue.ToString());

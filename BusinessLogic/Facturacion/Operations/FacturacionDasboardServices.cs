@@ -30,8 +30,8 @@ namespace BusinessLogic.Facturacion.Operations
                 filterData =
                 [
                     FilterData.Equal("c.tipo_cuenta", "PROPIA"),
-                    FilterData.GreaterEqual("tm.fecha", desde),
-                    FilterData.LessEqual("tm.fecha", hasta.AddDays(1).AddTicks(-1)), // cuidado: rango inclusivo
+                    FilterData.GreaterEqual("tm.fecha", desde.ToString("yyyy-MM-dd")),
+                    FilterData.LessEqual("tm.fecha", hasta.AddDays(1).AddTicks(-1).ToString("yyyy-MM-dd")), // cuidado: rango inclusivo
                     //FilterData.Equal("c.id_sucursal", dbUser?.Id_Sucursal ?? 0),
                 ]
             }.Get<TransactionReport>();

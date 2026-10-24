@@ -133,7 +133,7 @@ class ActasEntregasView extends HTMLElement {
 							modal.close();
 						}
 					}, "¿Esta seguro que desea anular esta entrega?"));
-				}}">Aceptar</button>
+				 }}">Aceptar</button>
 				</div>
 				<style>
 					.options { 

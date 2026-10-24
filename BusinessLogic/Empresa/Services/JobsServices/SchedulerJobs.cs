@@ -22,7 +22,7 @@ namespace BackgroundJob.Cron.Jobs
             _log.LogInformation(":::::::::::Running...  DailyCronJob at {0}", DateTime.UtcNow);
             try
             {
-                new Recibos_Transactions().CalculateMora();
+                new RecibosServices().CalculateMora();
             }
             catch (System.Exception ex)
             {

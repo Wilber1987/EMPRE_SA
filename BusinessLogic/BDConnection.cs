@@ -33,7 +33,7 @@ namespace BusinessLogic.Connection
 		{
 			if (isDebug)
 			{
-				return SqlADOConexion.IniciarConexion("sa", "zaxscd", ".", "EMPRE_SA");
+				return SqlADOConexion.IniciarConexion("sa", "zaxscd", ".\\SQLEXPRESS", "EMPRE_SA");
 			}
 			//CONEXIONES DE PRODUCCION
 			//SqlADOConexion.IniciarConexion("empresa", "Wmatus09%", "tcp:empresociedadanonima.database.windows.net", "EMPRE_SA");

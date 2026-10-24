@@ -38,6 +38,7 @@ import { Transaction_Contratos } from "../FrontModel/Transaction_Contratos.js";
 import { Catalogo_Clientes } from "../FrontModel/ClientesModel.js";
 import { Detail_Valores } from "../Facturacion/FrontModel/Tbl_Lotes.js";
 import { WSimpleModal } from "../WDevCore/WComponents/WSimpleModal.js";
+import { DateTime } from "../WDevCore/WModules/Types/DateTime.js";
 class Transaction_Valoraciones_View extends HTMLElement {
 	// @ts-ignore
 	constructor(props) {
@@ -67,22 +68,26 @@ class Transaction_Valoraciones_View extends HTMLElement {
 	}
 	Draw = async () => {
 		/** @type {Array<Catalogo_Cambio_Divisa>} */
-		this.tasasCambio = await new Catalogo_Cambio_Divisa_ModelComponent().Get();
+		this.tasasCambio = await new Catalogo_Cambio_Divisa_ModelComponent().Get();		
+		this.Categorias = await new Catalogo_Categoria_ModelComponent().Get();
+
 		let estadosArticulos = await new Catalogo_Estados_Articulos_ModelComponent().Where(
 			FilterData.IsNull("id_categoria")
 		);
 		this.estadosArticulos = estadosArticulos.sort(((a, b) => a.id_estado_articulo - b.id_estado_articulo));
-		this.Categorias = await new Catalogo_Categoria_ModelComponent().Get()
 		this.Intereses = await new Transactional_Configuraciones().getConfiguraciones_Intereses();
 		this.Beneficios = await new Transactional_Configuraciones().getConfiguraciones_Beneficios();
 		this.InteresBase = WArrayF.SumValAtt(this.Intereses, "Valor");
 
 		this.buildValoresModel(this.tasasCambio);
 
-		this.multiSelectEstadosArticulos = new WTableComponent({
-			Dataset: estadosArticulos,
+		console.log(this.Categorias[0]?.Catalogo_Estados_Articulos);
+		
+		const isEstadosDisponibles = Array.isArray(this.Categorias[0]?.Catalogo_Estados_Articulos);
+		this.multiSelectEstadosArticulos = new WTableComponent({ 
+			Dataset: isEstadosDisponibles ? this.Categorias[0]?.Catalogo_Estados_Articulos :  estadosArticulos,
 			ModelObject: this.BuildEstadosArticulosModel(),
-			selectedItems: [estadosArticulos[0]],
+			selectedItems:isEstadosDisponibles ? [this.Categorias[0]?.Catalogo_Estados_Articulos[0]] : [estadosArticulos[0]],
 			paginate: false,
 			Options: {
 				Select: true, MultiSelect: false, SelectAction: () => {
@@ -225,7 +230,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
 			porcentaje_empeno: { type: 'number', hidden: true },
 			Porcentaje_venta_compra: { type: 'number', hidden: true },
 			Porcentaje_venta_empeno: { type: 'number', hidden: true },
-			Categoria: { hidden: true },
+			Categoria: { type: 'Text', hidden: true },
 			valor_compra_cordobas: {
 				type: "operation", action: (/** @type {{ porcentaje_compra: any; }} */ element) => {
 					return ConvertToMoneyString(this.calculoCordobas(element.porcentaje_compra));
@@ -573,7 +578,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
 		}))
 		if (WSecurity.HavePermission(Permissions.GESTION_EMPEÑOS)) {
 			this.OptionContainer.append(WRender.Create({
-				tagName: 'button', className: 'Block-Success', innerText: 'Generar Contrato',
+				tagName: 'button', className: 'Block-Success', innerText: 'Contrato de Empeño',
 				onclick: async () => {
 					if (this.valoracionesTable?.Dataset.length == 0) {
 						WAlertMessage.Connect({ Message: "Agregue valoraciones para poder continuar", Type: "warning" });
@@ -584,6 +589,23 @@ class Transaction_Valoraciones_View extends HTMLElement {
 						return;
 					}
 					const response = await this.calculoAmortizacion().SaveDataContract();
+					if (response) {
+						window.location.href = "/PagesViews/Transaction_ContratosView";
+					}
+				}
+			}))
+			this.OptionContainer.append(WRender.Create({
+				tagName: 'button', className: 'Block-Success', innerText: 'Contrato Deudor',
+				onclick: async () => {
+					if (this.valoracionesTable?.Dataset.length == 0) {
+						WAlertMessage.Connect({ Message: "Agregue valoraciones para poder continuar", Type: "warning" });
+						return;
+					}
+					if (this.Cliente?.codigo_cliente == undefined) {
+						WAlertMessage.Connect({ Message: "Seleccione un cliente para continuar", Type: "warning" });
+						return;
+					}
+					const response = await this.calculoAmortizacion("PRESTAMO").SaveDataContract();
 					if (response) {
 						window.location.href = "/PagesViews/Transaction_ContratosView";
 					}
@@ -741,7 +763,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
 	}
 	getTasaInteres = () => {
 		if (this.Cliente.Catalogo_Clasificacion_Interes) {
-			return parseFloat(this.Cliente.Catalogo_Clasificacion_Interes.porcentaje)
+			return parseFloat(this.Cliente.Catalogo_Clasificacion_Interes?.porcentaje ?? "0")
 				// @ts-ignore
 				+ this.InteresBase;
 		} else {
@@ -769,6 +791,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
 				if (prop == "id_valoracion" && valoracion.requireReValoracion(parseFloat((await SystemConfigs.FindByName("VENCIMIENTO_VALORACION"))?.Valor ?? "40"))) continue;
 				this.valoracionesForm.FormObject[prop] = valoracion[prop]
 			}
+			// @ts-ignore
 			this.valoracionesForm.Config.ModelObject?.Catalogo_Categoria?.action(this.valoracionesForm.FormObject, this.valoracionesForm);
 			this.valoracionesForm.DrawComponent();
 			if (this.valoresForm != undefined) {
@@ -817,7 +840,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
 			beneficioVentaE = estado_seleccionado?.Porcentaje_venta_empeno;
 		}
 
-		const mora = detail.Tasa_interes * 2 / 100;
+		const mora = (detail.Tasa_interes ?? 0) * 2 / 100;
 		const precio_venta_empeño = ((parseFloat(detail.Valoracion_empeño_dolares) * (mora + 1)) * (beneficioVentaE.Valor / 100 + 1));
 		//console.log(precio_venta_empeño);
 		// @ts-ignore
@@ -846,13 +869,13 @@ class Transaction_Valoraciones_View extends HTMLElement {
 			document.body.append(new WModalForm({
 				ObjectModal: beneficios
 			}))
-		}}">Beneficio</button>`);
+		 }}">Beneficio</button>`);
 		this.ValoracionesResumenData?.append(html`<button class="Block-Secundary" onclick="${() => {
 			this.printDocument('/documents/formatoInspeccionAutos.html');
-		}}">F/Autos</button>`)
+		 }}">F/Autos</button>`)
 		this.ValoracionesResumenData?.append(html`<button class="Block-Secundary" onclick="${() => {
 			this.printDocument('/documents/formatoInspeccionMotos.html');
-		}}">F/Motos</button>`)
+		 }}">F/Motos</button>`)
 		this.multiSelectEstadosArticulos?.SetOperationValues();
 		this.UpdateEstadosArticulos(this.valoracionSeleccionada)
 	}
@@ -875,7 +898,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
 	 * 
 	 * @returns {ValoracionesTransaction}
 	 */
-	calculoAmortizacion = () => {
+	calculoAmortizacion = (/** @type {String} */ tipoContrato = "EMPEÑO") => {
 		if (this.valoracionesTable?.Dataset.length == 0) {
 			this.amortizacionResumen.innerHTML = "";
 			this.amortizacionResumen.append(this.valoracionResumen(0, 0, 0, 0));
@@ -884,11 +907,12 @@ class Transaction_Valoraciones_View extends HTMLElement {
 		const total = this.valoracionesTable?.Dataset.reduce((sum, value) => (typeof value.Edad == "number" ? sum + value.Edad : sum), 0);
 		const contrato = new ValoracionesTransaction();
 		// @ts-ignore
-		contrato.valoraciones = this.valoracionesTable?.Dataset;
+		contrato.valoraciones = this.GetValoraciones(tipoContrato);
 
 		contrato.Transaction_Contratos = new Transaction_Contratos({
 			tasas_interes: this.getTasaInteres() / 100,
-			fecha: new Date(),
+			fecha: new DateTime(),
+			tipo: tipoContrato, 
 			plazo: this.valoracionesForm?.FormObject.Plazo ?? 1,
 			// @ts-ignore
 			taza_cambio: this.tasasCambio[0].Valor_de_venta,
@@ -898,7 +922,7 @@ class Transaction_Valoraciones_View extends HTMLElement {
 			Catalogo_Clientes: this.Cliente.codigo_cliente != undefined ? this.Cliente : this.GenerateClient(),
 			gestion_crediticia: this.Cliente.Catalogo_Clasificacion_Interes?.porcentaje ?? 6,
 		});
-		FinancialModule.calculoAmortizacion(contrato);
+		FinancialModule.calculoAmortizacion(contrato, true, tipoContrato);
 		//console.log(FinancialModule.calculoAmortizacion(contrato));
 
 		if (this.CuotasTable != undefined) {
@@ -912,6 +936,16 @@ class Transaction_Valoraciones_View extends HTMLElement {
 			contrato.Transaction_Contratos.Valoracion_empeño_dolares));
 		return contrato;
 	}
+	/**
+	 * @param {string | null} tipoContrato
+	 */
+	GetValoraciones(tipoContrato) {
+		// if (tipoContrato == "PRESTAMO") {
+		// 	return this.valoracionesTable?.Dataset.map(valoracion => {} new Transactional_Valoracion({...valoracion, e})) DEUDOR
+		// }
+		return this.valoracionesTable?.Dataset;
+	}
+
 	/**
 	* @returns {Catalogo_Clientes}
 	*/
@@ -1056,4 +1090,3 @@ customElements.define('w-valoraciones-view', Transaction_Valoraciones_View);
 export { Transaction_Valoraciones_View };
 // @ts-ignore
 window.addEventListener('load', async () => { MainBody.append(new Transaction_Valoraciones_View()) })
-

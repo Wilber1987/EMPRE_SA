@@ -13,7 +13,7 @@ import { FilterData } from "../WDevCore/WModules/CommonModel.js";
 import { ModalMessage } from "../WDevCore/WComponents/ModalMessage.js";
 import { DateTime } from "../WDevCore/WModules/Types/DateTime.js";
 import { SystemConfigs } from "../Services/SystemConfigs.js";
-import {Transactional_Valoracion_ModelComponent} from "../FrontModel/Transaction_Valoracion.js";
+import { Transactional_Valoracion_ModelComponent } from "../FrontModel/Transaction_Valoracion.js";
 import {
     Notas_de_contrato,
     Transaction_Contratos,
@@ -25,7 +25,7 @@ class ValoracionesSearch extends HTMLElement {
      * @param {(valoracion: import("../FrontModel/Transaction_Valoracion.js").Transactional_Valoracion) => Promise<void>} action
      * @param {undefined} [secondAction]
      */
-    constructor( action, secondAction, onlyValids = false) {
+    constructor(action, secondAction, onlyValids = false) {
         super();
         this.TabContainer = WRender.Create({ className: "TabContainer", id: 'TabContainer' });
         this.Manager = new ComponentsManager({ MainContainer: this.TabContainer, SPAManage: false });
@@ -39,7 +39,7 @@ class ValoracionesSearch extends HTMLElement {
         const requiere_valoracion = parseFloat((await SystemConfigs.FindByName("VENCIMIENTO_VALORACION"))?.Valor ?? "40")
         if (this.onlyValids) {
             // @ts-ignore`
-            model.FilterData.push(FilterData.Greater("Fecha",new DateTime().subtractDays(40).toISO() ) );
+            model.FilterData.push(FilterData.Greater("Fecha", new DateTime().subtractDays(40).toISO()));
         }
         let dataset = await model.Get();
 
@@ -97,8 +97,8 @@ export { ValoracionesSearch }
 const clientSearcher = (actions) => {
     const model = new Catalogo_Clientes();
     const TableComponent = new WTableComponent({
-        ModelObject: new  Catalogo_Clientes_ModelComponent(),  
-        EntityModel: model,  
+        ModelObject: new Catalogo_Clientes_ModelComponent(),
+        EntityModel: model,
         Options: {
             Filter: true,
             FilterDisplay: true,
@@ -113,21 +113,22 @@ export { clientSearcher }
  * 
  * @param { Function } [action] 
  * @param { Function } [anularAction]
+ * @param { Array<FilterData> } [filters]
  * @returns { HTMLElement }
  */
-const contratosSearcher = (action, anularAction, withNotas = false) => {
-    const model = new Transaction_Contratos_ModelComponent();
-    model.Tbl_Cuotas.ModelObject = () => new Tbl_Cuotas_ModelComponent({
-        Estado: {
-            type: "operation", action: (/** @type {Tbl_Cuotas_ModelComponent} */ cuota) => {
-                if (cuota.total == cuota.pago_contado) {
-                    return "CANCELADA";
-                } else if (cuota.pago_contado > 0) {
-                    return "PAGO PARCIAL";
-                }
-            }
-        }
-    });
+const contratosSearcher = (action, anularAction, withNotas = false, filters = []) => {
+    const model = new Transaction_Contratos({ FilterData: filters });
+    // model.Tbl_Cuotas.ModelObject = () => new Tbl_Cuotas_ModelComponent({
+    //     Estado: {
+    //         type: "operation", action: (/** @type {Tbl_Cuotas_ModelComponent} */ cuota) => {
+    //             if (cuota.total == cuota.pago_contado) {
+    //                 return "CANCELADA";
+    //             } else if (cuota.pago_contado > 0) {
+    //                 return "PAGO PARCIAL";
+    //             }
+    //         }
+    //     }
+    // });
     const actions = []
     if (action) {
         actions.push({
@@ -144,7 +145,7 @@ const contratosSearcher = (action, anularAction, withNotas = false) => {
             rendered: (/** @type { Transaction_Contratos } */ contrato) => {
                 return contrato.IsAnulable
                 //return contrato.estado != "ANULADO" && contrato.estado != "CANCELADO"
-            }, 
+            },
             action: async (cliente) => {
                 // @ts-ignore
                 await anularAction(cliente);
@@ -155,7 +156,7 @@ const contratosSearcher = (action, anularAction, withNotas = false) => {
         actions.push({
             name: "Agregar nota",
             action: async (cliente) => {
-                document.body.appendChild( new WModalForm({
+                document.body.appendChild(new WModalForm({
                     ModelObject: new Notas_de_contrato(),
                     title: "Agregar nota",
                     ObjectOptions: {
@@ -165,12 +166,12 @@ const contratosSearcher = (action, anularAction, withNotas = false) => {
                             } else {
                                 cliente.Notas = [nuevaNota]
                             }
-                            const response = await  new Transaction_Contratos(cliente).Update();
-                            document.body.appendChild(ModalMessage(response.message));                            
-                        } 
+                            const response = await new Transaction_Contratos(cliente).Update();
+                            document.body.appendChild(ModalMessage(response.message));
+                        }
                     }
                 }));
-               
+
             }
         })
     }
@@ -179,15 +180,17 @@ const contratosSearcher = (action, anularAction, withNotas = false) => {
         action: async (/** @type { Transaction_Contratos } */ contrato) => {
             // @ts-ignore
             const contratoF = await new Transaction_Contratos({ numero_contrato: contrato.numero_contrato }).Find();
-            document.body.append(new WModalForm({ ObjectModal: new  WDetailObject({ ObjectDetail: contratoF , ModelObject: new Transaction_Contratos_ModelComponent()})}));
+            document.body.append(new WModalForm({ ObjectModal: new WDetailObject({ ObjectDetail: contratoF, ModelObject: new Transaction_Contratos_ModelComponent() }) }));
         }
     })
+    
     const TableComponent = new WTableComponent({
         EntityModel: model,
         ModelObject: new Transaction_Contratos_ModelComponent({
-            numero_contrato: { type: "Number", primary: false }
+            numero_contrato: { type: "Number", primary: false },
+            FilterData: filters
         }),
-        AddItemsFromApi: true,
+        //AddItemsFromApi: true,
         Options: {
             //Show: true,
             Filter: true,

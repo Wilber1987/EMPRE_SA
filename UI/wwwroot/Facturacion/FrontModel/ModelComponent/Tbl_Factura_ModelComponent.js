@@ -70,7 +70,7 @@ class Tbl_Factura_ModelComponent extends EntityClass {
 	/**@type {ModelProperty}*/ Fecha_Vencimiento = { type: 'date', hidden: true };
 	/**@type {ModelProperty}*/ Observaciones = { type: 'textarea', require: false };
 	/**@type {ModelProperty}*/ Id_Usuario = { type: 'number', hidden: true };
-	/**@type {ModelProperty}*/ Estado = { type: 'SELECT', hidden: true, Dataset: ["ACTIVA", "ANULADO"] };
+	/**@type {ModelProperty}*/ Estado = { type: 'SELECT', hidden: true, Dataset: ["ACTIVO", "ANULADO"] };
 	/**@type {ModelProperty}*/ Sub_Total = { type: 'number', hidden: true };
 	/**@type {ModelProperty}*/ Iva = { type: 'number', hidden: true };
 	/**@type {ModelProperty}*/ Tasa_Cambio = { type: 'number', hidden: true };

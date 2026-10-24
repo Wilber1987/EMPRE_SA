@@ -2,11 +2,12 @@
 import { EntityClass } from "../../WDevCore/WModules/EntityClass.js";
 import { EstadoEnum } from "../Enums/enums.js";
 
-import { Catalogo_Sucursales_ModelComponent } from "../../FrontModel/DBODataBaseModel.js";
+
 // @ts-ignore
 import { ModelProperty } from "../../WDevCore/WModules/CommonModel.js";
 import {Detail_Prendas} from "../../FrontModel/Detail_Prendas.js";
 import {Transaction_Contratos} from "../../FrontModel/Transaction_Contratos.js";
+import { Catalogo_Sucursales_ModelComponent } from "../../FrontModel/Catalogo_Cuentas.js";
 
 class Tbl_Acta_Entrega extends EntityClass {
 	constructor(props) {

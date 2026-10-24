@@ -18,6 +18,7 @@ import {Detail_Prendas, Detail_Prendas_ModelComponent, Detail_Prendas_Vehiculos_
 import {Transaction_Contratos, Transaction_Contratos_ModelComponent} from "../FrontModel/Transaction_Contratos.js";
 import { Catalogo_Cambio_Divisa_ModelComponent } from "../FrontModel/DBODataBaseModel.js";
 import { Catalogo_Clientes_ModelComponent } from "../FrontModel/ClientesModel.js";
+import { WOrtograficValidation } from "../WDevCore/WModules/WOrtograficValidation.js";
 
 /**
  * @typedef {Object} ContratosConfig
@@ -62,7 +63,7 @@ class Transaction_ContratosView extends HTMLElement {
         this.Intereses = await new Transactional_Configuraciones().getConfiguraciones_Intereses();
         this.InteresBase = WArrayF.SumValAtt(this.Intereses, "Valor");
         this.entity.Transaction_Contratos.taza_interes_cargos = this.InteresBase;
-        FinancialModule.calculoAmortizacion(this.entity);
+        FinancialModule.calculoAmortizacion(this.entity, true , this.entity.Transaction_Contratos.tipo);
         /**@type  {Catalogo_Cambio_Divisa_ModelComponent}*/
         this.tasaActual = this.tasasCambio[0];
         // @ts-ignore
@@ -126,7 +127,8 @@ class Transaction_ContratosView extends HTMLElement {
         const optionContainer = WRender.Create({
             className: "OptionContainer form",
             children: [
-                "Plazo:", this.inputPlazo, this.SelectMoneda,
+                "Plazo:", 
+                this.inputPlazo,
                 "Fecha de cancelación:",
                 fechaCancelacion, this.inputObservacion,
             ]
@@ -166,6 +168,9 @@ class Transaction_ContratosView extends HTMLElement {
 
 
     SetOption() {
+        this.OptionContainer.append(WRender.Create({
+            tagName: 'h2', innerText: 'CONTRATO: ' + WOrtograficValidation.es(this.entity.Transaction_Contratos.tipo) 
+        }))
         this.OptionContainer.append(WRender.Create({
             tagName: 'button', className: 'Block-Primary', innerText: 'Datos contrato',
             onclick: () => this.Manager.NavigateFunction("valoraciones")
@@ -387,7 +392,7 @@ class Transaction_ContratosView extends HTMLElement {
 
     }
     update() {
-        FinancialModule.calculoAmortizacion(this.entity);
+        FinancialModule.calculoAmortizacion(this.entity, true, this.entity.Transaction_Contratos.tipo);
         if (this.prendasTable != undefined && this.entity.Transaction_Contratos.Detail_Prendas != undefined) {
             this.entity.Transaction_Contratos?.Detail_Prendas.forEach((/** @type { Detail_Prendas }} */ detalle) => {
                 detalle.monto_aprobado_dolares = detalle.Transactional_Valoracion?.Valoracion_empeño_dolares

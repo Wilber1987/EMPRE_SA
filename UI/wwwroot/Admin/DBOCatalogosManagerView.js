@@ -1,6 +1,8 @@
 //@ts-check
 import { Catalogo_Tipo_Identificacion } from "../ClientModule/FrontModel/Catalogo_Clientes.js";
-import { Catalogo_Cambio_Divisa_ModelComponent, Catalogo_Categoria_ModelComponent, Catalogo_Cuentas, Catalogo_Departamento, Catalogo_Estados_Articulos, Catalogo_Estados_Articulos_ModelComponent, Catalogo_Municipio, Catalogo_Nacionalidad, Catalogo_Profesiones, Catalogo_Sucursales_ModelComponent, Permisos_Cuentas } from "../FrontModel/DBODataBaseModel.js";
+import { Catalogo_Cambio_Divisa_ModelComponent, Catalogo_Categoria_ModelComponent, Catalogo_Departamento, Catalogo_Estados_Articulos, 
+    Catalogo_Estados_Articulos_ModelComponent, Catalogo_Municipio, 
+    Catalogo_Nacionalidad, Catalogo_Profesiones } from "../FrontModel/DBODataBaseModel.js";
 import { StylesControlsV2, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js";
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js";
@@ -8,7 +10,8 @@ import { EntityClass } from "../WDevCore/WModules/EntityClass.js";
 import { ComponentsManager, html, WRender } from "../WDevCore/WModules/WComponentsTools.js";
 import { WOrtograficValidation } from "../WDevCore/WModules/WOrtograficValidation.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
-import {Catalogo_Clasificacion_Cliente, Catalogo_Clasificacion_Interes} from "../FrontModel/ClientesModel.js";
+import {Catalogo_Clasificacion_Cliente_ModelComponent, Catalogo_Clasificacion_Interes} from "../FrontModel/ClientesModel.js";
+import { Catalogo_Cuentas, Catalogo_Cuentas_ModelComponent, Catalogo_Sucursales_ModelComponent, Permisos_Cuentas_ModelComponent } from "../FrontModel/Catalogo_Cuentas.js";
 class DBOCatalogosManagerView extends HTMLElement {
     constructor() {
         super();              
@@ -57,11 +60,11 @@ class DBOCatalogosManagerView extends HTMLElement {
                 }
             }, {
                 name: WOrtograficValidation.es('Catalogo_Cuentas'), action: async () => {
-                    return this.NavigateFunction(new Catalogo_Cuentas())
+                    return this.NavigateFunction(new Catalogo_Cuentas_ModelComponent(), new Catalogo_Cuentas())
                 }
             }, {
                 name: WOrtograficValidation.es('Permisos_Cuentas'), action: async () => {
-                    return this.NavigateFunction(new Permisos_Cuentas())
+                    return this.NavigateFunction(new Permisos_Cuentas_ModelComponent())
                 }
             }, {
                 name: WOrtograficValidation.es('Catalogo_Clasificacion_Interes'), action: async () => {
@@ -94,7 +97,7 @@ class DBOCatalogosManagerView extends HTMLElement {
                 }
             }, {
                 name: WOrtograficValidation.es('Catalogo_Clasificacion_Cliente'), action: async () => {
-                    return this.NavigateFunction(new Catalogo_Clasificacion_Cliente())
+                    return this.NavigateFunction(new Catalogo_Clasificacion_Cliente_ModelComponent())
                 }
             }, {
                 name: 'Tipo Identificación', action: async () => {

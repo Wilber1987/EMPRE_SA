@@ -10,10 +10,17 @@ import { ModalMessage } from "../WDevCore/WComponents/ModalMessage.js";
 import { ModalVericateAction } from "../WDevCore/WComponents/ModalVericateAction.js";
 import { WPrintExportToolBar } from "../WDevCore/WComponents/WPrintExportToolBar.mjs";
 import { Transaccion_Recibos } from "../FrontModel/Recibos.js";
-import {Transaccion_Recibos_ModelComponent} from "../FrontModel/Transaction_Recibos.js";
+import { Transaccion_Recibos_ModelComponent } from "../FrontModel/Transaction_Recibos.js";
+import { DirectionEnum, EstadoOrden, MonedaEnum, Orden_Movimiento, TipoMovimiento } from "../Caja/Model/Order_Movimiento.js";
+import { FilterData, OrderData } from "../WDevCore/WModules/CommonModel.js";
+import { Money } from "../WDevCore/WModules/Types/Money.js";
+import { WOrderProcessorComponent } from "../Caja/WOrderProcessorComponent.js";
+import { Denominacion_Catalogo } from "../Caja/Model/Denominacion_Catalogo.js";
+import { CuentasAnularCompras, CuentasCompras } from "../FrontModel/CuentasCompras.js";
 
 
 class RecibosManagerView extends HTMLElement {
+
 	constructor() {
 		super();
 		this.Draw();
@@ -48,23 +55,7 @@ class RecibosManagerView extends HTMLElement {
 								title: "ANULACIÓN",
 								ObjectOptions: {
 									SaveFunction: async () => {
-										if (recibo.estado == "ANULADO") {
-											this.append(ModalMessage("Recibo ya esta anulado"));
-											return;
-										}
-										this.append(ModalVericateAction(async () => {
-											const response =
-												await WAjaxTools.PostRequest("../api/ApiRecibos/anularRecibo",
-													{
-														id_recibo: recibo.id_factura,
-														tasa_cambio: tasa[0].Valor_de_venta,
-														tasa_cambio_compra: tasa[0].Valor_de_compra,
-														Motivo_Anulacion: recibo.Motivo_Anulacion
-													});
-
-											this.append(ModalMessage(response.message, undefined, true));
-											modal.close();
-										}, "Esta seguro que desea anular este contrato"))
+										this.AnularRecibo(recibo, modal, tasa)
 									}
 								}
 							});
@@ -100,6 +91,80 @@ class RecibosManagerView extends HTMLElement {
 				window.location.href = "/PagesViews/Gestion_Recibos";
 			}
 		}))
+	}
+	/**
+	 * @param {Transaccion_Recibos} recibo
+	 * @param {WModalForm} modal
+	 * @param {any[]} tasa
+	 */
+	async AnularRecibo(recibo, modal, tasa) {
+		if (recibo.estado == "ANULADO") {
+			this.append(ModalMessage("Recibo ya esta anulado"));
+			return;
+		}
+		const order = await new Orden_Movimiento().Find(
+			FilterData.Equal("id_documento_origen", recibo?.id_factura),
+			FilterData.Equal("tipo_documento_origen", "RECIBO"),
+			FilterData.Equal("direccion", DirectionEnum.INGRESO),
+			FilterData.Equal("estado", EstadoOrden.EJECUTADA)
+		);
+		console.log(order);
+
+
+		const MONEDA_ENTRADA = recibo.Moneda;
+		const Monto = recibo.Moneda == MonedaEnum.DOLARES ? new Money(recibo.total) : new Money(recibo.total_cordobas);
+
+		/**@type {Array<Denominacion_Catalogo>} */
+		const denoms = await new Denominacion_Catalogo({ OrderData: [OrderData.Desc("valor")] }).Get();
+
+		const cuentasCompras = await new CuentasAnularCompras().Find();
+
+		const newOrder = new Orden_Movimiento({
+			descripcion: ``,
+			direccion: DirectionEnum.EGRESO,
+			concepto: "Pago de cuota del contrato #" + recibo.numero_contrato,
+			monto: Monto.Round(),
+			tasa_cambio: tasa[0].Valor_de_venta,
+			tasa_cambio_compra: tasa[0].Valor_de_compra,
+			moneda: MONEDA_ENTRADA,
+			Tipo_Movimiento: TipoMovimiento.DESEMBOLSO_POR_ANULACION_DE_PAGO_DE_RECIBO,
+			requiere_aprobacion: false,
+			estado: EstadoOrden.PENDIENTE,
+			tipo_documento_origen: "RECIBO",
+			Id_cuenta_destino: cuentasCompras.Id_cuenta_destino,
+			Id_cuenta_origen: cuentasCompras.Id_cuenta_origen
+		})
+		recibo.OrdenData = newOrder;
+
+		const orderProcessor = new WOrderProcessorComponent({
+			entity: newOrder,
+			denominaciones: denoms ?? [],
+			liquidationMode: newOrder.direccion ?? DirectionEnum.INGRESO,
+			isFlexibleLiquidationModeActive: true,
+			SaveFunction: () => {
+				document.body.append(ModalVericateAction(() => {
+					ModalVericateAction(async () => {
+						// const response =
+						// 	await WAjaxTools.PostRequest("../api/ApiRecibos/anularRecibo",
+						// 		{
+						// 			id_recibo: recibo.id_factura,
+						// 			tasa_cambio: tasa[0].Valor_de_venta,
+						// 			tasa_cambio_compra: tasa[0].Valor_de_compra,
+						// 			Motivo_Anulacion: recibo.Motivo_Anulacion
+						// 		});
+
+						// this.append(ModalMessage(response.message, undefined, true));
+						// modal.close();
+					}, "Esta seguro que desea anular este contrato")
+				}, "¿Desea guardar el recibo?"))
+			}
+		})
+		const orderProcessorModal = new WModalForm({
+			ObjectModal: orderProcessor,
+			FullScreen: true
+		})
+
+		document.body.append(orderProcessorModal);
 	}
 
 
@@ -173,6 +238,7 @@ class RecibosManagerView extends HTMLElement {
 			border: solid 1px #bdbcbc; 
 			margin-bottom: 5px;
 			flex-direction: column;
+			box-sizing: border-box;
 		}.print-container-iframe {
 			background-color: #bdbcbc;  
 		}  .print-container iframe {            

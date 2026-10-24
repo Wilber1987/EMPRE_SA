@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "module": "esnext",
+    "target": "es2021",
+    "jsx": "react"
+  },
+  "include": ["wwwroot/**/*"]
+}

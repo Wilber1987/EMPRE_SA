@@ -11,17 +11,15 @@
   <ItemGroup>
     <PackageReference Include="HtmlAgilityPack" Version="1.6.11" />
   </ItemGroup>
+  
   <ItemGroup>
     <Folder Include="Mapping\Entity\" />
     <Folder Include="Mapping\Views\" />
     <Folder Include="Security\" />
-    <Folder Include="Resources\" />
-    <Folder Include="Resources\**" />
   </ItemGroup>
+
   <ItemGroup>
-    <!-- Incluye todos los archivos HTML en la carpeta Resources -->
-    <None Update="Resources\**\*.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <!-- Incluye y copia todos los archivos de Resources al output -->
+    <None Include="Resources\**\*" CopyToOutputDirectory="PreserveNewest" LinkBase="Resources" />
   </ItemGroup>
 </Project>

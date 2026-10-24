@@ -28,14 +28,17 @@
 {
     <a class="title-collapse" id="GestionRecibosMenu" onclick="changeActive(this)">GESTIÓN DE RECIBOS</a>
     <div class="collapse">
-        <a class="menu-item" id="Gestion_Recibos" asp-area="" asp-page="/Caja/Movimientos">Caja</a>
-        <a class="menu-item" id="Gestion_Recibos" asp-area="" asp-page="/PagesViews/Gestion_Recibos">Nuevo Recibo</a>
-        <a class="menu-item" id="RecibosManagerView" asp-area="" asp-page="/PagesViews/RecibosManagerView">Ver Recibos</a>
+        <a class="menu-item" id="Movimientos" 
+        asp-area="" asp-page="/Caja/Movimientos">Caja</a>
+        @* <a class="menu-item" id="Gestion_Recibos" asp-area="" asp-page="/PagesViews/Gestion_Recibos">Nuevo Recibo</a> *@
+        <a class="menu-item" id="RecibosManagerView" asp-area=""
+         asp-page="/PagesViews/RecibosManagerView">Ver Recibos</a>
     </div>
 }
 @if (SecurityController.HavePermission(Identify, Permissions.GESTION_COMPRAS, Permissions.GESTION_VENTAS))
 {
-    <a class="title-collapse" id="GestionFacturaCompraMenu" onclick="changeActive(this)">GESTIÓN DE COMPRAS</a>
+    <a class="title-collapse" id="GestionFacturaCompraMenu" 
+        onclick="changeActive(this)">GESTIÓN DE COMPRAS</a>
     <div class="collapse">
         @if (SecurityController.HavePermission(Identify, Permissions.GESTION_COMPRAS))
         {
@@ -43,29 +46,33 @@
                 Nueva Compra</a>
                 <a class="menu-item" id="ComprasManager" asp-area="" asp-page="/Facturacion/ComprasManager">
                     Ver Compras</a>*@
-            <a class="menu-item" id="ComprasComponentView" asp-area=""
+            <a class="menu-item" id="Transaction_Valoraciones_View" asp-area=""
                 asp-page="/PagesViews/Transaction_Valoraciones_View">Nueva Compra</a>
-            <a class="menu-item" id="ComprasComponentView" asp-area=""
+            <a class="menu-item" id="ComprasManager" asp-area=""
                 asp-page="/Facturacion/ComprasManager">Compras realizadas</a>
 
         }
     </div>
-    <a class="title-collapse" id="GestionFacturaVentasMenu" onclick="changeActive(this)">GESTIÓN DE VENTAS</a>
+    <a class="title-collapse" id="GestionFacturaVentasMenu" 
+        onclick="changeActive(this)">GESTIÓN DE VENTAS</a>
     <div class="collapse">
         @if (SecurityController.HavePermission(Identify, Permissions.GESTION_VENTAS))
         {
-            <a class="menu-item" id="FacturasVentasView" asp-area="" asp-page="/Facturacion/FacturasComponentView">Ventas</a>
+            <a class="menu-item" id="FacturasComponentView" 
+            asp-area="" asp-page="/Facturacion/FacturasComponentView">Ventas</a>
         }
         @if (SecurityController.HavePermission(Permissions.GESTION_LOTES.ToString(), Identify))
         {
-            <a class="menu-item" id="LotesManager" asp-area="" asp-page="/Facturacion/LotesManager">Existencias</a>
+            <a class="menu-item" id="LotesManager" 
+            asp-area="" asp-page="/Facturacion/LotesManager">Existencias</a>
         }
     </div>
 }
 
 @if (SecurityController.HavePermission(Permissions.GESTION_MOVIMIENTOS.ToString(), Identify))
 {
-    <a class="title-collapse" id="GestionCuentasMenu" onclick="changeActive(this)">GESTIÓN DE CUENTAS</a>
+    <a class="title-collapse" id="GestionCuentasMenu" 
+    onclick="changeActive(this)">GESTIÓN DE CUENTAS</a>
     <div class="collapse">        
         <a class="menu-item" id="Movimientos_CuentasView" asp-area=""
             asp-page="/PagesViews/Movimientos_CuentasView">Gestión de Cuentas</a>
@@ -75,8 +82,7 @@
 @if (SecurityController.HavePermission(Identify, Permissions.ADMIN_ACCESS))
 {
     <a class="title-collapse" id="GestionCuentasMenu" onclick="changeActive(this)">PANEL DE ADMINISTRACIÓN</a>
-    <div class="collapse">        
-        <a class="menu-item" id="AdminPanel"  asp-page="/Admin/AdminPanel">Admin Panel</a>
+    <div class="collapse">
         <a class="menu-item" id="Catalogs"  asp-page="/Admin/Catalogs">Catalogos</a>
         <a class="menu-item" id="Security"  asp-page="/Admin/Security">Seguridad</a>
     </div>

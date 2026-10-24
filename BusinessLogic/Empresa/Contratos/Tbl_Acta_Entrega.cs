@@ -49,6 +49,10 @@ namespace BusinessLogic.Empresa.Contratos
         {
             contrato.Detail_Prendas?.ForEach(prenda =>
             {
+                if (prenda.en_manos_de == EnManosDe.ACREEDOR)
+                {
+                    return;
+                }	
                 prenda.en_manos_de = EnManosDe.CLIENTE;
                 new Tbl_Acta_Entrega
                 {
@@ -67,11 +71,11 @@ namespace BusinessLogic.Empresa.Contratos
         {
             if (tipo == null)
             {
-                tipo = Contratos_Type.EMPENO;
+                tipo = Contratos_Type.EMPEÑO;
             }
             switch (tipo)
             {
-                case Contratos_Type.EMPENO: return ActaTypeEnum.EMPENO;
+                case Contratos_Type.EMPEÑO: return ActaTypeEnum.EMPENO;
                 case Contratos_Type.EMPENO_VEHICULO: return ActaTypeEnum.EMPENO_VEHICULO;
                 case Contratos_Type.APARTADO_QUINCENAL: return ActaTypeEnum.CONTRATO_QUINCENAL;
                 case Contratos_Type.APARTADO_MENSUAL: return ActaTypeEnum.CONTRATO_MENSUAL;

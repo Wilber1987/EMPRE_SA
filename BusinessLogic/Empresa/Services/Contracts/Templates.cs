@@ -28,13 +28,13 @@ public class ContractsTemplates
 	";
 	public static string ContractHeader = @"
 		<p style='font-size:9.5px; margin-top:0px; margin-bottom:0px; text-align:center; padding-bottom:0px'>
-					<img class='img-container' style='margin:auto' src='{{logo}}' width='100'>
+					<img class='img-container' style='margin:auto' src='{{ logo }}' width='100'>
 					<br/>
-					{{titulo}}
+					{{ titulo }}
 					<br/>
 					Carazo - Nicaragua
 					 <br/>
-					{{subtitulo}}
+					{{ subtitulo }}
 					  <br/>
 					 RUC J0310000300895
 		</p>
@@ -42,17 +42,17 @@ public class ContractsTemplates
 		<tbody>
 		<tr style='margin-top: 0px; margin-bottom: 0px;  width: 100%'> 
 			<td style='font-size: 9.5px; text-align: left;  width: 50%; border: none !important' >
-				No Contrato: {{numero_contrato}}
+				No Contrato: {{ numero_contrato }}
 			</td>       
 			<td style='font-size: 9.5px; text-align: right;  width: 50%; border: none !important'>
-			{{fecha_contrato_label}}
+			{{ fecha_contrato_label }}
 			</td>   
 		</tr> 
 		</tbody>
 		</table>              
 	   
 		<p style='font-size:9.5px; margin-top:0px; margin-bottom:0px; text-align:center; padding-bottom:0px'>Oficina Central
-					{{info_tel}}</p>
+					{{ info_tel }}</p>
 		<p style='font-size:9.5px; margin-top:0px; margin-bottom:0px; text-align:center; padding-bottom:0px'>CONTRATO DE
 				MUTUO GARANTIZADO CON PRENDA COMERCIAL</p>
 	";
@@ -85,31 +85,31 @@ public class ContractsTemplates
 				<thead>
 					<tr>
 						<td colspan='2' class='col2'><span lang='ES-NI'>CAPITAL PRESTADO C$</span></td>
-						<td colspan='2' class='col2'> <span lang='ES-NI'>C$ {{Valoracion_empeño_cordobas}}</span></td>
+						<td colspan='2' class='col2'> <span lang='ES-NI'>C$ {{ Valoracion_empeño_cordobas }}</span></td>
 						<td colspan='6' class='col6' rowspan='2'>
 						<span lang='ES-NI'>TABLA DE AMORTIZACION DE DEUDA POR GARANTIA PRENDARIA</span>
 						</td>
 						<td colspan='2' class='col2'><span lang='ES-NI'>CUOTA C$</span></td>
-						<td colspan='2' class='col2'> <span lang='ES-NI'>C$ {{cuotafija}}</span></td>
+						<td colspan='2' class='col2'> <span lang='ES-NI'>C$ {{ cuotafija }}</span></td>
 					</tr>
 					<tr>
 						<td colspan='2' class='col2'> CAPITAL PRESTADO $</td>
-						<td colspan='2' class='col2'> $ {{Valoracion_empeño_dolares}}</td>
+						<td colspan='2' class='col2'> $ {{ Valoracion_empeño_dolares }}</td>
 						<td colspan='2' class='col2'><span lang='ES-NI'>CUOTA FIJA<br>$</br></span> </td>
-						<td colspan='2' class='col2'>$ {{cuotafija_dolares}}</td>
+						<td colspan='2' class='col2'>$ {{ cuotafija_dolares }}</td>
 					</tr>
 					<tr>
 						<td colspan='2' class='col2'>
-						<span lang='ES-NI'>PLAZO PARA CANCELAR: {{plazo}} mes(es)</span>
+						<span lang='ES-NI'>PLAZO PARA CANCELAR: {{ plazo }} mes(es)</span>
 						</td>
 						<td colspan='2' class='col2'>
 						<p style='margin-bottom:0cm;text-align:center;line-height:normal'>
-							<span lang='ES-NI'>INTERÉS NETO CORRIENTE(a): {{interes_inicial}}%</span>
+							<span lang='ES-NI'>INTERÉS NETO CORRIENTE(a): {{ interes_inicial }}%</span>
 						</p>
 						</td>
 						<td colspan='2' class='col2'>
 						<span lang='ES-NI'>Demás cargos a
-							pagar en relación con lo pactado(b): {{sum_intereses}}%</span>
+							pagar en relación con lo pactado(b): {{ sum_intereses }}%</span>
 						</td>
 						<td colspan='2' class='col2'>
 						<span lang='ES-NI'>Interés Neto
@@ -145,7 +145,7 @@ public class ContractsTemplates
 						<td><span lang='ES-NI'>$</span></td>
 					</tr>
 				</thead>
-				{{tbody_amortizacion}}
+				{{ tbody_amortizacion }}
 			</table>
 	";
 	public static string ContractPrestamo = @"
@@ -153,7 +153,7 @@ public class ContractsTemplates
 			<html>
 			<head>" + ContractStyle + @"</head>
 			<body>" + ContractHeader + @"
-				<p style='text-align: justify; font-size:9.5px; margin-top:20px'>Nosotros: {{datos_apoderado}}, {{resumen_datos_apoderado}}, actuando en calidad de apoderado generalísimo
+				<p style='text-align: justify; font-size:9.5px; margin-top:20px'>Nosotros: {{ datos_apoderado }}, {{ resumen_datos_apoderado }}, actuando en calidad de apoderado generalísimo
 					de la sociedad Anónima denominada: ' EMPEÑOS Y PRESTAMOS S.A ' EMPRE S.A, Sociedad que es de este domicilio,
 					constituida, autorizada y existente de conformidad a las leyes de la República de Nicaragua, en escritura
 					pública
@@ -162,19 +162,19 @@ public class ContractsTemplates
 					por brevedad en lo sucesivo del presente contrato se le podrá denominar el ACREEDOR; siendo el domicilio: Del
 					Instituto Juan XXIII, 20 varas al Oeste,
 					en el municipio de San Marcos, Departamento de Carazo, Dirección electrónica: empresociedadanonima@gmail.com; y
-					por otra parte el / la señor (a) :  {{primer_nombre}}  {{segundo_nombre}}  {{primer_apellido}}  {{segundo_apellidio}} mayor de edad,
-					con número de cédula: {{identificacion}}  con domicilio: {{direccion}} , Estado civil: {{estado_civil}} quien habita en
+					por otra parte el / la señor (a) :  {{ primer_nombre }}  {{ segundo_nombre }}  {{ primer_apellido }}  {{ segundo_apellidio }} mayor de edad,
+					con número de cédula: {{ identificacion }}  con domicilio: {{ direccion }} , Estado civil: {{ estado_civil }} quien habita en
 					el
-					municipio de: {{municipio}}, Departamento de {{departamento}},
+					municipio de: {{ municipio }}, Departamento de {{ departamento }},
 					a quien en sucesivo se le denominará el 'DEUDOR', hemos convenido en celebrar el presente 'CONTRATO DE MUTUO
 					GARANTIZADO CON PRENDA COMERCIAL' , el cual se regirá conforme las cláusulas siguientes:
 				</p>
 
 				<p style='text-align: justify; font-size:9.5px;'><u>1. PRIMERA (MONTO DEL PRÉSTAMO):</u> El deudor confiesa tener
 					recibido de parte del acreedor, un préstamo en calidad de
-					mutuo, por la cantidad de: C$. {{monto}} , equivalente a moneda de los Estados Unidos de América: $
-					{{cuotafija_dolares}}, Según el valor de la
-					compra del dólar a la fecha de hoy {{fecha_contrato_label}} de: C$ {{taza_cambio_compra}} Suma de dinero que el deudor, se obliga a destinar,
+					mutuo, por la cantidad de: C$. {{ monto }} , equivalente a moneda de los Estados Unidos de América: $
+					{{ cuotafija_dolares }}, Según el valor de la
+					compra del dólar a la fecha de hoy {{ fecha_contrato_label }} de: C$ {{ taza_cambio_compra }} Suma de dinero que el deudor, se obliga a destinar,
 					única y
 					exclusivamente
 					al pago del préstamo otorgado. El deudor acepta estar conforme de recibir mensajes de texto en su teléfono
@@ -247,11 +247,11 @@ public class ContractsTemplates
 				</p>
 				<p style='text-align: justify; font-size:9.5px;'><u>3. TERCERA (PLAZO Y FORMA DE PAGO):</u> El deudor decide en
 					cuantas cuotas mensuales cancelar su préstamo,
-					pero no podrá exceder los veinticuatro meses, los pagos se realizarán en cuotas fijas de C$ {{cuotafija}} , que
+					pero no podrá exceder los veinticuatro meses, los pagos se realizarán en cuotas fijas de C$ {{ cuotafija }} , que
 					serán  modificables al tipo de cambio del dólar, en la fecha que el cliente haga efectivo su pago. Los pagos se
-					realizarán en córdobas o el equivalente a $ {{cuotafija_dolares}}, Estadounidenses, Según tasa de cambio del
+					realizarán en córdobas o el equivalente a $ {{ cuotafija_dolares }}, Estadounidenses, Según tasa de cambio del
 					Banco Central de
-					Nicaragua, iniciando la primera cuota el día {{fecha_primera_cuota}} y la última el día {{fecha_ultima_cuota}}. 
+					Nicaragua, iniciando la primera cuota el día {{ fecha_primera_cuota }} y la última el día {{ fecha_ultima_cuota }}. 
 					El deudor se obliga a pagar al acreedor; La mora, el interés neto corriente, demás cargos a pagar en relación con lo pactado, 
 					y el capital prestado, en las
 					oficinas principales del acreedor o realizar el pago de su cuota en línea en cualquier sucursal o agente Banpro
@@ -266,28 +266,28 @@ public class ContractsTemplates
 				</p>
 				<p style='text-align: justify; font-size:9.5px;'><u>4. CUARTA (INTERES CORRIENTE Y DEMAS CARGOS MENSUALES A PAGAR EN
 						RELACION CON LO PACTADO):</u> El préstamo
-					devengará una tasa de interés corriente inicial del {{interes_inicial_label}} por ciento
-					({{interes_inicial}}%) sobre saldo, la cual será
+					devengará una tasa de interés corriente inicial del {{ interes_inicial_label }} por ciento
+					({{ interes_inicial }}%) sobre saldo, la cual será
 					verificable mensualmente de acuerdo con la tasa promedio ponderada que emita el Banco Central de Nicaragua, de
 					conformidad a
 					la ley 176. Los demás cargos a pagar en relación con lo pactado, a como lo menciona el artículo 74 numeral 4 de
 					la ley 842, bajo lo cual Empresa estipula lo siguiente:
-					{{interes_gastos_administrativos_label}} por ciento
-					({{interes_gastos_administrativos}}%)
-					de Gastos administrativos, {{interes_gastos_legales_label}} por ciento ({{interes_gastos_legales}}%) de gastos
-					legales, {{interes_comisiones_label}} por ciento ({{interes_comisiones}}%) de Comisiones,
-					{{interes_mantenimiento_valor_label}} por
-					ciento ({{interes_mantenimiento_valor}}%) de mantenimiento al valor de la prenda,
-					{{interes_demas_cargos_label}} porciento ({{interes_demas_cargos}}%) de Gestiones crediticias; Todos estos
+					{{ interes_gastos_administrativos_label }} por ciento
+					({{ interes_gastos_administrativos }}%)
+					de Gastos administrativos, {{ interes_gastos_legales_label }} por ciento ({{ interes_gastos_legales }}%) de gastos
+					legales, {{ interes_comisiones_label }} por ciento ({{ interes_comisiones }}%) de Comisiones,
+					{{ interes_mantenimiento_valor_label }} por
+					ciento ({{ interes_mantenimiento_valor }}%) de mantenimiento al valor de la prenda,
+					{{ interes_demas_cargos_label }} porciento ({{ interes_demas_cargos }}%) de Gestiones crediticias; Todos estos
 					demás cargos son aplicados sobre el monto restante.
 				</p>
 				<p style='text-align: justify; font-size:9.5px;'><u>5. QUINTA (MORA):
 					</u> El deudor podrá realizar el pago de su cuota anticipada a su fecha de pago, con el fin de
 					evitarse mora; En caso que el Deudor no pague en la fecha de cada cuota mensual,
 					automáticamente quedará constituido en mora y por el sólo hecho de incumplimiento, y desde esa fecha hasta el pago
-					efectivo de su cuota, reconocerá al acreedor un factor mora {{mora}}
+					efectivo de su cuota, reconocerá al acreedor un factor mora {{ mora }}
 					%% de aplicado a la cuota fija,
-					equivalente a {{valor_mora}}, ({{valor_mora_label}}%) por cada día transcurrido en mora hasta el pago efectivo de su cuota.
+					equivalente a {{ valor_mora }}, ({{ valor_mora_label }}%) por cada día transcurrido en mora hasta el pago efectivo de su cuota.
 				</p>
 				<p style='text-align: justify; font-size:9.5px;'><u>6. SEXTA (VENCIMIENTO ANTICIPADO):</u> No obstante al plazo
 					prefijado y la forma de pago convenida, y sin
@@ -381,7 +381,7 @@ public class ContractsTemplates
 		<html>
 		<head>" + ContractStyle + @"</head>
 		<body>" + ContractHeader + @"
-			<p style='text-align: justify; font-size:9.5px; margin-top:20px'>Nosotros: {{datos_apoderado}}, {{resumen_datos_apoderado}} actuando en calidad de apoderado generalísimo
+			<p style='text-align: justify; font-size:9.5px; margin-top:20px'>Nosotros: {{ datos_apoderado }}, {{ resumen_datos_apoderado }} actuando en calidad de apoderado generalísimo
 				de la sociedad Anónima denominada: ' EMPEÑOS Y PRESTAMOS S.A ' EMPRE S.A, Sociedad que es de este domicilio,
 				constituida, autorizada y existente de conformidad a las leyes de la República de Nicaragua, en escritura
 				pública
@@ -390,28 +390,28 @@ public class ContractsTemplates
 				por brevedad en lo sucesivo del presente contrato se le podrá denominar el ACREEDOR; siendo el domicilio: Del
 				Instituto Juan XXIII, 20 varas al Oeste,
 				en el municipio de San Marcos, Departamento de Carazo, Dirección electrónica: empresociedadanonima@gmail.com; y
-				por otra parte el / la señor (a) : {{primer_nombre}}  {{segundo_nombre}}  {{primer_apellido}}  {{segundo_apellidio}} mayor de edad,
-				con número de cédula:  {{identificacion}} con domicilio: {{direccion}} , Estado civil: {{estado_civil}} quien habita en
+				por otra parte el / la señor (a) : {{ primer_nombre }}  {{ segundo_nombre }}  {{ primer_apellido }}  {{ segundo_apellidio }} mayor de edad,
+				con número de cédula:  {{ identificacion }} con domicilio: {{ direccion }} , Estado civil: {{ estado_civil }} quien habita en
 				el
-				municipio de: {{municipio}}, Departamento de {{departamento}},
+				municipio de: {{ municipio }}, Departamento de {{ departamento }},
 				a quien en sucesivo se le denominará el 'DEUDOR', hemos convenido en celebrar el presente 'CONTRATO DE MUTUO
 				GARANTIZADO CON PRENDA COMERCIAL' , el cual se regirá conforme las cláusulas siguientes:
 			</p>
 			<p style='text-align: justify; font-size:9.5px;'>
 				<u>1. PRIMERA (MONTO DE EMPEÑO):</u> El deudor confiesa tener recibido de parte del acreedor, la cantidad de: C$
-			{{Valoracion_empeño_cordobas}}, ({{Valoracion_empeño_cordobas_label}}) equivalente a moneda de los Estados Unidos
+			{{ Valoracion_empeño_cordobas }}, ({{ Valoracion_empeño_cordobas_label }}) equivalente a moneda de los Estados Unidos
 			de América: $
-			{{Valoracion_empeño_dolares}}, ({{Valoracion_empeño_dolares_label}}), Según el valor de
-			la compra del dólar a la fecha de hoy {{fecha_contrato_label_corta}} de: C$ {{taza_cambio_compra}} 
+			{{ Valoracion_empeño_dolares }}, ({{ Valoracion_empeño_dolares_label }}), Según el valor de
+			la compra del dólar a la fecha de hoy {{ fecha_contrato_label_corta }} de: C$ {{ taza_cambio_compra }} 
 			</p>
 			<p style='text-align: justify; font-size:9.5px;'>
 				<u>2. SEGUNDA (DESCRIPCIÓN DEL VEHÍCULO ):</u> En garantía del pago a la cantidad debida, el deudor
 				constituye a favor del acreedor el siguiente vehículo:
 			</p>
 			<div style='font-size: 10px;'>
-				{{tabla_articulos}}
+				{{ tabla_articulos }}
 			</div>
-			<p style='text-align: left; font-weight:bold;margin-top:10px;font-size:10px;'>Observaciones: {{observaciones}}</p>
+			<p style='text-align: left; font-weight:bold;margin-top:10px;font-size:10px;'>Observaciones: {{ observaciones }}</p>
 
 			<p style='text-align: justify; font-size:9.5px;'>
 				<u>3. TERCERA (INSPECCIÓN DEL VEHÍCULO):</u> El deudor cede los derechos para que el acreedor realice una inspección al estado físico del
@@ -432,11 +432,11 @@ public class ContractsTemplates
 			<p style='text-align: justify; font-size:9.5px;'>
 				<u>5. QUINTA (PLAZO Y FORMA DE PAGO):</u>
 				El deudor decide en cuantas cuotas mensuales cancela su empeño, siendo el plazo máximo de 3 meses para artículos electrónicos, 
-				6 meses para artículos no electrónicos y 12 meses para automotores; los pagos se realizarán en cuotas fijas  <span class='sombrear'>MENSUALES</span> de  C$ {{cuotafija}} , 
-				({{cuotafija_label}}), según el cambio del córdoba a dólar a la fecha de hoy {{fecha_contrato_label_corta}} de: C$ {{taza_cambio}} que serán 
+				6 meses para artículos no electrónicos y 12 meses para automotores; los pagos se realizarán en cuotas fijas  <span class='sombrear'>MENSUALES</span> de  C$ {{ cuotafija }} , 
+				({{ cuotafija_label }}), según el cambio del córdoba a dólar a la fecha de hoy {{ fecha_contrato_label_corta }} de: C$ {{ taza_cambio }} que serán 
 				modificables al tipo de cambio del dólar, en la fecha que el cliente haga efectivo su pago. Los pagos se realizarán en córdobas o el 
-				equivalente a $ {{cuotafija_dolares}}, ($ {{cuotafija_dolares_label}})  Estadounidenses, Según tasa de cambio del Banco Central de Nicaragua,  
-				iniciando la primera cuota mensual el día {{fecha_primera_cuota}} y la última el día {{fecha_ultima_cuota}}. El deudor acepta  
+				equivalente a $ {{ cuotafija_dolares }}, ($ {{ cuotafija_dolares_label }})  Estadounidenses, Según tasa de cambio del Banco Central de Nicaragua,  
+				iniciando la primera cuota mensual el día {{ fecha_primera_cuota }} y la última el día {{ fecha_ultima_cuota }}. El deudor acepta  
 				 realizar sus pagos mensuales en  las  oficinas  del acreedor, los pagos serán  todos  en  cuotas  fijas mensuales a como se muestra 
 				 en la tabla de amortización de  deuda  por garantía prendaria indicada al final de este contrato. En ningún momento el deudor podrá 
 				 cancelar el monto total de su empeño, sin antes haber pagado mora (en caso de incurrir,  <span class='sombrear'>hasta un máximo de 20 días en mora</span>), 
@@ -460,25 +460,25 @@ public class ContractsTemplates
 			</p>       
 			<p style='text-align: justify; font-size:9.5px;'>
 				<u>5. SÉPTIMA (INTERÉS CORRIENTE Y DEMÁS CARGOS MENSUALES A PAGAR EN RELACIÓN CON LO PACTADO):</u> El monto de
-				empeño devengará una tasa de interés corriente inicial del {{interes_inicial_label}} por ciento
-				({{interes_inicial}}%) sobre saldo, la cual será
+				empeño devengará una tasa de interés corriente inicial del {{ interes_inicial_label }} por ciento
+				({{ interes_inicial }}%) sobre saldo, la cual será
 				verificable mensualmente de acuerdo con la tasa promedio ponderada que emita el Banco Central de Nicaragua. Los
 				demás cargos que pagar en relación con lo pactado bajo lo cual EMPRE S. A estipula lo siguiente:
-				{{interes_gastos_administrativos_label}} por ciento
-				({{interes_gastos_administrativos}}%)
-				de Gastos administrativos, {{interes_gastos_legales_label}} por ciento ({{interes_gastos_legales}}%) de gastos
-				legales, {{interes_comisiones_label}} por ciento ({{interes_comisiones}}%) de Comisiones,
-				{{interes_mantenimiento_valor_label}} por
-				ciento ({{interes_mantenimiento_valor}}%) de mantenimiento al valor de la prenda,
-				{{interes_demas_cargos_label}} porciento ({{interes_demas_cargos}}%) de Gestiones crediticias; Todos estos
+				{{ interes_gastos_administrativos_label }} por ciento
+				({{ interes_gastos_administrativos }}%)
+				de Gastos administrativos, {{ interes_gastos_legales_label }} por ciento ({{ interes_gastos_legales }}%) de gastos
+				legales, {{ interes_comisiones_label }} por ciento ({{ interes_comisiones }}%) de Comisiones,
+				{{ interes_mantenimiento_valor_label }} por
+				ciento ({{ interes_mantenimiento_valor }}%) de mantenimiento al valor de la prenda,
+				{{ interes_demas_cargos_label }} porciento ({{ interes_demas_cargos }}%) de Gestiones crediticias; Todos estos
 				demás cargos son aplicados sobre el monto restante.
 			</p>
 			<p style='text-align: justify; font-size:9.5px;'>
 				<u>6. OCTAVA (MORA):</u> El deudor podrá realizar el pago de su cuota anticipada a su fecha de pago, con el fin de
 				evitarse mora; En caso que el Deudor no pague en la fecha de cada cuota mensual,
 				automáticamente quedará constituido en mora y por el sólo hecho de incumplimiento, y desde esa fecha hasta el pago
-				efectivo de su cuota, reconocerá al acreedor un factor mora {{mora}} % de aplicado a la cuota fija,
-				equivalente a {{valor_mora}}, ({{valor_mora_label}}) por cada día transcurrido en mora hasta el pago efectivo de su cuota o cancelación.
+				efectivo de su cuota, reconocerá al acreedor un factor mora {{ mora }} % de aplicado a la cuota fija,
+				equivalente a {{ valor_mora }}, ({{ valor_mora_label }}) por cada día transcurrido en mora hasta el pago efectivo de su cuota o cancelación.
 			</p>
 			<p style='text-align: justify; font-size:9.5px;'>
 				<u>7. NOVENA (PÉRDIDA DEL VEHÍCULO): </u> El deudor debe realizar sus pagos mensuales, <span class='sombrear'>pero si llegase a 21 
@@ -536,7 +536,7 @@ public class ContractsTemplates
 			<p style='text-align: justify; font-size:9.5px;'>
 				<u>13. DECIMA QUINTA (ACEPTACIÓN): </u>Los comparecientes declaran expresamente que aceptan el presente contrato
 				con los términos relacionados, Y leído el presente contrato por las partes lo encontramos conforme, aprobamos,
-				ratificamos y firmamos, en la ciudad de San Marcos a los {{dias}} dias del mes de {{mes}} del año {{anio}}.
+				ratificamos y firmamos, en la ciudad de San Marcos a los {{ dias }} dias del mes de {{ mes }} del año {{ anio }}.
 			</p>
 			<br></br>
 			  " + ContractTable + $"<br></br>{Footer}" + @" 
@@ -548,7 +548,7 @@ public class ContractsTemplates
 		<html>
 		 <head>" + ContractStyle + @"</head>
 		<body>" + ContractHeader + @"      
-		<p style='text-align: justify; font-size:9.5px; margin-top:20px'>Nosotros: {{datos_apoderado}}, {{resumen_datos_apoderado}}, actuando en calidad de apoderado generalísimo
+		<p style='text-align: justify; font-size:9.5px; margin-top:20px'>Nosotros: {{ datos_apoderado }}, {{ resumen_datos_apoderado }}, actuando en calidad de apoderado generalísimo
 			de la sociedad Anónima denominada: ' EMPEÑOS Y PRESTAMOS S.A ' EMPRE S.A, Sociedad que es de este domicilio,
 			constituida, autorizada y existente de conformidad a las leyes de la República de Nicaragua, en escritura pública
 			#51, Constitución de Sociedad Anónima y estatutos,
@@ -556,20 +556,20 @@ public class ContractsTemplates
 			por brevedad en lo sucesivo del presente contrato se le podrá denominar el ACREEDOR; siendo el domicilio: Del
 			Instituto Juan XXIII, 20 varas al Oeste,
 			en el municipio de San Marcos, Departamento de Carazo, Dirección electrónica: empresociedadanonima@gmail.com; y
-			por otra parte el / la señor (a) : {{primer_nombre}} {{segundo_nombre}} {{primer_apellido}} {{segundo_apellidio}}
+			por otra parte el / la señor (a) : {{ primer_nombre }} {{ segundo_nombre }} {{ primer_apellido }} {{ segundo_apellidio }}
 			mayor de edad,
-			con número de cédula: {{identificacion}} con domicilio: {{direccion}} , Estado civil: {{estado_civil}} quien
+			con número de cédula: {{ identificacion }} con domicilio: {{ direccion }} , Estado civil: {{ estado_civil }} quien
 			habita en el
-			municipio de: {{municipio}}, Departamento de {{departamento}},
+			municipio de: {{ municipio }}, Departamento de {{ departamento }},
 			a quien en sucesivo se le denominará el 'DEUDOR', hemos convenido en celebrar el presente 'CONTRATO DE MUTUO
 			GARANTIZADO CON PRENDA COMERCIAL' , el cual se regirá conforme las cláusulas siguientes:
 		</p>
 		<p style='text-align: justify; font-size:9.5px;'>
 			<u>1. PRIMERA (MONTO DE EMPEÑO):</u> El deudor confiesa tener recibido de parte del acreedor, la cantidad de: C$
-			{{Valoracion_empeño_cordobas}}, ({{Valoracion_empeño_cordobas_label}}) equivalente a moneda de los Estados Unidos
+			{{ Valoracion_empeño_cordobas }}, ({{ Valoracion_empeño_cordobas_label }}) equivalente a moneda de los Estados Unidos
 			de América: $
-			{{Valoracion_empeño_dolares}}, ({{Valoracion_empeño_dolares_label}}), Según el valor de
-			la compra del dólar a la fecha de hoy {{fecha_contrato_label_corta}} de: C$ {{taza_cambio_compra}}
+			{{ Valoracion_empeño_dolares }}, ({{ Valoracion_empeño_dolares_label }}), Según el valor de
+			la compra del dólar a la fecha de hoy {{ fecha_contrato_label_corta }} de: C$ {{ taza_cambio_compra }}
 		</p>
 		<p style='text-align: justify; font-size:9.5px;'>
 			<u>2. SEGUNDA (DESCRIPCION DE LOS BIENES EMPEÑADOS):</u> En garantía del pago a la cantidad debida, el deudor
@@ -577,10 +577,10 @@ public class ContractsTemplates
 		</p>
 
 		<div style='font-size: 10px;;'>
-			{{tabla_articulos}}
+			{{ tabla_articulos }}
 		</div>
 
-		<p style='text-align: left; font-weight:bold;margin-top:10px;font-size:10px;'>Observaciones: {{observaciones}}</p>
+		<p style='text-align: left; font-weight:bold;margin-top:10px;font-size:10px;'>Observaciones: {{ observaciones }}</p>
 
 		<p style='text-align: justify; font-size:9.5px;'> <u>3. TERCERA (RESPONSABILIDAD LIMITADA DEL ACREEDOR):</u> El
 			acreedor no se responsabiliza por deterioros de los bienes empeñados por consecuencias de terremotos,
@@ -596,11 +596,11 @@ public class ContractsTemplates
 			<u>4. CUARTA (PLAZO Y FORMA DE PAGO):</u> El deudor decide en cuantas cuotas mensuales cancela su empeño, siendo
 			el plazo máximo de 3 meses para artículos electrónicos, 6 meses
 			para artículos no electrónicos y 12 meses para automotores; los pagos se realizarán en cuotas fijas <span class='sombrear'>MENSUALES</span> de
-			C$ {{cuotafija}}, ({{cuotafija_label}}), según el cambio del córdoba a dólar a la fecha de hoy {{fecha_contrato_label_corta}} de: C$
-			{{taza_cambio}} que serán modificables al tipo de cambio del dólar, en la fecha que el cliente haga efectivo su pago. Los pagos se 
-			realizarán en córdobas o el equivalente a $ {{cuotafija_dolares}} , ({{cuotafija_dolares_label}}) Estadounidenses, 
-			Según tasa de cambio del Banco Central de Nicaragua, iniciando la primera cuota mensual el día {{fecha_primera_cuota}} 
-			y la última cuota mensual el día {{fecha_ultima_cuota}}.El deudor acepta realizar sus pagos mensuales en las oficinas del acreedor,
+			C$ {{ cuotafija }}, ({{ cuotafija_label }}), según el cambio del córdoba a dólar a la fecha de hoy {{ fecha_contrato_label_corta }} de: C$
+			{{ taza_cambio }} que serán modificables al tipo de cambio del dólar, en la fecha que el cliente haga efectivo su pago. Los pagos se 
+			realizarán en córdobas o el equivalente a $ {{ cuotafija_dolares }} , ({{ cuotafija_dolares_label }}) Estadounidenses, 
+			Según tasa de cambio del Banco Central de Nicaragua, iniciando la primera cuota mensual el día {{ fecha_primera_cuota }} 
+			y la última cuota mensual el día {{ fecha_ultima_cuota }}.El deudor acepta realizar sus pagos mensuales en las oficinas del acreedor,
 			los pagos serán todos en cuotas fijas mensuales a como se muestra en la tabla de amortización de deuda por
 			garantía prendaria indicada al final de este contrato. En ningún momento el deudor podrá cancelar el
 			monto total de su empeño, sin antes haber pagado mora (en caso de incurrir, <span class='sombrear'>hasta un máximo de 20 días calendarios en mora</span>),
@@ -614,26 +614,26 @@ public class ContractsTemplates
 		</p>
 		<p style='text-align: justify; font-size:9.5px;'>
 			<u>5. QUINTA (INTERES CORRIENTE Y DEMÁS CARGOS MENSUALES A PAGAR EN RELACION CON LO PACTADO):</u> El monto de
-			empeño devengará una tasa de interés corriente inicial del {{interes_inicial_label}} por ciento
-			({{interes_inicial}}%) sobre saldo, la cual será
+			empeño devengará una tasa de interés corriente inicial del {{ interes_inicial_label }} por ciento
+			({{ interes_inicial }}%) sobre saldo, la cual será
 			verificable mensualmente de acuerdo con la tasa promedio ponderada que emita el Banco Central de Nicaragua. Los
 			demás cargos que pagar en relación con lo pactado bajo lo cual EMPRE S. A estipula lo siguiente:
-			{{interes_gastos_administrativos_label}} por ciento
-			({{interes_gastos_administrativos}}%)
-			de Gastos administrativos, {{interes_gastos_legales_label}} por ciento ({{interes_gastos_legales}}%) de gastos
-			legales, {{interes_comisiones_label}} por ciento ({{interes_comisiones}}%) de Comisiones,
-			{{interes_mantenimiento_valor_label}} por
-			ciento ({{interes_mantenimiento_valor}}%) de mantenimiento al valor de la prenda,
-			{{interes_demas_cargos_label}} porciento ({{interes_demas_cargos}}%) de Gestiones crediticias; Todos estos
+			{{ interes_gastos_administrativos_label }} por ciento
+			({{ interes_gastos_administrativos }}%)
+			de Gastos administrativos, {{ interes_gastos_legales_label }} por ciento ({{ interes_gastos_legales }}%) de gastos
+			legales, {{ interes_comisiones_label }} por ciento ({{ interes_comisiones }}%) de Comisiones,
+			{{ interes_mantenimiento_valor_label }} por
+			ciento ({{ interes_mantenimiento_valor }}%) de mantenimiento al valor de la prenda,
+			{{ interes_demas_cargos_label }} porciento ({{ interes_demas_cargos }}%) de Gestiones crediticias; Todos estos
 			demás cargos son aplicados sobre el monto restante.
 		</p>
 		<p style='text-align: justify; font-size:9.5px;'>
 			<u>6. SEXTA (MORA):</u> El deudor podrá realizar el pago de su cuota anticipada a su fecha de pago, con el fin de
 			evitarse mora; En caso que el Deudor no pague en la fecha de cada cuota mensual,
 			automáticamente quedará constituido en mora y por el sólo hecho de incumplimiento, y desde esa fecha hasta el pago
-			efectivo de su cuota, reconocerá al acreedor un factor mora {{mora}}
+			efectivo de su cuota, reconocerá al acreedor un factor mora {{ mora }}
 			% de aplicado a la cuota fija,
-			equivalente a {{valor_mora}}, ({{valor_mora_label}}) por cada día transcurrido en mora hasta el pago efectivo de su cuota.
+			equivalente a {{ valor_mora }}, ({{ valor_mora_label }}) por cada día transcurrido en mora hasta el pago efectivo de su cuota.
 		</p>
 		<p style='text-align: justify; font-size:9.5px;'> <u> 7. SEPTIMA (PÉRDIDA DE LA(S) GARANTIA(S)):</u> El deudor debe
 			realizar sus pagos mensuales, <span class='sombrear'>pero si llegase a 21 días en mora</span> el deudor pierde total derecho sobre la (s)
@@ -705,7 +705,7 @@ public class ContractsTemplates
 		<p style='text-align: justify; font-size:9.5px;'>
 			<u>14. DECIMA CUARTA (ACEPTACIÓN):</u> Los comparecientes declaran expresamente que aceptan el presente contrato
 			con los términos relacionados, Y leído el presente contrato por las partes lo encontramos conforme, aprobamos,
-			ratificamos y firmamos, en la ciudad de San Marcos a los {{dias}} dias del mes de {{mes}} del año {{anio}}.
+			ratificamos y firmamos, en la ciudad de San Marcos a los {{ dias }} dias del mes de {{ mes }} del año {{ anio }}.
 		</p><br></br>
 		  " + ContractTable + $"<br></br>{Footer}" + @" 
 		</body>
@@ -716,20 +716,20 @@ public class ContractsTemplates
 		<tr style='margin-top: 0px; margin-bottom: 0px;  width: 100%'> 
 			<td style='font-size: 9.5px; text-align: left;  width: 30%; border: none !important;'>
 				<p style='text-align:left; font-size:10px;width: 200px !important; margin-top:100px; border-top: solid 1px #000 !important; padding-bottom:0px; margin-bottom:0px; ; padding-top:10px'>
-					Deudor: {{primer_nombre}} {{segundo_nombre}} {{primer_apellido}} {{segundo_apellidio}}
+					Deudor: {{ primer_nombre }} {{ segundo_nombre }} {{ primer_apellido }} {{ segundo_apellidio }}
 				</p>
 				<p style='text-align:left; font-size:10px; margin-top:0px; padding-bottom:0px; margin-bottom:0px;'>Cédula:
-					{{identificacion}}
+					{{ identificacion }}
 				</p>
-				<p style='text-align:left; font-size:10px; margin-top:0px; padding-bottom:0px; margin-bottom:0px;'>Cel:{{telefono}}
+				<p style='text-align:left; font-size:10px; margin-top:0px; padding-bottom:0px; margin-bottom:0px;'>Cel:{{ telefono }}
 				</p>
 			</td>       
 			<td style='font-size: 9.5px; text-align: right !important;  width: 70%; border: none !important'>
 				<p style='text-align:right; font-size:10px; margin-top:0px; padding-bottom:0px; margin-bottom:0px;'>
-					<img style='height:80px; width:140px;' src='{{firma}}'/>
+					<img style='height:80px; width:140px;' src='{{ firma }}'/>
 				</p>
 				<p style='text-align:right; font-size:10px; margin-top:0px; padding-bottom:0px; margin-bottom:0px; border-top: none !important; width: 100% !important; padding-top:10px'>
-					{{datos_apoderado}}
+					{{ datos_apoderado }}
 				</p>
 			</td>   
 		</tr> 
@@ -764,18 +764,18 @@ public class ContractsTemplates
 				<thead>
 					<tr>
 						<td colspan='1' class='col2'><span lang='ES-NI'>PRECIO DEL ARTÍCULO EN C$</span></td>
-						<td colspan='1' class='col2'> <span lang='ES-NI'>C$ {{Valoracion_empeño_cordobas}}</span></td>
+						<td colspan='1' class='col2'> <span lang='ES-NI'>C$ {{ Valoracion_empeño_cordobas }}</span></td>
 						<td colspan='3' class='col6' rowspan='2'>
 						<span lang='ES-NI'>TABLA DE PAGO DEL SISTEMA DE APARTADO</span>
 						</td>
 						<td colspan='1' class='col2'><span lang='ES-NI'>CUOTA C$</span></td>
-						<td colspan='1' class='col2'> <span lang='ES-NI'>C$ {{cuotafija}}</span></td>
+						<td colspan='1' class='col2'> <span lang='ES-NI'>C$ {{ cuotafija }}</span></td>
 					</tr>
 					<tr>
 						<td colspan='1' class='col2'> PRECIO DEL ARTÍCULO EN $</td>
-						<td colspan='1' class='col2'> $ {{Valoracion_empeño_dolares}}</td>
+						<td colspan='1' class='col2'> $ {{ Valoracion_empeño_dolares }}</td>
 						<td colspan='1' class='col2'><span lang='ES-NI'>CUOTA FIJA<br>$</br></span> </td>
-						<td colspan='1' class='col2'>$ {{cuotafija_dolares}}</td>
+						<td colspan='1' class='col2'>$ {{ cuotafija_dolares }}</td>
 					</tr>
 					
 					<tr>
@@ -787,7 +787,7 @@ public class ContractsTemplates
 						<td><span lang='ES-NI'>MONTO RESTANTE EN $</span></td>
 					</tr>
 				</thead>
-				{{tbody_amortizacion}}
+				{{ tbody_amortizacion }}
 			</table>
 	";
 
@@ -799,8 +799,8 @@ public class ContractsTemplates
 
 		<body>" + ContractHeader + @"
 			<h3>CONTRATO DE SISTEMA DE APARTADO PARA COMPRA DE ARTÍCULOS COMERCIALES.</h3>
-			<p style='text-align: justify; font-size:9.5px; margin-top:20px'>Nosotros: {{datos_apoderado}},
-				{{resumen_datos_apoderado}}, actuando en calidad de apoderado generalísimo
+			<p style='text-align: justify; font-size:9.5px; margin-top:20px'>Nosotros: {{ datos_apoderado }},
+				{{ resumen_datos_apoderado }}, actuando en calidad de apoderado generalísimo
 				de la sociedad Anónima denominada: ' EMPEÑOS Y PRESTAMOS S.A ' EMPRE S.A, Sociedad que es de este domicilio,
 				constituida, autorizada y existente de conformidad a las leyes de la República de Nicaragua, en escritura
 				pública
@@ -809,12 +809,12 @@ public class ContractsTemplates
 				por brevedad en lo sucesivo del presente contrato se le podrá denominar el VENDEDOR; siendo el domicilio: Del
 				Instituto Juan XXIII, 20 varas al Oeste,
 				en el municipio de San Marcos, Departamento de Carazo, Dirección electrónica: empresociedadanonima@gmail.com; y
-				por otra parte el / la señor (a) : {{primer_nombre}} {{segundo_nombre}} {{primer_apellido}}
-				{{segundo_apellidio}}
+				por otra parte el / la señor (a) : {{ primer_nombre }} {{ segundo_nombre }} {{ primer_apellido }}
+				{{ segundo_apellidio }}
 				mayor de edad,
-				con número de cédula: {{identificacion}} con domicilio: {{direccion}} , Estado civil: {{estado_civil}} quien
+				con número de cédula: {{ identificacion }} con domicilio: {{ direccion }} , Estado civil: {{ estado_civil }} quien
 				habita en el
-				municipio de: {{municipio}}, Departamento de {{departamento}},
+				municipio de: {{ municipio }}, Departamento de {{ departamento }},
 				a quien en lo sucesivo se le denominará el ""COMPRADOR"", hemos convenido en celebrar el presente ""CONTRATO DE
 				SISTEMA DE APARTADO"" PARA COMPRA DE ARTÍCULO COMERCIAL"" , el cual se regirá conforme las cláusulas siguientes:
 			</p>
@@ -824,21 +824,21 @@ public class ContractsTemplates
 			</p>
 
 			<div style='font-size: 10px;;'>
-				{{tabla_articulos}}
+				{{ tabla_articulos }}
 			</div>
 
-			<p style='text-align: left; font-weight:bold;margin-top:10px;font-size:10px;'>Observaciones: {{observaciones}}</p>
+			<p style='text-align: left; font-weight:bold;margin-top:10px;font-size:10px;'>Observaciones: {{ observaciones }}</p>
 			<p style='text-align: justify; font-size:9.5px;'>
-				<u>2. SEGUNDA (PRECIO DEL ARTICULO):</u> El valor del artículo es de: C$ {{Valoracion_empeño_cordobas}} ({{Valoracion_empeño_cordobas_label}}),
-				equivalente a $ {{Valoracion_empeño_dolares}} ({{Valoracion_empeño_dolares_label}}) dólares americanos, Según el
+				<u>2. SEGUNDA (PRECIO DEL ARTICULO):</u> El valor del artículo es de: C$ {{ Valoracion_empeño_cordobas }} ({{ Valoracion_empeño_cordobas_label }}),
+				equivalente a $ {{ Valoracion_empeño_dolares }} ({{ Valoracion_empeño_dolares_label }}) dólares americanos, Según el
 				valor de la compra del dólar
-				a la fecha de hoy de C$ {{taza_cambio_compra}}
+				a la fecha de hoy de C$ {{ taza_cambio_compra }}
 			</p>
 
 			<p style='text-align: justify; font-size:9.5px;'> <u>3. TERCERA (CUOTA DE APARTADO):</u>
 				El comprador está obligado en realizar el primer pago de su cuota al momento de firmar
-				este contrato, su cuota de apartado es de: de C$ {{cuotafija}} ,
-				({{cuotafija_label}}), equivalente a: $ {{cuotafija_dolares}}, ($ {{cuotafija_dolares_label}}), dólares
+				este contrato, su cuota de apartado es de: de C$ {{ cuotafija }} ,
+				({{ cuotafija_label }}), equivalente a: $ {{ cuotafija_dolares }}, ($ {{ cuotafija_dolares_label }}), dólares
 				Americanos,
 				que serán entregados en la fecha de la suscripción de este contrato.
 			</p>
@@ -848,10 +848,10 @@ public class ContractsTemplates
 				Si el artículo tiene un valor menor o Igual a treinta dólares, el comprador deberá cancelar en 2 cuotas
 				máximo, si el/los artículo (s) tienen un valor entre 31 y 60 dólares, las cuotas serán 3, y Si el precio
 				del/los artículo (s) es mayor a 60 dólares se cancelará a un plazo de 4 cuotas. Los pagos se realizarán
-				en cuotas de CC$ {{cuotafija}} ({{cuotafija_label}}), que serán modificables al tipo de cambio del dólar, en la
+				en cuotas de CC$ {{ cuotafija }} ({{ cuotafija_label }}), que serán modificables al tipo de cambio del dólar, en la
 				fecha que el cliente
-				haga efectivo su pago. Los pagos se realizarán en córdobas o el equivalente a: $ {{cuotafija_dolares}} ($
-				{{cuotafija_dolares_label}}) Estadounidenses,
+				haga efectivo su pago. Los pagos se realizarán en córdobas o el equivalente a: $ {{ cuotafija_dolares }} ($
+				{{ cuotafija_dolares_label }}) Estadounidenses,
 				según  la tasa de cambio en la fecha del pago. El comprador se compromete con el pago de su última
 				cuota el día, como se muestra en la siguiente tabla de pago.
 
@@ -865,7 +865,7 @@ public class ContractsTemplates
 				Apartado del artículo comercial,
 				si el comprador faltare a una de las cuotas, en el tiempo establecido, otorgando al
 				COMPRADOR una prorroga no mayor a 5 días para actualizar su cuota, En caso de que no
-				se actualice, automáticamente el/la señor(a): {{primer_nombre}} {{segundo_nombre}} {{primer_apellido}} {{segundo_apellidio}}, cede y traspasa todo el dinero
+				se actualice, automáticamente el/la señor(a): {{ primer_nombre }} {{ segundo_nombre }} {{ primer_apellido }} {{ segundo_apellidio }}, cede y traspasa todo el dinero
 				abonado al vendedor, y pierde el derecho sobre el/los artículo (s), donde este (os)
 				pasará (n) nuevamente a venta.
 
@@ -886,7 +886,7 @@ public class ContractsTemplates
 			<p style='text-align: justify; font-size:9.5px;'>
 				<u>9. NOVENA (ACEPTACION): </u>
 				Los comparecientes declaran que aceptan el presente contrato con los términos relacionados, y luego de haberse leído por  EL VENDEDOR Y EL COMPRADOR,  lo  encontramos  conforme,  aceptamos y  firmamos,  
-				en la ciudad de San Marcos a los {{dias}} dias del mes de {{mes}} del año {{anio}}.
+				en la ciudad de San Marcos a los {{ dias }} dias del mes de {{ mes }} del año {{ anio }}.
 
 			</p>" + $"<br></br>{Footer}" + @"
 		</body>

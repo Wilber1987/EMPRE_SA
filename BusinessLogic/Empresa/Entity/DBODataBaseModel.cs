@@ -111,11 +111,12 @@ namespace DataBaseModel
 		CANCELADO, 
 		ANULADO,
         CAPITAL_CANCELADO,
-        VENCIDO
+        VENCIDO,
+        PENDIENTE
     }
 	public enum Contratos_Type
 	{
-		EMPENO, PRESTAMO, EMPENO_VEHICULO, APARTADO_QUINCENAL, APARTADO_MENSUAL
+		EMPEÑO, PRESTAMO, EMPENO_VEHICULO, APARTADO_QUINCENAL, APARTADO_MENSUAL
 	}
 	public class Detail_Prendas : EntityClass
 	{
@@ -217,7 +218,7 @@ namespace DataBaseModel
 		public int? id_usuario_crea { get; set; }
 		public DateTime? fecha { get; set; }
 		public string? tipo { get; set; }
-		public string? moneda { get; set; }
+		public MonedaEnum? moneda { get; set; }
 		public decimal? tasa_cambio { get; set; }
 		public bool? correo_enviado { get; set; }
 		public decimal? tasa_cambio_compra { get; set; }
@@ -229,6 +230,9 @@ namespace DataBaseModel
 
 		[OneToMany(TableName = "Detail_Movimiento", KeyColumn = "id_movimiento", ForeignKeyColumn = "id_movimiento")]
 		public List<Detail_Movimiento>? Detail_Movimiento { get; set; }
+
+		[JsonProp]
+		public List<Denominacion_Movimiento>? Denominaciones { get; set; }
 	}
 	public class Detail_Movimiento : EntityClass
 	{
@@ -241,7 +245,7 @@ namespace DataBaseModel
 		public decimal? credito_dolares { get; set; }
 		public decimal? tasa_cambio { get; set; }
 		public decimal? tasa_cambio_compra { get; set; }
-		public string? moneda { get; set; }
+		public MonedaEnum? moneda { get; set; }
 
 		public decimal? monto_inicial { get; set; }
 		public decimal? monto_final { get; set; }

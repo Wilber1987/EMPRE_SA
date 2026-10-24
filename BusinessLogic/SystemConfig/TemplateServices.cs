@@ -19,7 +19,7 @@ namespace CAPA_NEGOCIO.SystemConfig
                 string propertyName = property.Name;
                 object propertyValue = property.GetValue(model, null);
 
-                string placeholder = $"{{{{ {propertyName} }}}}";
+                string placeholder = $"{{ {{ {propertyName} }} }}";
 
                 if (propertyValue != null)
                 {

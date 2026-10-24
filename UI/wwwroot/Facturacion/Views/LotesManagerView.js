@@ -310,7 +310,7 @@ class LotesManagerView extends HTMLElement {
 							etiquetasContainer.querySelectorAll("input").forEach(input => {
 								input.checked = true
 							})							
-						}}">Seleccionar todos</button>
+						 }}">Seleccionar todos</button>
 						<button class="Btn-Mini-Alert" onclick="${ ()=> {
 							lotes.forEach((/** @type {{ [x: string]: any; }} */ lote) => {
 								WArrayF.AddOrRemove(lote, selectedLotes, false);
@@ -318,7 +318,7 @@ class LotesManagerView extends HTMLElement {
 							etiquetasContainer.querySelectorAll("input").forEach(input => {
 								input.checked = false
 							})							
-						}}">Deseleccionar todos</button>
+						 }}">Deseleccionar todos</button>
 					</div>
 				</div>`)
 				lotes.forEach((/** @type {Tbl_Lotes} */ lote) => { etiquetasContainer.append(this.CreateEtiqueta(lote, selectedLotes)) })
@@ -423,11 +423,11 @@ class LotesManagerView extends HTMLElement {
 						if (response.status == 200) {
 							location.reload();
 						}
-					}}">
+					 }}">
 					</div>
 			<div><input type="checkbox" onchange="${async (ev) => {
 				WArrayF.AddOrRemove(lote, selectedLotes, ev.target.checked);
-			}}"></div>
+			 }}"></div>
 		</div>`
 		return etiqueta;
 	}

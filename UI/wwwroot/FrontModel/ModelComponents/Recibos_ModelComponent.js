@@ -65,9 +65,10 @@ class Recibos_ModelComponent extends EntityClass {
     /**@type {ModelProperty} */ paga_dolares = { type: "number", hiddenInTable: true };
    
     
-    /**@type {ModelProperty} */ total_apagar_cordobas = { type: "text", disabled: true, label : "Total a pagar C$" };   
-    /**@type {ModelProperty} */ total_apagar_dolares = { type: "text", disabled: true , label : "Total a pagar $" };
+    /**@type {ModelProperty} */ total_apagar_cordobas = { type: "MONEY", hidden: true, disabled: true, label : "Total a pagar C$" };   
+    /**@type {ModelProperty} */ total_apagar_dolares = { type: "MONEY", hidden: true, disabled: true , label : "Total a pagar $" };
 
+   
     
     /**@type {ModelProperty} */ reestructurar_value = { type: "number", label: "meses a reestructurar", placeholder: "número de meses ejm. 1", hidden: true, min: 1, require: true };
 
@@ -135,7 +136,7 @@ class Recibos_ModelComponent extends EntityClass {
                     }
                     this.DefineMaxAndMinInForm(form, contractData);
                 }
-            }, /*pago_parcial: {
+            }, pago_parcial: {
                 type: "checkbox", hidden: !contractData.canPagoParcial, require: false,
                 action: (recibo, form) => {
                     if (recibo.pago_parcial == true) {
@@ -161,7 +162,8 @@ class Recibos_ModelComponent extends EntityClass {
                     }
                     this.DefineMaxAndMinInForm(form, contractData);
                 }
-            },*/ /**@type {ModelProperty} */solo_interes_mora: {
+            },
+             /**@type {ModelProperty} */solo_interes_mora: {
                 type: "checkbox", require: false, hidden: !contractData.soloInteresMora,
                 action: (recibo, form) => {
                     recibo.cancelar = false;
@@ -219,7 +221,7 @@ class Recibos_ModelComponent extends EntityClass {
                     form.ModelObject.monto_dolares.action(ObjectF, form);
                     //form?.DrawComponent();
                 }
-            }, monto_dolares: {
+            }, monto_dolares: { hidden: true,
                 type: 'MONEY', defaultValue: 0, action: (/**@type {Recibos}*/ ObjectF, form) => {
                     ObjectF.monto_cordobas = (ObjectF.monto_dolares * ObjectF.tasa_cambio).toFixed(3);
                     ObjectF.cambio_dolares = (ObjectF.monto_dolares - ObjectF.paga_dolares).toFixed(3);
@@ -240,38 +242,38 @@ class Recibos_ModelComponent extends EntityClass {
                     }
                     form?.DrawComponent();
                 }
-            }, cambio_dolares: {
+            }, cambio_dolares: { hidden: true,
                 type: 'MONEY', disabled: true, require: false, defaultValue: 0, action: (/**@type {Recibos}*/ ObjectF, form) => {
                     //console.log(ObjectF.monto_dolares);
                     //return ConvertToMoneyString(ObjectF.cambio_dolares = ObjectF.monto_dolares - ObjectF.paga_dolares);
                 }
-            }, cambio_cordobas: {
+            }, cambio_cordobas: { hidden: true,
                 type: 'MONEY', disabled: true, require: false, defaultValue: 0, action: (/**@type {Recibos}*/ ObjectF, form) => {
                     //return ConvertToMoneyString(ObjectF.cambio_cordobas = ObjectF.monto_cordobas - ObjectF.paga_cordobas);
                 }
             }, moneda: {
                 type: "radio", Dataset: ["DOLARES", "CORDOBAS"], action: (/**@type {Recibos}*/ ObjectF, form) => {
                     if (ObjectF.moneda == "DOLARES") {
-                        form.ModelObject.monto_dolares.hidden = false;
-                        form.ModelObject.monto_cordobas.hidden = true;
+                        //form.ModelObject.monto_dolares.hidden = false;
+                        //form.ModelObject.monto_cordobas.hidden = true;
 
                         form.ModelObject.paga_cordobas.disabled = true;
                         form.ModelObject.paga_dolares.disabled = false;
 
-                        form.ModelObject.Is_cambio_cordobas.hidden = false;
+                        //form.ModelObject.Is_cambio_cordobas.hidden = false;
                         ObjectF.Is_cambio_cordobas = false;
-                        ObjectF.cambio_cordobas = ((ObjectF.monto_dolares - ObjectF.paga_dolares) * contractData.tasasCambio[0].Valor_de_compra).toFixed(3);
+                        //ObjectF.cambio_cordobas = ((ObjectF.monto_dolares - ObjectF.paga_dolares) * contractData.tasasCambio[0].Valor_de_compra).toFixed(3);
                         form?.DrawComponent();
                     } else {
-                        form.ModelObject.monto_dolares.hidden = true;
-                        form.ModelObject.monto_cordobas.hidden = false;
+                        //form.ModelObject.monto_dolares.hidden = true;
+                        //form.ModelObject.monto_cordobas.hidden = false;
 
                         form.ModelObject.paga_cordobas.disabled = false;
                         form.ModelObject.paga_dolares.disabled = true;
 
-                        form.ModelObject.Is_cambio_cordobas.hidden = true;
+                        //form.ModelObject.Is_cambio_cordobas.hidden = true;
                         ObjectF.Is_cambio_cordobas = false;
-                        ObjectF.cambio_cordobas = (ObjectF.monto_cordobas - ObjectF.paga_cordobas).toFixed(3);
+                        //ObjectF.cambio_cordobas = (ObjectF.monto_cordobas - ObjectF.paga_cordobas).toFixed(3);
                         form?.DrawComponent();
                     }
                 }
@@ -339,7 +341,8 @@ class Recibos_ModelComponent extends EntityClass {
         }
     };
     /**@type {ModelProperty} */ temporal = { type: "checkbox", require: false };
-    /**@type {ModelProperty} */ Is_cambio_cordobas = { type: "checkbox", require: false, label: "dar cambio en córdobas", hidden: false };
+    /**@type {ModelProperty} */ Is_cambio_cordobas = { hidden: true,
+        type: "checkbox", require: false, label: "dar cambio en córdobas" };
 
 }
 export { Recibos_ModelComponent };

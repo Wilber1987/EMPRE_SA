@@ -33,7 +33,7 @@ namespace API.Controllers
 
 		[HttpPost]
 		[AuthController(Permissions.GESTION_EMPEÑOS)]
-		public object GetDataContract()
+		public ContractServices? GetDataContract()
 		{
 			return new ContractServices().GetDataContract(HttpContext.Session.GetString("sessionKey"));
 		}

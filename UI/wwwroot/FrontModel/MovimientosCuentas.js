@@ -1,9 +1,10 @@
 //@ts-check
 // @ts-ignore
+import { Orden_Movimiento } from "../Caja/Model/Order_Movimiento.js";
 import { ModelProperty } from "../WDevCore/WModules/CommonModel.js";
 import { EntityClass } from "../WDevCore/WModules/EntityClass.js";
 import { DateTime } from "../WDevCore/WModules/Types/DateTime.js";
-import { Catalogo_Cuentas } from "./DBODataBaseModel.js";
+import { Catalogo_Cuentas, Catalogo_Cuentas_ModelComponent } from "./Catalogo_Cuentas.js";
 
 
 /**
@@ -122,17 +123,23 @@ export class Movimientos_Cuentas extends EntityClass {
   /**@type {number}**/ id_movimiento;
   /**@type {number}**/ Id_cuenta_origen;
   /**@type {number}**/ Id_cuenta_destino;
-  /**@type {Catalogo_Cuentas}**/ Catalogo_Cuentas_Origen;
-  /**@type {Catalogo_Cuentas}**/ Catalogo_Cuentas_Destino;
+  /**@type {Catalogo_Cuentas?}**/ Catalogo_Cuentas_Origen;
+  /**@type {Catalogo_Cuentas?}**/ Catalogo_Cuentas_Destino;
   //moneda = { type: 'select', Dataset: ["C$", "$"], hiddenInTable: false,hidden:true, disabled: true, require: false, };
   /**@type {string}**/ moneda;
   /**@type {number}**/ monto;
+  /**@type {number}**/ total;
+  /**@type {number}**/ tasa_cambio_compra;
   /**@type {number}**/ tasa_cambio;
   //tasa_cambio_compra = { type: "number", disabled: true , hiddenFilter: true};	
   /**@type {number}**/ id_usuario_crea;
   /**@type {Date}**/ fecha;
   /**@type {string}**/ concepto;
   /**@type {string}**/ descripcion;
+  /**@type {boolean}**/ is_transaction;
+
+  //ORDER MOVIMIENTO ASOCIADO A EL REQUEST
+  /**@type {Orden_Movimiento}**/ OrderData;
 }
 
 export class Detail_Movimiento extends EntityClass {
@@ -164,11 +171,11 @@ class Movimientos_Cuentas_ModelComponent extends EntityClass {
 	/**@type {ModelProperty} */ Id_cuenta_destino = { type: "number", hidden: true }
 	/**@type {ModelProperty} */ Catalogo_Cuentas_Origen = {
     type: 'WSELECT',
-    ModelObject: () => new Catalogo_Cuentas(), ForeignKeyColumn: "Id_cuenta_origen"
+    ModelObject: () => new Catalogo_Cuentas_ModelComponent(), ForeignKeyColumn: "Id_cuenta_origen"
   };
 	/**@type {ModelProperty} */ Catalogo_Cuentas_Destino = {
     type: 'WSELECT',
-    ModelObject: () => new Catalogo_Cuentas(), ForeignKeyColumn: "Id_cuenta_destino"
+    ModelObject: () => new Catalogo_Cuentas_ModelComponent(), ForeignKeyColumn: "Id_cuenta_destino"
   };
 	//moneda = { type: 'select', Dataset: ["C$", "$"], hiddenInTable: false,hidden:true, disabled: true, require: false, };
 	/**@type {ModelProperty} */ moneda = { type: "radio", Dataset: ["CORDOBAS", "DOLARES"] };
@@ -176,7 +183,7 @@ class Movimientos_Cuentas_ModelComponent extends EntityClass {
 	/**@type {ModelProperty} */ tasa_cambio = { type: "money", disabled: true, hiddenFilter: true, hidden: true };
 	//tasa_cambio_compra = { type: "number", disabled: true , hiddenFilter: true};	
 	/**@type {ModelProperty} */ id_usuario_crea = { type: "number", hidden: true, hiddenFilter: true };
-	/**@type {ModelProperty} */ fecha = { type: "datetime", disabled: true, require: false };  
+	/**@type {ModelProperty} */ fecha = { type: "datetime", disabled: true, require: false };
   /**@type {ModelProperty} */ Tipo_Movimiento = { type: "Select", Dataset: Object.keys(TipoMovimiento) };
 	/**@type {ModelProperty} */ concepto = { type: "textarea" };
 	/**@type {ModelProperty} */ descripcion = { type: "textarea", require: false, hiddenFilter: true, hiddenInTable: true };
@@ -193,18 +200,25 @@ class Detail_Movimiento_ModelComponent extends EntityClass {
     super(props, 'Cuentas');
     Object.assign(this, props);;
   }
-  id_movimiento = { type: "number", primary: true };
-  fecha = { type: "date" };
-  //moneda = { type: 'select', Dataset: ["C$", "$"], hiddenInTable: false,hidden:true, disabled: true, require: false, };
-  debito = { type: "money" };
-  credito = { type: "money" };
-  debito_dolares = { type: "money" };
-  credito_dolares = { type: "money" };
-  monto_inicial = { type: "money" };
-  monto_final = { type: "money" };
-  monto_inicial_dolares = { type: "money" };
-  monto_final_dolares = { type: "money" };
+  /**@type {ModelProperty} */ 
+  
+  
+  /**@type {ModelProperty} */ id_movimiento = { type: "number", primary: true };
+  /**@type {ModelProperty} */ fecha = { type: "date" };
+  /**@type {ModelProperty} */ //moneda = { type: 'select', Dataset: ["C$", "$"], hiddenInTable: false,hidden:true, disabled: true, require: false, };
+  /**@type {ModelProperty} */ debito = { type: "money" };
+  /**@type {ModelProperty} */ credito = { type: "money" };
+  /**@type {ModelProperty} */ debito_dolares = { type: "money" };
+  /**@type {ModelProperty} */ credito_dolares = { type: "money" };
+  /**@type {ModelProperty} */ monto_inicial = { type: "money" };
+  /**@type {ModelProperty} */ monto_final = { type: "money" };
+  /**@type {ModelProperty} */ monto_inicial_dolares = { type: "money" };
+  /**@type {ModelProperty} */ monto_final_dolares = { type: "money" };
   Transaction_Movimiento = undefined;
 }
 export { Detail_Movimiento_ModelComponent }
+
+export const Tipo_CuentaEnum = {
+  PROPIA: "PROPIA", EXTERNA: "EXTERNA", PAGO: "PAGO"
+}
 

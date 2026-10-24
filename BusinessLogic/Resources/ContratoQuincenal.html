@@ -5,8 +5,8 @@
 
 <body>" + ContractHeader + @"
 	<h1>CONTRATO DE SISTEMA DE APARTADO PARA COMPRA DE ARTÍCULOS COMERCIALES.</h1>
-	<p style='text-align: justify; font-size:9.5px; margin-top:20px'>Nosotros: {{datos_apoderado}},
-		{{resumen_datos_apoderado}}, actuando en calidad de apoderado generalísimo
+	<p style='text-align: justify; font-size:9.5px; margin-top:20px'>Nosotros: {{ datos_apoderado }},
+		{{ resumen_datos_apoderado }}, actuando en calidad de apoderado generalísimo
 		de la sociedad Anónima denominada: ' EMPEÑOS Y PRESTAMOS S.A ' EMPRE S.A, Sociedad que es de este domicilio,
 		constituida, autorizada y existente de conformidad a las leyes de la República de Nicaragua, en escritura
 		pública
@@ -15,12 +15,12 @@
 		por brevedad en lo sucesivo del presente contrato se le podrá denominar el VENDEDOR; siendo el domicilio: Del
 		Instituto Juan XXIII, 20 varas al Oeste,
 		en el municipio de San Marcos, Departamento de Carazo, Dirección electrónica: empresociedadanonima@gmail.com; y
-		por otra parte el / la señor (a) : {{primer_nombre}} {{segundo_nombre}} {{primer_apellido}}
-		{{segundo_apellidio}}
+		por otra parte el / la señor (a) : {{ primer_nombre }} {{ segundo_nombre }} {{ primer_apellido }}
+		{{ segundo_apellidio }}
 		mayor de edad,
-		con número de cédula: {{identificacion}} con domicilio: {{direccion}} , Estado civil: {{estado_civil}} quien
+		con número de cédula: {{ identificacion }} con domicilio: {{ direccion }} , Estado civil: {{ estado_civil }} quien
 		habita en el
-		municipio de: {{municipio}}, Departamento de {{departamento}},
+		municipio de: {{ municipio }}, Departamento de {{ departamento }},
 		a quien en lo sucesivo se le denominará el "COMPRADOR", hemos convenido en celebrar el presente "CONTRATO DE
 		SISTEMA DE APARTADO" PARA COMPRA DE ARTÍCULO COMERCIAL" , el cual se regirá conforme las cláusulas siguientes:
 	</p>
@@ -30,22 +30,22 @@
 	</p>
 
 	<div style='font-size: 10px;;'>
-		{{tabla_articulos}}
+		{{ tabla_articulos }}
 	</div>
 
-	<p style='text-align: left; font-weight:bold;margin-top:10px;font-size:10px;'>Observaciones: {{observaciones}}</p>
+	<p style='text-align: left; font-weight:bold;margin-top:10px;font-size:10px;'>Observaciones: {{ observaciones }}</p>
 	<p style='text-align: justify; font-size:9.5px;'>
-		<u>2. SEGUNDA (PRECIO DEL ARTICULO):</u> El valor del artículo es de: C$ {{ PRECIO_ARTICULO_CORDOBAS }} ({{
-		PRECIO_ARTICULO_CORDOBAS_LABEL }}),
-		equivalente a $ {{ PRECIO_ARTICULO_DOLARES }} ({{ PRECIO_ARTICULO_DOLARES_LABEL }}) dólares americanos, Según el
+		<u>2. SEGUNDA (PRECIO DEL ARTICULO):</u> El valor del artículo es de: C$ {{  PRECIO_ARTICULO_CORDOBAS  }} ({{ 
+		PRECIO_ARTICULO_CORDOBAS_LABEL  }}),
+		equivalente a $ {{  PRECIO_ARTICULO_DOLARES  }} ({{  PRECIO_ARTICULO_DOLARES_LABEL  }}) dólares americanos, Según el
 		valor de la compra del dólar
-		a la fecha de hoy de C$ {{taza_cambio_compra}}
+		a la fecha de hoy de C$ {{ taza_cambio_compra }}
 	</p>
 
 	<p style='text-align: justify; font-size:9.5px;'> <u>3. TERCERA (CUOTA DE APARTADO):</u>
 		El comprador está obligado en realizar el primer pago de su cuota al momento de firmar
-		este contrato, su cuota de apartado es de: de C$ {{cuotafija}} ,
-		({{cuotafija_label}}), equivalente a: $ {{cuotafija_dolares}}, ($ {{cuotafija_dolares_label}}), dólares
+		este contrato, su cuota de apartado es de: de C$ {{ cuotafija }} ,
+		({{ cuotafija_label }}), equivalente a: $ {{ cuotafija_dolares }}, ($ {{ cuotafija_dolares_label }}), dólares
 		Americanos,
 		que serán entregados en la fecha de la suscripción de este contrato.
 	</p>
@@ -55,10 +55,10 @@
 		Si el artículo tiene un valor menor o Igual a treinta dólares, el comprador deberá cancelar en 2 cuotas
 		máximo, si el/los artículo (s) tienen un valor entre 31 y 60 dólares, las cuotas serán 3, y Si el precio
 		del/los artículo (s) es mayor a 60 dólares se cancelará a un plazo de 4 cuotas. Los pagos se realizarán
-		en cuotas de CC$ {{cuotafija}} ({{cuotafija_label}}), que serán modificables al tipo de cambio del dólar, en la
+		en cuotas de CC$ {{ cuotafija }} ({{ cuotafija_label }}), que serán modificables al tipo de cambio del dólar, en la
 		fecha que el cliente
-		haga efectivo su pago. Los pagos se realizarán en córdobas o el equivalente a: $ {{cuotafija_dolares}} ($
-		{{cuotafija_dolares_label}}) Estadounidenses,
+		haga efectivo su pago. Los pagos se realizarán en córdobas o el equivalente a: $ {{ cuotafija_dolares }} ($
+		{{ cuotafija_dolares_label }}) Estadounidenses,
 		según la tasa de cambio en la fecha del pago. El comprador se compromete con el pago de su última
 		cuota el día, como se muestra en la siguiente tabla de pago.
 
@@ -93,7 +93,7 @@
 	<p style='text-align: justify; font-size:9.5px;'>
 		<u>9. NOVENA (ACEPTACION): </u>
 		Los comparecientes declaran que aceptan el presente contrato con los términos relacionados, y luego de haberse leído por  EL VENDEDOR Y EL COMPRADOR,  lo  encontramos  conforme,  aceptamos y  firmamos,  
-		en la ciudad de San Marcos a los {{dias}} dias del mes de {{mes}} del año {{anio}}.
+		en la ciudad de San Marcos a los {{ dias }} dias del mes de {{ mes }} del año {{ anio }}.
 
 	</p>" + $"<br></br>{Footer}" + @"
 </body>

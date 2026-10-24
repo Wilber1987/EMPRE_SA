@@ -12,7 +12,7 @@ namespace Model
 
 		public Transaction_Contratos? Transaction_Contratos { get; set; }
 		public List<Transactional_Valoracion>? valoraciones { get; set; }
-		public string? Moneda { get; set; }
+		public MonedaEnum? Moneda { get; set; }
 		/**@type {Number} */
 
 		public ResponseService SaveDataContract(string Identify)
@@ -67,7 +67,8 @@ namespace Model
 
 		public ResponseService DoSaveContract(string Identify)
 		{
-			var  (User, dbUser) =  Business.Security_Users.GetUserData(Identify);
+			Moneda ??= MonedaEnum.DOLARES;
+			var (User, dbUser) = Business.Security_Users.GetUserData(Identify);
 			var configuraciones = new Transactional_Configuraciones().GetConfig(ConfiguracionesInteresesEnum.MORA_CONTRATOS_EMP.ToString());
 			if (Transaction_Contratos?.Detail_Prendas?.Count == 0)
 			{
@@ -77,8 +78,9 @@ namespace Model
 					message = "Prendas Requeridas"
 				};
 			}
-			foreach (var prenda in Transaction_Contratos?.Detail_Prendas ?? [])
+			foreach (Detail_Prendas prenda in Transaction_Contratos?.Detail_Prendas ?? [])
 			{
+				prenda.estado = EstadoEnum.ACTIVO;
 				if (prenda.serie != null)
 				{
 					List<Detail_Prendas> prendasGuardadas = new Detail_Prendas().Where<Detail_Prendas>(
@@ -97,6 +99,10 @@ namespace Model
 								message = $"No es posible guardar el contrato ya que la Prenda con serie '{prenda?.serie}' esta incluida en un contrato {contrato?.estado}"
 							};
 						}
+						if (contrato?.estado == Contratos_State.PENDIENTE)
+						{
+							contrato.Delete();
+						}
 					}
 				}
 			}
@@ -105,6 +111,8 @@ namespace Model
 			Transaction_Contratos.fecha_cancelar = Transaction_Contratos.Tbl_Cuotas.Select(c => c.fecha).ToList().Max();
 			Transaction_Contratos.fecha_vencimiento = Transaction_Contratos.Tbl_Cuotas.Select(c => c.fecha).ToList().Max();
 			var valoracion = Transaction_Contratos.Detail_Prendas[0];
+
+
 			if (Transaction_Contratos?.tipo == Contratos_Type.APARTADO_QUINCENAL
 			|| Transaction_Contratos?.tipo == Contratos_Type.APARTADO_MENSUAL)
 			{
@@ -114,7 +122,7 @@ namespace Model
 			else if (valoracion.en_manos_de == EnManosDe.ACREEDOR
 			&& valoracion.Catalogo_Categoria?.IsForVehiculo != true)
 			{
-				Transaction_Contratos.tipo = Contratos_Type.EMPENO;
+				Transaction_Contratos.tipo = Contratos_Type.EMPEÑO;
 			}
 			else if (valoracion.en_manos_de == EnManosDe.ACREEDOR
 			 && valoracion.Catalogo_Categoria?.IsForVehiculo == true)
@@ -130,7 +138,7 @@ namespace Model
 			Transaction_Contratos.monto = Transaction_Contratos.Valoracion_empeño_dolares;
 			Transaction_Contratos.saldo = Transaction_Contratos.Valoracion_empeño_dolares;
 			Transaction_Contratos.mora = Convert.ToDecimal(configuraciones.Valor);
-			Transaction_Contratos.estado = Contratos_State.ACTIVO;
+			Transaction_Contratos.estado = Contratos_State.PENDIENTE;
 			Transaction_Contratos.Id_User = dbUser?.Id_User;
 			Transaction_Contratos.Tbl_Cuotas?.ForEach(c =>
 			{
@@ -160,19 +168,41 @@ namespace Model
 					message = "Cuentas no configuradas correctamente"
 				};
 			}
-			return new Movimientos_Cuentas
+			var ordenResponse = new Orden_Movimiento()
+			{
+				id_documento_origen = Transaction_Contratos.numero_contrato,
+				tipo_documento_origen = "CONTRATO",
+				descripcion = $"Desembolso por contrato #{Transaction_Contratos.numero_contrato}",
+				concepto = $"Desembolso por contrato #{Transaction_Contratos.numero_contrato}",
+				monto = Moneda == MonedaEnum.CORDOBAS ? Transaction_Contratos.Valoracion_empeño_cordobas : Transaction_Contratos.monto,
+				moneda = Moneda,
+				Cliente = $"{Transaction_Contratos.Catalogo_Clientes?.identificacion} - ${Transaction_Contratos.Catalogo_Clientes?.Nombre_Completo}",
+				tasa_cambio = Transaction_Contratos.taza_cambio,
+				Id_cuenta_origen = cuentaOrigen?.id_cuentas,
+				Id_cuenta_destino = cuentaDestino?.id_cuentas,
+				Tipo_Movimiento = TipoMovimiento.DESEMBOLSO_POR_CONTRATO,
+				direccion = DirectionEnum.EGRESO,
+				requiere_aprobacion = true  // Los contratos siempre requieren aprobación
+			}.DoSaveOrder(dbUser);
+			if (ordenResponse.status != 200)
+			{
+				//RollBackGlobalTransaction();
+				return ordenResponse;
+			}
+			return ordenResponse;
+			/*return new Movimientos_Cuentas
 			{
 				Catalogo_Cuentas_Destino = cuentaDestino,
 				Catalogo_Cuentas_Origen = cuentaOrigen,
 				concepto = "Desembolso de monto para, contrato No: " + Transaction_Contratos.numero_contrato,
 				descripcion = "Desembolso de monto para, contrato No: " + Transaction_Contratos.numero_contrato,
-				moneda = Moneda ?? "DOLARES",
-				monto = Moneda == "CORDOBAS" ? Transaction_Contratos.Valoracion_empeño_cordobas : Transaction_Contratos.monto,
+				moneda = Moneda ?? MonedaEnum.DOLARES,
+				monto = Moneda == MonedaEnum.CORDOBAS ? Transaction_Contratos.Valoracion_empeño_cordobas : Transaction_Contratos.monto,
 				tasa_cambio = Transaction_Contratos.taza_cambio,
 				tasa_cambio_compra = Transaction_Contratos.taza_cambio_compra,
 				is_transaction = true,
 				Tipo_Movimiento = TipoMovimiento.DESEMBOLSO_POR_CONTRATO
-			}.SaveMovimiento(dbUser);
+			}.SaveMovimiento(dbUser);*/
 		}
 
 		public ContractServices GetDataContract(string Identify)
@@ -187,7 +217,7 @@ namespace Model
 			//var VencimientoConfig = new Transactional_Configuraciones().GetConfig(ConfiguracionesVencimientos.VENCIMIENTO_CONTRATO.ToString());
 			var contratosVencidos = new Transaction_Contratos().Where<Transaction_Contratos>(
 				FilterData.Or(
-					FilterData.Equal("tipo", Contratos_Type.EMPENO.ToString()),
+					FilterData.Equal("tipo", Contratos_Type.EMPEÑO.ToString()),
 					FilterData.Equal("tipo", Contratos_Type.EMPENO_VEHICULO.ToString())
 				),
 				FilterData.Equal("estado", EstadoEnum.ACTIVO.ToString())

@@ -6,10 +6,13 @@ using DataBaseModel;
 using Model;
 using UI.CAPA_NEGOCIO.Empresa.Services.Recibos;
 using BusinessLogic.Facturacion.Operations;
+using BusinessLogic.Empresa.Transactions;
+using BusinessLogic.Empresa.Entity;
+using DocumentFormat.OpenXml.Drawing.Charts;
 
 namespace Transactions
 {
-	public class Recibos_Transactions : EntityClass
+	public class RecibosServices : EntityClass
 	{
 		#region propiedades
 		[PrimaryKey(Identity = true)]
@@ -46,7 +49,7 @@ namespace Transactions
 		public bool? reestructurar { get; set; }
 		public decimal? reestructurar_value { get; set; }
 		public decimal? total_apagar_dolares { get; set; }
-		public string? moneda { get; set; }
+		public MonedaEnum? moneda { get; set; }
 		public string? motivo_anulacion { get; set; }
 		public bool? perdida_de_documento { get; set; }
 		public decimal? monto_dolares { get; set; }
@@ -57,6 +60,7 @@ namespace Transactions
 		public bool? pago_parcial { get; set; }
 		public List<Tbl_Cuotas>? CuotasReestructuradas { get; private set; }
 		public bool Is_withMesaCambiaria { get; set; } = true;
+		public Orden_Movimiento? OrdenData { get; set; }
 		#endregion
 
 		public ResponseService SaveRecibos(string Identify)
@@ -268,20 +272,40 @@ namespace Transactions
 							message = "Cuentas no configuradas correctamente"
 						};
 					}
-					ResponseService response = new Movimientos_Cuentas
+					OrdenData!.id_documento_origen = factura.id_factura;
+					OrdenData!.Id_cuenta_destino = cuentaDestino.id_cuentas;
+					OrdenData!.Id_cuenta_origen = cuentaOrigen.id_cuentas;
+					OrdenData!.descripcion = "Pago de cuota, contrato No: " + this.numero_contrato;
+					OrdenData!.fecha_aprobacion = DateTime.Now;
+					OrdenData!.fecha_creacion = DateTime.Now;
+					OrdenData!.id_usuario_crea = dbUser.Id_User;
+					OrdenData!.id_usuario_aprueba = dbUser.Id_User;
+					OrdenData!.id_sucursal = dbUser.Id_Sucursal;
+					OrdenData!.requiere_aprobacion = false;
+					OrdenData!.Cliente = contrato.Catalogo_Clientes?.Nombre_Completo;
+					OrdenData!.estado = EstadoOrden.PENDIENTE;
+					OrdenData!.AutoCreate = true;
+					OrdenData!.Tipo_Movimiento = TipoMovimiento.INGRESO_POR_PAGO_DE_RECIBO;
+					OrdenData!.direccion = DirectionEnum.INGRESO;
+					OrdenData!.tipo_documento_origen = "RECIBO";
+
+					ResponseService response = OrdersOperations.DoAprobaryEjecutarOrder(OrdenData, dbUser);
+
+					/*ResponseService response = new Movimientos_Cuentas
 					{
 						Catalogo_Cuentas_Destino = cuentaDestino,
 						Catalogo_Cuentas_Origen = cuentaOrigen,
 						concepto = "Pago de cuota, contrato No: " + this.numero_contrato,
 						descripcion = "Pago de cuota, contrato No: " + this.numero_contrato,
-						moneda = this.moneda?.ToUpper(),
-						monto = this.moneda?.ToUpper() == "DOLARES" ? this.paga_dolares : this.paga_cordobas,
+						moneda = this.moneda,
+						monto = this.moneda == MonedaEnum.DOLARES ? this.paga_dolares : this.paga_cordobas,
 						tasa_cambio = this.tasa_cambio,
 						//tasa_cambio_compra = this.tasa_cambio_compra,
 						is_transaction = true,
 						Tipo_Movimiento = TipoMovimiento.INGRESO_POR_PAGO_DE_RECIBO
-					}.SaveMovimiento(dbUser);
-					if (response.status == 400)
+					}.SaveMovimiento(dbUser);*/
+
+					if (response.status != 200)
 					{
 						RollBackGlobalTransaction();
 						return response;
@@ -651,135 +675,23 @@ namespace Transactions
 		public object? AnularFactura(string Identify)
 		{
 			try
-			{
-				var (User, dbUser) = Business.Security_Users.GetUserData(Identify);
-				var factura = new Transaccion_Recibos() { id_factura = this.id_recibo }.Find<Transaccion_Recibos>();
-				var contrato = new Transaction_Contratos() { numero_contrato = factura?.Factura_contrato?.numero_contrato }.Find<Transaction_Contratos>();
-				var FacturasActivas = new Transaccion_Recibos()
-				{
-					numero_contrato = factura?.Factura_contrato?.numero_contrato
-				}.Where<Transaccion_Recibos>(
-					FilterData.Equal("estado", EstadoEnum.ACTIVO),
-					FilterData.Greater("id_factura", this.id_recibo)
-				);
-				if (FacturasActivas.Count > 0)
-				{
-					return new ResponseService()
-					{
-						status = 400,
-						message = "Recibo no se puede anular, debido a que hay recibos posteriores activos"
-					};
-				}
-
-				if (factura == null)
-				{
-					return new ResponseService()
-					{
-						status = 400,
-						message = "Recibo no encontrado"
-					};
-				}
-				if (factura.estado != EstadoEnum.ACTIVO.ToString())
-				{
-					return new ResponseService()
-					{
-						status = 400,
-						message = "Recibo no se encuentra activo"
-					};
-				}
-				factura.estado = EstadoEnum.ANULADO.ToString();
-				factura.Motivo_Anulacion = motivo_anulacion;
+            {
+                var (User, dbUser) = Business.Security_Users.GetUserData(Identify);
 				BeginGlobalTransaction();
-				factura.Update();
-
-				if (contrato != null)
-				{
-					contrato.saldo = factura?.Factura_contrato?.saldo_anterior;
-					contrato.estado = Contratos_State.ACTIVO;
-					contrato.reestructurado = factura?.Factura_contrato?.reestructurado_anterior;
-					var reestructuracionData = factura?.Factura_contrato?.Datos_Reestructuracion;
-					if (reestructuracionData != null)
-					{
-						contrato.cuotafija = reestructuracionData.Cuota_Anterior_Cordobas;
-						contrato.cuotafija_dolares = reestructuracionData.Cuota_Anterior;
-						contrato.plazo = reestructuracionData.Plazo_Anterior;
-						contrato.monto = reestructuracionData.Monto_Anterior;
-
-						reestructuracionData.Cuotas_reestructuradas?.ForEach(c =>
-						{
-							c.Delete();
-						});
-					}
-					contrato.Update();
-				}
-
-				factura?.Detalle_Factura_Recibo.OrderBy(c => c.id_cuota).ToList().ForEach(detalle =>
-				{
-					Tbl_Cuotas? cuota = detalle?.Tbl_Cuotas;
-					if (cuota != null)
-					{
-						cuota.fecha_pago = detalle?.EstadoAnterior?.fecha_pago;
-						cuota.pago_contado = detalle?.EstadoAnterior?.pago_contado;
-						cuota.Estado = detalle?.EstadoAnterior?.Estado;
-						cuota.total = detalle?.EstadoAnterior?.total;
-						cuota.interes = detalle?.EstadoAnterior?.interes;
-						cuota.abono_capital = detalle?.EstadoAnterior?.abono_capital;
-						cuota.Update();
-					}
-				});
-
-				if (contrato?.Catalogo_Clientes?.id_clasificacion_interes != factura?.Factura_contrato?.id_clasificacion_interes_anterior)
-				{
-					contrato!.Catalogo_Clientes!.id_clasificacion_interes = factura?.Factura_contrato?.id_clasificacion_interes_anterior;
-					contrato.Catalogo_Clientes.Update();
-				}
-
-				var cuentaOrigen = Catalogo_Cuentas.GetCuentaIngresoRecibos(dbUser);
-				var cuentaDestino = Catalogo_Cuentas.GetCuentaEgresoRecibos(dbUser);
-
-				if (cuentaDestino == null || cuentaOrigen == null)
+                ResponseService responseService = DoAnular(dbUser);
+				if (responseService.status != 200)
 				{
 					RollBackGlobalTransaction();
-					return new ResponseService()
-					{
-						status = 400,
-						message = "Cuentas para anulación de factura no configuradas correctamente"
-					};
 				}
-				contrato?.EstablecerComoVencido();
-				var detalle = contrato != null
-					? $"Anulación de cuota No: <strong>{factura?.no_factura}</strong> del contrato No:  <strong>${factura?.Factura_contrato?.numero_contrato}</strong>"
-					: "Anulación de recibo: " + factura?.no_factura;
-				ResponseService response = new Movimientos_Cuentas
+				else
 				{
-					Catalogo_Cuentas_Destino = cuentaDestino,
-					Catalogo_Cuentas_Origen = cuentaOrigen,
-					concepto = detalle,
-					descripcion = detalle,
-					moneda = factura?.Moneda?.ToUpper(),
-					monto = factura?.Moneda?.ToUpper() == "DOLARES" ? factura.total : factura?.total_cordobas,
-					tasa_cambio = factura?.tasa_cambio,
-					//tasa_cambio_compra = this.tasa_cambio_compra,
-					is_transaction = true,
-					Tipo_Movimiento = TipoMovimiento.DESEMBOLSO_POR_ANULACION_DE_PAGO_DE_RECIBO
-				}.SaveMovimiento(dbUser);
-
-				if (response.status == 400)
-				{
-					RollBackGlobalTransaction();
-					return response;
+					CommitGlobalTransaction();
 				}
-				CommitGlobalTransaction();
 
-				return new ResponseService()
-				{
-					status = 200,
-					message = "Recibo anulado correctamente",
-					body = factura
-				};
+				return responseService;
 
-			}
-			catch (System.Exception ex)
+            }
+            catch (System.Exception ex)
 			{
 				RollBackGlobalTransaction();
 				return new ResponseService()
@@ -790,7 +702,134 @@ namespace Transactions
 			}
 		}
 
-		public decimal? GetPago(Transaction_Contratos contrato)
+        public ResponseService DoAnular(Security_Users? dbUser)
+        {
+            var factura = new Transaccion_Recibos() { id_factura = this.id_recibo }.Find<Transaccion_Recibos>();
+            var contrato = new Transaction_Contratos() { numero_contrato = factura?.Factura_contrato?.numero_contrato }.Find<Transaction_Contratos>();
+            var FacturasActivas = new Transaccion_Recibos()
+            {
+                numero_contrato = factura?.Factura_contrato?.numero_contrato
+            }.Where<Transaccion_Recibos>(
+                FilterData.Equal("estado", EstadoEnum.ACTIVO),
+                FilterData.Greater("id_factura", this.id_recibo)
+            );
+            if (FacturasActivas.Count > 0)
+            {
+                return new ResponseService()
+                {
+                    status = 400,
+                    message = "Recibo no se puede anular, debido a que hay recibos posteriores activos"
+                };
+            }
+
+            if (factura == null)
+            {
+                return new ResponseService()
+                {
+                    status = 400,
+                    message = "Recibo no encontrado"
+                };
+            }
+            if (factura.estado != EstadoEnum.ACTIVO.ToString())
+            {
+                return new ResponseService()
+                {
+                    status = 400,
+                    message = "Recibo no se encuentra activo"
+                };
+            }
+            factura.estado = EstadoEnum.ANULADO.ToString();
+            factura.Motivo_Anulacion = motivo_anulacion;
+            
+            factura.Update();
+
+            if (contrato != null)
+            {
+                contrato.saldo = factura?.Factura_contrato?.saldo_anterior;
+                contrato.estado = Contratos_State.ACTIVO;
+                contrato.reestructurado = factura?.Factura_contrato?.reestructurado_anterior;
+                var reestructuracionData = factura?.Factura_contrato?.Datos_Reestructuracion;
+                if (reestructuracionData != null)
+                {
+                    contrato.cuotafija = reestructuracionData.Cuota_Anterior_Cordobas;
+                    contrato.cuotafija_dolares = reestructuracionData.Cuota_Anterior;
+                    contrato.plazo = reestructuracionData.Plazo_Anterior;
+                    contrato.monto = reestructuracionData.Monto_Anterior;
+
+                    reestructuracionData.Cuotas_reestructuradas?.ForEach(c =>
+                    {
+                        c.Delete();
+                    });
+                }
+                contrato.Update();
+            }
+
+            factura?.Detalle_Factura_Recibo.OrderBy(c => c.id_cuota).ToList().ForEach(detalle =>
+            {
+                Tbl_Cuotas? cuota = detalle?.Tbl_Cuotas;
+                if (cuota != null)
+                {
+                    cuota.fecha_pago = detalle?.EstadoAnterior?.fecha_pago;
+                    cuota.pago_contado = detalle?.EstadoAnterior?.pago_contado;
+                    cuota.Estado = detalle?.EstadoAnterior?.Estado;
+                    cuota.total = detalle?.EstadoAnterior?.total;
+                    cuota.interes = detalle?.EstadoAnterior?.interes;
+                    cuota.abono_capital = detalle?.EstadoAnterior?.abono_capital;
+                    cuota.Update();
+                }
+            });
+
+            if (contrato?.Catalogo_Clientes?.id_clasificacion_interes != factura?.Factura_contrato?.id_clasificacion_interes_anterior)
+            {
+                contrato!.Catalogo_Clientes!.id_clasificacion_interes = factura?.Factura_contrato?.id_clasificacion_interes_anterior;
+                contrato.Catalogo_Clientes.Update();
+            }
+
+            var cuentaOrigen = Catalogo_Cuentas.GetCuentaIngresoRecibos(dbUser);
+            var cuentaDestino = Catalogo_Cuentas.GetCuentaEgresoRecibos(dbUser);
+
+            if (cuentaDestino == null || cuentaOrigen == null)
+            {                
+                return new ResponseService()
+                {
+                    status = 400,
+                    message = "Cuentas para anulación de factura no configuradas correctamente"
+                };
+            }
+            contrato?.EstablecerComoVencido();
+            var detalle = contrato != null
+                ? $"Anulación de cuota No: <strong>{factura?.no_factura}</strong> del contrato No:  <strong>${factura?.Factura_contrato?.numero_contrato}</strong>"
+                : "Anulación de recibo: " + factura?.no_factura;
+
+            OrdenData!.id_documento_origen = factura?.id_factura;
+            OrdenData!.Id_cuenta_destino = cuentaDestino.id_cuentas;
+            OrdenData!.Id_cuenta_origen = cuentaOrigen.id_cuentas;
+            OrdenData!.descripcion = "Pago de cuota, contrato No: " + this.numero_contrato;
+            OrdenData!.fecha_aprobacion = DateTime.Now;
+            OrdenData!.fecha_creacion = DateTime.Now;
+            OrdenData!.id_usuario_crea = dbUser.Id_User;
+            OrdenData!.id_usuario_aprueba = dbUser.Id_User;
+            OrdenData!.id_sucursal = dbUser.Id_Sucursal;
+            OrdenData!.requiere_aprobacion = false;
+            OrdenData!.Cliente = contrato?.Catalogo_Clientes?.Nombre_Completo;
+            OrdenData!.estado = EstadoOrden.EJECUTADA;
+            OrdenData!.AutoCreate = true;
+            OrdenData!.Tipo_Movimiento = TipoMovimiento.DESEMBOLSO_POR_ANULACION_DE_PAGO_DE_RECIBO;
+            OrdenData!.direccion = DirectionEnum.EGRESO;
+            OrdenData!.tipo_documento_origen = "RECIBO";
+
+            ResponseService response = OrdersOperations.DoAprobaryEjecutarOrder(OrdenData, dbUser);
+
+
+            return new ResponseService()
+            {
+                status = 200,
+                message = "Recibo anulado correctamente",
+                body = factura
+            };
+        }
+
+        public decimal? GetPago(Transaction_Contratos contrato)
 		{
 			decimal? monto = contrato.Valoracion_empeño_dolares;
 			int? cuotas = contrato.plazo;

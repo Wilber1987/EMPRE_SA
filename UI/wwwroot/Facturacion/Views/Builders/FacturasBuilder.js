@@ -66,7 +66,7 @@ export class FacturasBuilder {
     static BuildFacturaVenta(documentsData, factura) {
         return html`<div style="font-family: Arial, sans-serif;" class="recibo">
            ${this.style.cloneNode(true)}
-            <div style="margin-top: 5px; display: flex; height: 90px">
+            <div style="margin-top: 5px; display: flex; ">
                 ${documentsData.Header}
                 <div style="text-align: center; margin-bottom: 5px; width: 300px">
                     <p>RUC: ${localStorage.getItem("RUC")}</p>
@@ -147,7 +147,7 @@ export class FacturasBuilder {
         //documentsData.Header.appendChild(html`<h1>RUC: ${localStorage.getItem("RUC")}</h1>`)
         return html`<div style="font-family: Arial, sans-serif;" class="recibo">
             ${this.style.cloneNode(true)}
-            <div style="margin-top: 5px; display: flex; height: 90px">
+            <div style="margin-top: 5px; display: flex; ">
                 ${documentsData.Header}
                 <div style="text-align: center; margin-bottom: 5px; width: 300px">  
                     <table class="marco" style="width: 100%; border-collapse: collapse; margin-top: 5px;">
@@ -173,7 +173,7 @@ export class FacturasBuilder {
                 </div>
             </div>
             <h1 style="text-align: center; font-size: 16px, margin: 5px 0px">COMPRAVENTA</h1> 
-            <div style="margin-top: 5px; display: flex; height: 80px">
+            <div style="margin-top: 5px; display: flex;">
                 <table style="flex:2" class="">
                     <tr><td class="marcogris">Nombre:</td> <td class="underline">${factura.Cat_Proveedor.Nombre}</td></tr>
                     <tr><td class="marcogris">Cédula:</td> <td class="underline">${factura.Cat_Proveedor.Identificacion}</td></tr>

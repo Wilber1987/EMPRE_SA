@@ -17,14 +17,11 @@ export class SystemConfigs {
     /**
     * @returns {Promise<Transactional_Configuraciones|undefined>}
     */
-    static FindByName = async (name) => {
+    static FindByName = async (/** @type {string | null} */ name) => {
         if ( this.#Configuraciones == undefined) {
             await this.Get()
         }
         return this.#Configuraciones?.find(c => c.Nombre == name);
     }
-
-
-
 
 }

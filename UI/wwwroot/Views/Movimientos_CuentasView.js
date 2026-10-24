@@ -1,12 +1,18 @@
 //@ts-check
+import { Denominacion_Catalogo } from "../Caja/Model/Denominacion_Catalogo.js";
+import { DirectionEnum, MonedaEnum, Orden_Movimiento } from "../Caja/Model/Order_Movimiento.js";
+import { WOrderProcessorComponent } from "../Caja/WOrderProcessorComponent.js";
 import { Catalogo_Cambio_Divisa } from "../FrontModel/Catalogo_Cambio_Divisa.js";
-import { Catalogo_Cambio_Divisa_ModelComponent, Catalogo_Cuentas } from "../FrontModel/DBODataBaseModel.js";
-import { Movimientos_Cuentas_ModelComponent } from "../FrontModel/MovimientosCuentas.js";
+import { Catalogo_Cuentas_ModelComponent } from "../FrontModel/Catalogo_Cuentas.js";
+import { Catalogo_Cambio_Divisa_ModelComponent } from "../FrontModel/DBODataBaseModel.js";
+import { Movimientos_Cuentas, Movimientos_Cuentas_ModelComponent, Tipo_CuentaEnum, TipoMovimiento } from "../FrontModel/MovimientosCuentas.js";
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js";
 import { ModalMessage } from "../WDevCore/WComponents/ModalMessage.js";
 import { WAlertMessage } from "../WDevCore/WComponents/WAlertMessage.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js";
+import { OrderData } from "../WDevCore/WModules/CommonModel.js";
+import { Money } from "../WDevCore/WModules/Types/Money.js";
 import { ComponentsManager, WRender } from "../WDevCore/WModules/WComponentsTools.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 import { Gestion_CuentasView } from "./Gestion_CuentasView.js";
@@ -23,7 +29,7 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
         model.tasa_cambio.defaultValue = tasa[0].Valor_de_compra;
         /**@type {Catalogo_Cambio_Divisa} */
         const tasaActual = tasa[0];
-        this.Cuentas = await new Catalogo_Cuentas().Get();
+        this.Cuentas = await new Catalogo_Cuentas_ModelComponent().Get();
         this.append(this.CustomStyle);
         this.OptionContainer = WRender.Create({ className: "OptionContainer" });
         this.TabContainer = WRender.Create({ className: "main-container", id: 'TabContainer' });
@@ -45,7 +51,7 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
                             // @ts-ignore
                             return movimiento.is_transaction == true;
                         },
-                        action: (movimiento) => {
+                        action: (/**@type {Movimientos_Cuentas} */ movimiento) => {
                             /*if (movimiento.is_transaction) {
                                 return false;
                             }*/
@@ -72,7 +78,7 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
                             this.append(new WModalForm({
                                 EditObject: MovimientoContrapartida,
                                 ObjectOptions: {
-                                    Url: "/Api/ApiEntityDBO/saveMovimientos_Cuentas", SaveFunction: (param) => {
+                                    Url: "/Api/ApiEntityDBO/saveMovimientos_Cuentas", SaveFunction: (/** @type {any} */ param) => {
                                         this.TableComponent.Dataset.push(param);
                                         this.TableComponent.DrawTable();
                                     }
@@ -84,15 +90,6 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
                 ]
             }
         })
-        const ObjectOptions = {
-            SaveFunction: (param, response) => {
-                console.log(response)
-                WAlertMessage.Warning(response.message);
-            }
-        }
-
-
-
         this.Manager?.NavigateFunction("tablaMovimientos", new Gestion_CuentasView())
 
         //this.MainComponent.shadowRoot?.prepend(this.FilterOptions);
@@ -117,7 +114,7 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
                 const modelExterno = new Movimientos_Cuentas_ModelComponent();
                 modelExterno.tasa_cambio.defaultValue = tasa[0].Valor_de_venta;
                 modelExterno.Catalogo_Cuentas_Origen.Dataset = this.Cuentas?.filter(x => x.tipo_cuenta == "PROPIA");
-                modelExterno.Catalogo_Cuentas_Origen.action = (entity, form) => {
+                modelExterno.Catalogo_Cuentas_Origen.action = (/** @type {{ Catalogo_Cuentas_Origen: { id_cuentas: any; }; Fecha: Date; }} */ entity, /** @type {{ DrawComponent: () => void; }} */ form) => {
                     modelExterno.Catalogo_Cuentas_Destino.Dataset = this.Cuentas?.filter(x => x.tipo_cuenta == "PROPIA"
                         && x.id_cuentas != entity.Catalogo_Cuentas_Origen.id_cuentas);
                     entity.Fecha = new Date();
@@ -125,11 +122,15 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
                 }
                 const cuentaPrimaria = this.Cuentas?.find(x => x.tipo_cuenta == "PROPIA"
                     && x.id_cuentas);
-
                 modelExterno.Catalogo_Cuentas_Destino.Dataset = this.Cuentas?.filter(x => x.tipo_cuenta == "PROPIA"
                     && x.id_cuentas != cuentaPrimaria.id_cuentas);
                 //modelExterno.tasa_cambio_compra = model.tasa_cambio_compra;
-                this.append(new WModalForm({ title: "Movimiento a cuenta", ModelObject: modelExterno, AutoSave: true, ObjectOptions: ObjectOptions }))
+                this.append(new WModalForm({
+                    title: "Movimiento a cuenta",
+                    ModelObject: modelExterno,
+                    AutoSave: false,
+                    ObjectOptions: this.ObjectOptionsModal(DirectionEnum.INGRESO)
+                }))
             }
         }))
 
@@ -139,12 +140,17 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
             onclick: () => {
                 const modelExterno = new Movimientos_Cuentas_ModelComponent();
                 modelExterno.tasa_cambio.defaultValue = tasa[0].Valor_de_venta;
-                console.log(modelExterno);
                 modelExterno.Catalogo_Cuentas_Origen.Dataset = this.Cuentas?.filter(x => x.tipo_cuenta != "PROPIA");
                 modelExterno.Catalogo_Cuentas_Destino.Dataset = this.Cuentas?.filter(x => x.tipo_cuenta == "PROPIA");
 
                 //modelExterno.tasa_cambio_compra = model.tasa_cambio_compra;
-                this.append(new WModalForm({ title: "Ingreso", ModelObject: modelExterno, AutoSave: true, ObjectOptions: this.ObjectOptionsModal }))
+                this.append(new WModalForm({
+                    title: "Ingreso",
+                    ModelObject: modelExterno,
+                    AutoSave: false,
+                    ObjectOptions: this.ObjectOptionsModal(DirectionEnum.INGRESO)
+
+                }))
             }
         }))
 
@@ -175,8 +181,7 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
                     title: "Egreso",
                     ModelObject: modelExterno,
                     AutoSave: true,
-                    ObjectOptions:
-                        this.ObjectOptionsModal
+                    ObjectOptions: this.ObjectOptionsModal(DirectionEnum.EGRESO)
                 }))
             }
         }))
@@ -189,16 +194,73 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
             this.TabContainer
         );
     }
-    ObjectOptionsModal = {
-        SaveFunction: async (profile, response) => {
-            this.append(ModalMessage(response.message))
-            if (response.status == 200) {
-                const dataset = await new Movimientos_Cuentas_ModelComponent().Get();
-                this.TableComponent.Dataset = dataset;
-                this.TableComponent.DrawTable();
+    ObjectOptionsModal = (/** @type {string} */ direccion) => {
+        return {
+            SaveFunction: async (/** @type {Movimientos_Cuentas} */ movimiento,
+            /** @type {{ message: string; status: number; }} */ response) => {
+
+                this.NuevoMovimiento(movimiento, direccion)
+                return;
+                if (movimiento.Catalogo_Cuentas_Destino?.tipo_cuenta == Tipo_CuentaEnum.PROPIA) {
+                    this.NuevoMovimiento(movimiento, direccion)
+                    return;
+                }
+                this.append(ModalMessage(response.message))
+                if (response.status == 200) {
+                    const dataset = await new Movimientos_Cuentas_ModelComponent().Get();
+                    this.TableComponent.Dataset = dataset;
+                    this.TableComponent.DrawTable();
+                }
             }
         }
     }
+
+    /**
+     * @param {Movimientos_Cuentas} movimientos_Cuentas
+     * @param {String} direccion 
+     */
+    async NuevoMovimiento(movimientos_Cuentas, direccion) {
+        //const liquidationMode = MONEDA_ENTRADA == MonedaEnum.DOLARES ? ;
+        /**@type {Array<Denominacion_Catalogo>} */
+        this.denoms = await new Denominacion_Catalogo({ OrderData: [OrderData.Desc("valor")] }).Get();
+
+        const order = new Orden_Movimiento({
+            tipo_documento_origen: "INGRESO",
+            descripcion: `INGRESO: ${movimientos_Cuentas.descripcion}`,
+            direccion: direccion,
+            concepto: `INGRESO: ${movimientos_Cuentas.concepto}`,
+            monto: new Money(movimientos_Cuentas.monto),
+            Id_cuenta_origen: movimientos_Cuentas.Catalogo_Cuentas_Origen?.id_cuentas,
+            Id_cuenta_destino: movimientos_Cuentas.Catalogo_Cuentas_Destino?.id_cuentas,
+            //tasa_cambio: 37.07,
+            //tasa_cambio_compra: null,
+            moneda: movimientos_Cuentas.moneda,
+            Tipo_Movimiento: TipoMovimiento.MOVIMIENTO_CUENTA,
+            requiere_aprobacion: false
+        })
+
+        const orderProcessor = new WOrderProcessorComponent({
+            entity: order,
+            denominaciones: this.denoms ?? [],
+            liquidationMode: movimientos_Cuentas.moneda == MonedaEnum.DOLARES ? "USD" : "NIO",
+            isFlexibleLiquidationModeActive: false,
+            action: async (/** @type {Orden_Movimiento} */ order) => {
+                movimientos_Cuentas.OrderData = order;
+                WAlertMessage.Success("Movimiento guardado correctamente")
+                const dataset = await new Movimientos_Cuentas_ModelComponent().Get();
+                this.TableComponent.Dataset = dataset;
+                this.TableComponent.DrawTable();
+                Modal.close();
+            }
+        })
+        const Modal = new WModalForm({
+            ObjectModal: orderProcessor,
+            DivColumns: "FullScreen"
+        })
+
+        document.body.append(Modal);
+    }
+
     CustomStyle = css`
         .component{
            display: block;

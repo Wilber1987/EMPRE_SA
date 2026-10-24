@@ -146,7 +146,7 @@ class Transaction_Contratos extends EntityClass {
     fecha_baja;
     /**@type {Number} */ abonos;
     ultima_visita;
-    tipo;
+    /**@type {String?} */tipo = null;
     entregado;
     /**@type {Number} */ interes_actual;
     observaciones;
@@ -200,7 +200,7 @@ class Transaction_Contratos extends EntityClass {
     /**@type {Number} */ total_pagar_cordobas;
     /**@type {Number} */ total_pagar_dolares;
     /**@type {Number} */ reestructurado;
-    /**@type {Array<Transaccion_Recibos_ModelComponent>} */ Recibos;
+    /**@type {Array<Transaccion_Recibos>} */ Recibos;
     Anular = async () => {
         return await this.SaveData("Transactional_Contrato/AnularContract", this)
     }
