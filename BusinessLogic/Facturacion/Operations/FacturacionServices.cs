@@ -240,8 +240,10 @@ namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 			//TODO REVISAR
 			string detalleT = $"Venta de producto, factura: {factura?.Id_Factura} al cliente {factura?.Cliente?.Nombre_Completo}";
 
+			
+
 			Orden_Movimiento? orderRelated = new Orden_Movimiento().Find<Orden_Movimiento>(
-				FilterData.Equal("id_documento_origen", contract?.numero_contrato),
+				FilterData.Equal("id_documento_origen", contract?.numero_contrato ?? -1),
 				FilterData.Equal("tipo_documento_origen", "CONTRATO"),
 				FilterData.Equal("direccion", DirectionEnum.EGRESO),
 				FilterData.Equal("estado", EstadoOrden.PENDIENTE)

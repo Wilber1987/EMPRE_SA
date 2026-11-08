@@ -446,7 +446,7 @@ export class WOrderProcessorComponent extends HTMLElement {
             .multiply(new Money(exchangeRate));
 
         if (this.InputNIO) {
-            /** @type {HTMLInputElement} */ (this.InputNIO).value = String(/** @type {Money} */ (this.targetNio).toNumber());
+            /** @type {HTMLInputElement} */ (this.InputNIO).value = String(/** @type {Money} */(this.targetNio).toNumber());
         }
         this.updateMixedAmounts();
     };
@@ -564,6 +564,7 @@ export class WOrderProcessorComponent extends HTMLElement {
             if (target.toNumber() > 0) this.applyOptimalCombinationToBlock("change_nio", target);
             this.updateValidation();
         };
+        console.log(this.changeMode);
 
         return html`<div class="tp-card tp-change-mode-section" id="changeModeSection">
             <div class="tp-change-mode-header">
@@ -572,12 +573,12 @@ export class WOrderProcessorComponent extends HTMLElement {
             <div class="tp-change-mode-options">
                 <label class="tp-radio-option">
                     <input type="radio" name="changeMode" id="changeModeUSD" value="USD"
-                        ?checked="${this.changeMode == "USD"}" onchange="${changeHandlerUSD}"/>
+                        ${this.changeMode == "USD" ? "checked" : ""} onchange="${changeHandlerUSD}"/>
                     <span class="tp-radio-label">Dar cambio en Dólares (USD)</span>
                 </label>
                 <label class="tp-radio-option">
                     <input type="radio" name="changeMode" id="changeModeNIO" value="NIO"
-                        ?checked="${this.changeMode == "NIO"}" onchange="${changeHandlerNIO}"/>
+                        ${this.changeMode == "NIO" ? "checked" : ""} onchange="${changeHandlerNIO}"/>
                     <span class="tp-radio-label">Dar cambio en Córdobas (NIO)</span>
                 </label>
             </div>
@@ -622,10 +623,11 @@ export class WOrderProcessorComponent extends HTMLElement {
         const baseAmountDisplay = this.querySelector("#baseAmountDisplay");
 
         if (clienteNameDisplay) clienteNameDisplay.textContent = order.Cliente;
+        const monedaOrder = order.moneda == "DOLARES" ? "USD" : "NIO";
         if (baseAmountDisplay) {
-            baseAmountDisplay.textContent = `${new Money(order.GetMonto(), "USD")} ${order.moneda}`;
+            baseAmountDisplay.textContent = `${new Money(order.GetMonto(), monedaOrder)} ${order.moneda}`;
             if (order.Orden_Related != null) {
-                baseAmountDisplay.textContent += ` (${new Money(order.monto, "USD")} - ${new Money(order.Orden_Related.monto, "USD")}) `;
+                baseAmountDisplay.textContent += ` (${new Money(order.monto, monedaOrder)} - ${new Money(order.Orden_Related.monto, monedaOrder)}) `;
             }
         }
 
@@ -1406,18 +1408,52 @@ export class WOrderProcessorComponent extends HTMLElement {
             return el.getClientRects().length > 0;
         });
     }
+      /**
+     * Calcula la combinación óptima de denominaciones para alcanzar un monto exacto,
+     * minimizando el número total de billetes/monedas, respetando el inventario.
+     * Usa Programación Dinámica (bounded knapsack).
+     *
+     * @param {Money} targetAmount - Monto objetivo
+     * @param {Inventario_Denominacion_Caja[]} inventory - Inventario disponible
+     * @param {string} currency - "USD" | "NIO"
+     * @returns {Object.<number, number>|null} - Map { id_denominacion: cantidad } o null si no es posible
+     */
+    calculateGreedyCombination = (targetAmount, inventory, currency) => {
+        let remaining = Math.round(targetAmount.toNumber() * 100);
+        const monedaEnum = currency === "USD" ? MonedaEnum.DOLARES : MonedaEnum.CORDOBAS;
+        const denoms = inventory
+            .filter(i => i.Denominacion_Catalogo?.moneda === monedaEnum)
+            .map(i => ({
+                id: i.Denominacion_Catalogo.id_denominacion,
+                valueCents: Math.round((i.Denominacion_Catalogo.valor ?? 0) * 100),
+                available: i.cantidad_actual ?? 0
+            }))
+            .filter(d => d.valueCents > 0 && d.available > 0)
+            .sort((a, b) => b.valueCents - a.valueCents);
+
+        const result = {};
+        for (const d of denoms) {
+            if (remaining <= 0) break;
+            const canUse = Math.min(d.available, Math.floor(remaining / d.valueCents));
+            if (canUse > 0) {
+                result[d.id] = canUse;
+                remaining -= canUse * d.valueCents;
+            }
+        }
+        return remaining === 0 ? result : null;
+    };
 
     //bundary
     /**
- * Calcula la combinación óptima de denominaciones para alcanzar un monto exacto,
- * minimizando el número total de billetes/monedas, respetando el inventario.
- * Usa Programación Dinámica (bounded knapsack).
- *
- * @param {Money} targetAmount - Monto objetivo
- * @param {Inventario_Denominacion_Caja[]} inventory - Inventario disponible
- * @param {string} currency - "USD" | "NIO"
- * @returns {Object.<number, number>|null} - Map { id_denominacion: cantidad } o null si no es posible
- */
+     * Calcula la combinación óptima de denominaciones para alcanzar un monto exacto,
+     * minimizando el número total de billetes/monedas, respetando el inventario.
+     * Usa Programación Dinámica (bounded knapsack).
+     *
+     * @param {Money} targetAmount - Monto objetivo
+     * @param {Inventario_Denominacion_Caja[]} inventory - Inventario disponible
+     * @param {string} currency - "USD" | "NIO"
+     * @returns {Object.<number, number>|null} - Map { id_denominacion: cantidad } o null si no es posible
+     */
     calculateOptimalCombination = (targetAmount, inventory, currency) => {
         const targetCents = Math.round(targetAmount.toNumber() * 100);
         if (targetCents === 0) return {};
@@ -1481,7 +1517,8 @@ export class WOrderProcessorComponent extends HTMLElement {
             ? this.inventarioCajaOrigen
             : this.inventarioCajaDestino;
 
-        const combination = this.calculateOptimalCombination(target, inventory, currency);
+        //const combination = this.calculateOptimalCombination(target, inventory, currency);
+        const combination = this.calculateGreedyCombination(target, inventory, currency);
         if (!combination) {
             WAlertMessage.Warning(
                 `No es posible cubrir exactamente ${currency} $${target.toFixed(2)} con el inventario actual.`,
