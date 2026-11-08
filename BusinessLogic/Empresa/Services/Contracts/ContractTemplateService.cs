@@ -42,10 +42,10 @@ namespace CAPA_NEGOCIO.Services
 			{
 				return "";
 			}
-			string templateContent = ContractsTemplates.ContractEmpeno;
+			string templateContent = DocumentsData.GetContratoEmpenoDataFragments();
 			if (model.tipo.Equals(Contratos_Type.EMPENO_VEHICULO))
 			{
-				templateContent = ContractsTemplates.ContractEmpenoVehiculo;
+				templateContent = DocumentsData.GetContratoEmpenoVehiculoDataFragments();
 			}
 			else if (model.tipo.Equals(Contratos_Type.PRESTAMO))
 			{
@@ -53,11 +53,11 @@ namespace CAPA_NEGOCIO.Services
 			}
 			else if (model.tipo.Equals(Contratos_Type.APARTADO_MENSUAL))
 			{
-				templateContent = ContractsTemplates.ContractEmpeno;
+				templateContent = DocumentsData.GetContratoEmpenoDataFragments();
 			}
 			else if (model.tipo.Equals(Contratos_Type.APARTADO_QUINCENAL))
 			{
-				templateContent = ContractsTemplates.ContractQuincenal;
+				templateContent = DocumentsData.GetContratoQuincenalDataFragments();
 			}
 			DateTime? fechaPrimeraCuota = model.Tbl_Cuotas?.Select(c => c.fecha).ToList().Min();
 			DateTime? fechaUltimaCuota = model.Tbl_Cuotas?.Select(c => c.fecha).ToList().Max();

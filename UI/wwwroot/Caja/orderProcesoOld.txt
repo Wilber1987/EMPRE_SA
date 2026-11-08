@@ -1,0 +1,1643 @@
+//@ts-check
+
+import { Catalogo_Cambio_Divisa } from "../FrontModel/Catalogo_Cambio_Divisa.js";
+import { ModalVericateAction } from "../WDevCore/WComponents/ModalVericateAction.js";
+import { WAlertMessage } from "../WDevCore/WComponents/WAlertMessage.js";
+import { FilterData } from "../WDevCore/WModules/CommonModel.js";
+import { Money } from "../WDevCore/WModules/Types/Money.js";
+import { html, WRender } from "../WDevCore/WModules/WComponentsTools.js";
+import { Denominacion_Catalogo } from "./Model/Denominacion_Catalogo.js";
+import { Inventario_Denominacion_Caja } from "./Model/Inventario_Denominacion_Caja.js";
+import { DenominacionMovimientoDTO, DirectionEnum, MonedaEnum, Orden_Movimiento } from "./Model/Order_Movimiento.js";
+import { WTransactionProcessorStyle } from "./Modules/TransactionsStyles.js";
+
+
+
+/**
+ * @typedef {Object} WOrderProcessorComponentConfig
+ * @property {Function} [action]
+ * @property {Function} [SaveFunction]
+ * @property {Orden_Movimiento} [entity]
+ * @property {Denominacion_Catalogo[]} denominaciones
+ * @property {{ Moneda: String, Moneda2: String }} [cambio_moneda]
+ * @property {string} [liquidationMode]  "USD" | "NIO" | "MIXED_PAYMENT"
+ * @property {boolean} [isFlexibleLiquidationModeActive]
+ */
+
+export class WOrderProcessorComponent extends HTMLElement {
+    /**
+     * @param {WOrderProcessorComponentConfig} Config
+     */
+    constructor(Config) {
+        super();
+
+        this.style.backgroundColor = "#f8fafc";
+        this.style.display = "flex";
+        this.style.flexDirection = "column";
+        this.style.height = "100%";
+        this.style.overflow = "hidden";
+
+        this.Config = Config;
+        this.Entity = Config?.entity ?? new Orden_Movimiento();
+
+        /** @type {Orden_Movimiento} */
+        this.selectedOrder = this.Entity;
+        this.liquidationMode = Config.liquidationMode ?? null;
+        this.isFlexibleLiquidationModeActive = Config.isFlexibleLiquidationModeActive ?? (this.liquidationMode == null)
+        this.targetUsd = new Money(0);
+        this.targetNio = new Money(0);
+        this.countedUsd = 0;
+        this.countedNio = 0;
+
+        /** @type {string|null} "USD" | "NIO" | null - Modo de vuelto cuando hay exceso de pago */
+        //this.changeMode = null;
+        this.changeMode = "USD";
+
+        /**@type {Array<Denominacion_Catalogo>} */
+        this.USD_DENOMS = Config?.denominaciones.filter(denom => denom.moneda == MonedaEnum.DOLARES) ?? [];
+        /**@type {Array<Denominacion_Catalogo>} */
+        this.NIO_DENOMS = Config?.denominaciones.filter(denom => denom.moneda == MonedaEnum.CORDOBAS) ?? [];
+
+        /**@type {Array<Inventario_Denominacion_Caja>} */
+        this.inventarioCajaOrigen = []
+        /**@type {Array<Inventario_Denominacion_Caja>} */
+        this.inventarioCajaDestino = []
+
+        /** @type {Object.<string, Object.<number, number>>} */
+        this.denomCounts = {
+            USD: {},
+            NIO: {}
+        };
+        this.InitDenomsCount();
+
+        //this.InitAllDenomsCount();
+
+        /** 
+     * Contadores por bloque (contexto + moneda)
+     * @type {Object.<string, Object.<number, number>>}
+     */
+        this.denomCountsByBlock = {
+            payment_usd: {},
+            payment_nio: {},
+            exchange_usd: {},
+            exchange_nio: {},
+            change_usd: {},
+            change_nio: {}
+        };
+        this.InitAllDenomsCount();
+
+        this.DrawComponent();
+    }
+
+    InitAllDenomsCount() {
+        const initBlock = (/** @type {string} */ blockKey, /** @type {any[]} */ denoms) => {
+            this.denomCountsByBlock[blockKey] = {};
+            denoms.forEach(d => this.denomCountsByBlock[blockKey][d.id_denominacion] = 0);
+        };
+        initBlock("payment_usd", this.USD_DENOMS);
+        initBlock("payment_nio", this.NIO_DENOMS);
+        initBlock("exchange_usd", this.USD_DENOMS);
+        initBlock("exchange_nio", this.NIO_DENOMS);
+        initBlock("change_usd", this.USD_DENOMS);
+        initBlock("change_nio", this.NIO_DENOMS);
+    }
+
+    InitDenomsCount() {
+        this.USD_DENOMS.forEach(d => this.denomCounts.USD[d.id_denominacion] = 0);
+        this.NIO_DENOMS.forEach(d => this.denomCounts.NIO[d.id_denominacion] = 0);
+    }
+
+    connectedCallback() {
+        this.addEventListener("keydown", this.handleTabTrap);
+    }
+
+    disconnectedCallback() {
+        this.removeEventListener("keydown", this.handleTabTrap);
+    }
+
+    renderAllDenominationGrids = () => {
+        const blocks = ["payment_usd", "payment_nio", "exchange_usd", "exchange_nio", "change_usd", "change_nio"];
+
+        blocks.forEach(blockKey => {
+            const container = this.querySelector(`#${blockKey}Container`);
+            if (!container) return;
+
+            const currency = blockKey.split("_")[1].toUpperCase();
+            const denoms = currency === "USD" ? this.USD_DENOMS : this.NIO_DENOMS;
+            const targetAmount = this.getTargetForBlock(blockKey);
+
+            const targetDisplay = this.querySelector(`#target_${blockKey}_Display`);
+            const countedDisplay = this.querySelector(`#counted_${blockKey}_Display`);
+            const symbol = currency === "USD" ? "$" : "C$";
+            const counted = this.calculateCountedForBlock(blockKey);
+
+            if (this.liquidationMode != "MIXED" && blockKey.indexOf("change") !== 0) {
+                if (targetDisplay) targetDisplay.textContent = `${symbol}${targetAmount.toFixed(2)}`;
+            } else if (blockKey.indexOf("change") === 0) {
+                if (targetDisplay) targetDisplay.textContent = `${symbol}${targetAmount.toFixed(2)}`;
+            } else {
+                if (targetDisplay) targetDisplay.textContent = `-`;
+            }
+            if (countedDisplay) countedDisplay.textContent = `${symbol}${counted.toFixed(2)}`;
+
+            const grid = this.querySelector(`#${blockKey}Grid`);
+            if (grid) {
+                if (grid.children.length !== denoms.length) {
+                    // Primera construcción
+                    grid.innerHTML = "";
+                    denoms.forEach(denom => {
+                        const count = this.denomCountsByBlock[blockKey][denom.id_denominacion];
+                        const subtotal = count * (denom.valor ?? 0);
+                        grid.append(this.createDenomCard(blockKey, currency, denom, count, subtotal));
+                    });
+                } else {
+                    // Actualización en sitio: no se destruye ningún botón ni input
+                    const isTargetZero = targetAmount.toNumber() === 0;
+                    denoms.forEach((denom, i) => {
+                        const card = /** @type {HTMLElement} */ (grid.children[i]);
+                        const count = this.denomCountsByBlock[blockKey][denom.id_denominacion];
+                        const subtotal = count * (denom.valor ?? 0);
+
+                        const input = /** @type {HTMLInputElement|null} */ (card.querySelector(".tp-denom-count"));
+                        const subtotalEl = card.querySelector(".tp-denom-subtotal");
+
+                        if (input && Number(input.value) !== count) input.value = String(count);
+                        if (subtotalEl) subtotalEl.textContent = `${symbol}${subtotal.toFixed(2)}`;
+                        card.classList.toggle("tp-denom-disabled", count === 0 && isTargetZero);
+                    });
+                }
+            }
+        });
+    }
+
+    GetTasaAplicada = () => {
+        if (this.selectedOrder.direccion == DirectionEnum.MIXED) {
+            return this.selectedOrder.moneda == MonedaEnum.CORDOBAS ? this.TasaActual?.Valor_de_venta : this.TasaActual?.Valor_de_compra
+        }
+        return this.selectedOrder.direccion == DirectionEnum.INGRESO
+            ? this.TasaActual?.Valor_de_venta : this.TasaActual?.Valor_de_compra
+    }
+
+    /**
+     * Obtiene el monto requerido para un bloque específico
+     */
+    getTargetForBlock = (/** @type {string} */ blockKey) => {
+        // Manejar bloques de vuelto (change)
+        if (blockKey === "change_usd" || blockKey === "change_nio") {
+            return this.getTargetForChangeBlock(blockKey);
+        }
+
+        const isOrderUsd = this.selectedOrder.moneda === MonedaEnum.DOLARES;
+        const orderAmount = new Money(this.selectedOrder?.monto) ?? new Money(0);
+        const exchangeRateCompra = this.TasaActual?.Valor_de_compra ?? 0;
+        const exchangeRateVenta = this.TasaActual?.Valor_de_venta ?? 0;
+
+        const tasa = (this.GetTasaAplicada()) ?? 0
+
+        if (this.liquidationMode === "USD") {
+            if (blockKey === "payment_usd") return isOrderUsd ? orderAmount : orderAmount.divide(tasa);
+            if (blockKey === "exchange_nio") return isOrderUsd ? new Money(0) : orderAmount;
+            return new Money(0);
+        }
+        else if (this.liquidationMode === "NIO") {
+            if (blockKey === "payment_nio") return isOrderUsd ? orderAmount.multiply(tasa) : orderAmount;
+            if (blockKey === "exchange_usd") return isOrderUsd ? orderAmount : new Money(0);
+            return new Money(0);
+        }
+        else if (this.liquidationMode === "MIXED_PAYMENT") {
+            if (isOrderUsd) {
+                if (blockKey === "payment_usd") return this.targetUsd;
+                if (blockKey === "payment_nio") return this.targetNio;
+                if (blockKey === "exchange_usd") return this.targetNio.divide(tasa);
+                return new Money(0);
+            } else {
+                if (blockKey === "payment_nio") return this.targetNio;
+                if (blockKey === "payment_usd") return this.targetUsd;
+                if (blockKey === "exchange_nio") return this.targetUsd.multiply(tasa);
+                return new Money(0);
+            }
+        }
+        else if (this.liquidationMode === "MIXED") {
+            if (isOrderUsd) {
+                if (blockKey === "exchange_usd") return this.targetNio.divide(tasa);
+                return new Money(0);
+            } else {
+                if (blockKey === "exchange_nio") return this.targetUsd.multiply(tasa);
+                return new Money(0);
+            }
+        }
+        return new Money(0);
+    }
+
+    /**
+     * Calcula el target para bloques de vuelto (change)
+     * @param {string} blockKey
+     */
+    getTargetForChangeBlock = (blockKey) => {
+        if (this.changeMode == null || !this.hasPaymentExcess()) {
+            return new Money(0);
+        }
+
+        const isOrderUsd = this.selectedOrder.moneda === MonedaEnum.DOLARES;
+        const tasaCompra = new Money(this.TasaActual?.Valor_de_compra ?? 0);
+        const tasaVenta = new Money(this.TasaActual?.Valor_de_venta ?? 0);
+
+        // Exceso expresado en la moneda de la orden
+        const excess = this.calculatePaymentExcess();
+
+        if (blockKey === "change_usd") {
+            if (this.changeMode !== "USD") return new Money(0);
+            // Orden USD + vuelto USD: exceso directo
+            if (isOrderUsd) return excess;
+            // Orden NIO + vuelto USD: exceso / valor de venta
+            return excess.divide(tasaVenta);
+        }
+
+        if (blockKey === "change_nio") {
+            if (this.changeMode !== "NIO") return new Money(0);
+            // Orden USD + vuelto NIO: exceso * valor de compra
+            if (isOrderUsd) return excess.multiply(tasaCompra);
+            // Orden NIO + vuelto NIO: exceso directo
+            return excess;
+        }
+
+        return new Money(0);
+    }
+
+    /**
+     * Calcula el exceso de pago (cuando las denominaciones superan el monto de la orden)
+     */
+    calculatePaymentExcess = () => {
+        if (this.selectedOrder?.direccion !== DirectionEnum.INGRESO) {
+            return new Money(0);
+        }
+
+        const isOrderUsd = this.selectedOrder.moneda === MonedaEnum.DOLARES;
+        const orderAmount = new Money(this.selectedOrder?.monto ?? 0);
+        const tasaCompra = new Money(this.TasaActual?.Valor_de_compra ?? 0);
+        const tasaVenta = new Money(this.TasaActual?.Valor_de_venta ?? 0);
+
+        const paymentUsd = this.calculateCountedForBlock("payment_usd");
+        const paymentNio = this.calculateCountedForBlock("payment_nio");
+
+        let totalPaidInOrderCurrency;
+        if (isOrderUsd) {
+            // NIO entrando a caja sobre orden USD => tasa de venta
+            totalPaidInOrderCurrency = paymentUsd.add(paymentNio.divide(tasaVenta));
+        } else {
+            // USD entrando a caja sobre orden NIO => tasa de compra
+            totalPaidInOrderCurrency = paymentNio.add(paymentUsd.multiply(tasaCompra));
+        }
+
+        return totalPaidInOrderCurrency.subtract(orderAmount);
+    }
+
+    /**
+     * Verifica si hay exceso de pago que requiera vuelto
+     */
+    hasPaymentExcess = () => {
+        return this.calculatePaymentExcess().toNumber() > 0.01;
+    }
+
+    /**
+     * Calcula el total contado en un bloque específico
+     */
+    calculateCountedForBlock = (/** @type {string} */ blockKey) => {
+        const currency = blockKey.split("_")[1].toUpperCase();
+        const denoms = currency === "USD" ? this.USD_DENOMS : this.NIO_DENOMS;
+        return denoms.reduce((sum, d) => {
+            return new Money(sum).add(new Money(d.valor ?? 0).multiply(this.denomCountsByBlock[blockKey][d.id_denominacion]))
+        }, new Money(0));
+    }
+
+    DrawComponent = async () => {
+        this.tasasCambio = await new Catalogo_Cambio_Divisa().Get();
+        /**@type  {Catalogo_Cambio_Divisa}*/
+        this.TasaActual = this.tasasCambio[0];
+        if (!this.TasaActual) {
+            throw "No hay tasa de cambio comfigurada"
+        }
+        console.log(this.selectedOrder);
+
+
+        if (this.selectedOrder.Id_cuenta_origen && this.selectedOrder.Id_cuenta_destino) {
+            /**@type {Array<Inventario_Denominacion_Caja>} */
+            this.inventarioCajaOrigen = await new Inventario_Denominacion_Caja().
+                Where(FilterData.Equal("id_cuenta", this.selectedOrder.Id_cuenta_origen))
+            /**@type {Array<Inventario_Denominacion_Caja>} */
+            this.inventarioCajaDestino = await new Inventario_Denominacion_Caja().
+                Where(FilterData.Equal("id_cuenta", this.selectedOrder.Id_cuenta_destino))
+        }
+
+        this.innerHTML = "";
+        this.append(WTransactionProcessorStyle.cloneNode(true));
+        this.append(this.CreateProcessingInterface());
+        this.selectOrder(this.selectedOrder)
+
+        if (!this.isFlexibleLiquidationModeActive && this.liquidationMode) {
+            this.setLiquidationMode(this.liquidationMode)
+            this.renderDenominationBlocks();
+        }
+        if (this.liquidationMode == "MIXED") {
+            //this.renderDenominationBlocks();
+        }
+    }
+
+    CreateEmptyState = () => {
+        return WRender.Create({
+            className: "tp-empty-state",
+            id: "emptyState",
+            children: [
+                WRender.Create({
+                    innerHTML: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                    </svg>`
+                }),
+                WRender.Create({ tagName: "p", innerText: "Seleccione una orden para procesar" }),
+                WRender.Create({ tagName: "p", innerText: "Las órdenes pendientes aparecen en el panel izquierdo." })
+            ]
+        });
+    }
+
+    CreateProcessingInterface = () => {
+        return WRender.Create({
+            className: "tp-processing-interface",
+            id: "processingInterface",
+            children: [
+                this.CreateTransactionData(),
+                this.CreateDenominationsSection()
+            ]
+        });
+    }
+
+    CreateTransactionData = () => {
+        return WRender.Create({
+            className: "tp-transaction-data",
+            children: [
+                this.CreateOrderHeaderCard(),
+                this.CreateLiquidationMethod(),
+                this.CreateActionButton()
+            ]
+        });
+    }
+
+    CreateOrderHeaderCard = () => {
+        return WRender.Create({
+            className: "tp-card",
+            children: [
+                WRender.Create({
+                    className: "tp-order-header",
+                    children: [
+                        WRender.Create({
+                            children: [
+                                WRender.Create({
+                                    className: "tp-badges",
+                                    children: [
+                                        WRender.Create({ tagName: "span", id: "orderTypeBadge", className: "tp-badge tp-badge-type" }),
+                                        WRender.Create({ tagName: "span", id: "orderdireccionBadge", className: "tp-badge tp-badge-direccion" })
+                                    ]
+                                }),
+                                WRender.Create({
+                                    className: "tp-cliente-info",
+                                    innerHTML: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                            </svg>`,
+                                    children: [
+                                        WRender.Create({ tagName: "span", id: "clienteNameDisplay" })
+                                    ]
+                                })
+                            ]
+                        }),
+                        WRender.Create({
+                            className: "tp-amount-display",
+                            children: [
+                                WRender.Create({ tagName: "p", innerText: "Monto Base de la Orden" }),
+                                WRender.Create({ tagName: "p", id: "baseAmountDisplay", className: "tp-amount-value" })
+                            ]
+                        })
+                    ]
+                }),
+                WRender.Create({
+                    className: "tp-info-box",
+                    children: [
+                        WRender.Create({
+                            innerHTML: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>`
+                        }),
+                        WRender.Create({
+                            tagName: "span",
+                            innerText: "Esta orden fue generada en SAC. El monto original está en USD. Seleccione el método de liquidación a continuación."
+                        })
+                    ]
+                })
+            ]
+        });
+    }
+
+    CreateLiquidationMethod = () => {
+        const tasa = this.GetTasaAplicada()
+
+        const liquidationBtnsArray = [];
+        if (this.isFlexibleLiquidationModeActive || (!this.isFlexibleLiquidationModeActive && this.liquidationMode == "USD")) {
+            liquidationBtnsArray.push(this.CreateLiquidationButton("USD", "Solo Dólares (USD)", "Entrega o cobro 100% en moneda estadounidense."))
+        }
+        if (this.isFlexibleLiquidationModeActive || (!this.isFlexibleLiquidationModeActive && this.liquidationMode == "NIO")) {
+            liquidationBtnsArray.push(this.CreateLiquidationButton("NIO", "Solo Córdobas (NIO)", `Conversión total a moneda local (Tasa: ${tasa}).`))
+        }
+        if (this.isFlexibleLiquidationModeActive || (!this.isFlexibleLiquidationModeActive && this.liquidationMode == "MIXED_PAYMENT")) {
+            liquidationBtnsArray.push(this.CreateLiquidationButton("MIXED_PAYMENT", "Mixto / Mesa Cambiaria", "Dividir el monto entre USD y NIO."))
+        }
+
+        return WRender.Create({
+            className: "tp-card",
+            children: [
+                WRender.Create({ tagName: "h3", innerText: "1. Método de Liquidación", className: "tp-section-title" }),
+                WRender.Create({
+                    className: "tp-liquidation-grid",
+                    children: [...liquidationBtnsArray]
+                }),
+                this.CreateMixedInputs()
+            ]
+        });
+    }
+
+    /**
+     * @param {string} mode
+     * @param {string} title
+     * @param {string} description
+     */
+    CreateLiquidationButton = (mode, title, description) => {
+        return WRender.Create({
+            tagName: "button",
+            className: "tp-liquidation-btn",
+            id: `btnMode${mode}`,
+            onclick: () => this.setLiquidationMode(mode),
+            children: [
+                WRender.Create({ tagName: "div", innerText: title, className: "tp-btn-title" }),
+                WRender.Create({ tagName: "div", innerText: description, className: "tp-btn-desc" })
+            ]
+        });
+    }
+
+    CreateMixedInputs = () => {
+        this.InputUsd = WRender.Create({
+            tagName: "input",
+            type: "number",
+            id: "mixedUsdAmount",
+            step: "0.01",
+            min: 0,
+            className: "tp-mixed-input",
+            onchange: (/** @type {{ target: { value: any; }; }} */ ev) => {
+                if (this.selectedOrder != null) {
+
+                    const exchangeRate = this.GetTasaAplicada();
+
+                    this.targetUsd = new Money(ev.target.value);
+                    this.selectedOrder?.monto
+                    // @ts-ignore
+                    this.targetNio = new Money(this.selectedOrder.monto)
+                        .subtract(this.targetUsd)
+                        .multiply(new Money(exchangeRate))
+                    // @ts-ignore
+                    this.InputNIO.value = new Money(this.targetNio).toNumber();
+                    this.updateMixedAmounts()
+                }
+
+            }
+        })
+
+        this.InputNIO = WRender.Create({
+            tagName: "input",
+            type: "number",
+            id: "mixedNioAmount",
+            min: 0,
+            step: "0.01",
+            className: "tp-mixed-input",
+        })
+        return WRender.Create({
+            className: "tp-mixed-inputs",
+            id: "mixedInputs",
+            children: [
+                WRender.Create({
+                    className: "tp-mixed-header",
+                    children: [
+                        WRender.Create({
+                            innerHTML: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                            </svg>`
+                        }),
+                        WRender.Create({ tagName: "h4", innerText: "Distribución del Monto (Mesa Cambiaria)" })
+                    ]
+                }),
+                WRender.Create({
+                    className: "tp-mixed-grid",
+                    children: [
+                        WRender.Create({
+                            children: [
+                                WRender.Create({ tagName: "label", innerText: "Monto a liquidar en USD" }),
+                                WRender.Create({
+                                    className: "tp-input-wrapper",
+                                    children: [
+                                        WRender.Create({ tagName: "span", innerText: "$", className: "tp-input-prefix" }),
+                                        this.InputUsd
+                                    ]
+                                })
+                            ]
+                        }),
+                        WRender.Create({
+                            children: [
+                                WRender.Create({ tagName: "label", innerText: "Monto a liquidar en NIO" }),
+                                WRender.Create({
+                                    className: "tp-input-wrapper",
+                                    children: [
+                                        WRender.Create({ tagName: "span", innerText: "C$", className: "tp-input-prefix" }),
+                                        this.InputNIO
+                                    ]
+                                })
+                            ]
+                        })
+                    ]
+                }),
+                WRender.Create({ tagName: "p", id: "mixedValidationMsg", className: "tp-validation-msg" })
+            ]
+        });
+    }
+
+    CreateActionButton = () => {
+        return html`<div class="tp-action-container">
+            <button tabindex="-1" id="processBtn" class="tp-process-btn tp-process-btn-disabled" disabled 
+                onclick="${() => this.processTransaction()}">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Procesar Transacción
+            </button>
+        </div>`;
+    }
+
+    CreateDenominationsSection = () => {
+        return WRender.Create({
+            className: "tp-denominations-section",
+            id: "denominationsSection",
+            children: [
+                WRender.Create({ tagName: "h3", innerText: "2. Registro de Denominaciones", className: "tp-section-title" }),
+                this.CreateCurrencyDenomination("USD", "Dólares (USD)"),
+                this.CreateCurrencyDenomination("NIO", "Córdobas (NIO)"),
+                this.CreateValidationStatus()
+            ]
+        });
+    }
+
+    /**
+   * @param {string} currency - "USD" | "NIO"
+   * @param {string} label - Etiqueta descriptiva
+   * @param {string} context - "payment" | "exchange" | "change"
+   */
+    CreateCurrencyDenomination = (currency, label, context = "payment") => {
+        const colorClass = currency === "USD" ? "tp-color-green" : "tp-color-blue";
+        const contextClass = context === "exchange" ? "tp-currency-exchange" : context === "change" ? "tp-currency-change" : "tp-currency-payment";
+        const blockId = `${context}_${currency.toLowerCase()}`;
+
+        return WRender.Create({
+            className: `tp-currency-container ${contextClass}`,
+            id: `${blockId}Container`,
+            children: [
+                WRender.Create({
+                    className: "tp-currency-header",
+                    children: [
+                        WRender.Create({
+                            className: "tp-currency-title",
+                            children: [
+                                WRender.Create({ className: `tp-color-dot ${colorClass}` }),
+                                WRender.Create({ tagName: "h4", innerText: label })
+                            ]
+                        }),
+                        WRender.Create({
+                            className: "tp-currency-summary",
+                            children: [
+                                WRender.Create({ innerHTML: `Requerido: <span class="tp-bold" id="target_${blockId}_Display">$0.00</span>` }),
+                                WRender.Create({ innerHTML: ` | Contado: <span class="tp-bold" id="counted_${blockId}_Display">$0.00</span>` })
+                            ]
+                        })
+                    ]
+                }),
+                WRender.Create({
+                    className: `tp-denom-grid`,
+                    id: `${blockId}Grid`
+                })
+            ]
+        });
+    }
+
+    /**
+     * Crea la sección de selección de modo de vuelto (cambio al cliente)
+     */
+    CreateChangeModeSection = () => {
+        //this.changeMode = "USD";
+        //alert(this.changeMode)
+        return WRender.Create({
+            className: "tp-card tp-change-mode-section",
+            id: "changeModeSection",
+            children: [
+                WRender.Create({
+                    className: "tp-change-mode-header",
+                    children: [
+                        WRender.Create({ tagName: "h4", innerText: "Exceso de Pago - Seleccione el tipo de vuelto" })
+                    ]
+                }),
+                WRender.Create({
+                    className: "tp-change-mode-options",
+                    children: [
+                        WRender.Create({
+                            className: "tp-radio-option",
+                            children: [
+                                WRender.Create({
+                                    tagName: "input",
+                                    type: "radio",
+                                    name: "changeMode",
+                                    id: "changeModeUSD",
+                                    value: "USD",
+                                    checked: this.changeMode == "USD",
+                                    onchange: () => {
+                                        this.changeMode = "USD"; // o "NIO" en el otro radio
+                                        this.resetBlockCounts("change_usd");
+                                        this.resetBlockCounts("change_nio");
+                                        this.renderDenominationBlocks();
+                                        // Auto-calcular el vuelto óptimo
+                                        const target = this.getTargetForChangeBlock("change_usd");
+                                        if (target.toNumber() > 0) this.applyOptimalCombinationToBlock("change_usd", target);
+
+                                        this.updateValidation();
+                                    }
+                                }),
+                                WRender.Create({
+                                    tagName: "label",
+                                    htmlFor: "changeModeUSD",
+                                    innerText: "Dar cambio en Dólares (USD)",
+                                    className: "tp-radio-label"
+                                })
+                            ]
+                        }),
+                        WRender.Create({
+                            className: "tp-radio-option",
+                            children: [
+                                WRender.Create({
+                                    tagName: "input",
+                                    type: "radio",
+                                    name: "changeMode",
+                                    id: "changeModeNIO",
+                                    value: "NIO",
+                                    checked: this.changeMode == "NIO",
+                                    onchange: () => {
+                                        this.changeMode = "NIO";
+                                        this.resetBlockCounts("change_usd");
+                                        this.resetBlockCounts("change_nio");
+                                        this.renderDenominationBlocks();
+                                        // Auto-calcular el vuelto óptimo
+                                        const target = this.getTargetForChangeBlock("change_nio");
+                                        if (target.toNumber() > 0) this.applyOptimalCombinationToBlock("change_nio", target);
+                                        this.updateValidation();
+                                    }
+                                }),
+                                WRender.Create({
+                                    tagName: "label",
+                                    htmlFor: "changeModeNIO",
+                                    innerText: "Dar cambio en Córdobas (NIO)",
+                                    className: "tp-radio-label"
+                                })
+                            ]
+                        })
+                    ]
+                })
+            ]
+        });
+    }
+
+    CreateValidationStatus = () => {
+        return WRender.Create({
+            className: "tp-validation-status tp-validation-error",
+            id: "validationStatus",
+            children: [
+                WRender.Create({
+                    id: "statusIcon",
+                    innerHTML: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>`
+                }),
+                WRender.Create({
+                    children: [
+                        WRender.Create({ tagName: "p", id: "statusTitle", innerText: "Monto no coincide", className: "tp-status-title" }),
+                        WRender.Create({ tagName: "p", id: "statusDesc", innerText: "Revise las denominaciones ingresadas.", className: "tp-status-desc" })
+                    ]
+                })
+            ]
+        });
+    }
+
+    /**
+     * @param {Orden_Movimiento} order
+     */
+    selectOrder = (order) => {
+        this.selectedOrder = order;
+        this.liquidationMode = this.liquidationMode ?? null;
+        this.changeMode = "USD"; // Resetear modo de vuelto
+        this.targetUsd = new Money(0);;
+        this.targetNio = new Money(0);;
+        this.countedUsd = 0;
+        this.countedNio = 0;
+        this.InitDenomsCount()
+
+        const emptyState = this.querySelector("#emptyState");
+        const processingInterface = this.querySelector("#processingInterface");
+
+        if (emptyState) emptyState.classList.add("hidden");
+        if (processingInterface) processingInterface.classList.remove("hidden");
+
+        // CORRECCIÓN: Estas declaraciones faltaban
+        const clienteNameDisplay = this.querySelector("#clienteNameDisplay");
+        const baseAmountDisplay = this.querySelector("#baseAmountDisplay");
+
+        if (clienteNameDisplay) clienteNameDisplay.textContent = order.Cliente;
+        if (baseAmountDisplay) baseAmountDisplay.textContent = `${new Money(order.monto, "USD")} ${order.moneda}`;
+
+        const typeBadge = this.querySelector("#orderTypeBadge");
+        if (typeBadge) {
+            // @ts-ignore
+            typeBadge.textContent = order.Tipo_Movimiento?.replaceAll("_", " ");
+            typeBadge.className = `tp-badge tp-badge-type ${order.Tipo_Movimiento?.replaceAll("_", " ") === "EMPEÑO" ? "tp-badge-purple" : "tp-badge-blue"}`;
+        }
+
+        const dirBadge = this.querySelector("#orderdireccionBadge");
+        if (dirBadge) {
+            dirBadge.textContent = order.direccion;
+            dirBadge.className = `tp-badge tp-badge-direccion ${order.direccion === DirectionEnum.EGRESO ? "tp-badge-red" : "tp-badge-green"}`;
+        }
+
+        this.querySelectorAll(".tp-liquidation-btn").forEach(btn => {
+            btn.classList.remove("tp-liquidation-btn-active");
+        });
+
+        const mixedInputs = this.querySelector("#mixedInputs");
+        if (mixedInputs) mixedInputs.classList.add("hidden");
+
+        const denominationsSection = this.querySelector("#denominationsSection");
+        if (denominationsSection) denominationsSection.classList.add("hidden");
+
+        this.updateValidation();
+    }
+
+    /**
+     * @param {string} mode - "USD" | "NIO" | "MIXED_PAYMENT"
+     */
+    setLiquidationMode = (mode) => {
+        this.liquidationMode = mode;
+        this.changeMode = "USD"; // Resetear modo de vuelto al cambiar método de liquidación
+        // 🔥 NUEVO: Limpiar los bloques que cambian de propósito
+        this.resetBlockCounts("payment_usd");
+        this.resetBlockCounts("payment_nio");
+        this.resetBlockCounts("exchange_usd");
+        this.resetBlockCounts("exchange_nio");
+        this.resetBlockCounts("change_usd");
+        this.resetBlockCounts("change_nio");
+
+
+        this.querySelectorAll(".tp-liquidation-btn").forEach(btn => {
+            btn.classList.remove("tp-liquidation-btn-active");
+        });
+        const activeBtn = this.querySelector(`#btnMode${mode}`);
+        if (activeBtn) activeBtn.classList.add("tp-liquidation-btn-active");
+
+        const isOrderUsd = this.selectedOrder.moneda === MonedaEnum.DOLARES;
+        const orderAmount = new Money(this.selectedOrder?.monto ?? 0);
+        const tasa = this.GetTasaAplicada();
+
+        const exchangeRate = new Money(tasa ?? 0);
+
+        if (mode === "USD") {
+            if (isOrderUsd) {
+                this.targetUsd = orderAmount;
+                this.targetNio = new Money(0);
+                this.selectedOrder.tipo_operacion_cambio = "NONE";
+            } else {
+                this.targetUsd = orderAmount.divide(exchangeRate);
+                this.targetNio = new Money(0);
+                this.selectedOrder.tipo_operacion_cambio = "COMPRA_MONEDA";
+                this.selectedOrder.monto_cambio_usd = this.targetUsd.toNumber();
+                this.selectedOrder.monto_cambio_nio = orderAmount.toNumber();
+                this.selectedOrder.tasa_cambio_aplicada = exchangeRate.toNumber();
+            }
+        }
+        else if (mode === "NIO") {
+            if (isOrderUsd) {
+                this.targetUsd = new Money(0);
+                this.targetNio = orderAmount.multiply(exchangeRate);
+                this.selectedOrder.tipo_operacion_cambio = "VENTA_MONEDA";
+                this.selectedOrder.monto_cambio_usd = orderAmount.toNumber();
+                this.selectedOrder.monto_cambio_nio = this.targetNio.toNumber();
+                this.selectedOrder.tasa_cambio_aplicada = exchangeRate.toNumber();
+            } else {
+                this.targetUsd = new Money(0);
+                this.targetNio = orderAmount;
+                this.selectedOrder.tipo_operacion_cambio = "NONE";
+            }
+        }
+        else if (mode === "MIXED_PAYMENT") {
+            const mixedInputs = this.querySelector("#mixedInputs");
+            if (mixedInputs) mixedInputs.classList.remove("hidden");
+
+            const mixedUsdAmount = this.querySelector("#mixedUsdAmount");
+            const mixedNioAmount = this.querySelector("#mixedNioAmount");
+            if (mixedUsdAmount) /** @type {HTMLInputElement} */ (mixedUsdAmount).value = "";
+            if (mixedNioAmount) /** @type {HTMLInputElement} */ (mixedNioAmount).value = "";
+
+            this.targetUsd = new Money(0);
+            this.targetNio = new Money(0);
+            this.selectedOrder.tipo_operacion_cambio = "MIXED_PAYMENT";
+        } else if (mode === "MIXED") {
+            const isCompra = this.selectedOrder.direccion == DirectionEnum.MIXED
+                && this.selectedOrder.moneda == MonedaEnum.DOLARES;
+
+            this.selectedOrder.tipo_operacion_cambio = isCompra
+                ? "COMPRA_MONEDA" : "VENTA_MONEDA";
+        }
+
+        const mixedInputs = this.querySelector("#mixedInputs");
+        if (mode !== "MIXED_PAYMENT" && mixedInputs) mixedInputs.classList.add("hidden");
+
+        const denominationsSection = this.querySelector("#denominationsSection");
+        if (denominationsSection) denominationsSection.classList.remove("hidden");
+        // Dentro de setLiquidationMode(), al final, antes de renderDenominationBlocks:
+        if (this.selectedOrder?.direccion === DirectionEnum.EGRESO) {
+            if (mode === "USD" && isOrderUsd) {
+                this.applyOptimalCombinationToBlock("payment_usd", this.targetUsd);
+            } else if (mode === "NIO" && !isOrderUsd) {
+                this.applyOptimalCombinationToBlock("payment_nio", this.targetNio);
+            } else if (mode === "USD" && !isOrderUsd) {
+                // Caja entrega USD por una orden NIO (cambio)
+                this.applyOptimalCombinationToBlock("exchange_usd", this.getTargetForBlock("exchange_usd"));
+            } else if (mode === "NIO" && isOrderUsd) {
+                this.applyOptimalCombinationToBlock("exchange_nio", this.getTargetForBlock("exchange_nio"));
+            }
+        }
+
+        this.renderDenominationBlocks();
+        this.updateValidation();
+    }
+
+    renderDenominationBlocks = () => {
+        const container = this.querySelector("#denominationsSection");
+        if (!container) return;
+
+        const focusInfo = this.captureFocus();
+        // Limpiar bloques anteriores
+        container.querySelectorAll(".tp-currency-container, .tp-exchange-info-box, .tp-change-mode-section").forEach(el => el.remove());
+
+        const isOrderUsd = this.selectedOrder.moneda === MonedaEnum.DOLARES;
+        const validationStatus = container.querySelector("#validationStatus");
+        const tasa = this.GetTasaAplicada();
+
+
+        if (this.liquidationMode === "USD") {
+            if (isOrderUsd) {
+                container.insertBefore(
+                    this.CreateCurrencyDenomination("USD", "Dólares (USD) - Pago del Cliente", "payment"),
+                    validationStatus
+                );
+            } else {
+                container.insertBefore(
+                    this.CreateExchangeInfoBox(
+                        "💱 Compra de Moneda",
+                        `La caja recibe USD y entrega Córdobas. Tasa: ${tasa}`
+                    ),
+                    validationStatus
+                );
+                container.insertBefore(
+                    this.CreateCurrencyDenomination("USD", "USD - Pago del Cliente (Entra a Caja)", "payment"),
+                    validationStatus
+                );
+            }
+        }
+        else if (this.liquidationMode === "NIO") {
+            if (isOrderUsd) {
+                container.insertBefore(
+                    this.CreateExchangeInfoBox(
+                        "💱 Venta de Moneda",
+                        `La caja recibe Córdobas y entrega USD. Tasa: ${tasa}`
+                    ),
+                    validationStatus
+                );
+                container.insertBefore(
+                    this.CreateCurrencyDenomination("NIO", "NIO - Pago del Cliente (Entra a Caja)", "payment"),
+                    validationStatus
+                );
+            } else {
+                container.insertBefore(
+                    this.CreateCurrencyDenomination("NIO", "Córdobas (NIO) - Pago del Cliente", "payment"),
+                    validationStatus
+                );
+            }
+        }
+        else if (this.liquidationMode === "MIXED_PAYMENT") {
+            if (isOrderUsd) {
+                container.insertBefore(
+                    this.CreateExchangeInfoBox(
+                        "💱 Venta Parcial de Moneda",
+                        `Parte del pago es en USD y parte en NIO. Tasa: ${tasa}`
+                    ),
+                    validationStatus
+                );
+                container.insertBefore(
+                    this.CreateCurrencyDenomination("USD", "USD - Pago Directo del Cliente", "payment"),
+                    validationStatus
+                );
+                container.insertBefore(
+                    this.CreateCurrencyDenomination("NIO", "NIO - Pago en Córdobas (Entra a Caja)", "payment"),
+                    validationStatus
+                );
+            } else {
+                container.insertBefore(
+                    this.CreateExchangeInfoBox(
+                        "💱 Compra Parcial de Moneda",
+                        `Parte del pago es en NIO y parte en USD. Tasa: ${tasa}`
+                    ),
+                    validationStatus
+                );
+                container.insertBefore(
+                    this.CreateCurrencyDenomination("NIO", "NIO - Pago Directo del Cliente", "payment"),
+                    validationStatus
+                );
+                container.insertBefore(
+                    this.CreateCurrencyDenomination("USD", "USD - Pago en Dólares (Entra a Caja)", "payment"),
+                    validationStatus
+                );
+            }
+        } else if (this.liquidationMode === "MIXED") {
+            container.insertBefore(
+                this.CreateCurrencyDenomination("USD", "USD", "exchange"),
+                validationStatus
+            );
+            container.insertBefore(
+                this.CreateCurrencyDenomination("NIO", "NIO", "exchange"),
+                validationStatus
+            );
+        }
+
+        // Verificar si hay exceso de pago y mostrar sección de vuelto
+        if (this.selectedOrder?.direccion === DirectionEnum.INGRESO && this.hasPaymentExcess()) {
+            container.insertBefore(
+                this.CreateChangeModeSection(),
+                validationStatus
+            );
+
+            if (this.changeMode === "USD") {
+                container.insertBefore(
+                    this.CreateCurrencyDenomination("USD", "USD - Vuelto al Cliente", "change"),
+                    validationStatus
+                );
+            } else if (this.changeMode === "NIO") {
+                container.insertBefore(
+                    this.CreateCurrencyDenomination("NIO", "NIO - Vuelto al Cliente", "change"),
+                    validationStatus
+                );
+            }
+        }
+
+        this.renderAllDenominationGrids();
+        this.restoreFocus(focusInfo);
+    }
+
+    CreateExchangeInfoBox = (/** @type {string} */ title, /** @type {string} */ description) => {
+        return WRender.Create({
+            className: "tp-info-box tp-exchange-info-box",
+            children: [
+                WRender.Create({
+                    innerHTML: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                </svg>`
+                }),
+                WRender.Create({
+                    children: [
+                        WRender.Create({ tagName: "strong", innerText: title }),
+                        WRender.Create({ tagName: "p", innerText: description })
+                    ]
+                })
+            ]
+        });
+    }
+
+    updateMixedAmounts = () => {
+        const exchangeRate = this.GetTasaAplicada();
+
+        const totalEquivalentUsd = new Money(this.targetUsd)
+            .add(new Money(this.targetNio)
+                .divide(new Money(exchangeRate)))
+        const orderUsd = this.selectedOrder?.monto ?? 0;
+        // @ts-ignore
+        const diff = Math.abs(totalEquivalentUsd - orderUsd);
+
+        const msgEl = this.querySelector("#mixedValidationMsg");
+        if (msgEl) {
+            if (diff < 0.01) {
+                msgEl.textContent = "✓ Distribución correcta";
+                msgEl.className = "tp-validation-msg tp-validation-success";
+            } else {
+                msgEl.textContent = `⚠ La suma equivale a $${totalEquivalentUsd.toFixed(2)} USD (Debe ser $${orderUsd.toFixed(2)})`;
+                msgEl.className = "tp-validation-msg tp-validation-error-text";
+            }
+        }
+
+        this.renderAllDenominationGrids();
+        this.updateValidation();
+    }
+
+    /**
+    * @param {string} blockKey - "payment_usd", "exchange_nio", etc.
+    * @param {string} currency
+    * @param {Denominacion_Catalogo} denom
+    * @param {number} count
+    * @param {number} subtotal
+    */
+    createDenomCard = (blockKey, currency, denom, count, subtotal) => {
+        const targetAmount = this.getTargetForBlock(blockKey);
+        const isDisabled = count === 0 && targetAmount.toNumber() === 0;
+        const opacityClass = isDisabled ? "tp-denom-disabled" : "";
+        const symbol = currency === "USD" ? "$" : "C$";
+        const direction = this.selectedOrder.direccion;
+        console.log(direction);
+        const validateIngreso = this.selectedOrder.direccion == DirectionEnum.INGRESO;
+        const validateEgreso = this.selectedOrder.direccion == DirectionEnum.EGRESO;
+
+        /**  payment_usd, exchange_nio, payment_nio, exchange_usd, change_usd, change_nio */
+        /**@type {Inventario_Denominacion_Caja[]} */
+        const inventory = [];
+        let hiddenDenom = false;
+        /**@type {Inventario_Denominacion_Caja | undefined} */
+        let findInventory;
+        const findInventoryFun = () => {
+            findInventory = inventory.find(i => i.Denominacion_Catalogo?.valor == denom.valor
+                && i.Denominacion_Catalogo?.moneda == denom.moneda
+                && i.Denominacion_Catalogo?.tipo == denom.tipo);
+        }
+        if (["payment_usd", "payment_nio", "exchange_nio", "exchange_usd"].includes(blockKey) && validateEgreso) {
+            inventory.length = 0;
+            inventory.push(...this.inventarioCajaOrigen)
+            findInventoryFun();
+            hiddenDenom = (validateEgreso && (findInventory == null || findInventory.cantidad_actual == 0))
+        } if (["change_usd", "change_nio"].includes(blockKey) && validateIngreso) {
+            inventory.length = 0;
+            inventory.push(...this.inventarioCajaDestino)
+            findInventoryFun();
+            hiddenDenom = (validateIngreso && (findInventory == null || findInventory.cantidad_actual == 0))
+        }
+
+        const denomWrapper = html`<div class="tp-denom-card ${opacityClass}">
+            <span class="tp-denom-value">${symbol}${denom.valor}</span>
+            <div class="tp-denom-controls">
+                <button tabindex="-1" min="0" onclick="${() => this.updateDenom(blockKey, currency, denom, -1, true)}" 
+                    class="tp-denom-btn tp-denom-btn-minus">-</button>
+                <input min="0" max="${findInventory?.cantidad_actual ?? ""}" type="number" value="${count}" 
+                    onchange="${(/** @type {{ target: { value: number; }; }} */ ev) => this.updateDenom(blockKey, currency, denom, ev.target.value)}" 
+                    class="tp-denom-count" />
+                <button tabindex="-1" min="0" onclick="${() => this.updateDenom(blockKey, currency, denom, 1, true)}" 
+                    class="tp-denom-btn tp-denom-btn-plus">+</button>
+            </div>
+            <span class="tp-denom-subtotal">${symbol}${subtotal.toFixed(2)}</span>
+        </div>`;
+        denomWrapper.style.display = hiddenDenom ? "none" : "grid";
+        return denomWrapper;
+    }
+
+    /**
+     * @param {string} blockKey
+     * @param {string} currency
+     * @param {Denominacion_Catalogo} denom
+     * @param {number} change
+     */
+    updateDenom = (blockKey, currency, denom, change, isButtom = false) => {
+        if (change < 0 && !isButtom) {
+            change = 0;
+        }
+        const newCount = !isButtom ? change
+            : parseInt(this.denomCountsByBlock[blockKey][denom.id_denominacion].toString()) + parseInt(change.toString());
+        if (newCount < 0) return;
+
+        this.denomCountsByBlock[blockKey][denom.id_denominacion] = newCount;
+
+        // >>> NUEVO: mostrar/ocultar sección de vuelto si cambió el exceso <<<
+        this.syncChangeSection();
+
+        this.renderAllDenominationGrids();
+        this.updateValidation();
+    }
+
+    calculateTotals = () => {
+        this.countedUsd = this.USD_DENOMS.reduce((sum, d) => sum + (this.denomCounts.USD[d.id_denominacion] * (d.valor ?? 0)), 0);
+        this.countedNio = this.NIO_DENOMS.reduce((sum, d) => sum + (this.denomCounts.NIO[d.id_denominacion] * (d.valor ?? 0)), 0);
+
+        const countedUsdDisplay = this.querySelector("#countedUSDDisplay");
+        const countedNioDisplay = this.querySelector("#countedNIODisplay");
+
+        if (countedUsdDisplay) countedUsdDisplay.textContent = `$${this.countedUsd.toFixed(2)}`;
+        if (countedNioDisplay) countedNioDisplay.textContent = `C$${this.countedNio.toFixed(2)}`;
+    }
+
+    updateValidation = () => {
+        const statusDiv = this.querySelector("#validationStatus");
+        const statusIcon = this.querySelector("#statusIcon");
+        const statusTitle = this.querySelector("#statusTitle");
+        const statusDesc = this.querySelector("#statusDesc");
+        const processBtn = this.querySelector("#processBtn");
+
+        if (!statusDiv || !statusIcon || !statusTitle || !statusDesc || !processBtn) return;
+
+        const activeBlocks = this.getActiveBlocks();
+        let allValid = true;
+        let messages = [];
+
+        for (const blockKey of activeBlocks) {
+            if (this.liquidationMode == "MIXED") {
+                if (blockKey == "exchange_usd") {
+                    this.targetUsd = this.calculateCountedForBlock(blockKey);
+                } else if (blockKey == "exchange_nio") {
+                    this.targetNio = this.calculateCountedForBlock(blockKey);
+                }
+                continue;
+            }
+            const target = this.getTargetForBlock(blockKey);
+            const counted = this.calculateCountedForBlock(blockKey);
+            const diff = counted.subtract(target);
+            const currency = blockKey.split("_")[1].toUpperCase();
+            const symbol = currency === "USD" ? "$" : "C$";
+
+            let context = "";
+            if (blockKey.startsWith("payment")) context = "Pago";
+            else if (blockKey.startsWith("exchange")) context = "Cambio";
+            else if (blockKey.startsWith("change")) context = "Vuelto";
+
+            const isPaymentBlock = blockKey.startsWith("payment");
+            const hasActiveChange = this.changeMode != null
+                && this.selectedOrder?.direccion === DirectionEnum.INGRESO;
+
+            if (isPaymentBlock && hasActiveChange) {
+                // Cuando hay vuelto activo, el pago puede SUPERAR el monto.
+                // Solo validar que cubra al menos el monto requerido.
+                if (counted.toNumber() < target.toNumber() - 0.01) {
+                    allValid = false;
+                    messages.push(`${context} ${currency}: falta ${symbol}${target.subtract(counted).toFixed(2)}`);
+                }
+            } else {
+                // Validación estricta: debe coincidir exactamente
+                if (Math.abs(diff.toNumber()) > 0.01) {
+                    allValid = false;
+                    messages.push(`${context} ${currency}: diferencia ${diff.toNumber() > 0 ? "+" : ""}${symbol}${diff.toFixed(2)}`);
+                }
+            }
+        }
+
+        if (this.liquidationMode === "MIXED_PAYMENT") {
+            const exchangeRate = this.GetTasaAplicada();
+            const isOrderUsd = this.selectedOrder.moneda === MonedaEnum.DOLARES;
+            const orderAmount = new Money(this.selectedOrder?.monto) ?? new Money(0);
+
+            let totalInOrderCurrency;
+            if (isOrderUsd) {
+                totalInOrderCurrency = new Money(this.targetUsd)
+                    .add(new Money(this.targetNio)
+                        .divide(exchangeRate));
+            } else {
+                totalInOrderCurrency = new Money(this.targetNio)
+                    .add(new Money(this.targetUsd)
+                        .multiply(exchangeRate));
+            }
+
+            if (Math.abs(totalInOrderCurrency.toNumber() - orderAmount.toNumber()) > 0.01) {
+                allValid = false;
+                messages.push(`Distribución mixta incorrecta`);
+            }
+        }
+
+        if (this.liquidationMode === "MIXED") {
+            const exchangeRate = this.GetTasaAplicada();
+            const isOrderUsd = this.selectedOrder.moneda === MonedaEnum.DOLARES;
+
+            let totalUsdEsperadoConvertido = new Money(this.targetNio)
+                .divide(exchangeRate);
+            let totalNioEsperadoConvertido = new Money(this.targetUsd)
+                .multiply(exchangeRate);
+
+            if (!isOrderUsd && Math.abs(totalUsdEsperadoConvertido.toNumber() - this.targetUsd.toNumber()) > 0.01) {
+                allValid = false;
+                messages.push(`Distribución de cambio incorrecto, tasa: ${exchangeRate}, 
+                    esperado ${totalUsdEsperadoConvertido}, faltante: ${totalUsdEsperadoConvertido.subtract(this.targetUsd)}`);
+            }
+            if (isOrderUsd && Math.abs(totalNioEsperadoConvertido.toNumber() - this.targetNio.toNumber()) > 0.01) {
+                allValid = false;
+                messages.push(`Distribución de cambio incorrecto, tasa: ${exchangeRate}, 
+                    esperado ${totalNioEsperadoConvertido}, faltante: ${totalNioEsperadoConvertido.subtract(this.targetNio)}`);
+            }
+        }
+        if (this.selectedOrder?.direccion === DirectionEnum.INGRESO
+            && this.hasPaymentExcess()
+            && this.changeMode == null) {
+            allValid = false;
+            messages.push("Seleccione el tipo de cambio para el excedente de pago");
+        }
+
+        if (allValid && this.liquidationMode !== null && activeBlocks.length > 0) {
+            this.setValidationState(true, "Monto correcto", "Todas las denominaciones coinciden exactamente.", statusDiv, statusIcon, statusTitle, statusDesc, processBtn);
+        } else {
+            const msg = messages.length > 0 ? messages.join(". ") + "." : "Revise las denominaciones ingresadas.";
+            this.setValidationState(false, "Monto no coincide", msg, statusDiv, statusIcon, statusTitle, statusDesc, processBtn);
+        }
+    }
+
+    /**
+     * Retorna los bloques que están activos según el modo de liquidación
+     */
+    getActiveBlocks = () => {
+        const isOrderUsd = this.selectedOrder.moneda === MonedaEnum.DOLARES;
+
+        /**
+         * @type {string[]}
+         */
+        let blocks = [];
+
+        if (this.liquidationMode === "USD") {
+            blocks = isOrderUsd ? ["payment_usd"] : ["payment_usd", "exchange_nio"];
+        }
+        else if (this.liquidationMode === "NIO") {
+            blocks = isOrderUsd ? ["payment_nio", "exchange_usd"] : ["payment_nio"];
+        }
+        else if (this.liquidationMode === "MIXED_PAYMENT") {
+            blocks = isOrderUsd
+                ? ["payment_usd", "payment_nio"]
+                : ["payment_nio", "payment_usd"];
+        }
+        else if (this.liquidationMode === "MIXED") {
+            blocks = ["exchange_usd", "exchange_nio"];
+        }
+
+        // Agregar bloques de vuelto si hay exceso de pago y se ha seleccionado un modo
+        if (this.selectedOrder?.direccion === DirectionEnum.INGRESO && this.hasPaymentExcess()) {
+            if (this.changeMode === "USD") {
+                blocks.push("change_usd");
+            } else if (this.changeMode === "NIO") {
+                blocks.push("change_nio");
+            }
+        }
+
+        return blocks;
+    }
+
+    /**
+     * @param {boolean} isValid
+     * @param {string} title
+     * @param {string} desc
+     * @param {Element} statusDiv
+     * @param {Element} icon
+     * @param {Element} titleEl
+     * @param {Element} descEl
+     * @param {Element} btn
+     */
+    setValidationState = (isValid, title, desc, statusDiv, icon, titleEl, descEl, btn) => {
+        if (isValid) {
+            statusDiv.className = "tp-validation-status tp-validation-success";
+            icon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>';
+            titleEl.className = "tp-status-title tp-status-title-success";
+            descEl.className = "tp-status-desc tp-status-desc-success";
+
+            /** @type {HTMLButtonElement} */ (btn).disabled = false;
+            btn.className = "tp-process-btn tp-process-btn-enabled";
+        } else {
+            statusDiv.className = "tp-validation-status tp-validation-error";
+            icon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>';
+            titleEl.className = "tp-status-title tp-status-title-error";
+            descEl.className = "tp-status-desc tp-status-desc-error";
+
+            /** @type {HTMLButtonElement} */ (btn).disabled = true;
+            btn.className = "tp-process-btn tp-process-btn-disabled";
+        }
+        titleEl.textContent = title;
+        descEl.textContent = desc;
+    }
+
+    processTransaction = async () => {
+        if (!this.selectedOrder) return;
+
+        this.append(ModalVericateAction(async () => {
+            const isOrderUsd = this.selectedOrder.moneda === MonedaEnum.DOLARES;
+
+            this.selectedOrder.tipo_vuelto = this.changeMode;
+            this.selectedOrder.DenominationsUSD = this.buildDenominationsFromBlock("payment_usd", this.selectedOrder.direccion);
+            this.selectedOrder.DenominationsNIO = this.buildDenominationsFromBlock("payment_nio", this.selectedOrder.direccion);
+
+            const exchangeDirection = this.selectedOrder.direccion === DirectionEnum.INGRESO
+                ? DirectionEnum.EGRESO
+                : DirectionEnum.INGRESO;
+
+            this.selectedOrder.DenominationsCambioUSD = this.buildDenominationsFromBlock("exchange_usd", exchangeDirection);
+            this.selectedOrder.DenominationsCambioNIO = this.buildDenominationsFromBlock("exchange_nio", exchangeDirection);
+
+            // Agregar denominaciones de vuelto (vuelto al cliente, dirección inversa al pago)
+            const changeDirection = this.selectedOrder.direccion === DirectionEnum.INGRESO
+                ? DirectionEnum.EGRESO
+                : DirectionEnum.INGRESO;
+
+            this.selectedOrder.DenominationsVueltoUSD = this.buildDenominationsFromBlock("change_usd", changeDirection);
+            this.selectedOrder.DenominationsVueltoNIO = this.buildDenominationsFromBlock("change_nio", changeDirection);
+
+            if (this.Config.SaveFunction) {
+                this.Config.SaveFunction(this.selectedOrder);
+                return;
+            }
+            const response = await this.selectedOrder.AprobarOrden();
+            if (response.status == 200) {
+                if (this.Config?.action) {
+                    this.Config.action(this.selectedOrder);
+                    return;
+                }
+                this.showSuccessModal();
+            } else {
+                WAlertMessage.Danger(response.message, true);
+            }
+        }, "¿Está seguro de ejecutar este proceso?"))
+    }
+
+    /**
+     * Construye el array de DTOs desde un bloque específico
+     * @param {string} blockKey
+     * @param {string?} direction
+     * @returns {DenominacionMovimientoDTO[]}
+     */
+    buildDenominationsFromBlock = (blockKey, direction) => {
+        const currency = blockKey.split("_")[1].toUpperCase();
+        const counts = this.denomCountsByBlock[blockKey];
+
+        return Object.keys(counts).map(key => {
+            const cantidad = counts[parseInt(key)];
+            if (cantidad === 0) return null;
+
+            return new DenominacionMovimientoDTO({
+                id_denominacion: parseInt(key),
+                tipo_operacion: direction,
+                cantidad: cantidad
+            });
+        }).filter(d => d !== null);
+    }
+
+    showSuccessModal = () => {
+        WAlertMessage.Success("¡Transacción Exitosa!", true, "center", true)
+        // const modal = WRender.Create({
+        //     className: "tp-modal-overlay",
+        //     id: "successModal",
+        //     children: [
+        //         WRender.Create({
+        //             className: "tp-modal-content",
+        //             children: [
+        //                 WRender.Create({
+        //                     className: "tp-modal-icon",
+        //                     innerHTML: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        //                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+        //                     </svg>`
+        //                 }),
+        //                 WRender.Create({ tagName: "h3", innerText: "¡Transacción Exitosa!" }),
+        //                 WRender.Create({
+        //                     tagName: "p",
+        //                     innerHTML: `La orden <span class="tp-bold">${this.selectedOrder?.id_usuario_crea?.toString()}</span> ha sido procesada correctamente y el arqueo de denominaciones ha sido registrado.`
+        //                 }),
+        //                 WRender.Create({
+        //                     tagName: "button",
+        //                     innerText: "Aceptar y Nueva Operación",
+        //                     className: "tp-modal-btn",
+        //                     onclick: () => this.closeModal()
+        //                 })
+        //             ]
+        //         })
+        //     ]
+        // });
+
+        // this.append(modal);
+    }
+
+    /**
+ * Muestra u oculta la sección de vuelto según exista exceso de pago.
+ * Solo re-renderiza los bloques cuando cambia la visibilidad.
+ */
+    syncChangeSection = () => {
+        const shouldShow = this.selectedOrder?.direccion === DirectionEnum.INGRESO && this.hasPaymentExcess();
+        const isShown = !!this.querySelector("#changeModeSection");
+
+        if (shouldShow === isShown) return;
+
+        if (!shouldShow) {
+            // El exceso desapareció: resetear modo y contadores de vuelto
+            this.changeMode = null;
+            this.resetBlockCounts("change_usd");
+            this.resetBlockCounts("change_nio");
+        }
+
+        this.renderDenominationBlocks();
+        // 🔥 NUEVO: Si acaba de aparecer la sección de vuelto, calcular automáticamente
+        if (shouldShow && !isShown && this.changeMode) {
+            const targetBlock = this.changeMode === "USD" ? "change_usd" : "change_nio";
+            const target = this.getTargetForChangeBlock(targetBlock);
+            if (target.toNumber() > 0) {
+                this.applyOptimalCombinationToBlock(targetBlock, target);
+            }
+        }
+    }
+
+    /**
+     * Reinicia SOLO los contadores de un bloque específico
+     */
+    resetBlockCounts = (/** @type {string} */ blockKey) => {
+        const counts = this.denomCountsByBlock[blockKey];
+        // @ts-ignore
+        Object.keys(counts).forEach(k => counts[k] = 0);
+    }
+
+    closeModal = async () => {
+        const modal = this.querySelector("#successModal");
+        if (modal) modal.remove();
+
+        const emptyState = this.querySelector("#emptyState");
+        const processingInterface = this.querySelector("#processingInterface");
+        const searchInput = /** @type {HTMLInputElement} */ (this.querySelector("#searchInput"));
+
+        if (emptyState) emptyState.classList.remove("hidden");
+        if (processingInterface) processingInterface.classList.add("hidden");
+        if (searchInput) searchInput.value = "";
+
+        this.remove();
+    }
+
+    captureFocus = () => {
+        const active = /** @type {HTMLElement|null} */ (document.activeElement);
+        if (!active || !this.contains(active)) return null;
+        const card = active.closest(".tp-denom-card");
+        const grid = card?.closest(".tp-denom-grid");
+        if (!card || !grid) return null;
+
+        const selector = active.classList.contains("tp-denom-btn-plus") ? ".tp-denom-btn-plus"
+            : active.classList.contains("tp-denom-btn-minus") ? ".tp-denom-btn-minus"
+                : ".tp-denom-count";
+
+        return { gridId: grid.id, index: Array.from(grid.children).indexOf(card), selector };
+    }
+
+    restoreFocus = (/** @type {{gridId:string,index:number,selector:string}|null} */ info) => {
+        if (!info) return;
+        const el = /** @type {HTMLElement|null} */ (
+            this.querySelector(`#${info.gridId}`)?.children[info.index]?.querySelector(info.selector)
+        );
+        el?.focus();
+    }
+
+    handleTabTrap = (/** @type {KeyboardEvent} */ ev) => {
+        if (ev.key !== "Tab") return;
+
+        const tabbables = this.getTabbables();
+        if (tabbables.length === 0) {
+            ev.preventDefault();
+            return;
+        }
+
+        const first = tabbables[0];
+        const last = tabbables[tabbables.length - 1];
+        const active = /** @type {HTMLElement} */ (document.activeElement);
+
+        // Si el foco se perdió (body), dejamos que el navegador decida
+        if (!active || !this.contains(active)) return;
+
+        const FOLLOWING = Node.DOCUMENT_POSITION_FOLLOWING;
+        const PRECEDING = Node.DOCUMENT_POSITION_PRECEDING;
+
+        if (!ev.shiftKey) {
+            // Tab: ¿estoy en el último, o en un elemento (ej. botón +) situado después del último?
+            const isAtEnd = active === last || !!(last.compareDocumentPosition(active) & FOLLOWING);
+            if (isAtEnd) {
+                ev.preventDefault();
+                first.focus();
+                if (first instanceof HTMLInputElement) first.select();
+            }
+        } else {
+            // Shift+Tab: ¿estoy en el primero, o antes del primero?
+            const isAtStart = active === first || !!(first.compareDocumentPosition(active) & PRECEDING);
+            if (isAtStart) {
+                ev.preventDefault();
+                last.focus();
+                if (last instanceof HTMLInputElement) last.select();
+            }
+        }
+    }
+    /**
+     * Elementos que realmente reciben foco con Tab dentro del componente
+     * (excluye tabindex="-1", deshabilitados y ocultos)
+     * @returns {HTMLElement[]}
+     */
+    getTabbables = () => {
+        const selector = 'input, select, textarea, button, a[href], [tabindex]:not([tabindex="-1"])';
+        return /** @type {HTMLElement[]} */ (Array.from(this.querySelectorAll(selector))).filter(el => {
+            if (el.getAttribute("tabindex") === "-1") return false;
+            if (/** @type {any} */ (el).disabled) return false;
+            // oculto (display:none o dentro de un contenedor .hidden)
+            return el.getClientRects().length > 0;
+        });
+    }
+
+    //bundary
+    /**
+ * Calcula la combinación óptima de denominaciones para alcanzar un monto exacto,
+ * minimizando el número total de billetes/monedas, respetando el inventario.
+ * Usa Programación Dinámica (bounded knapsack).
+ *
+ * @param {Money} targetAmount - Monto objetivo
+ * @param {Inventario_Denominacion_Caja[]} inventory - Inventario disponible
+ * @param {string} currency - "USD" | "NIO"
+ * @returns {Object.<number, number>|null} - Map { id_denominacion: cantidad } o null si no es posible
+ */
+    calculateOptimalCombination = (targetAmount, inventory, currency) => {
+        const targetCents = Math.round(targetAmount.toNumber() * 100);
+        if (targetCents === 0) return {};
+
+        // 1. Preparar denominaciones disponibles
+        const monedaEnum = currency === "USD" ? MonedaEnum.DOLARES : MonedaEnum.CORDOBAS;
+        const denoms = inventory
+            .filter(i => i.Denominacion_Catalogo?.moneda === monedaEnum)
+            .map(i => ({
+                id: i.Denominacion_Catalogo?.id_denominacion,
+                valueCents: Math.round((i.Denominacion_Catalogo?.valor ?? 0) * 100),
+                maxCount: i.cantidad_actual ?? 0
+            }))
+            .filter(d => d.valueCents > 0 && d.maxCount > 0)
+            .sort((a, b) => b.valueCents - a.valueCents); // Mayor a menor
+
+        if (denoms.length === 0) return null;
+
+        // 2. DP: dp[amount] = { minCoins, combination }
+        // Usamos un Map para evitar array gigante si targetCents es grande
+        const dp = new Map();
+        dp.set(0, { minCoins: 0, combo: new Map() });
+
+        for (const denom of denoms) {
+            const { id, valueCents, maxCount } = denom;
+            // Clonamos los estados actuales para no reutilizar la misma denominación en la misma iteración
+            const states = Array.from(dp.entries());
+            for (const [currentAmount, state] of states) {
+                for (let k = 1; k <= maxCount; k++) {
+                    const newAmount = currentAmount + k * valueCents;
+                    if (newAmount > targetCents) break;
+                    const newCoins = state.minCoins + k;
+                    const existing = dp.get(newAmount);
+                    if (!existing || newCoins < existing.minCoins) {
+                        const newCombo = new Map(state.combo);
+                        newCombo.set(id, (newCombo.get(id) ?? 0) + k);
+                        dp.set(newAmount, { minCoins: newCoins, combo: newCombo });
+                    }
+                }
+            }
+        }
+
+        const result = dp.get(targetCents);
+        if (!result) return null; // No hay combinación exacta posible
+
+        /**@type {Object.<string, any>} */
+        const output = {};
+        result.combo.forEach((/** @type {any} */ count, /** @type {string | number} */ id) => { output[id] = count; });
+        return output;
+    };
+
+    /**
+     * Aplica la combinación óptima a un bloque específico.
+     * @param {string} blockKey
+     * @param {Money} target
+     */
+    applyOptimalCombinationToBlock = (blockKey, target) => {
+        const currency = blockKey.split("_")[1].toUpperCase();
+        // En egresos y vueltos se usa inventario; aquí elegimos según contexto
+        const inventory = this.selectedOrder?.direccion === DirectionEnum.EGRESO
+            ? this.inventarioCajaOrigen
+            : this.inventarioCajaDestino;
+
+        const combination = this.calculateOptimalCombination(target, inventory, currency);
+        if (!combination) {
+            WAlertMessage.Warning(
+                `No es posible cubrir exactamente ${currency} $${target.toFixed(2)} con el inventario actual.`,
+                true
+            );
+            return;
+        }
+
+        // Resetear el bloque y aplicar la combinación
+        this.resetBlockCounts(blockKey);
+        for (const [idStr, count] of Object.entries(combination)) {
+            this.denomCountsByBlock[blockKey][parseInt(idStr)] = count;
+        }
+
+        this.renderAllDenominationGrids();
+        this.updateValidation();
+    };
+}
+
+customElements.define("w-transaction-processor-component", WOrderProcessorComponent);

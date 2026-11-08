@@ -52,6 +52,25 @@ namespace BusinessLogic.Empresa.Transactions
             // ============================================================
             // VALIDAR VUELTO CUANDO HAY EXCESO DE PAGO
             // ============================================================
+
+            decimal monto = order.monto.GetValueOrDefault();
+            if (order.Orden_Related != null)
+            {
+                var direccionO = order.direccion;
+                var directionRelated = order.Orden_Related.direccion;
+                if (direccionO.Equals(DirectionEnum.INGRESO) && directionRelated.Equals(DirectionEnum.EGRESO))
+                {
+                    monto -= order.Orden_Related.monto.GetValueOrDefault();
+                } else if (direccionO.Equals(DirectionEnum.EGRESO) && directionRelated.Equals(DirectionEnum.INGRESO))
+                {//TODO REVISAR DESPUES ESTA LOGICA
+                    monto -= order.Orden_Related.monto.GetValueOrDefault();
+                } else if (direccionO.Equals(directionRelated))
+                {
+                    monto += order.Orden_Related.monto.GetValueOrDefault();
+                }
+               
+            }
+
             if (isIngreso)
             {
                 // Calcular total pagado en la moneda de la orden
@@ -65,7 +84,7 @@ namespace BusinessLogic.Empresa.Transactions
                     totalPagadoEnMonedaOrden = totalPagoNIO + (totalPagoUSD * tasaCompraSistema);
                 }
 
-                decimal montoOrden = order.monto.GetValueOrDefault();
+                decimal montoOrden = monto;
                 decimal exceso = totalPagadoEnMonedaOrden - montoOrden;
 
                 // Si hay exceso, validar vuelto
@@ -134,7 +153,7 @@ namespace BusinessLogic.Empresa.Transactions
                     }
                 }
             }
-
+            
             // 2. Validar según el tipo de operación (código existente)
             if (order.tipo_operacion_cambio == TipoOperacionEnum.NONE ||
                 order.tipo_operacion_cambio == null)
@@ -142,13 +161,13 @@ namespace BusinessLogic.Empresa.Transactions
                 // PAGO SIMPLE: las denominaciones deben cubrir al menos el monto de la orden
                 if (order.moneda == MonedaEnum.DOLARES)
                 {
-                    if (totalPagoUSD < order.monto.GetValueOrDefault() - 0.01m)
+                    if (totalPagoUSD < monto - 0.01m)
                         return new ResponseService(400,
                             $"Las denominaciones en USD (${totalPagoUSD:F2}) no cubren el monto de la orden (${order.monto:F2})");
                 }
                 else
                 {
-                    if (totalPagoNIO < order.monto.GetValueOrDefault() - 0.01m)
+                    if (totalPagoNIO < monto - 0.01m)
                         return new ResponseService(400,
                             $"Las denominaciones en NIO (C${totalPagoNIO:F2}) no cubren el monto de la orden (C${order.monto:F2})");
                 }
@@ -156,22 +175,22 @@ namespace BusinessLogic.Empresa.Transactions
             else if (order.tipo_operacion_cambio == TipoOperacionEnum.MIXED_PAYMENT)
             {
                 decimal montoEnOrdenUSD = order.moneda == MonedaEnum.DOLARES
-                    ? order.monto.GetValueOrDefault()
-                    : order.monto.GetValueOrDefault() / tasaVentaSistema;
+                    ? monto
+                    : monto / tasaVentaSistema;
 
                 decimal pagoDirecto = order.moneda == MonedaEnum.DOLARES ? totalPagoUSD : totalPagoNIO;
                 decimal montoCambioEquivalente = order.moneda == MonedaEnum.DOLARES
-                    ? totalPagoNIO / tasaVentaSistema
-                    : totalPagoUSD * tasaCompraSistema;
+                    ? totalPagoNIO / tasaAplicada
+                    : totalPagoUSD * tasaAplicada;
 
                 if (order.moneda == MonedaEnum.DOLARES)
                 {
-                    order.monto_cambio_usd = order.monto.GetValueOrDefault() - pagoDirecto;
+                    order.monto_cambio_usd = monto - pagoDirecto;
                     order.monto_cambio_nio = totalPagoNIO;
                 }
                 else
                 {
-                    order.monto_cambio_nio = order.monto.GetValueOrDefault() - pagoDirecto;
+                    order.monto_cambio_nio = monto - pagoDirecto;
                     order.monto_cambio_usd = totalPagoUSD;
                 }
 

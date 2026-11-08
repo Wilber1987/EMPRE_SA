@@ -5,7 +5,7 @@ import { ModalVericateAction } from "../WDevCore/WComponents/ModalVericateAction
 import { WAlertMessage } from "../WDevCore/WComponents/WAlertMessage.js";
 import { FilterData } from "../WDevCore/WModules/CommonModel.js";
 import { Money } from "../WDevCore/WModules/Types/Money.js";
-import { html, WRender } from "../WDevCore/WModules/WComponentsTools.js";
+import { html } from "../WDevCore/WModules/WComponentsTools.js";
 import { Denominacion_Catalogo } from "./Model/Denominacion_Catalogo.js";
 import { Inventario_Denominacion_Caja } from "./Model/Inventario_Denominacion_Caja.js";
 import { DenominacionMovimientoDTO, DirectionEnum, MonedaEnum, Orden_Movimiento } from "./Model/Order_Movimiento.js";
@@ -188,7 +188,7 @@ export class WOrderProcessorComponent extends HTMLElement {
         }
 
         const isOrderUsd = this.selectedOrder.moneda === MonedaEnum.DOLARES;
-        const orderAmount = new Money(this.selectedOrder?.monto) ?? new Money(0);
+        const orderAmount = new Money(this.selectedOrder?.GetMonto()) ?? new Money(0);
         const exchangeRateCompra = this.TasaActual?.Valor_de_compra ?? 0;
         const exchangeRateVenta = this.TasaActual?.Valor_de_venta ?? 0;
 
@@ -273,7 +273,7 @@ export class WOrderProcessorComponent extends HTMLElement {
         }
 
         const isOrderUsd = this.selectedOrder.moneda === MonedaEnum.DOLARES;
-        const orderAmount = new Money(this.selectedOrder?.monto ?? 0);
+        const orderAmount = new Money(this.selectedOrder?.GetMonto() ?? 0);
         const tasaCompra = new Money(this.TasaActual?.Valor_de_compra ?? 0);
         const tasaVenta = new Money(this.TasaActual?.Valor_de_venta ?? 0);
 
@@ -344,122 +344,78 @@ export class WOrderProcessorComponent extends HTMLElement {
     }
 
     CreateEmptyState = () => {
-        return WRender.Create({
-            className: "tp-empty-state",
-            id: "emptyState",
-            children: [
-                WRender.Create({
-                    innerHTML: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                    </svg>`
-                }),
-                WRender.Create({ tagName: "p", innerText: "Seleccione una orden para procesar" }),
-                WRender.Create({ tagName: "p", innerText: "Las órdenes pendientes aparecen en el panel izquierdo." })
-            ]
-        });
+        return html`<div class="tp-empty-state" id="emptyState">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+            </svg>
+            <p>Seleccione una orden para procesar</p>
+            <p>Las órdenes pendientes aparecen en el panel izquierdo.</p>
+        </div>`;
     }
 
     CreateProcessingInterface = () => {
-        return WRender.Create({
-            className: "tp-processing-interface",
-            id: "processingInterface",
-            children: [
-                this.CreateTransactionData(),
-                this.CreateDenominationsSection()
-            ]
-        });
+        return html`<div class="tp-processing-interface" id="processingInterface">
+            ${this.CreateTransactionData()}
+            ${this.CreateDenominationsSection()}
+        </div>`;
     }
 
     CreateTransactionData = () => {
-        return WRender.Create({
-            className: "tp-transaction-data",
-            children: [
-                this.CreateOrderHeaderCard(),
-                this.CreateLiquidationMethod(),
-                this.CreateActionButton()
-            ]
-        });
+        return html`<div class="tp-transaction-data">
+            ${this.CreateOrderHeaderCard()}
+            ${this.CreateLiquidationMethod()}
+            ${this.CreateActionButton()}
+        </div>`;
     }
 
     CreateOrderHeaderCard = () => {
-        return WRender.Create({
-            className: "tp-card",
-            children: [
-                WRender.Create({
-                    className: "tp-order-header",
-                    children: [
-                        WRender.Create({
-                            children: [
-                                WRender.Create({
-                                    className: "tp-badges",
-                                    children: [
-                                        WRender.Create({ tagName: "span", id: "orderTypeBadge", className: "tp-badge tp-badge-type" }),
-                                        WRender.Create({ tagName: "span", id: "orderdireccionBadge", className: "tp-badge tp-badge-direccion" })
-                                    ]
-                                }),
-                                WRender.Create({
-                                    className: "tp-cliente-info",
-                                    innerHTML: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                            </svg>`,
-                                    children: [
-                                        WRender.Create({ tagName: "span", id: "clienteNameDisplay" })
-                                    ]
-                                })
-                            ]
-                        }),
-                        WRender.Create({
-                            className: "tp-amount-display",
-                            children: [
-                                WRender.Create({ tagName: "p", innerText: "Monto Base de la Orden" }),
-                                WRender.Create({ tagName: "p", id: "baseAmountDisplay", className: "tp-amount-value" })
-                            ]
-                        })
-                    ]
-                }),
-                WRender.Create({
-                    className: "tp-info-box",
-                    children: [
-                        WRender.Create({
-                            innerHTML: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>`
-                        }),
-                        WRender.Create({
-                            tagName: "span",
-                            innerText: "Esta orden fue generada en SAC. El monto original está en USD. Seleccione el método de liquidación a continuación."
-                        })
-                    ]
-                })
-            ]
-        });
+        return html`<div class="tp-card">
+            <div class="tp-order-header">
+                <div>
+                    <div class="tp-badges">
+                        <span id="orderTypeBadge" class="tp-badge tp-badge-type"></span>
+                        <span id="orderdireccionBadge" class="tp-badge tp-badge-direccion"></span>
+                    </div>
+                    <div class="tp-cliente-info">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                        <span id="clienteNameDisplay"></span>
+                    </div>
+                </div>
+                <div class="tp-amount-display">
+                    <p>Monto Base de la Orden</p>
+                    <p id="baseAmountDisplay" class="tp-amount-value"></p>
+                </div>
+            </div>
+            <div class="tp-info-box">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>Esta orden fue generada en SAC. El monto original está en USD. Seleccione el método de liquidación a continuación.</span>
+            </div>
+        </div>`;
     }
 
     CreateLiquidationMethod = () => {
-        const tasa = this.GetTasaAplicada()
+        const tasa = this.GetTasaAplicada();
 
         const liquidationBtnsArray = [];
         if (this.isFlexibleLiquidationModeActive || (!this.isFlexibleLiquidationModeActive && this.liquidationMode == "USD")) {
-            liquidationBtnsArray.push(this.CreateLiquidationButton("USD", "Solo Dólares (USD)", "Entrega o cobro 100% en moneda estadounidense."))
+            liquidationBtnsArray.push(this.CreateLiquidationButton("USD", "Solo Dólares (USD)", "Entrega o cobro 100% en moneda estadounidense."));
         }
         if (this.isFlexibleLiquidationModeActive || (!this.isFlexibleLiquidationModeActive && this.liquidationMode == "NIO")) {
-            liquidationBtnsArray.push(this.CreateLiquidationButton("NIO", "Solo Córdobas (NIO)", `Conversión total a moneda local (Tasa: ${tasa}).`))
+            liquidationBtnsArray.push(this.CreateLiquidationButton("NIO", "Solo Córdobas (NIO)", `Conversión total a moneda local (Tasa: ${tasa}).`));
         }
         if (this.isFlexibleLiquidationModeActive || (!this.isFlexibleLiquidationModeActive && this.liquidationMode == "MIXED_PAYMENT")) {
-            liquidationBtnsArray.push(this.CreateLiquidationButton("MIXED_PAYMENT", "Mixto / Mesa Cambiaria", "Dividir el monto entre USD y NIO."))
+            liquidationBtnsArray.push(this.CreateLiquidationButton("MIXED_PAYMENT", "Mixto / Mesa Cambiaria", "Dividir el monto entre USD y NIO."));
         }
 
-        return WRender.Create({
-            className: "tp-card",
-            children: [
-                WRender.Create({ tagName: "h3", innerText: "1. Método de Liquidación", className: "tp-section-title" }),
-                WRender.Create({
-                    className: "tp-liquidation-grid",
-                    children: [...liquidationBtnsArray]
-                }),
-                this.CreateMixedInputs()
-            ]
-        });
+        return html`<div class="tp-card">
+            <h3 class="tp-section-title">1. Método de Liquidación</h3>
+            <div class="tp-liquidation-grid">${liquidationBtnsArray}</div>
+            ${this.CreateMixedInputs()}
+        </div>`;
     }
 
     /**
@@ -468,100 +424,70 @@ export class WOrderProcessorComponent extends HTMLElement {
      * @param {string} description
      */
     CreateLiquidationButton = (mode, title, description) => {
-        return WRender.Create({
-            tagName: "button",
-            className: "tp-liquidation-btn",
-            id: `btnMode${mode}`,
-            onclick: () => this.setLiquidationMode(mode),
-            children: [
-                WRender.Create({ tagName: "div", innerText: title, className: "tp-btn-title" }),
-                WRender.Create({ tagName: "div", innerText: description, className: "tp-btn-desc" })
-            ]
-        });
+        return html`<button class="tp-liquidation-btn" id="btnMode${mode}" onclick="${() => this.setLiquidationMode(mode)}">
+            <div class="tp-btn-title">${title}</div>
+            <div class="tp-btn-desc">${description}</div>
+        </button>`;
     }
 
+    /**
+     * Maneja el evento onchange del input de USD en la distribución mixta
+     */
+    handleMixedInput = (/** @type {{ target: { value: number; }; }} */ ev) => {
+        if (!this.selectedOrder || !ev.target.value) return;
+
+        const exchangeRate = this.GetTasaAplicada();
+
+        // @ts-ignore
+        this.targetUsd = new Money(ev.target.value);
+        // @ts-ignore
+        this.targetNio = new Money(this.selectedOrder.monto)
+            .subtract(this.targetUsd)
+            .multiply(new Money(exchangeRate));
+
+        if (this.InputNIO) {
+            /** @type {HTMLInputElement} */ (this.InputNIO).value = String(/** @type {Money} */ (this.targetNio).toNumber());
+        }
+        this.updateMixedAmounts();
+    };
+
     CreateMixedInputs = () => {
-        this.InputUsd = WRender.Create({
-            tagName: "input",
-            type: "number",
-            id: "mixedUsdAmount",
-            step: "0.01",
-            min: 0,
-            className: "tp-mixed-input",
-            onchange: (/** @type {{ target: { value: any; }; }} */ ev) => {
-                if (this.selectedOrder != null) {
+        const usdInputTemplate = html`<input type="number" id="mixedUsdAmount" step="0.01" min="0" class="tp-mixed-input"
+            onchange="${(/** @type {{ target: { value: number; }; }} */ ev) => this.handleMixedInput(ev)}"/>`;
 
-                    const exchangeRate = this.GetTasaAplicada();
+        // Store reference for backward compatibility (used in handleMixedInput)
+        this.InputUsd = /** @type {HTMLInputElement} */ (usdInputTemplate.querySelector("#mixedUsdAmount"));
 
-                    this.targetUsd = new Money(ev.target.value);
-                    this.selectedOrder?.monto
-                    // @ts-ignore
-                    this.targetNio = new Money(this.selectedOrder.monto)
-                        .subtract(this.targetUsd)
-                        .multiply(new Money(exchangeRate))
-                    // @ts-ignore
-                    this.InputNIO.value = new Money(this.targetNio).toNumber();
-                    this.updateMixedAmounts()
-                }
+        const nioInputTemplate = html`<input type="number" id="mixedNioAmount" step="0.01" min="0" class="tp-mixed-input"/>`;
 
-            }
-        })
+        // Store reference for backward compatibility (used in handleMixedInput)
+        this.InputNIO = /** @type {HTMLInputElement} */ (nioInputTemplate.querySelector("#mixedNioAmount"));
 
-        this.InputNIO = WRender.Create({
-            tagName: "input",
-            type: "number",
-            id: "mixedNioAmount",
-            min: 0,
-            step: "0.01",
-            className: "tp-mixed-input",
-        })
-        return WRender.Create({
-            className: "tp-mixed-inputs",
-            id: "mixedInputs",
-            children: [
-                WRender.Create({
-                    className: "tp-mixed-header",
-                    children: [
-                        WRender.Create({
-                            innerHTML: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-                            </svg>`
-                        }),
-                        WRender.Create({ tagName: "h4", innerText: "Distribución del Monto (Mesa Cambiaria)" })
-                    ]
-                }),
-                WRender.Create({
-                    className: "tp-mixed-grid",
-                    children: [
-                        WRender.Create({
-                            children: [
-                                WRender.Create({ tagName: "label", innerText: "Monto a liquidar en USD" }),
-                                WRender.Create({
-                                    className: "tp-input-wrapper",
-                                    children: [
-                                        WRender.Create({ tagName: "span", innerText: "$", className: "tp-input-prefix" }),
-                                        this.InputUsd
-                                    ]
-                                })
-                            ]
-                        }),
-                        WRender.Create({
-                            children: [
-                                WRender.Create({ tagName: "label", innerText: "Monto a liquidar en NIO" }),
-                                WRender.Create({
-                                    className: "tp-input-wrapper",
-                                    children: [
-                                        WRender.Create({ tagName: "span", innerText: "C$", className: "tp-input-prefix" }),
-                                        this.InputNIO
-                                    ]
-                                })
-                            ]
-                        })
-                    ]
-                }),
-                WRender.Create({ tagName: "p", id: "mixedValidationMsg", className: "tp-validation-msg" })
-            ]
-        });
+        return html`<div class="tp-mixed-inputs" id="mixedInputs">
+            <div class="tp-mixed-header">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                </svg>
+                <h4>Distribución del Monto (Mesa Cambiaria)</h4>
+            </div>
+            <div class="tp-mixed-grid">
+                <div>
+                    <label>Monto a liquidar en USD</label>
+                    <div class="tp-input-wrapper">
+                        <span class="tp-input-prefix">$</span>
+                        ${usdInputTemplate}
+                    </div>
+                </div>
+                <div>
+                    <label>Monto a liquidar en NIO</label>
+                    <div class="tp-input-wrapper">
+                        <span class="tp-input-prefix">C$</span>
+                        ${nioInputTemplate}
+                    </div>
+                </div>
+            </div>
+            <p id="mixedValidationMsg" class="tp-validation-msg"></p>
+        </div>`;
     }
 
     CreateActionButton = () => {
@@ -577,16 +503,12 @@ export class WOrderProcessorComponent extends HTMLElement {
     }
 
     CreateDenominationsSection = () => {
-        return WRender.Create({
-            className: "tp-denominations-section",
-            id: "denominationsSection",
-            children: [
-                WRender.Create({ tagName: "h3", innerText: "2. Registro de Denominaciones", className: "tp-section-title" }),
-                this.CreateCurrencyDenomination("USD", "Dólares (USD)"),
-                this.CreateCurrencyDenomination("NIO", "Córdobas (NIO)"),
-                this.CreateValidationStatus()
-            ]
-        });
+        return html`<div class="tp-denominations-section" id="denominationsSection">
+            <h3 class="tp-section-title">2. Registro de Denominaciones</h3>
+            ${this.CreateCurrencyDenomination("USD", "Dólares (USD)")}
+            ${this.CreateCurrencyDenomination("NIO", "Córdobas (NIO)")}
+            ${this.CreateValidationStatus()}
+        </div>`;
     }
 
     /**
@@ -599,35 +521,19 @@ export class WOrderProcessorComponent extends HTMLElement {
         const contextClass = context === "exchange" ? "tp-currency-exchange" : context === "change" ? "tp-currency-change" : "tp-currency-payment";
         const blockId = `${context}_${currency.toLowerCase()}`;
 
-        return WRender.Create({
-            className: `tp-currency-container ${contextClass}`,
-            id: `${blockId}Container`,
-            children: [
-                WRender.Create({
-                    className: "tp-currency-header",
-                    children: [
-                        WRender.Create({
-                            className: "tp-currency-title",
-                            children: [
-                                WRender.Create({ className: `tp-color-dot ${colorClass}` }),
-                                WRender.Create({ tagName: "h4", innerText: label })
-                            ]
-                        }),
-                        WRender.Create({
-                            className: "tp-currency-summary",
-                            children: [
-                                WRender.Create({ innerHTML: `Requerido: <span class="tp-bold" id="target_${blockId}_Display">$0.00</span>` }),
-                                WRender.Create({ innerHTML: ` | Contado: <span class="tp-bold" id="counted_${blockId}_Display">$0.00</span>` })
-                            ]
-                        })
-                    ]
-                }),
-                WRender.Create({
-                    className: `tp-denom-grid`,
-                    id: `${blockId}Grid`
-                })
-            ]
-        });
+        return html`<div class="tp-currency-container ${contextClass}" id="${blockId}Container">
+            <div class="tp-currency-header">
+                <div class="tp-currency-title">
+                    <span class="tp-color-dot ${colorClass}"></span>
+                    <h4>${label}</h4>
+                </div>
+                <div class="tp-currency-summary">
+                    Requerido: <span class="tp-bold" id="target_${blockId}_Display">$0.00</span>
+                    | Contado: <span class="tp-bold" id="counted_${blockId}_Display">$0.00</span>
+                </div>
+            </div>
+            <div class="tp-denom-grid" id="${blockId}Grid"></div>
+        </div>`;
     }
 
     /**
@@ -636,108 +542,65 @@ export class WOrderProcessorComponent extends HTMLElement {
     CreateChangeModeSection = () => {
         //this.changeMode = "USD";
         //alert(this.changeMode)
-        return WRender.Create({
-            className: "tp-card tp-change-mode-section",
-            id: "changeModeSection",
-            children: [
-                WRender.Create({
-                    className: "tp-change-mode-header",
-                    children: [
-                        WRender.Create({ tagName: "h4", innerText: "Exceso de Pago - Seleccione el tipo de vuelto" })
-                    ]
-                }),
-                WRender.Create({
-                    className: "tp-change-mode-options",
-                    children: [
-                        WRender.Create({
-                            className: "tp-radio-option",
-                            children: [
-                                WRender.Create({
-                                    tagName: "input",
-                                    type: "radio",
-                                    name: "changeMode",
-                                    id: "changeModeUSD",
-                                    value: "USD",
-                                    checked: this.changeMode == "USD",
-                                    onchange: () => {
-                                        this.changeMode = "USD"; // o "NIO" en el otro radio
-                                        this.resetBlockCounts("change_usd");
-                                        this.resetBlockCounts("change_nio");
-                                        this.renderDenominationBlocks();
-                                        // Auto-calcular el vuelto óptimo
-                                        const target = this.getTargetForChangeBlock("change_usd");
-                                        if (target.toNumber() > 0) this.applyOptimalCombinationToBlock("change_usd", target);
 
-                                        this.updateValidation();
-                                    }
-                                }),
-                                WRender.Create({
-                                    tagName: "label",
-                                    htmlFor: "changeModeUSD",
-                                    innerText: "Dar cambio en Dólares (USD)",
-                                    className: "tp-radio-label"
-                                })
-                            ]
-                        }),
-                        WRender.Create({
-                            className: "tp-radio-option",
-                            children: [
-                                WRender.Create({
-                                    tagName: "input",
-                                    type: "radio",
-                                    name: "changeMode",
-                                    id: "changeModeNIO",
-                                    value: "NIO",
-                                    checked: this.changeMode == "NIO",
-                                    onchange: () => {
-                                        this.changeMode = "NIO";
-                                        this.resetBlockCounts("change_usd");
-                                        this.resetBlockCounts("change_nio");
-                                        this.renderDenominationBlocks();
-                                        // Auto-calcular el vuelto óptimo
-                                        const target = this.getTargetForChangeBlock("change_nio");
-                                        if (target.toNumber() > 0) this.applyOptimalCombinationToBlock("change_nio", target);
-                                        this.updateValidation();
-                                    }
-                                }),
-                                WRender.Create({
-                                    tagName: "label",
-                                    htmlFor: "changeModeNIO",
-                                    innerText: "Dar cambio en Córdobas (NIO)",
-                                    className: "tp-radio-label"
-                                })
-                            ]
-                        })
-                    ]
-                })
-            ]
-        });
+        const changeHandlerUSD = () => {
+            this.changeMode = "USD"; // o "NIO" en el otro radio
+            this.resetBlockCounts("change_usd");
+            this.resetBlockCounts("change_nio");
+            this.renderDenominationBlocks();
+            // Auto-calcular el vuelto óptimo
+            const target = this.getTargetForChangeBlock("change_usd");
+            if (target.toNumber() > 0) this.applyOptimalCombinationToBlock("change_usd", target);
+            this.updateValidation();
+        };
+
+        const changeHandlerNIO = () => {
+            this.changeMode = "NIO";
+            this.resetBlockCounts("change_usd");
+            this.resetBlockCounts("change_nio");
+            this.renderDenominationBlocks();
+            // Auto-calcular el vuelto óptimo
+            const target = this.getTargetForChangeBlock("change_nio");
+            if (target.toNumber() > 0) this.applyOptimalCombinationToBlock("change_nio", target);
+            this.updateValidation();
+        };
+
+        return html`<div class="tp-card tp-change-mode-section" id="changeModeSection">
+            <div class="tp-change-mode-header">
+                <h4>Exceso de Pago - Seleccione el tipo de vuelto</h4>
+            </div>
+            <div class="tp-change-mode-options">
+                <label class="tp-radio-option">
+                    <input type="radio" name="changeMode" id="changeModeUSD" value="USD"
+                        ?checked="${this.changeMode == "USD"}" onchange="${changeHandlerUSD}"/>
+                    <span class="tp-radio-label">Dar cambio en Dólares (USD)</span>
+                </label>
+                <label class="tp-radio-option">
+                    <input type="radio" name="changeMode" id="changeModeNIO" value="NIO"
+                        ?checked="${this.changeMode == "NIO"}" onchange="${changeHandlerNIO}"/>
+                    <span class="tp-radio-label">Dar cambio en Córdobas (NIO)</span>
+                </label>
+            </div>
+        </div>`;
     }
 
     CreateValidationStatus = () => {
-        return WRender.Create({
-            className: "tp-validation-status tp-validation-error",
-            id: "validationStatus",
-            children: [
-                WRender.Create({
-                    id: "statusIcon",
-                    innerHTML: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>`
-                }),
-                WRender.Create({
-                    children: [
-                        WRender.Create({ tagName: "p", id: "statusTitle", innerText: "Monto no coincide", className: "tp-status-title" }),
-                        WRender.Create({ tagName: "p", id: "statusDesc", innerText: "Revise las denominaciones ingresadas.", className: "tp-status-desc" })
-                    ]
-                })
-            ]
-        });
+        return html`<div class="tp-validation-status tp-validation-error" id="validationStatus">
+            <span id="statusIcon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </span>
+            <div>
+                <p id="statusTitle" class="tp-status-title">Monto no coincide</p>
+                <p id="statusDesc" class="tp-status-desc">Revise las denominaciones ingresadas.</p>
+            </div>
+        </div>`;
     }
 
     /**
-  * @param {Orden_Movimiento} order
-  */
+     * @param {Orden_Movimiento} order
+     */
     selectOrder = (order) => {
         this.selectedOrder = order;
         this.liquidationMode = this.liquidationMode ?? null;
@@ -759,7 +622,12 @@ export class WOrderProcessorComponent extends HTMLElement {
         const baseAmountDisplay = this.querySelector("#baseAmountDisplay");
 
         if (clienteNameDisplay) clienteNameDisplay.textContent = order.Cliente;
-        if (baseAmountDisplay) baseAmountDisplay.textContent = `$${order.monto?.toFixed(2)} USD`;
+        if (baseAmountDisplay) {
+            baseAmountDisplay.textContent = `${new Money(order.GetMonto(), "USD")} ${order.moneda}`;
+            if (order.Orden_Related != null) {
+                baseAmountDisplay.textContent += ` (${new Money(order.monto, "USD")} - ${new Money(order.Orden_Related.monto, "USD")}) `;
+            }
+        }
 
         const typeBadge = this.querySelector("#orderTypeBadge");
         if (typeBadge) {
@@ -809,7 +677,7 @@ export class WOrderProcessorComponent extends HTMLElement {
         if (activeBtn) activeBtn.classList.add("tp-liquidation-btn-active");
 
         const isOrderUsd = this.selectedOrder.moneda === MonedaEnum.DOLARES;
-        const orderAmount = new Money(this.selectedOrder?.monto ?? 0);
+        const orderAmount = new Money(this.selectedOrder?.GetMonto() ?? 0);
         const tasa = this.GetTasaAplicada();
 
         const exchangeRate = new Money(tasa ?? 0);
@@ -1008,22 +876,15 @@ export class WOrderProcessorComponent extends HTMLElement {
     }
 
     CreateExchangeInfoBox = (/** @type {string} */ title, /** @type {string} */ description) => {
-        return WRender.Create({
-            className: "tp-info-box tp-exchange-info-box",
-            children: [
-                WRender.Create({
-                    innerHTML: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-                </svg>`
-                }),
-                WRender.Create({
-                    children: [
-                        WRender.Create({ tagName: "strong", innerText: title }),
-                        WRender.Create({ tagName: "p", innerText: description })
-                    ]
-                })
-            ]
-        });
+        return html`<div class="tp-info-box tp-exchange-info-box">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+            </svg>
+            <div>
+                <strong>${title}</strong>
+                <p>${description}</p>
+            </div>
+        </div>`;
     }
 
     updateMixedAmounts = () => {
@@ -1032,7 +893,7 @@ export class WOrderProcessorComponent extends HTMLElement {
         const totalEquivalentUsd = new Money(this.targetUsd)
             .add(new Money(this.targetNio)
                 .divide(new Money(exchangeRate)))
-        const orderUsd = this.selectedOrder?.monto ?? 0;
+        const orderUsd = this.selectedOrder?.GetMonto() ?? 0;
         // @ts-ignore
         const diff = Math.abs(totalEquivalentUsd - orderUsd);
 
@@ -1198,7 +1059,7 @@ export class WOrderProcessorComponent extends HTMLElement {
         if (this.liquidationMode === "MIXED_PAYMENT") {
             const exchangeRate = this.GetTasaAplicada();
             const isOrderUsd = this.selectedOrder.moneda === MonedaEnum.DOLARES;
-            const orderAmount = new Money(this.selectedOrder?.monto) ?? new Money(0);
+            const orderAmount = new Money(this.selectedOrder?.GetMonto()) ?? new Money(0);
 
             let totalInOrderCurrency;
             if (isOrderUsd) {
@@ -1387,36 +1248,37 @@ export class WOrderProcessorComponent extends HTMLElement {
     }
 
     showSuccessModal = () => {
-        const modal = WRender.Create({
-            className: "tp-modal-overlay",
-            id: "successModal",
-            children: [
-                WRender.Create({
-                    className: "tp-modal-content",
-                    children: [
-                        WRender.Create({
-                            className: "tp-modal-icon",
-                            innerHTML: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                            </svg>`
-                        }),
-                        WRender.Create({ tagName: "h3", innerText: "¡Transacción Exitosa!" }),
-                        WRender.Create({
-                            tagName: "p",
-                            innerHTML: `La orden <span class="tp-bold">${this.selectedOrder?.id_usuario_crea?.toString()}</span> ha sido procesada correctamente y el arqueo de denominaciones ha sido registrado.`
-                        }),
-                        WRender.Create({
-                            tagName: "button",
-                            innerText: "Aceptar y Nueva Operación",
-                            className: "tp-modal-btn",
-                            onclick: () => this.closeModal()
-                        })
-                    ]
-                })
-            ]
-        });
+        WAlertMessage.Success("¡Transacción Exitosa!", true, "center", true)
+        // const modal = WRender.Create({
+        //     className: "tp-modal-overlay",
+        //     id: "successModal",
+        //     children: [
+        //         WRender.Create({
+        //             className: "tp-modal-content",
+        //             children: [
+        //                 WRender.Create({
+        //                     className: "tp-modal-icon",
+        //                     innerHTML: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        //                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+        //                     </svg>`
+        //                 }),
+        //                 WRender.Create({ tagName: "h3", innerText: "¡Transacción Exitosa!" }),
+        //                 WRender.Create({
+        //                     tagName: "p",
+        //                     innerHTML: `La orden <span class="tp-bold">${this.selectedOrder?.id_usuario_crea?.toString()}</span> ha sido procesada correctamente y el arqueo de denominaciones ha sido registrado.`
+        //                 }),
+        //                 WRender.Create({
+        //                     tagName: "button",
+        //                     innerText: "Aceptar y Nueva Operación",
+        //                     className: "tp-modal-btn",
+        //                     onclick: () => this.closeModal()
+        //                 })
+        //             ]
+        //         })
+        //     ]
+        // });
 
-        this.append(modal);
+        // this.append(modal);
     }
 
     /**

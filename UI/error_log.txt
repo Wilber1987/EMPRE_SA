@@ -1337,3 +1337,479 @@ Incorrect syntax near 'IsDeleted'.
    at System.Data.SqlClient.SqlConnection.Open()
    at APPCORE.EntityClass.Save(Boolean fullInsert) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\EntityStructure\EntityClass.cs:line 131
    at APPCORE.LoggerServices.AddMessageError(String message, Exception ex) in D:\repos\NETCORE\EmpresaUpdated\AppCore\LoggerServices.cs:line 77
+[24/10/2026 21:08:24] Failed to log true error to file: Ambiguous match found for 'APPCORE.BDCore.Abstracts.WDataMapper T TakeObject[T](APPCORE.EntityClass, System.String, Boolean)'.
+   at System.RuntimeType.GetMethodImplCommon(String name, Int32 genericParameterCount, BindingFlags bindingAttr, Binder binder, CallingConventions callConv, Type[] types, ParameterModifier[] modifiers)
+   at System.Type.GetMethod(String name, BindingFlags bindingAttr)
+   at APPCORE.BDCore.Abstracts.WDataMapper.UpdateObject(EntityClass entity, String[] IdObject) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\BDCore\DataMapper.cs:line 202
+   at APPCORE.EntityClass.Update(String[] Id) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\EntityStructure\EntityClass.cs:line 216
+[24/10/2026 21:08:24] Failed to log error to the database: Implicit distributed transactions have not been enabled. If you're intentionally starting a distributed transaction, set TransactionManager.ImplicitDistributedTransactions to true.
+   at System.Transactions.DtcProxyShim.DtcProxyShimFactory.ConnectToProxy(String nodeName, Guid resourceManagerIdentifier, Object managedIdentifier, Boolean& nodeNameMatches, Byte[]& whereabouts, ResourceManagerShim& resourceManagerShim)
+   at System.Transactions.Oletx.DtcTransactionManager.Initialize()
+   at System.Transactions.Oletx.DtcTransactionManager.get_ProxyShimFactory()
+   at System.Transactions.TransactionInterop.GetOletxTransactionFromTransmitterPropagationToken(Byte[] propagationToken)
+   at System.Transactions.TransactionStatePSPEOperation.PSPEPromote(InternalTransaction tx)
+   at System.Transactions.TransactionStateDelegatedBase.EnterState(InternalTransaction tx)
+   at System.Transactions.EnlistableStates.Promote(InternalTransaction tx)
+   at System.Transactions.Transaction.Promote()
+   at System.Transactions.TransactionInterop.ConvertToOletxTransaction(Transaction transaction)
+   at System.Transactions.TransactionInterop.GetExportCookie(Transaction transaction, Byte[] whereabouts)
+   at System.Data.SqlClient.SqlInternalConnection.GetTransactionCookie(Transaction transaction, Byte[] whereAbouts)
+   at System.Data.SqlClient.SqlInternalConnection.EnlistNonNull(Transaction tx)
+   at System.Data.ProviderBase.DbConnectionPool.PrepareConnection(DbConnection owningObject, DbConnectionInternal obj, Transaction transaction)
+   at System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionFactory.TryGetConnection(DbConnection owningConnection, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal oldConnection, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionInternal.TryOpenConnectionInternal(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at System.Data.SqlClient.SqlConnection.Open()
+   at APPCORE.EntityClass.Save(Boolean fullInsert) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\EntityStructure\EntityClass.cs:line 131
+   at APPCORE.LoggerServices.AddMessageError(String message, Exception ex) in D:\repos\NETCORE\EmpresaUpdated\AppCore\LoggerServices.cs:line 77
+[24/10/2026 21:08:36] Failed to log true error to file: Ambiguous match found for 'APPCORE.BDCore.Abstracts.WDataMapper T TakeObject[T](APPCORE.EntityClass, System.String, Boolean)'.
+   at System.RuntimeType.GetMethodImplCommon(String name, Int32 genericParameterCount, BindingFlags bindingAttr, Binder binder, CallingConventions callConv, Type[] types, ParameterModifier[] modifiers)
+   at System.Type.GetMethod(String name, BindingFlags bindingAttr)
+   at APPCORE.BDCore.Abstracts.WDataMapper.UpdateObject(EntityClass entity, String[] IdObject) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\BDCore\DataMapper.cs:line 202
+   at APPCORE.EntityClass.Update(String[] Id) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\EntityStructure\EntityClass.cs:line 216
+[24/10/2026 21:08:36] Failed to log error to the database: Implicit distributed transactions have not been enabled. If you're intentionally starting a distributed transaction, set TransactionManager.ImplicitDistributedTransactions to true.
+   at System.Transactions.DtcProxyShim.DtcProxyShimFactory.ConnectToProxy(String nodeName, Guid resourceManagerIdentifier, Object managedIdentifier, Boolean& nodeNameMatches, Byte[]& whereabouts, ResourceManagerShim& resourceManagerShim)
+   at System.Transactions.Oletx.DtcTransactionManager.Initialize()
+   at System.Transactions.Oletx.DtcTransactionManager.get_ProxyShimFactory()
+   at System.Transactions.TransactionInterop.GetOletxTransactionFromTransmitterPropagationToken(Byte[] propagationToken)
+   at System.Transactions.TransactionStatePSPEOperation.PSPEPromote(InternalTransaction tx)
+   at System.Transactions.TransactionStateDelegatedBase.EnterState(InternalTransaction tx)
+   at System.Transactions.EnlistableStates.Promote(InternalTransaction tx)
+   at System.Transactions.Transaction.Promote()
+   at System.Transactions.TransactionInterop.ConvertToOletxTransaction(Transaction transaction)
+   at System.Transactions.TransactionInterop.GetExportCookie(Transaction transaction, Byte[] whereabouts)
+   at System.Data.SqlClient.SqlInternalConnection.GetTransactionCookie(Transaction transaction, Byte[] whereAbouts)
+   at System.Data.SqlClient.SqlInternalConnection.EnlistNonNull(Transaction tx)
+   at System.Data.ProviderBase.DbConnectionPool.PrepareConnection(DbConnection owningObject, DbConnectionInternal obj, Transaction transaction)
+   at System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionFactory.TryGetConnection(DbConnection owningConnection, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal oldConnection, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionInternal.TryOpenConnectionInternal(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at System.Data.SqlClient.SqlConnection.Open()
+   at APPCORE.EntityClass.Save(Boolean fullInsert) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\EntityStructure\EntityClass.cs:line 131
+   at APPCORE.LoggerServices.AddMessageError(String message, Exception ex) in D:\repos\NETCORE\EmpresaUpdated\AppCore\LoggerServices.cs:line 77
+[24/10/2026 21:08:58] Failed to log true error to file: Ambiguous match found for 'APPCORE.BDCore.Abstracts.WDataMapper T TakeObject[T](APPCORE.EntityClass, System.String, Boolean)'.
+   at System.RuntimeType.GetMethodImplCommon(String name, Int32 genericParameterCount, BindingFlags bindingAttr, Binder binder, CallingConventions callConv, Type[] types, ParameterModifier[] modifiers)
+   at System.Type.GetMethod(String name, BindingFlags bindingAttr)
+   at APPCORE.BDCore.Abstracts.WDataMapper.UpdateObject(EntityClass entity, String[] IdObject) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\BDCore\DataMapper.cs:line 202
+   at APPCORE.EntityClass.Update(String[] Id) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\EntityStructure\EntityClass.cs:line 216
+[24/10/2026 21:08:58] Failed to log error to the database: Implicit distributed transactions have not been enabled. If you're intentionally starting a distributed transaction, set TransactionManager.ImplicitDistributedTransactions to true.
+   at System.Transactions.DtcProxyShim.DtcProxyShimFactory.ConnectToProxy(String nodeName, Guid resourceManagerIdentifier, Object managedIdentifier, Boolean& nodeNameMatches, Byte[]& whereabouts, ResourceManagerShim& resourceManagerShim)
+   at System.Transactions.Oletx.DtcTransactionManager.Initialize()
+   at System.Transactions.Oletx.DtcTransactionManager.get_ProxyShimFactory()
+   at System.Transactions.TransactionInterop.GetOletxTransactionFromTransmitterPropagationToken(Byte[] propagationToken)
+   at System.Transactions.TransactionStatePSPEOperation.PSPEPromote(InternalTransaction tx)
+   at System.Transactions.TransactionStateDelegatedBase.EnterState(InternalTransaction tx)
+   at System.Transactions.EnlistableStates.Promote(InternalTransaction tx)
+   at System.Transactions.Transaction.Promote()
+   at System.Transactions.TransactionInterop.ConvertToOletxTransaction(Transaction transaction)
+   at System.Transactions.TransactionInterop.GetExportCookie(Transaction transaction, Byte[] whereabouts)
+   at System.Data.SqlClient.SqlInternalConnection.GetTransactionCookie(Transaction transaction, Byte[] whereAbouts)
+   at System.Data.SqlClient.SqlInternalConnection.EnlistNonNull(Transaction tx)
+   at System.Data.ProviderBase.DbConnectionPool.PrepareConnection(DbConnection owningObject, DbConnectionInternal obj, Transaction transaction)
+   at System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionFactory.TryGetConnection(DbConnection owningConnection, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal oldConnection, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionInternal.TryOpenConnectionInternal(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at System.Data.SqlClient.SqlConnection.Open()
+   at APPCORE.EntityClass.Save(Boolean fullInsert) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\EntityStructure\EntityClass.cs:line 131
+   at APPCORE.LoggerServices.AddMessageError(String message, Exception ex) in D:\repos\NETCORE\EmpresaUpdated\AppCore\LoggerServices.cs:line 77
+[24/10/2026 21:09:33] Failed to log true error to file: Ambiguous match found for 'APPCORE.BDCore.Abstracts.WDataMapper T TakeObject[T](APPCORE.EntityClass, System.String, Boolean)'.
+   at System.RuntimeType.GetMethodImplCommon(String name, Int32 genericParameterCount, BindingFlags bindingAttr, Binder binder, CallingConventions callConv, Type[] types, ParameterModifier[] modifiers)
+   at System.RuntimeType.GetMethodImpl(String name, BindingFlags bindingAttr, Binder binder, CallingConventions callConv, Type[] types, ParameterModifier[] modifiers)
+   at System.Type.GetMethod(String name, BindingFlags bindingAttr)
+   at APPCORE.BDCore.Abstracts.WDataMapper.UpdateObject(EntityClass entity, String[] IdObject) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\BDCore\DataMapper.cs:line 202
+   at APPCORE.EntityClass.Update(String[] Id) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\EntityStructure\EntityClass.cs:line 216
+[24/10/2026 21:09:33] Failed to log error to the database: Implicit distributed transactions have not been enabled. If you're intentionally starting a distributed transaction, set TransactionManager.ImplicitDistributedTransactions to true.
+   at System.Transactions.DtcProxyShim.DtcProxyShimFactory.ConnectToProxy(String nodeName, Guid resourceManagerIdentifier, Object managedIdentifier, Boolean& nodeNameMatches, Byte[]& whereabouts, ResourceManagerShim& resourceManagerShim)
+   at System.Transactions.Oletx.DtcTransactionManager.Initialize()
+   at System.Transactions.Oletx.DtcTransactionManager.get_ProxyShimFactory()
+   at System.Transactions.TransactionInterop.GetOletxTransactionFromTransmitterPropagationToken(Byte[] propagationToken)
+   at System.Transactions.TransactionStatePSPEOperation.PSPEPromote(InternalTransaction tx)
+   at System.Transactions.TransactionStateDelegatedBase.EnterState(InternalTransaction tx)
+   at System.Transactions.EnlistableStates.Promote(InternalTransaction tx)
+   at System.Transactions.Transaction.Promote()
+   at System.Transactions.TransactionInterop.ConvertToOletxTransaction(Transaction transaction)
+   at System.Transactions.TransactionInterop.GetExportCookie(Transaction transaction, Byte[] whereabouts)
+   at System.Data.SqlClient.SqlInternalConnection.GetTransactionCookie(Transaction transaction, Byte[] whereAbouts)
+   at System.Data.SqlClient.SqlInternalConnection.EnlistNonNull(Transaction tx)
+   at System.Data.SqlClient.SqlInternalConnection.Enlist(Transaction tx)
+   at System.Data.SqlClient.SqlInternalConnectionTds.Activate(Transaction transaction)
+   at System.Data.ProviderBase.DbConnectionInternal.ActivateConnection(Transaction transaction)
+   at System.Data.ProviderBase.DbConnectionPool.PrepareConnection(DbConnection owningObject, DbConnectionInternal obj, Transaction transaction)
+   at System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionFactory.TryGetConnection(DbConnection owningConnection, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal oldConnection, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionInternal.TryOpenConnectionInternal(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at System.Data.ProviderBase.DbConnectionClosed.TryOpenConnection(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at System.Data.SqlClient.SqlConnection.TryOpen(TaskCompletionSource`1 retry)
+   at System.Data.SqlClient.SqlConnection.Open()
+   at APPCORE.EntityClass.Save(Boolean fullInsert) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\EntityStructure\EntityClass.cs:line 131
+   at APPCORE.LoggerServices.AddMessageError(String message, Exception ex) in D:\repos\NETCORE\EmpresaUpdated\AppCore\LoggerServices.cs:line 77
+[24/10/2026 21:10:12] Failed to log true error to file: Ambiguous match found for 'APPCORE.BDCore.Abstracts.WDataMapper T TakeObject[T](APPCORE.EntityClass, System.String, Boolean)'.
+   at System.RuntimeType.GetMethodImplCommon(String name, Int32 genericParameterCount, BindingFlags bindingAttr, Binder binder, CallingConventions callConv, Type[] types, ParameterModifier[] modifiers)
+   at System.RuntimeType.GetMethodImpl(String name, BindingFlags bindingAttr, Binder binder, CallingConventions callConv, Type[] types, ParameterModifier[] modifiers)
+   at System.Type.GetMethod(String name, BindingFlags bindingAttr)
+   at APPCORE.BDCore.Abstracts.WDataMapper.UpdateObject(EntityClass entity, String[] IdObject) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\BDCore\DataMapper.cs:line 202
+   at APPCORE.EntityClass.Update(String[] Id) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\EntityStructure\EntityClass.cs:line 216
+[24/10/2026 21:10:12] Failed to log error to the database: Implicit distributed transactions have not been enabled. If you're intentionally starting a distributed transaction, set TransactionManager.ImplicitDistributedTransactions to true.
+   at System.Transactions.DtcProxyShim.DtcProxyShimFactory.ConnectToProxy(String nodeName, Guid resourceManagerIdentifier, Object managedIdentifier, Boolean& nodeNameMatches, Byte[]& whereabouts, ResourceManagerShim& resourceManagerShim)
+   at System.Transactions.Oletx.DtcTransactionManager.Initialize()
+   at System.Transactions.Oletx.DtcTransactionManager.get_ProxyShimFactory()
+   at System.Transactions.TransactionInterop.GetOletxTransactionFromTransmitterPropagationToken(Byte[] propagationToken)
+   at System.Transactions.TransactionStatePSPEOperation.PSPEPromote(InternalTransaction tx)
+   at System.Transactions.TransactionStateDelegatedBase.EnterState(InternalTransaction tx)
+   at System.Transactions.EnlistableStates.Promote(InternalTransaction tx)
+   at System.Transactions.Transaction.Promote()
+   at System.Transactions.TransactionInterop.ConvertToOletxTransaction(Transaction transaction)
+   at System.Transactions.TransactionInterop.GetExportCookie(Transaction transaction, Byte[] whereabouts)
+   at System.Data.SqlClient.SqlInternalConnection.GetTransactionCookie(Transaction transaction, Byte[] whereAbouts)
+   at System.Data.SqlClient.SqlInternalConnection.EnlistNonNull(Transaction tx)
+   at System.Data.SqlClient.SqlInternalConnection.Enlist(Transaction tx)
+   at System.Data.SqlClient.SqlInternalConnectionTds.Activate(Transaction transaction)
+   at System.Data.ProviderBase.DbConnectionInternal.ActivateConnection(Transaction transaction)
+   at System.Data.ProviderBase.DbConnectionPool.PrepareConnection(DbConnection owningObject, DbConnectionInternal obj, Transaction transaction)
+   at System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionFactory.TryGetConnection(DbConnection owningConnection, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal oldConnection, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionInternal.TryOpenConnectionInternal(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at System.Data.ProviderBase.DbConnectionClosed.TryOpenConnection(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at System.Data.SqlClient.SqlConnection.TryOpen(TaskCompletionSource`1 retry)
+   at System.Data.SqlClient.SqlConnection.Open()
+   at APPCORE.EntityClass.Save(Boolean fullInsert) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\EntityStructure\EntityClass.cs:line 131
+   at APPCORE.LoggerServices.AddMessageError(String message, Exception ex) in D:\repos\NETCORE\EmpresaUpdated\AppCore\LoggerServices.cs:line 77
+[24/10/2026 21:10:46] Failed to log true error to file: Ambiguous match found for 'APPCORE.BDCore.Abstracts.WDataMapper T TakeObject[T](APPCORE.EntityClass, System.String, Boolean)'.
+   at System.RuntimeType.GetMethodImplCommon(String name, Int32 genericParameterCount, BindingFlags bindingAttr, Binder binder, CallingConventions callConv, Type[] types, ParameterModifier[] modifiers)
+   at System.RuntimeType.GetMethodImpl(String name, BindingFlags bindingAttr, Binder binder, CallingConventions callConv, Type[] types, ParameterModifier[] modifiers)
+   at System.Type.GetMethod(String name, BindingFlags bindingAttr)
+   at APPCORE.BDCore.Abstracts.WDataMapper.UpdateObject(EntityClass entity, String[] IdObject) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\BDCore\DataMapper.cs:line 202
+   at APPCORE.EntityClass.Update(String[] Id) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\EntityStructure\EntityClass.cs:line 216
+[24/10/2026 21:10:46] Failed to log error to the database: Implicit distributed transactions have not been enabled. If you're intentionally starting a distributed transaction, set TransactionManager.ImplicitDistributedTransactions to true.
+   at System.Transactions.DtcProxyShim.DtcProxyShimFactory.ConnectToProxy(String nodeName, Guid resourceManagerIdentifier, Object managedIdentifier, Boolean& nodeNameMatches, Byte[]& whereabouts, ResourceManagerShim& resourceManagerShim)
+   at System.Transactions.Oletx.DtcTransactionManager.Initialize()
+   at System.Transactions.Oletx.DtcTransactionManager.get_ProxyShimFactory()
+   at System.Transactions.TransactionInterop.GetOletxTransactionFromTransmitterPropagationToken(Byte[] propagationToken)
+   at System.Transactions.TransactionStatePSPEOperation.PSPEPromote(InternalTransaction tx)
+   at System.Transactions.TransactionStateDelegatedBase.EnterState(InternalTransaction tx)
+   at System.Transactions.EnlistableStates.Promote(InternalTransaction tx)
+   at System.Transactions.Transaction.Promote()
+   at System.Transactions.TransactionInterop.ConvertToOletxTransaction(Transaction transaction)
+   at System.Transactions.TransactionInterop.GetExportCookie(Transaction transaction, Byte[] whereabouts)
+   at System.Data.SqlClient.SqlInternalConnection.GetTransactionCookie(Transaction transaction, Byte[] whereAbouts)
+   at System.Data.SqlClient.SqlInternalConnection.EnlistNonNull(Transaction tx)
+   at System.Data.ProviderBase.DbConnectionPool.PrepareConnection(DbConnection owningObject, DbConnectionInternal obj, Transaction transaction)
+   at System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionFactory.TryGetConnection(DbConnection owningConnection, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal oldConnection, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionInternal.TryOpenConnectionInternal(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at System.Data.SqlClient.SqlConnection.Open()
+   at APPCORE.EntityClass.Save(Boolean fullInsert) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\EntityStructure\EntityClass.cs:line 131
+   at APPCORE.LoggerServices.AddMessageError(String message, Exception ex) in D:\repos\NETCORE\EmpresaUpdated\AppCore\LoggerServices.cs:line 77
+[24/10/2026 21:11:29] Failed to log true error to file: Ambiguous match found for 'APPCORE.BDCore.Abstracts.WDataMapper T TakeObject[T](APPCORE.EntityClass, System.String, Boolean)'.
+   at System.RuntimeType.GetMethodImplCommon(String name, Int32 genericParameterCount, BindingFlags bindingAttr, Binder binder, CallingConventions callConv, Type[] types, ParameterModifier[] modifiers)
+   at System.RuntimeType.GetMethodImpl(String name, BindingFlags bindingAttr, Binder binder, CallingConventions callConv, Type[] types, ParameterModifier[] modifiers)
+   at System.Type.GetMethod(String name, BindingFlags bindingAttr)
+   at APPCORE.BDCore.Abstracts.WDataMapper.UpdateObject(EntityClass entity, String[] IdObject) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\BDCore\DataMapper.cs:line 202
+   at APPCORE.EntityClass.Update(String[] Id) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\EntityStructure\EntityClass.cs:line 216
+[24/10/2026 21:11:29] Failed to log error to the database: Implicit distributed transactions have not been enabled. If you're intentionally starting a distributed transaction, set TransactionManager.ImplicitDistributedTransactions to true.
+   at System.Transactions.DtcProxyShim.DtcProxyShimFactory.ConnectToProxy(String nodeName, Guid resourceManagerIdentifier, Object managedIdentifier, Boolean& nodeNameMatches, Byte[]& whereabouts, ResourceManagerShim& resourceManagerShim)
+   at System.Transactions.Oletx.DtcTransactionManager.Initialize()
+   at System.Transactions.Oletx.DtcTransactionManager.get_ProxyShimFactory()
+   at System.Transactions.TransactionInterop.GetOletxTransactionFromTransmitterPropagationToken(Byte[] propagationToken)
+   at System.Transactions.TransactionStatePSPEOperation.PSPEPromote(InternalTransaction tx)
+   at System.Transactions.TransactionStateDelegatedBase.EnterState(InternalTransaction tx)
+   at System.Transactions.EnlistableStates.Promote(InternalTransaction tx)
+   at System.Transactions.Transaction.Promote()
+   at System.Transactions.TransactionInterop.ConvertToOletxTransaction(Transaction transaction)
+   at System.Transactions.TransactionInterop.GetExportCookie(Transaction transaction, Byte[] whereabouts)
+   at System.Data.SqlClient.SqlInternalConnection.GetTransactionCookie(Transaction transaction, Byte[] whereAbouts)
+   at System.Data.SqlClient.SqlInternalConnection.EnlistNonNull(Transaction tx)
+   at System.Data.ProviderBase.DbConnectionPool.PrepareConnection(DbConnection owningObject, DbConnectionInternal obj, Transaction transaction)
+   at System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionFactory.TryGetConnection(DbConnection owningConnection, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal oldConnection, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionInternal.TryOpenConnectionInternal(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at System.Data.SqlClient.SqlConnection.Open()
+   at APPCORE.EntityClass.Save(Boolean fullInsert) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\EntityStructure\EntityClass.cs:line 131
+   at APPCORE.LoggerServices.AddMessageError(String message, Exception ex) in D:\repos\NETCORE\EmpresaUpdated\AppCore\LoggerServices.cs:line 77
+[24/10/2026 21:12:46] Failed to log true error to file: Ambiguous match found for 'APPCORE.BDCore.Abstracts.WDataMapper T TakeObject[T](APPCORE.EntityClass, System.String, Boolean)'.
+   at System.RuntimeType.GetMethodImplCommon(String name, Int32 genericParameterCount, BindingFlags bindingAttr, Binder binder, CallingConventions callConv, Type[] types, ParameterModifier[] modifiers)
+   at System.RuntimeType.GetMethodImpl(String name, BindingFlags bindingAttr, Binder binder, CallingConventions callConv, Type[] types, ParameterModifier[] modifiers)
+   at System.Type.GetMethod(String name, BindingFlags bindingAttr)
+   at APPCORE.BDCore.Abstracts.WDataMapper.UpdateObject(EntityClass entity, String[] IdObject) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\BDCore\DataMapper.cs:line 202
+   at APPCORE.EntityClass.Update(String[] Id) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\EntityStructure\EntityClass.cs:line 216
+[24/10/2026 21:12:46] Failed to log error to the database: Implicit distributed transactions have not been enabled. If you're intentionally starting a distributed transaction, set TransactionManager.ImplicitDistributedTransactions to true.
+   at System.Transactions.DtcProxyShim.DtcProxyShimFactory.ConnectToProxy(String nodeName, Guid resourceManagerIdentifier, Object managedIdentifier, Boolean& nodeNameMatches, Byte[]& whereabouts, ResourceManagerShim& resourceManagerShim)
+   at System.Transactions.Oletx.DtcTransactionManager.Initialize()
+   at System.Transactions.Oletx.DtcTransactionManager.get_ProxyShimFactory()
+   at System.Transactions.TransactionInterop.GetOletxTransactionFromTransmitterPropagationToken(Byte[] propagationToken)
+   at System.Transactions.TransactionStatePSPEOperation.PSPEPromote(InternalTransaction tx)
+   at System.Transactions.TransactionStateDelegatedBase.EnterState(InternalTransaction tx)
+   at System.Transactions.EnlistableStates.Promote(InternalTransaction tx)
+   at System.Transactions.Transaction.Promote()
+   at System.Transactions.TransactionInterop.ConvertToOletxTransaction(Transaction transaction)
+   at System.Transactions.TransactionInterop.GetExportCookie(Transaction transaction, Byte[] whereabouts)
+   at System.Data.SqlClient.SqlInternalConnection.GetTransactionCookie(Transaction transaction, Byte[] whereAbouts)
+   at System.Data.SqlClient.SqlInternalConnection.EnlistNonNull(Transaction tx)
+   at System.Data.ProviderBase.DbConnectionPool.PrepareConnection(DbConnection owningObject, DbConnectionInternal obj, Transaction transaction)
+   at System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionFactory.TryGetConnection(DbConnection owningConnection, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal oldConnection, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionInternal.TryOpenConnectionInternal(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at System.Data.SqlClient.SqlConnection.Open()
+   at APPCORE.EntityClass.Save(Boolean fullInsert) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\EntityStructure\EntityClass.cs:line 131
+   at APPCORE.LoggerServices.AddMessageError(String message, Exception ex) in D:\repos\NETCORE\EmpresaUpdated\AppCore\LoggerServices.cs:line 77
+[24/10/2026 21:13:24] Failed to log true error to file: Ambiguous match found for 'APPCORE.BDCore.Abstracts.WDataMapper T TakeObject[T](APPCORE.EntityClass, System.String, Boolean)'.
+   at System.RuntimeType.GetMethodImplCommon(String name, Int32 genericParameterCount, BindingFlags bindingAttr, Binder binder, CallingConventions callConv, Type[] types, ParameterModifier[] modifiers)
+   at System.RuntimeType.GetMethodImpl(String name, BindingFlags bindingAttr, Binder binder, CallingConventions callConv, Type[] types, ParameterModifier[] modifiers)
+   at System.Type.GetMethod(String name, BindingFlags bindingAttr)
+   at APPCORE.BDCore.Abstracts.WDataMapper.UpdateObject(EntityClass entity, String[] IdObject) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\BDCore\DataMapper.cs:line 202
+   at APPCORE.EntityClass.Update(String[] Id) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\EntityStructure\EntityClass.cs:line 216
+[24/10/2026 21:13:24] Failed to log error to the database: Implicit distributed transactions have not been enabled. If you're intentionally starting a distributed transaction, set TransactionManager.ImplicitDistributedTransactions to true.
+   at System.Transactions.DtcProxyShim.DtcProxyShimFactory.ConnectToProxy(String nodeName, Guid resourceManagerIdentifier, Object managedIdentifier, Boolean& nodeNameMatches, Byte[]& whereabouts, ResourceManagerShim& resourceManagerShim)
+   at System.Transactions.Oletx.DtcTransactionManager.Initialize()
+   at System.Transactions.Oletx.DtcTransactionManager.get_ProxyShimFactory()
+   at System.Transactions.TransactionInterop.GetOletxTransactionFromTransmitterPropagationToken(Byte[] propagationToken)
+   at System.Transactions.TransactionStatePSPEOperation.PSPEPromote(InternalTransaction tx)
+   at System.Transactions.TransactionStateDelegatedBase.EnterState(InternalTransaction tx)
+   at System.Transactions.EnlistableStates.Promote(InternalTransaction tx)
+   at System.Transactions.Transaction.Promote()
+   at System.Transactions.TransactionInterop.ConvertToOletxTransaction(Transaction transaction)
+   at System.Transactions.TransactionInterop.GetExportCookie(Transaction transaction, Byte[] whereabouts)
+   at System.Data.SqlClient.SqlInternalConnection.GetTransactionCookie(Transaction transaction, Byte[] whereAbouts)
+   at System.Data.SqlClient.SqlInternalConnection.EnlistNonNull(Transaction tx)
+   at System.Data.ProviderBase.DbConnectionPool.PrepareConnection(DbConnection owningObject, DbConnectionInternal obj, Transaction transaction)
+   at System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionFactory.TryGetConnection(DbConnection owningConnection, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal oldConnection, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionInternal.TryOpenConnectionInternal(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at System.Data.SqlClient.SqlConnection.Open()
+   at APPCORE.EntityClass.Save(Boolean fullInsert) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\EntityStructure\EntityClass.cs:line 131
+   at APPCORE.LoggerServices.AddMessageError(String message, Exception ex) in D:\repos\NETCORE\EmpresaUpdated\AppCore\LoggerServices.cs:line 77
+[24/10/2026 21:22:28] Failed to log true error to file: Ambiguous match found for 'APPCORE.BDCore.Abstracts.WDataMapper T TakeObject[T](APPCORE.EntityClass, System.String, Boolean)'.
+   at System.RuntimeType.GetMethodImplCommon(String name, Int32 genericParameterCount, BindingFlags bindingAttr, Binder binder, CallingConventions callConv, Type[] types, ParameterModifier[] modifiers)
+   at System.RuntimeType.GetMethodImpl(String name, BindingFlags bindingAttr, Binder binder, CallingConventions callConv, Type[] types, ParameterModifier[] modifiers)
+   at System.Type.GetMethod(String name, BindingFlags bindingAttr)
+   at APPCORE.BDCore.Abstracts.WDataMapper.UpdateObject(EntityClass entity, String[] IdObject) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\BDCore\DataMapper.cs:line 202
+   at APPCORE.EntityClass.Update(String[] Id) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\EntityStructure\EntityClass.cs:line 216
+[24/10/2026 21:22:28] Failed to log error to the database: Implicit distributed transactions have not been enabled. If you're intentionally starting a distributed transaction, set TransactionManager.ImplicitDistributedTransactions to true.
+   at System.Transactions.DtcProxyShim.DtcProxyShimFactory.ConnectToProxy(String nodeName, Guid resourceManagerIdentifier, Object managedIdentifier, Boolean& nodeNameMatches, Byte[]& whereabouts, ResourceManagerShim& resourceManagerShim)
+   at System.Transactions.Oletx.DtcTransactionManager.Initialize()
+   at System.Transactions.Oletx.DtcTransactionManager.get_ProxyShimFactory()
+   at System.Transactions.TransactionInterop.GetOletxTransactionFromTransmitterPropagationToken(Byte[] propagationToken)
+   at System.Transactions.TransactionStatePSPEOperation.PSPEPromote(InternalTransaction tx)
+   at System.Transactions.TransactionStateDelegatedBase.EnterState(InternalTransaction tx)
+   at System.Transactions.EnlistableStates.Promote(InternalTransaction tx)
+   at System.Transactions.Transaction.Promote()
+   at System.Transactions.TransactionInterop.ConvertToOletxTransaction(Transaction transaction)
+   at System.Transactions.TransactionInterop.GetExportCookie(Transaction transaction, Byte[] whereabouts)
+   at System.Data.SqlClient.SqlInternalConnection.GetTransactionCookie(Transaction transaction, Byte[] whereAbouts)
+   at System.Data.SqlClient.SqlInternalConnection.EnlistNonNull(Transaction tx)
+   at System.Data.SqlClient.SqlInternalConnection.Enlist(Transaction tx)
+   at System.Data.SqlClient.SqlInternalConnectionTds.Activate(Transaction transaction)
+   at System.Data.ProviderBase.DbConnectionInternal.ActivateConnection(Transaction transaction)
+   at System.Data.ProviderBase.DbConnectionPool.PrepareConnection(DbConnection owningObject, DbConnectionInternal obj, Transaction transaction)
+   at System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionFactory.TryGetConnection(DbConnection owningConnection, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal oldConnection, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionInternal.TryOpenConnectionInternal(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at System.Data.ProviderBase.DbConnectionClosed.TryOpenConnection(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at System.Data.SqlClient.SqlConnection.TryOpen(TaskCompletionSource`1 retry)
+   at System.Data.SqlClient.SqlConnection.Open()
+   at APPCORE.EntityClass.Save(Boolean fullInsert) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\EntityStructure\EntityClass.cs:line 131
+   at APPCORE.LoggerServices.AddMessageError(String message, Exception ex) in D:\repos\NETCORE\EmpresaUpdated\AppCore\LoggerServices.cs:line 77
+[24/10/2026 21:22:52] Failed to log true error to file: Transactions.Orden_Movimiento TakeObject[Orden_Movimiento](APPCORE.EntityClass, System.String, Boolean) is not a GenericMethodDefinition. MakeGenericMethod may only be called on a method for which MethodBase.IsGenericMethodDefinition is true.
+   at System.Reflection.RuntimeMethodInfo.MakeGenericMethod(Type[] methodInstantiation)
+   at APPCORE.BDCore.Abstracts.WDataMapper.UpdateObject(EntityClass entity, String[] IdObject) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\BDCore\DataMapper.cs:line 212
+   at APPCORE.EntityClass.Update(String[] Id) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\EntityStructure\EntityClass.cs:line 221
+[24/10/2026 21:22:52] Failed to log error to the database: Implicit distributed transactions have not been enabled. If you're intentionally starting a distributed transaction, set TransactionManager.ImplicitDistributedTransactions to true.
+   at System.Transactions.DtcProxyShim.DtcProxyShimFactory.ConnectToProxy(String nodeName, Guid resourceManagerIdentifier, Object managedIdentifier, Boolean& nodeNameMatches, Byte[]& whereabouts, ResourceManagerShim& resourceManagerShim)
+   at System.Transactions.Oletx.DtcTransactionManager.Initialize()
+   at System.Transactions.Oletx.DtcTransactionManager.get_ProxyShimFactory()
+   at System.Transactions.TransactionInterop.GetOletxTransactionFromTransmitterPropagationToken(Byte[] propagationToken)
+   at System.Transactions.TransactionStatePSPEOperation.PSPEPromote(InternalTransaction tx)
+   at System.Transactions.TransactionStateDelegatedBase.EnterState(InternalTransaction tx)
+   at System.Transactions.EnlistableStates.Promote(InternalTransaction tx)
+   at System.Transactions.Transaction.Promote()
+   at System.Transactions.TransactionInterop.ConvertToOletxTransaction(Transaction transaction)
+   at System.Transactions.TransactionInterop.GetExportCookie(Transaction transaction, Byte[] whereabouts)
+   at System.Data.SqlClient.SqlInternalConnection.GetTransactionCookie(Transaction transaction, Byte[] whereAbouts)
+   at System.Data.SqlClient.SqlInternalConnection.EnlistNonNull(Transaction tx)
+   at System.Data.SqlClient.SqlInternalConnection.Enlist(Transaction tx)
+   at System.Data.SqlClient.SqlInternalConnectionTds.Activate(Transaction transaction)
+   at System.Data.ProviderBase.DbConnectionInternal.ActivateConnection(Transaction transaction)
+   at System.Data.ProviderBase.DbConnectionPool.PrepareConnection(DbConnection owningObject, DbConnectionInternal obj, Transaction transaction)
+   at System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionFactory.TryGetConnection(DbConnection owningConnection, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal oldConnection, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionInternal.TryOpenConnectionInternal(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at System.Data.ProviderBase.DbConnectionClosed.TryOpenConnection(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at System.Data.SqlClient.SqlConnection.TryOpen(TaskCompletionSource`1 retry)
+   at System.Data.SqlClient.SqlConnection.Open()
+   at APPCORE.EntityClass.Save(Boolean fullInsert) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\EntityStructure\EntityClass.cs:line 136
+   at APPCORE.LoggerServices.AddMessageError(String message, Exception ex) in D:\repos\NETCORE\EmpresaUpdated\AppCore\LoggerServices.cs:line 77
+[24/10/2026 21:26:15] Failed to log true error to file: Transactions.Orden_Movimiento TakeObject[Orden_Movimiento](APPCORE.EntityClass, System.String, Boolean) is not a GenericMethodDefinition. MakeGenericMethod may only be called on a method for which MethodBase.IsGenericMethodDefinition is true.
+   at System.Reflection.RuntimeMethodInfo.MakeGenericMethod(Type[] methodInstantiation)
+   at APPCORE.BDCore.Abstracts.WDataMapper.UpdateObject(EntityClass entity, String[] IdObject) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\BDCore\DataMapper.cs:line 212
+   at APPCORE.EntityClass.Update(String[] Id) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\EntityStructure\EntityClass.cs:line 221
+[24/10/2026 21:26:15] Failed to log error to the database: Implicit distributed transactions have not been enabled. If you're intentionally starting a distributed transaction, set TransactionManager.ImplicitDistributedTransactions to true.
+   at System.Transactions.DtcProxyShim.DtcProxyShimFactory.ConnectToProxy(String nodeName, Guid resourceManagerIdentifier, Object managedIdentifier, Boolean& nodeNameMatches, Byte[]& whereabouts, ResourceManagerShim& resourceManagerShim)
+   at System.Transactions.Oletx.DtcTransactionManager.Initialize()
+   at System.Transactions.Oletx.DtcTransactionManager.get_ProxyShimFactory()
+   at System.Transactions.TransactionInterop.GetOletxTransactionFromTransmitterPropagationToken(Byte[] propagationToken)
+   at System.Transactions.TransactionStatePSPEOperation.PSPEPromote(InternalTransaction tx)
+   at System.Transactions.TransactionStateDelegatedBase.EnterState(InternalTransaction tx)
+   at System.Transactions.EnlistableStates.Promote(InternalTransaction tx)
+   at System.Transactions.Transaction.Promote()
+   at System.Transactions.TransactionInterop.ConvertToOletxTransaction(Transaction transaction)
+   at System.Transactions.TransactionInterop.GetExportCookie(Transaction transaction, Byte[] whereabouts)
+   at System.Data.SqlClient.SqlInternalConnection.GetTransactionCookie(Transaction transaction, Byte[] whereAbouts)
+   at System.Data.SqlClient.SqlInternalConnection.EnlistNonNull(Transaction tx)
+   at System.Data.SqlClient.SqlInternalConnection.Enlist(Transaction tx)
+   at System.Data.SqlClient.SqlInternalConnectionTds.Activate(Transaction transaction)
+   at System.Data.ProviderBase.DbConnectionInternal.ActivateConnection(Transaction transaction)
+   at System.Data.ProviderBase.DbConnectionPool.PrepareConnection(DbConnection owningObject, DbConnectionInternal obj, Transaction transaction)
+   at System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionFactory.TryGetConnection(DbConnection owningConnection, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal oldConnection, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionInternal.TryOpenConnectionInternal(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at System.Data.ProviderBase.DbConnectionClosed.TryOpenConnection(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at System.Data.SqlClient.SqlConnection.TryOpen(TaskCompletionSource`1 retry)
+   at System.Data.SqlClient.SqlConnection.Open()
+   at APPCORE.EntityClass.Save(Boolean fullInsert) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\EntityStructure\EntityClass.cs:line 136
+   at APPCORE.LoggerServices.AddMessageError(String message, Exception ex) in D:\repos\NETCORE\EmpresaUpdated\AppCore\LoggerServices.cs:line 77
+[24/10/2026 21:26:30] Failed to log true error to file: Transactions.Orden_Movimiento TakeObject[Orden_Movimiento](APPCORE.EntityClass, System.String, Boolean) is not a GenericMethodDefinition. MakeGenericMethod may only be called on a method for which MethodBase.IsGenericMethodDefinition is true.
+   at System.Reflection.RuntimeMethodInfo.MakeGenericMethod(Type[] methodInstantiation)
+   at APPCORE.BDCore.Abstracts.WDataMapper.UpdateObject(EntityClass entity, String[] IdObject) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\BDCore\DataMapper.cs:line 212
+   at APPCORE.EntityClass.Update(String[] Id) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\EntityStructure\EntityClass.cs:line 221
+[24/10/2026 21:26:30] Failed to log error to the database: Implicit distributed transactions have not been enabled. If you're intentionally starting a distributed transaction, set TransactionManager.ImplicitDistributedTransactions to true.
+   at System.Transactions.DtcProxyShim.DtcProxyShimFactory.ConnectToProxy(String nodeName, Guid resourceManagerIdentifier, Object managedIdentifier, Boolean& nodeNameMatches, Byte[]& whereabouts, ResourceManagerShim& resourceManagerShim)
+   at System.Transactions.Oletx.DtcTransactionManager.Initialize()
+   at System.Transactions.Oletx.DtcTransactionManager.get_ProxyShimFactory()
+   at System.Transactions.TransactionInterop.GetOletxTransactionFromTransmitterPropagationToken(Byte[] propagationToken)
+   at System.Transactions.TransactionStatePSPEOperation.PSPEPromote(InternalTransaction tx)
+   at System.Transactions.TransactionStateDelegatedBase.EnterState(InternalTransaction tx)
+   at System.Transactions.EnlistableStates.Promote(InternalTransaction tx)
+   at System.Transactions.Transaction.Promote()
+   at System.Transactions.TransactionInterop.ConvertToOletxTransaction(Transaction transaction)
+   at System.Transactions.TransactionInterop.GetExportCookie(Transaction transaction, Byte[] whereabouts)
+   at System.Data.SqlClient.SqlInternalConnection.GetTransactionCookie(Transaction transaction, Byte[] whereAbouts)
+   at System.Data.SqlClient.SqlInternalConnection.EnlistNonNull(Transaction tx)
+   at System.Data.ProviderBase.DbConnectionPool.PrepareConnection(DbConnection owningObject, DbConnectionInternal obj, Transaction transaction)
+   at System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionFactory.TryGetConnection(DbConnection owningConnection, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal oldConnection, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionInternal.TryOpenConnectionInternal(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at System.Data.SqlClient.SqlConnection.Open()
+   at APPCORE.EntityClass.Save(Boolean fullInsert) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\EntityStructure\EntityClass.cs:line 136
+   at APPCORE.LoggerServices.AddMessageError(String message, Exception ex) in D:\repos\NETCORE\EmpresaUpdated\AppCore\LoggerServices.cs:line 77
+[24/10/2026 23:13:19] ERROR: Max retries reached. Operation failed.: Must declare the scalar variable "@UpdateAtSQO_G_T_X".
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite, String method)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior)
+   at System.Data.SqlClient.SqlCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   at APPCORE.GDatosAbstract.<>c__DisplayClass34_0.<TraerDatosSQL>b__0() in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\BDCore\Abstracts\GDatosAbstract.cs:line 225
+   at APPCORE.GDatosAbstract.ExecuteWithRetry(Func`1 operation, Int32 maxRetries) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\BDCore\Abstracts\GDatosAbstract.cs:line 186
+[24/10/2026 23:13:20] Transaction failed and connection restarted.: Must declare the scalar variable "@UpdateAtSQO_G_T_X".
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite, String method)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior)
+   at System.Data.SqlClient.SqlCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   at APPCORE.GDatosAbstract.<>c__DisplayClass34_0.<TraerDatosSQL>b__0() in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\BDCore\Abstracts\GDatosAbstract.cs:line 225
+   at APPCORE.GDatosAbstract.ExecuteWithRetry(Func`1 operation, Int32 maxRetries) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\BDCore\Abstracts\GDatosAbstract.cs:line 186
+[24/10/2026 23:13:20] Transaction failed and connection restarted.: Must declare the scalar variable "@UpdateAtSQO_G_T_X".
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite, String method)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior)
+   at System.Data.SqlClient.SqlCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   at APPCORE.GDatosAbstract.<>c__DisplayClass34_0.<TraerDatosSQL>b__0() in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\BDCore\Abstracts\GDatosAbstract.cs:line 225
+   at APPCORE.GDatosAbstract.ExecuteWithRetry(Func`1 operation, Int32 maxRetries) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\BDCore\Abstracts\GDatosAbstract.cs:line 186
+   at APPCORE.GDatosAbstract.TraerDatosSQL(String queryString, IDbConnection dbConnection, IDbTransaction dbTransaction, List`1 parameters) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\BDCore\Abstracts\GDatosAbstract.cs:line 218
+   at APPCORE.BDCore.Abstracts.WDataMapper.BuildTable(EntityClass Inst, String& CondSQL, Boolean isSimpleFind) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\BDCore\DataMapper.cs:line 430
+[24/10/2026 23:13:20] ERROR: BuildTable 
+
+ Transaction_Movimiento 
+
+  
+ SELECT  id_movimiento,descripcion,concepto,id_usuario_crea,fecha,tipo,moneda,tasa_cambio,correo_enviado,tasa_cambio_compra,is_transaction,id_sucursal,Id_cuenta_origen,Id_cuenta_destino,Tipo_Movimiento,Detail_Movimiento = (SELECT  id_detalle,id_movimiento,debito,debito_dolares,credito,credito_dolares,tasa_cambio,tasa_cambio_compra,moneda,monto_inicial,monto_final,monto_inicial_dolares,monto_final_dolares,fecha,Transaction_Movimiento = JSON_QUERY((SELECT  id_movimiento,descripcion,concepto,id_usuario_crea,fecha,tipo,moneda,tasa_cambio,correo_enviado,tasa_cambio_compra,is_transaction,id_sucursal,Id_cuenta_origen,Id_cuenta_destino,Tipo_Movimiento,Detail_Movimiento = (SELECT  id_detalle,id_movimiento,debito,debito_dolares,credito,credito_dolares,tasa_cambio,tasa_cambio_compra,moneda,monto_inicial,monto_final,monto_inicial_dolares,monto_final_dolares,fecha,id_cuenta FROM dbo.Detail_Movimiento as GYR_X_H_U   Where IsDeleted != 1  AND   id_movimiento = RIF_F_N_J.id_movimiento and IsDeleted != 1   ORDER BY id_detalle DESC FOR JSON PATH), Denominaciones = JSON_QUERY(Denominaciones) FROM dbo.Transaction_Movimiento as RIF_F_N_J   Where IsDeleted != 1  AND   id_movimiento = WND_T_U_R.id_movimiento and IsDeleted != 1   ORDER BY id_movimiento DESC FOR JSON PATH,  ROOT('object')),'$.object[0]'),id_cuenta,catalogo_Cuentas = JSON_QUERY((SELECT  id_cuentas,nombre,tipo_cuenta,saldo,saldo_dolares,permite_cordobas,permite_dolares,id_sucursal,Catalogo_Sucursales = JSON_QUERY((SELECT  Id_Sucursal,id_municipio,Nombre,Descripcion,Direccion FROM dbo.Catalogo_Sucursales as RGU_A_M_T   Where IsDeleted != 1  AND   Id_Sucursal = SWG_W_T_O.id_sucursal and IsDeleted != 1   ORDER BY Id_Sucursal DESC FOR JSON PATH,  ROOT('object')),'$.object[0]'),id_categoria,Categoria_Cuentas = JSON_QUERY((SELECT  id_categoria,descripcion FROM dbo.Categoria_Cuentas as VME_V_W_Z   Where IsDeleted != 1  AND   id_categoria = SWG_W_T_O.id_categoria and IsDeleted != 1   ORDER BY id_categoria DESC FOR JSON PATH,  ROOT('object')),'$.object[0]'),UpdateAt, Transacciones_Permitidas = JSON_QUERY(Transacciones_Permitidas),Inventario_Denominacion = (SELECT  id_inventario,id_cuenta,id_denominacion,cantidad_actual,ultima_actualizacion FROM transactions.Inventario_Denominacion_Caja as ZNE_N_N_B   Where IsDeleted != 1  AND   id_cuenta = SWG_W_T_O.id_cuentas and IsDeleted != 1   ORDER BY id_inventario DESC FOR JSON PATH) FROM dbo.Catalogo_Cuentas as SWG_W_T_O   Where IsDeleted != 1  AND UpdateAt = @UpdateAtSQO_G_T_X  AND   id_cuentas = WND_T_U_R.id_cuenta and IsDeleted != 1   ORDER BY id_cuentas DESC FOR JSON PATH,  ROOT('object')),'$.object[0]') FROM dbo.Detail_Movimiento as WND_T_U_R   Where IsDeleted != 1  AND   id_movimiento = RWQ_A_W_W.id_movimiento and IsDeleted != 1   ORDER BY id_detalle DESC FOR JSON PATH), Denominaciones = JSON_QUERY(Denominaciones) FROM dbo.Transaction_Movimiento as RWQ_A_W_W   Where IsDeleted != 1  AND  IsDeleted != 1    ORDER BY id_movimiento DESC: Must declare the scalar variable "@UpdateAtSQO_G_T_X".
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite, String method)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior)
+   at System.Data.SqlClient.SqlCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   at APPCORE.GDatosAbstract.<>c__DisplayClass34_0.<TraerDatosSQL>b__0() in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\BDCore\Abstracts\GDatosAbstract.cs:line 225
+   at APPCORE.GDatosAbstract.ExecuteWithRetry(Func`1 operation, Int32 maxRetries) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\BDCore\Abstracts\GDatosAbstract.cs:line 186
+   at APPCORE.GDatosAbstract.TraerDatosSQL(String queryString, IDbConnection dbConnection, IDbTransaction dbTransaction, List`1 parameters) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\BDCore\Abstracts\GDatosAbstract.cs:line 218
+   at APPCORE.BDCore.Abstracts.WDataMapper.BuildTable(EntityClass Inst, String& CondSQL, Boolean isSimpleFind) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\BDCore\DataMapper.cs:line 430
+[25/10/2026 10:34:03] ERROR: Max retries reached. Operation failed.: Timeout expired.  The timeout period elapsed prior to completion of the operation or the server is not responding.
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior)
+   at APPCORE.GDatosAbstract.<>c__DisplayClass34_0.<TraerDatosSQL>b__0() in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\BDCore\Abstracts\GDatosAbstract.cs:line 225
+   at APPCORE.GDatosAbstract.ExecuteWithRetry(Func`1 operation, Int32 maxRetries) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\BDCore\Abstracts\GDatosAbstract.cs:line 186
+[25/10/2026 10:34:04] Transaction failed and connection restarted.: Timeout expired.  The timeout period elapsed prior to completion of the operation or the server is not responding.
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior)
+   at APPCORE.GDatosAbstract.<>c__DisplayClass34_0.<TraerDatosSQL>b__0() in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\BDCore\Abstracts\GDatosAbstract.cs:line 225
+   at APPCORE.GDatosAbstract.ExecuteWithRetry(Func`1 operation, Int32 maxRetries) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\BDCore\Abstracts\GDatosAbstract.cs:line 186
+[25/10/2026 10:34:04] Transaction failed and connection restarted.: Timeout expired.  The timeout period elapsed prior to completion of the operation or the server is not responding.
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior)
+   at APPCORE.GDatosAbstract.<>c__DisplayClass34_0.<TraerDatosSQL>b__0() in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\BDCore\Abstracts\GDatosAbstract.cs:line 225
+   at APPCORE.GDatosAbstract.ExecuteWithRetry(Func`1 operation, Int32 maxRetries) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\BDCore\Abstracts\GDatosAbstract.cs:line 186
+   at APPCORE.GDatosAbstract.TraerDatosSQL(String queryString, IDbConnection dbConnection, IDbTransaction dbTransaction, List`1 parameters) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\BDCore\Abstracts\GDatosAbstract.cs:line 218
+   at APPCORE.BDCore.Abstracts.WDataMapper.TakeObject[T](EntityClass Inst, String CondSQL, Boolean isSimpleFind) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\BDCore\DataMapper.cs:line 356
+[25/10/2026 10:34:04] ERROR: TakeList - Catalogo_Cuentas - SELECT  top 1 id_cuentas,nombre,tipo_cuenta,saldo,saldo_dolares,permite_cordobas,permite_dolares,id_sucursal,Catalogo_Sucursales = JSON_QUERY((SELECT  Id_Sucursal,id_municipio,Nombre,Descripcion,Direccion,Datos_Configuracion = JSON_QUERY((SELECT  Id_Sucursal,Encabezado,AutoDebito,Consecutivo FROM dbo.Datos_Configuracion as CFX_A_Y_C   Where IsDeleted != 1  AND   Id_Sucursal = KGM_Z_Z_J.Id_Sucursal and IsDeleted != 1   ORDER BY Id_Sucursal DESC FOR JSON PATH,  ROOT('object') ),'$.object[0]'),Catalogo_Municipio = JSON_QUERY((SELECT  id_municipio,nombre,id_departamento,Catalogo_Departamento = JSON_QUERY((SELECT  id_departamento,nombre,id_nacionalidad,ponderacion,puntaje,clasificacion FROM dbo.Catalogo_Departamento as GGL_J_Q_N   Where IsDeleted != 1  AND   id_departamento = JRF_J_M_I.id_departamento and IsDeleted != 1   ORDER BY id_departamento DESC FOR JSON PATH,  ROOT('object')),'$.object[0]') FROM dbo.Catalogo_Municipio as JRF_J_M_I   Where IsDeleted != 1  AND   id_municipio = KGM_Z_Z_J.id_municipio and IsDeleted != 1   ORDER BY id_municipio DESC FOR JSON PATH,  ROOT('object')),'$.object[0]') FROM dbo.Catalogo_Sucursales as KGM_Z_Z_J   Where IsDeleted != 1  AND   Id_Sucursal = AJN_X_T_F.id_sucursal and IsDeleted != 1   ORDER BY Id_Sucursal DESC FOR JSON PATH,  ROOT('object')),'$.object[0]'),id_categoria,Categoria_Cuentas = JSON_QUERY((SELECT  id_categoria,descripcion FROM dbo.Categoria_Cuentas as ERB_G_O_A   Where IsDeleted != 1  AND   id_categoria = AJN_X_T_F.id_categoria and IsDeleted != 1   ORDER BY id_categoria DESC FOR JSON PATH,  ROOT('object')),'$.object[0]'),UpdateAt, Transacciones_Permitidas = JSON_QUERY(Transacciones_Permitidas),Inventario_Denominacion = (SELECT  id_inventario,id_cuenta,id_denominacion,cantidad_actual,ultima_actualizacion,Denominacion_Catalogo = JSON_QUERY((SELECT  id_denominacion,valor,moneda,tipo,activa FROM transactions.Denominacion_Catalogo as QBQ_C_L_N   Where IsDeleted != 1  AND   id_denominacion = NBW_S_N_H.id_denominacion and IsDeleted != 1   ORDER BY id_denominacion DESC FOR JSON PATH,  ROOT('object')),'$.object[0]') FROM transactions.Inventario_Denominacion_Caja as NBW_S_N_H   Where IsDeleted != 1  AND   id_cuenta = AJN_X_T_F.id_cuentas and IsDeleted != 1   ORDER BY id_inventario DESC FOR JSON PATH) FROM dbo.Catalogo_Cuentas as AJN_X_T_F   Where IsDeleted != 1  AND id_sucursal = @id_sucursalPME_I_M_S  AND  id_categoria  =  @id_categoria_2  AND  IsDeleted != 1    ORDER BY id_cuentas DESC: Timeout expired.  The timeout period elapsed prior to completion of the operation or the server is not responding.
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior)
+   at APPCORE.GDatosAbstract.<>c__DisplayClass34_0.<TraerDatosSQL>b__0() in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\BDCore\Abstracts\GDatosAbstract.cs:line 225
+   at APPCORE.GDatosAbstract.ExecuteWithRetry(Func`1 operation, Int32 maxRetries) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\BDCore\Abstracts\GDatosAbstract.cs:line 186
+   at APPCORE.GDatosAbstract.TraerDatosSQL(String queryString, IDbConnection dbConnection, IDbTransaction dbTransaction, List`1 parameters) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\BDCore\Abstracts\GDatosAbstract.cs:line 218
+   at APPCORE.BDCore.Abstracts.WDataMapper.TakeObject[T](EntityClass Inst, String CondSQL, Boolean isSimpleFind) in D:\repos\NETCORE\EmpresaUpdated\AppCore\Data_Access\BDCore\DataMapper.cs:line 356

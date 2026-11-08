@@ -13,7 +13,7 @@ namespace DataBaseModel
 		public int? Id_DetalleFactura { get; set; }
 		public int? Id_Factura { get; set; }
 		public int? Id_Producto { get; set; }
-		public int? Cantidad { get; set; }
+		public double? Cantidad { get; set; }
 		public decimal? Precio_Venta { get; set; }
 		public decimal? Iva { get; set; }
 		public decimal? Total { get; set; }

@@ -84,7 +84,10 @@ namespace Transactions
         public decimal? monto_vuelto_usd { get; set; }
         public decimal? monto_vuelto_nio { get; set; }
         public bool AutoCreate { get; internal set; }
+        public int? Id_OrderRelated { get;  set; }
 
+        [ManyToOne(TableName = "Orden_Movimiento", KeyColumn = "id_orden", ForeignKeyColumn = "Id_OrderRelated")]
+		public Orden_Movimiento? Orden_Related { get; set; }
 
 
         /// <summary>

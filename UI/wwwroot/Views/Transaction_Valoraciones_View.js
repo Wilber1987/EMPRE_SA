@@ -667,7 +667,8 @@ class Transaction_Valoraciones_View extends HTMLElement {
 				Cat_Marca: new Cat_Marca({
 					Nombre: element.Marca,
 					Descripcion: element.Marca,
-					Estado: "ACTIVO"
+					Estado: "ACTIVO",
+					Modelo: element.Modelo
 				}),
 				Cat_Categorias: new Cat_Categorias({
 					// @ts-ignore

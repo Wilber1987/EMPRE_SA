@@ -252,7 +252,11 @@ namespace BusinessLogic.Facturacion.Operations
 
                 bool isIngreso = order.direccion == DirectionEnum.INGRESO;
 
+                bool isEgreso = order.direccion == DirectionEnum.EGRESO;
+
                 bool isCompra = order.direccion == DirectionEnum.MIXED && order.moneda == MonedaEnum.DOLARES;
+
+                bool isVenta = order.direccion == DirectionEnum.MIXED && order.moneda == MonedaEnum.CORDOBAS;
 
                 // ============================================================
                 // 4. TASA APLICADA
@@ -401,73 +405,13 @@ namespace BusinessLogic.Facturacion.Operations
                 //      USD sale
                 // ============================================================
 
-                if (isIngreso || !isCompra)
+                if (isIngreso || isVenta)
                 {
-                    // --------------------------------------------------------
-                    // Movimiento de CÓRDOBAS
-                    //
-                    // Caja C$ recibe el dinero del cliente.
-                    // --------------------------------------------------------
-
-                    var movEntradaNIO = new Movimientos_Cuentas
+                    (bool flowControl, ResponseService value) = EntraCordobasSaleDolares(dbUser, order, tasaAplicada, montoUsdCambiado, montoNioCambiado, conceptoBase, cuentaCajaUSD, cuentaCajaCordobas, cuentaPuenteCambiario);
+                    if (!flowControl)
                     {
-                        descripcion = $"{conceptoBase} - " + $"Entrada de {montoNioCambiado:F2} C$",
-                        concepto = "VENTA_MONEDA_CAMBIO",
-                        monto = montoNioCambiado,
-                        moneda = MonedaEnum.CORDOBAS,
-                        tasa_cambio = tasaAplicada,
-                        Catalogo_Cuentas_Origen = cuentaPuenteCambiario,
-                        Catalogo_Cuentas_Destino = cuentaCajaCordobas,
-                        Tipo_Movimiento = TipoMovimiento.VENTA_DE_MONEDA,
-                        is_transaction = true
-                    };
-
-                    // Denominaciones C$ que ingresan físicamente
-                    foreach (var denom in order.DenominationsCambioNIO ?? [])
-                    {
-                        denom.tipo_operacion = DirectionEnum.INGRESO;
-
-                        movEntradaNIO.Denominaciones.Add(denom);
+                        return value;
                     }
-                    var responseEntradaNIO = movEntradaNIO.SaveMovimiento(dbUser);
-
-                    if (responseEntradaNIO.status != 200)
-                        return responseEntradaNIO;
-
-
-                    // --------------------------------------------------------
-                    // Movimiento de DÓLARES
-                    //
-                    // Caja USD entrega los dólares al cliente.
-                    // --------------------------------------------------------
-
-                    var movSalidaUSD = new Movimientos_Cuentas
-                    {
-                        descripcion = $"{conceptoBase} - " + $"Salida de {montoUsdCambiado:F2} USD",
-                        concepto = "VENTA_MONEDA_CAMBIO",
-                        monto = montoUsdCambiado,
-                        moneda = MonedaEnum.DOLARES,
-                        tasa_cambio = tasaAplicada,
-                        Catalogo_Cuentas_Origen = cuentaCajaUSD,
-                        Catalogo_Cuentas_Destino = cuentaPuenteCambiario,
-                        Tipo_Movimiento = TipoMovimiento.VENTA_DE_MONEDA,
-                        is_transaction = true
-                    };
-
-
-                    // Denominaciones USD que salen físicamente
-                    foreach (var denom in order.DenominationsCambioUSD ?? [])
-                    {
-                        denom.tipo_operacion = DirectionEnum.EGRESO;
-
-                        movSalidaUSD.Denominaciones.Add(denom);
-                    }
-
-
-                    var responseSalidaUSD = movSalidaUSD.SaveMovimiento(dbUser);
-
-                    if (responseSalidaUSD.status != 200)
-                        return responseSalidaUSD;
                 }
 
                 // ============================================================
@@ -484,74 +428,15 @@ namespace BusinessLogic.Facturacion.Operations
                 //      C$ sale
                 // ============================================================
 
-                else
+                else if (isEgreso || isCompra)
                 {
-                    // --------------------------------------------------------
-                    // Movimiento de DÓLARES
-                    //
-                    // USD entra a caja.
-                    // --------------------------------------------------------
-
-                    var movEntradaUSD = new Movimientos_Cuentas
+                    (bool flowControl, ResponseService value) = EntraDolaresSaleCordobas(dbUser, order, tasaAplicada, montoUsdCambiado, montoNioCambiado, conceptoBase, cuentaCajaUSD, cuentaCajaCordobas, cuentaPuenteCambiario);
+                    if (!flowControl)
                     {
-                        descripcion = $"{conceptoBase} - " + $"Entrada de {montoUsdCambiado:F2} USD",
-                        concepto = "COMPRA_MONEDA_CAMBIO",
-                        monto = montoUsdCambiado,
-                        moneda = MonedaEnum.DOLARES,
-                        tasa_cambio = tasaAplicada,
-                        Catalogo_Cuentas_Origen = cuentaPuenteCambiario,
-                        Catalogo_Cuentas_Destino = cuentaCajaUSD,
-                        Tipo_Movimiento = TipoMovimiento.COMPRA_DE_MONEDA,
-                        is_transaction = true
-                    };
-
-
-                    // Denominaciones USD que entran físicamente                    
-                    foreach (var denom in order.DenominationsCambioUSD ?? [])
-                    {
-                        denom.tipo_operacion = DirectionEnum.INGRESO;
-
-                        movEntradaUSD.Denominaciones.Add(denom);
+                        return value;
                     }
-
-
-                    var responseEntradaUSD = movEntradaUSD.SaveMovimiento(dbUser);
-
-                    if (responseEntradaUSD.status != 200)
-                        return responseEntradaUSD;
-
-
-                    // --------------------------------------------------------
-                    // Movimiento de CÓRDOBAS
-                    //
-                    // Caja C$ entrega el dinero al cliente.
-                    // --------------------------------------------------------
-
-                    var movSalidaNIO = new Movimientos_Cuentas
-                    {
-                        descripcion = $"{conceptoBase} - " + $"Salida de {montoNioCambiado:F2} C$",
-                        concepto = "COMPRA_MONEDA_CAMBIO",
-                        monto = montoNioCambiado,
-                        moneda = MonedaEnum.CORDOBAS,
-                        tasa_cambio = tasaAplicada,
-                        Catalogo_Cuentas_Origen = cuentaCajaCordobas,
-                        Catalogo_Cuentas_Destino = cuentaPuenteCambiario,
-                        Tipo_Movimiento = TipoMovimiento.COMPRA_DE_MONEDA,
-                        is_transaction = true
-                    };
-
-
-                    // Denominaciones C$ que salen físicamente
-                    foreach (var denom in order.DenominationsCambioNIO ?? [])
-                    {
-                        denom.tipo_operacion = DirectionEnum.EGRESO;
-                        movSalidaNIO.Denominaciones.Add(denom);
-                    }
-                    var responseSalidaNIO = movSalidaNIO.SaveMovimiento(dbUser);
-
-                    if (responseSalidaNIO.status != 200)
-                        return responseSalidaNIO;
                 }
+
 
 
                 // ============================================================
@@ -605,6 +490,146 @@ namespace BusinessLogic.Facturacion.Operations
             }
         }
 
+        private static (bool flowControl, ResponseService value) EntraDolaresSaleCordobas(Business.Security_Users dbUser, Orden_Movimiento order, decimal tasaAplicada, decimal montoUsdCambiado, decimal montoNioCambiado, string conceptoBase, Catalogo_Cuentas cuentaCajaUSD, Catalogo_Cuentas cuentaCajaCordobas, Catalogo_Cuentas cuentaPuenteCambiario)
+        {
+            // --------------------------------------------------------
+            // Movimiento de DÓLARES
+            //
+            // USD entra a caja.
+            // --------------------------------------------------------
+
+            var movEntradaUSD = new Movimientos_Cuentas
+            {
+                descripcion = $"{conceptoBase} - " + $"Entrada de {montoUsdCambiado:F2} USD",
+                concepto = "COMPRA_MONEDA_CAMBIO",
+                monto = montoUsdCambiado,
+                moneda = MonedaEnum.DOLARES,
+                tasa_cambio = tasaAplicada,
+                Catalogo_Cuentas_Origen = cuentaPuenteCambiario,
+                Catalogo_Cuentas_Destino = cuentaCajaUSD,
+                Tipo_Movimiento = TipoMovimiento.COMPRA_DE_MONEDA,
+                is_transaction = true
+            };
+
+
+            // Denominaciones USD que entran físicamente                    
+            foreach (var denom in order.DenominationsCambioUSD ?? [])
+            {
+                denom.tipo_operacion = DirectionEnum.INGRESO;
+
+                movEntradaUSD.Denominaciones.Add(denom);
+            }
+
+
+            var responseEntradaUSD = movEntradaUSD.SaveMovimiento(dbUser);
+
+            if (responseEntradaUSD.status != 200)
+                return (flowControl: false, value: responseEntradaUSD);
+
+
+            // --------------------------------------------------------
+            // Movimiento de CÓRDOBAS
+            //
+            // Caja C$ entrega el dinero al cliente.
+            // --------------------------------------------------------
+
+            var movSalidaNIO = new Movimientos_Cuentas
+            {
+                descripcion = $"{conceptoBase} - " + $"Salida de {montoNioCambiado:F2} C$",
+                concepto = "COMPRA_MONEDA_CAMBIO",
+                monto = montoNioCambiado,
+                moneda = MonedaEnum.CORDOBAS,
+                tasa_cambio = tasaAplicada,
+                Catalogo_Cuentas_Origen = cuentaCajaCordobas,
+                Catalogo_Cuentas_Destino = cuentaPuenteCambiario,
+                Tipo_Movimiento = TipoMovimiento.COMPRA_DE_MONEDA,
+                is_transaction = true
+            };
+
+
+            // Denominaciones C$ que salen físicamente
+            foreach (var denom in order.DenominationsCambioNIO ?? [])
+            {
+                denom.tipo_operacion = DirectionEnum.EGRESO;
+                movSalidaNIO.Denominaciones.Add(denom);
+            }
+            var responseSalidaNIO = movSalidaNIO.SaveMovimiento(dbUser);
+
+            if (responseSalidaNIO.status != 200)
+                return (flowControl: false, value: responseSalidaNIO);
+            return (flowControl: true, value: null);
+        }
+
+        private static (bool flowControl, ResponseService value) EntraCordobasSaleDolares(Business.Security_Users dbUser, Orden_Movimiento order, decimal tasaAplicada, decimal montoUsdCambiado, decimal montoNioCambiado, string conceptoBase, Catalogo_Cuentas cuentaCajaUSD, Catalogo_Cuentas cuentaCajaCordobas, Catalogo_Cuentas cuentaPuenteCambiario)
+        {
+            // --------------------------------------------------------
+            // Movimiento de CÓRDOBAS
+            //
+            // Caja C$ recibe el dinero del cliente.
+            // --------------------------------------------------------
+
+            var movEntradaNIO = new Movimientos_Cuentas
+            {
+                descripcion = $"{conceptoBase} - " + $"Entrada de {montoNioCambiado:F2} C$",
+                concepto = "VENTA_MONEDA_CAMBIO",
+                monto = montoNioCambiado,
+                moneda = MonedaEnum.CORDOBAS,
+                tasa_cambio = tasaAplicada,
+                Catalogo_Cuentas_Origen = cuentaPuenteCambiario,
+                Catalogo_Cuentas_Destino = cuentaCajaCordobas,
+                Tipo_Movimiento = TipoMovimiento.VENTA_DE_MONEDA,
+                is_transaction = true
+            };
+
+            // Denominaciones C$ que ingresan físicamente
+            foreach (var denom in order.DenominationsCambioNIO ?? [])
+            {
+                denom.tipo_operacion = DirectionEnum.INGRESO;
+
+                movEntradaNIO.Denominaciones.Add(denom);
+            }
+            var responseEntradaNIO = movEntradaNIO.SaveMovimiento(dbUser);
+
+            if (responseEntradaNIO.status != 200)
+                return (flowControl: false, value: responseEntradaNIO);
+
+
+            // --------------------------------------------------------
+            // Movimiento de DÓLARES
+            //
+            // Caja USD entrega los dólares al cliente.
+            // --------------------------------------------------------
+
+            var movSalidaUSD = new Movimientos_Cuentas
+            {
+                descripcion = $"{conceptoBase} - " + $"Salida de {montoUsdCambiado:F2} USD",
+                concepto = "VENTA_MONEDA_CAMBIO",
+                monto = montoUsdCambiado,
+                moneda = MonedaEnum.DOLARES,
+                tasa_cambio = tasaAplicada,
+                Catalogo_Cuentas_Origen = cuentaCajaUSD,
+                Catalogo_Cuentas_Destino = cuentaPuenteCambiario,
+                Tipo_Movimiento = TipoMovimiento.VENTA_DE_MONEDA,
+                is_transaction = true
+            };
+
+
+            // Denominaciones USD que salen físicamente
+            foreach (var denom in order.DenominationsCambioUSD ?? [])
+            {
+                denom.tipo_operacion = DirectionEnum.EGRESO;
+
+                movSalidaUSD.Denominaciones.Add(denom);
+            }
+
+
+            var responseSalidaUSD = movSalidaUSD.SaveMovimiento(dbUser);
+
+            if (responseSalidaUSD.status != 200)
+                return (flowControl: false, value: responseSalidaUSD);
+            return (flowControl: true, value: null);
+        }
+
         private static string GetDescripcionBeneficio(decimal beneficio, bool isIngreso, decimal tasaReferencia, decimal tasaAplicada)
         {
             string tipo = beneficio > 0 ? "Beneficio" : "Pérdida";
@@ -613,8 +638,8 @@ namespace BusinessLogic.Facturacion.Operations
         }
 
         public static ResponseService ProcesarVueltoEnOrden(
-    Business.Security_Users dbUser,
-    Orden_Movimiento order)
+            Business.Security_Users dbUser,
+            Orden_Movimiento order)
         {
             try
             {
@@ -844,8 +869,8 @@ namespace BusinessLogic.Facturacion.Operations
                             concepto = "VUELTO_SIMPLE_EQUIVALENCIA_INGRESO",
                             monto = montoVuelto,
                             moneda = monedaVuelto,
-                            Catalogo_Cuentas_Origen = cuentaCaja,
-                            Catalogo_Cuentas_Destino = cuentaPuenteCambiario,
+                            Catalogo_Cuentas_Origen = cuentaPuenteCambiario,
+                            Catalogo_Cuentas_Destino = cuentaCaja,
                             Tipo_Movimiento = TipoMovimiento.INGRESO,
                             is_transaction = true,
                             is_hidden = true

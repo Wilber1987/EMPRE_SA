@@ -29,7 +29,9 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
         model.tasa_cambio.defaultValue = tasa[0].Valor_de_compra;
         /**@type {Catalogo_Cambio_Divisa} */
         const tasaActual = tasa[0];
-        this.Cuentas = await new Catalogo_Cuentas_ModelComponent().Get();
+        this.Cuentas = await new Catalogo_Cuentas_ModelComponent({
+            OrderData: [OrderData.Desc("UpdateAt")]
+        }).Get();
         this.append(this.CustomStyle);
         this.OptionContainer = WRender.Create({ className: "OptionContainer" });
         this.TabContainer = WRender.Create({ className: "main-container", id: 'TabContainer' });
@@ -149,7 +151,6 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
                     ModelObject: modelExterno,
                     AutoSave: false,
                     ObjectOptions: this.ObjectOptionsModal(DirectionEnum.INGRESO)
-
                 }))
             }
         }))
@@ -199,7 +200,7 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
             SaveFunction: async (/** @type {Movimientos_Cuentas} */ movimiento,
             /** @type {{ message: string; status: number; }} */ response) => {
 
-                this.NuevoMovimiento(movimiento, direccion)
+                this.NuevoMovimiento(movimiento, direccion);
                 return;
                 if (movimiento.Catalogo_Cuentas_Destino?.tipo_cuenta == Tipo_CuentaEnum.PROPIA) {
                     this.NuevoMovimiento(movimiento, direccion)
@@ -246,11 +247,11 @@ class Gestion_movimientos_CuentasView extends HTMLElement {
             isFlexibleLiquidationModeActive: false,
             action: async (/** @type {Orden_Movimiento} */ order) => {
                 movimientos_Cuentas.OrderData = order;
-                WAlertMessage.Success("Movimiento guardado correctamente")
-                const dataset = await new Movimientos_Cuentas_ModelComponent().Get();
-                this.TableComponent.Dataset = dataset;
-                this.TableComponent.DrawTable();
-                Modal.close();
+                WAlertMessage.Success("Movimiento guardado correctamente", true, "center", true)
+                //const dataset = await new Movimientos_Cuentas_ModelComponent().Get();
+                //this.TableComponent.Dataset = dataset;
+                //this.TableComponent.DrawTable();
+                //Modal.close();
             }
         })
         const Modal = new WModalForm({

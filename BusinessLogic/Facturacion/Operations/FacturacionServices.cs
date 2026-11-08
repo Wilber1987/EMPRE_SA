@@ -94,7 +94,7 @@ namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 					default:
 						break;
 				}
-				var subtotal = detalle.Cantidad * detalle.Precio_Venta;
+				var subtotal = Convert.ToDecimal(detalle.Cantidad) * detalle.Precio_Venta;
 				var montoDescuento = subtotal * ((detalle.Descuento ?? 0) / 100);
 				var subTotalCalculado = subtotal - montoDescuento;
 				var ivaCalculado = subTotalCalculado * 0;
@@ -239,7 +239,14 @@ namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 			}
 			//TODO REVISAR
 			string detalleT = $"Venta de producto, factura: {factura?.Id_Factura} al cliente {factura?.Cliente?.Nombre_Completo}";
-			
+
+			Orden_Movimiento? orderRelated = new Orden_Movimiento().Find<Orden_Movimiento>(
+				FilterData.Equal("id_documento_origen", contract?.numero_contrato),
+				FilterData.Equal("tipo_documento_origen", "CONTRATO"),
+				FilterData.Equal("direccion", DirectionEnum.EGRESO),
+				FilterData.Equal("estado", EstadoOrden.PENDIENTE)
+			);
+
 			var ordenResponse = new Orden_Movimiento()
 			{
 				id_documento_origen = factura?.Id_Factura,
@@ -254,6 +261,7 @@ namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 				Id_cuenta_destino = cuentaDestino?.id_cuentas,
 				Tipo_Movimiento = TipoMovimiento.INGRESO_POR_PAGO_DE_FACTURACION,
 				direccion = DirectionEnum.INGRESO,
+				Id_OrderRelated = orderRelated?.id_orden,
 				requiere_aprobacion = true  // Los INGRESOS POR FACTURA siempre requieren aprobación
 			}.DoSaveOrder(dbUser);
 			if (ordenResponse.status != 200) return ordenResponse;
@@ -474,7 +482,7 @@ namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 			}
 		}
 
-		public (bool flowControl, ResponseService value) DoAnulacionFactura(Tbl_Factura factura, Security_Users dbUser)
+		public (bool flowControl, ResponseService? value) DoAnulacionFactura(Tbl_Factura factura, Security_Users dbUser)
 		{
 			if (factura?.Datos_Financiamiento?.Numero_Contrato != null)
 			{
@@ -484,7 +492,7 @@ namespace UI.CAPA_NEGOCIO.Facturacion.Operations
 					motivo_anulacion = factura?.Motivo_Anulacion
 				};
 				ResponseService? response = contract?.DoAnular(false, dbUser);
-				if (response?.status != 200)
+				if (response != null && response?.status != 200)
 				{
 					return (flowControl: false, value: response);
 				}

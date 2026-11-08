@@ -1,25 +1,36 @@
 //@ts-check
+import { Transactional_Valoracion } from "../../FrontModel/Transaction_Valoracion.js";
 import { EntityClass } from "../../WDevCore/WModules/EntityClass.js";
-import { Cat_Producto }  from './Cat_Producto.js'
-import { Tbl_Compra }  from './Tbl_Compra.js'
-import { Tbl_Lotes }  from './Tbl_Lotes.js'
+import { Money } from "../../WDevCore/WModules/Types/Money.js";
+import { Cat_Producto } from './Cat_Producto.js'
+import { Tbl_Compra } from './Tbl_Compra.js'
+import { Tbl_Lotes } from './Tbl_Lotes.js'
 class Detalle_Compra extends EntityClass {
-   constructor(props) {
-       super(props, 'EntityFacturacion');
-       Object.assign(this, props);;
-       this.Aplica_Iva = undefined;
-       this.Precio_Venta = undefined;
-   }
-   /**@type {Number}*/ Id_Detalle_Compra;
-   /**@type {Number}*/ Cantidad;
-   /**@type {Number}*/ Precio_Unitario;
-   /**@type {Number}*/ SubTotal;
-   /**@type {Number}*/ Iva;
-   /**@type {Number}*/ Total;
-   /**@type {String}*/ Presentacion;   
-   /**@type {Object}*/  Datos_Producto_Lote;
-   /**@type {Cat_Producto} ManyToOne*/ Cat_Producto;
-   /**@type {Tbl_Compra} ManyToOne*/ Tbl_Compra;
-   /**@type {Array<Tbl_Lotes>} OneToMany*/ Tbl_Lotes;
+     /**
+     * @param {Partial<Detalle_Compra>} [props]
+     */
+    constructor(props) {
+        super(props, 'EntityFacturacion');
+        Object.assign(this, props);;
+        /**
+         * @type {boolean | undefined}
+         */
+        this.Aplica_Iva = undefined;
+         /**
+         * @type {Money?}
+         */
+        this.Precio_Venta = null;
+    }
+   /**@type {Money?}*/ Id_Detalle_Compra = null;
+   /**@type {Money?}*/ Cantidad = null;
+   /**@type {Money?}*/ Precio_Unitario = null;
+   /**@type {Money?}*/ SubTotal = null;
+   /**@type {Money?}*/ Iva = null;
+   /**@type {Money?}*/ Total = null;
+   /**@type {String?}*/ Presentacion = null;
+   /**@type {Transactional_Valoracion?}*/  Datos_Producto_Lote = null;
+   /**@type {Cat_Producto?} ManyToOne*/ Cat_Producto = null;
+   /**@type {Tbl_Compra?} ManyToOne*/ Tbl_Compra = null;
+   /**@type {Array<Tbl_Lotes>} OneToMany*/ Tbl_Lotes = [];
 }
 export { Detalle_Compra }

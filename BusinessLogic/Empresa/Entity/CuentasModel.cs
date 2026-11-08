@@ -52,6 +52,8 @@ namespace DataBaseModel
 		public int? id_categoria { get; set; }
 		[ManyToOne(TableName = "Categoria_Cuentas", KeyColumn = "id_categoria", ForeignKeyColumn = "id_categoria")]
 		public Categoria_Cuentas? Categoria_Cuentas { get; set; }
+		public DateTime? UpdateAt { get; set; }
+		
 		//externa, propia, pago
 		[JsonProp]
 		public List<Transaccion_Permitida>? Transacciones_Permitidas { get; set; }

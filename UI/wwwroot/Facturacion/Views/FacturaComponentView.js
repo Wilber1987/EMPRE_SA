@@ -149,7 +149,7 @@ class FacturaComponentView extends HTMLElement {
                                 title: "ANULACIÓN",
                                 ObjectOptions: {
                                     SaveFunction: async () => {
-                                        this.append(ModalVericateAction(async (editObject) => {
+                                        this.append(ModalVericateAction(async () => {
                                             const response = await factura.Anular();
                                             this.append(ModalMessage(response.message, undefined, true));
                                             modal.close();
@@ -164,6 +164,9 @@ class FacturaComponentView extends HTMLElement {
             }
         });
     }
+    /**
+     * @param {Partial<Tbl_Factura> | undefined} factura
+     */
     async VerRecibos(factura) {
         const response = await new Tbl_Factura(factura).GetFacturaContrato();
         /**@type {DocumentsData} */
@@ -180,6 +183,9 @@ class FacturaComponentView extends HTMLElement {
         </div>`;
 
     }
+    /**
+     * @param {Partial<Tbl_Factura> | undefined} factura
+     */
     async VerContrato(factura) {
         const response = await new Tbl_Factura(factura).GetFacturaContrato();
         return html`<div class="contract-response">
@@ -202,7 +208,7 @@ class FacturaComponentView extends HTMLElement {
         documentsData.Header.style.width = "100%";
         this.factura = FacturasBuilder.BuildFactura(factura, documentsData)
         return html`<div class="contract-response">
-            ${this.BuildOptionsBar(this.factura, documentsData)}
+            ${this.BuildOptionsBar(this.factura)}
             ${this.factura}          
         </div>`;
     }
@@ -210,7 +216,7 @@ class FacturaComponentView extends HTMLElement {
     /**
     * @param {HTMLElement} factura
     */
-    BuildOptionsBar(factura, documentsData) {
+    BuildOptionsBar(factura) {
         return new WPrintExportToolBar({
             PrintAction: (toolBar) => {
                 toolBar.Print(html`<div class="">                   

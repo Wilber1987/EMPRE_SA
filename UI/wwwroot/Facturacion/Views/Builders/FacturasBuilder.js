@@ -9,7 +9,8 @@ import { Detalle_Factura } from "../../FrontModel/Detalle_Factura.js";
 import { DocumentsData } from "../../FrontModel/DocumentsData.js";
 import { Tbl_Compra } from "../../FrontModel/Tbl_Compra.js";
 import { Tbl_Factura } from "../../FrontModel/Tbl_Factura.js";
-import {Transaction_Contratos} from "../../../FrontModel/Transaction_Contratos.js";
+import { Transaction_Contratos } from "../../../FrontModel/Transaction_Contratos.js";
+import { Money } from "../../../WDevCore/WModules/Types/Money.js";
 
 export class FacturasBuilder {
     /**
@@ -64,6 +65,11 @@ export class FacturasBuilder {
     * @returns {any}
     */
     static BuildFacturaVenta(documentsData, factura) {
+        documentsData.Header.innerHTML = documentsData.Header.innerHTML
+            .replaceAll("{{ numero_contrato }}", typeof factura.Datos_Financiamiento?.Numero_Contrato == "string"
+                ? `No. Contrato: ${factura.Datos_Financiamiento.Numero_Contrato}` : "")
+            .replaceAll("{{ fecha_contrato_label }}", new DateTime(factura.Fecha).toDateTimeFormatEs());
+
         return html`<div style="font-family: Arial, sans-serif;" class="recibo">
            ${this.style.cloneNode(true)}
             <div style="margin-top: 5px; display: flex; ">
@@ -145,6 +151,9 @@ export class FacturasBuilder {
      */
     static BuildFacturaCompra(documentsData, factura) {
         //documentsData.Header.appendChild(html`<h1>RUC: ${localStorage.getItem("RUC")}</h1>`)
+        documentsData.Header.innerHTML = documentsData.Header.innerHTML
+            .replaceAll("{{ numero_contrato }}", "")
+            .replaceAll("{{ fecha_contrato_label }}", new DateTime(factura.Fecha).toDateTimeFormatEs());
         return html`<div style="font-family: Arial, sans-serif;" class="recibo">
             ${this.style.cloneNode(true)}
             <div style="margin-top: 5px; display: flex; ">
@@ -220,6 +229,9 @@ export class FacturasBuilder {
     }
 
 
+    /**
+     * @param {Tbl_Factura} factura
+     */
     static CreateTableDetail(factura) {
         return WRender.Create({
             tagName: "table", class: "marco", style: "width: 100%; border-collapse: collapse; margin-top: 5px;", children: [
@@ -239,6 +251,9 @@ export class FacturasBuilder {
         });
     }
 
+    /**
+     * @param {Tbl_Factura} factura
+     */
     static BuildFacturaDetail(factura) {
         return factura.Detalle_Factura.map((/**@type {Detalle_Factura} */ detalle) => {
             const total = factura.Moneda == "DOLARES" ? detalle.Total : detalle.Total * factura.Tasa_Cambio_Venta
@@ -278,6 +293,9 @@ export class FacturasBuilder {
             })
         });
     }
+    /**
+     * @param {Tbl_Compra} factura
+     */
     static CreateTableDetailCompra(factura) {
         return WRender.Create({
             tagName: "table", class: "marco", style: "width: 100%; border-collapse: collapse;", children: [
@@ -286,11 +304,10 @@ export class FacturasBuilder {
                         { tagName: "th", style: "padding: 5px;", innerHTML: "Descripción" },
                         { tagName: "th", style: "padding: 5px;", innerHTML: "Marca" },
                         { tagName: "th", style: "padding: 5px;", innerHTML: "Model" },
-                        { tagName: "th", style: "padding: 5px;", innerHTML: "Serie" },
-                        {
-                            tagName: "th", style: "padding: 5px; text-align: right;",
-                            innerHTML: `Sub Total ${WOrtograficValidation.es(factura.Moneda ?? "DOLARES")}`
-                        },
+                        { tagName: "th", style: "padding: 5px;", innerHTML: "Serie" },                        
+                        { tagName: "th", style: "padding: 5px;", innerHTML: "P/U." },
+                        { tagName: "th", style: "padding: 5px;", innerHTML: "Cant." },
+                        { tagName: "th", style: "padding: 5px;", innerHTML: "Total" },
                     ]
                 }),
                 { tagName: "tbody", children: this.BuildFacturaDetailCompra(factura) }
@@ -301,13 +318,16 @@ export class FacturasBuilder {
     static BuildFacturaDetailCompra(/**@type {Tbl_Compra} */ factura) {
 
         return factura.Detalle_Compra.map((/**@type {Detalle_Compra} */ detalle) => {
-            const total = factura.Moneda == "DOLARES" ? detalle.Total : detalle.Total * factura.Tasa_Cambio
+            const total = factura.Moneda == "DOLARES" ? new Money(detalle.Total)
+                : new Money(detalle.Total).multiply(factura.Tasa_Cambio)
+            const pu = factura.Moneda == "DOLARES" ? new Money(detalle.Precio_Unitario) : new Money(detalle.Precio_Unitario).multiply(factura.Tasa_Cambio)
+
             //const montoDetalle  = factura.Moneda == "DOLARES" ? detalle.Total : detalle.Total *  factura.Tasa_Cambio
             return WRender.Create({
                 tagName: "tr", children: [
                     WRender.Create({
                         tagName: "td", style: "padding: 5px;",
-                        innerText: `${detalle?.Cat_Producto.Descripcion || 'N/A'}`
+                        innerText: `${detalle?.Cat_Producto?.Descripcion || 'N/A'}`
                     }),
                     WRender.Create({
                         tagName: "td", style: "padding: 5px;",
@@ -315,7 +335,7 @@ export class FacturasBuilder {
                     }),
                     WRender.Create({
                         tagName: "td", style: "padding: 5px;",
-                        innerText: `${detalle?.Datos_Producto_Lote?.Modelo ?? "-"}`
+                        innerText: `${detalle?.Cat_Producto?.Modelo ?? "-"}`
                     }),
                     WRender.Create({
                         tagName: "td", style: "padding: 5px;",
@@ -323,7 +343,15 @@ export class FacturasBuilder {
                     }),
                     WRender.Create({
                         tagName: "td", className: "monto", style: "padding: 5px;",
-                        innerText: `${WOrtograficValidation.es(factura.Moneda ?? "DOLARES")} ${ConvertToMoneyString(total)}`
+                        innerText: `${pu}`
+                    }),
+                    WRender.Create({
+                        tagName: "td", className: "monto", style: "padding: 5px;",
+                        innerText: `${detalle.Cantidad}`
+                    }),
+                    WRender.Create({
+                        tagName: "td", className: "monto", style: "padding: 5px;",
+                        innerText: `${total}`
                     })
                 ]
             })

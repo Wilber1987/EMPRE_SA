@@ -27,9 +27,11 @@ namespace CAPA_NEGOCIO.SystemConfig
 			Header = Header.Replace("{{ logo }}", theme.MEDIA_IMG_PATH + theme.LOGO_PRINCIPAL)
 				.Replace("{{ titulo }}", theme.TITULO)
 				.Replace("{{ sub-titulo }}", theme.SUB_TITULO)
+				.Replace("{{ subtitulo }}", theme.SUB_TITULO)
 				.Replace("{{ email }}", theme.EMAIL)
 				.Replace("{{ tel }}", theme.INFO_TEL)
 				.Replace("{{ ruc }}", theme.RUC)
+				.Replace("{{ info_tel }}", theme.INFO_TEL)
 				.Replace("{{ sucursal }}", sucursal?.Descripcion);
 
 			return this;
@@ -99,6 +101,37 @@ namespace CAPA_NEGOCIO.SystemConfig
 				.Replace("{{ footer }}", Footer);
 
 			return templateBody;
+		}
+
+		public static string GetContratoEmpenoDataFragments()
+		{
+			return GetContratoDataFragments("ContratoEmpeno.html", "tableCuotasEmpeno.html");
+		}
+
+		public static string GetContratoEmpenoVehiculoDataFragments()
+		{
+			return GetContratoDataFragments("ContratoEmpenoVehiculo.html", "tableCuotasEmpeno.html");
+		}
+
+		public static string GetContratoQuincenalDataFragments()
+		{
+			return GetContratoDataFragments("ContratoQuincenal.html", "tableCuotasQuincenal.html");
+		}
+
+		private static string GetContratoDataFragments(string templateFile, string tableCuotasFile)
+		{
+			var Body = HtmlContentGetter.ReadHtmlFile(templateFile, "Resources/Contracts");
+			var Header = HtmlContentGetter.ReadHtmlFile("contractHeader.html", "Resources/Contracts/ContractFragments")
+				.Replace("{{ contract-title }}", "MUTUO GARANTIZADO CON PRENDA COMERCIAL");
+			var Footer = HtmlContentGetter.ReadHtmlFile("contractFooter.html", "Resources/Contracts/ContractFragments");
+			var style = HtmlContentGetter.ReadHtmlFile("style.html", "Resources/Contracts/ContractFragments");
+			var tableCuotas = HtmlContentGetter.ReadHtmlFile(tableCuotasFile, "Resources/Contracts/ContractFragments");
+
+			return Body
+				.Replace("{{ style }}", style)
+				.Replace("{{ header }}", Header)
+				.Replace("{{ tableCuotas }}", tableCuotas)
+				.Replace("{{ footer }}", Footer);
 		}
 	}
 }

@@ -87,8 +87,8 @@ export class WCajasView extends HTMLElement {
     }
     CambioMoneda() {
         return html`<div class="cambio-monedas">
-            <button class="Btn" onclick="${() => this.CambioMonedaView(MonedaEnum.DOLARES, MonedaEnum.CORDOBAS)}">USD - NIO</button>
-            <button class="Btn" onclick="${() => this.CambioMonedaView(MonedaEnum.CORDOBAS, MonedaEnum.DOLARES)}">NIO - USD</button>
+            <button class="Btn" onclick="${() => this.CambioMonedaView(MonedaEnum.DOLARES, MonedaEnum.CORDOBAS)}">COMPRA DE USD</button>
+            <button class="Btn" onclick="${() => this.CambioMonedaView(MonedaEnum.CORDOBAS, MonedaEnum.DOLARES)}">VENTA DE USD</button>
             <!-- <button class="Btn" onclick="${() => this.CambioMonedaView(MonedaEnum.CORDOBAS, MonedaEnum.CORDOBAS)}">NIO - NIO</button>
             <button class="Btn" onclick="${() => this.CambioMonedaView(MonedaEnum.DOLARES, MonedaEnum.DOLARES)}">USD - USD</button> -->
         </div>`;
@@ -98,12 +98,15 @@ export class WCajasView extends HTMLElement {
      * @param {string} MONEDA_SALIDA
      */
     CambioMonedaView(MONEDA_ENTRADA, MONEDA_SALIDA) {
-        //const liquidationMode = MONEDA_ENTRADA == MonedaEnum.DOLARES ? ;
+        const liquidationModeDescripcion = MONEDA_ENTRADA == MonedaEnum.DOLARES && MONEDA_SALIDA == MonedaEnum.CORDOBAS
+            ? "Compra de Dolares" : "Venta de Dolares";
+        const existMC = MONEDA_ENTRADA != MONEDA_ENTRADA;
+
         const order = new Orden_Movimiento({           
             tipo_documento_origen: "CAMBIO_MONEDA",
-            descripcion: `CAMBIO DE MONEDA: ${MONEDA_ENTRADA} A ${MONEDA_SALIDA}`,
+            descripcion: existMC ? liquidationModeDescripcion : `Cambio de ${MONEDA_ENTRADA} a ${MONEDA_SALIDA}`,
             direccion: "MIXED",
-            concepto: `CAMBIO DE MONEDA: ${MONEDA_ENTRADA} A ${MONEDA_SALIDA}`,
+            concepto: existMC ?  liquidationModeDescripcion : `Cambio de ${MONEDA_ENTRADA} a ${MONEDA_SALIDA}`,
             //monto: 40,
             //tasa_cambio: 37.07,
             //tasa_cambio_compra: null,
@@ -143,7 +146,7 @@ export class WCajasView extends HTMLElement {
             //cuenta: cuenta,
             //entity: new Orden_Movimiento(),
             denominaciones: this.denoms ?? [],
-            action: () => { }
+            //action: () => { }
         })
     }
 

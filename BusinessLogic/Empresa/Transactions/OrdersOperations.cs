@@ -38,7 +38,7 @@ namespace BusinessLogic.Empresa.Transactions
             }
         }
 
-        public static ResponseService DoAprobaryEjecutarOrder(Orden_Movimiento order, Security_Users? dbUser)
+        public static ResponseService DoAprobaryEjecutarOrder(Orden_Movimiento order, Security_Users? dbUser, bool validateOrden = true)
         {
 
             if (order.Tipo_Movimiento == TipoMovimiento.CAMBIO_MONEDA
@@ -62,9 +62,12 @@ namespace BusinessLogic.Empresa.Transactions
             // ============================================
             // 1. VALIDACIÓN DE DENOMINACIONES
             // ============================================
-            var validacionDenoms = OrderValidationOperation.ValidarDenominacionesDeOrden(order);
-            if (validacionDenoms.status != 200)
-                return validacionDenoms;
+            if (validateOrden)
+            {
+                var validacionDenoms = OrderValidationOperation.ValidarDenominacionesDeOrden(order);
+                if (validacionDenoms.status != 200) return validacionDenoms;
+            }
+           
 
             // ============================================
             // 2. PROCESAR OPERACIÓN DE CAMBIO (SI APLICA)
@@ -132,6 +135,15 @@ namespace BusinessLogic.Empresa.Transactions
                 return value;
             }
 
+            if (order.Orden_Related != null)
+            {
+                ResponseService responseServiceRelated = DoAprobaryEjecutarOrder(order.Orden_Related, dbUser, false);
+                if (responseServiceRelated.status != 200)
+                {
+                    return responseServiceRelated;
+                }
+            }
+
             return response;
         }
 
@@ -171,7 +183,7 @@ namespace BusinessLogic.Empresa.Transactions
                     compra.Estado = EstadoEnum.ANULADO;
                     var response = ComprasServices.DoAnularCompra(compra);
                     if (response.status != 200)
-                    {                        
+                    {
                         return (flowControl: false, response);
                     }
                 }
@@ -198,7 +210,7 @@ namespace BusinessLogic.Empresa.Transactions
                 var venta = new Tbl_Factura().Find<Tbl_Factura>(FilterData.Equal("Id_Factura", order.id_documento_origen));
                 if (venta != null)
                 {
-                   return new FacturacionServices().DoAnulacionFactura(venta, dbUser);
+                    return new FacturacionServices().DoAnulacionFactura(venta, dbUser);
                 }
                 else
                 {
@@ -260,10 +272,12 @@ namespace BusinessLogic.Empresa.Transactions
         /// </summary>
         public static List<Orden_Movimiento> GetPendientes(int id_sucursal)
         {
-            return new Orden_Movimiento().Where<Orden_Movimiento>(
+            var orders = new Orden_Movimiento().Where<Orden_Movimiento>(
                 FilterData.Equal("estado", EstadoOrden.PENDIENTE),
                 FilterData.Equal("id_sucursal", id_sucursal)
             );
+            var ordersRelateds = orders.Where(o => o.Id_OrderRelated != null).Select(o => o.Id_OrderRelated).ToList();
+            return orders.Where(o => !ordersRelateds.Contains(o.id_orden)).ToList();
         }
 
         public static List<Orden_Movimiento> GetOrder(string? sessionKey)
@@ -277,10 +291,10 @@ namespace BusinessLogic.Empresa.Transactions
         public static Orden_Movimiento? FindOrder(string? sessionKey, Orden_Movimiento inst)
         {
             var (User, dbUser) = Business.Security_Users.GetUserData(sessionKey);
-           /* var ordersPendientes = new Orden_Movimiento().Find<Orden_Movimiento>(
-                FilterData.Equal("id_sucursal", dbUser?.Id_Sucursal),
-                FilterData.Equal("id_orden", inst.id_orden)
-            ); ;*/
+            /* var ordersPendientes = new Orden_Movimiento().Find<Orden_Movimiento>(
+                 FilterData.Equal("id_sucursal", dbUser?.Id_Sucursal),
+                 FilterData.Equal("id_orden", inst.id_orden)
+             ); ;*/
             inst.filterData.Add(FilterData.Equal("id_sucursal", dbUser?.Id_Sucursal));
 
             return inst.Find<Orden_Movimiento>();

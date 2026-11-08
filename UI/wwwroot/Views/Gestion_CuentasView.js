@@ -11,6 +11,7 @@ import { PageType, WReportComponent } from "../WDevCore/WComponents/WReportCompo
 import { Detail_Movimiento, Detail_Movimiento_ModelComponent } from "../FrontModel/MovimientosCuentas.js";
 import { Movimiento, Movimiento_ModelComponent } from "../FrontModel/MovimientosCuentasReportModelOld.js";
 import { Catalogo_Cuentas_ModelComponent } from "../FrontModel/Catalogo_Cuentas.js";
+import { OrderData } from "../WDevCore/WModules/CommonModel.js";
 
 /**
  * @typedef {Object} ComponentConfig
@@ -42,7 +43,9 @@ class Gestion_CuentasView extends HTMLElement {
     }
 
     SetOption = async () => {
-        const model = new Catalogo_Cuentas_ModelComponent();
+        const model = new Catalogo_Cuentas_ModelComponent({
+            OrderData: [OrderData.Desc("UpdateAt")]
+        });
         /**@type {Array<Catalogo_Cuentas_ModelComponent>} */
         const dataset = await model.Get();
         this.Manager.NavigateFunction("PROPIAS", new GestionCuentaComponent({

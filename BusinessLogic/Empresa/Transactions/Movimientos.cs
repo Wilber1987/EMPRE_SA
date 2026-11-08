@@ -166,8 +166,10 @@ namespace Transactions
 			// ============================================
 			if (cuentaOrigen != null && cuentaDestino != null)
 			{
+				cuentaOrigen.UpdateAt = DateTime.Now;
 				cuentaOrigen.saldo = cuentaOrigen?.saldo ?? 0;
 				cuentaOrigen.saldo_dolares = cuentaOrigen?.saldo_dolares ?? 0;
+				cuentaDestino.UpdateAt = DateTime.Now;
 				cuentaDestino.saldo = cuentaDestino?.saldo ?? 0;
 				cuentaDestino.saldo_dolares = cuentaDestino?.saldo_dolares ?? 0;
 
@@ -344,6 +346,10 @@ namespace Transactions
 				if (is_hidden)
 				{
 					encabezado.Delete();
+					encabezado.Detail_Movimiento.ForEach(detalle =>
+					{
+						detalle.Delete();
+					});
 				}
 
 				// ============================================

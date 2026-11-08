@@ -1,0 +1,91 @@
+<style>
+				.table td {
+					border: 1px black solid;
+					padding: 5px;
+					width: 7.14% !important;
+				}
+
+				.table td.col2 {
+					width: 14.28% !important;
+				}
+
+				.table td.col6 {
+					width: 42.85% !important;
+				}
+
+				.table td.val {
+					text-align: right;
+				}
+				span.sombrear {
+					 border: 1px black solid;
+					color:#FFFF00;
+					background-color:#FFFF00;
+				}
+			</style>
+			<table class='table' style='width: 100%;font-size:9px !important; border-collapse: collapse;'>
+				<thead>
+					<tr>
+						<td colspan='2' class='col2'><span lang='ES-NI'>CAPITAL PRESTADO C$</span></td>
+						<td colspan='2' class='col2'> <span lang='ES-NI'>C$ {{ Valoracion_empeño_cordobas }}</span></td>
+						<td colspan='6' class='col6' rowspan='2'>
+						<span lang='ES-NI'>TABLA DE AMORTIZACION DE DEUDA POR GARANTIA PRENDARIA</span>
+						</td>
+						<td colspan='2' class='col2'><span lang='ES-NI'>CUOTA C$</span></td>
+						<td colspan='2' class='col2'> <span lang='ES-NI'>C$ {{ cuotafija }}</span></td>
+					</tr>
+					<tr>
+						<td colspan='2' class='col2'> CAPITAL PRESTADO $</td>
+						<td colspan='2' class='col2'> $ {{ Valoracion_empeño_dolares }}</td>
+						<td colspan='2' class='col2'><span lang='ES-NI'>CUOTA FIJA<br>$</br></span> </td>
+						<td colspan='2' class='col2'>$ {{ cuotafija_dolares }}</td>
+					</tr>
+					<tr>
+						<td colspan='2' class='col2'>
+						<span lang='ES-NI'>PLAZO PARA CANCELAR: {{ plazo }} mes(es)</span>
+						</td>
+						<td colspan='2' class='col2'>
+						<p style='margin-bottom:0cm;text-align:center;line-height:normal'>
+							<span lang='ES-NI'>INTERÉS NETO CORRIENTE(a): {{ interes_inicial }}%</span>
+						</p>
+						</td>
+						<td colspan='2' class='col2'>
+						<span lang='ES-NI'>Demás cargos a
+							pagar en relación con lo pactado(b): {{ sum_intereses }}%</span>
+						</td>
+						<td colspan='2' class='col2'>
+						<span lang='ES-NI'>Interés Neto
+							corriente más demás cargos a
+							pagar en relación con lo pactado</span>
+						</td>
+						<td colspan='2' class='col2'>
+						<span lang='ES-NI'>ABONO AL
+							CAPITAL</span>
+						</td>
+						<td colspan='2' class='col2'>
+						<span lang='ES-NI'>TOTAL A
+							PAGAR</span>
+						</td>
+						<td colspan='2' class='col2'>
+						<span lang='ES-NI'>MONTO
+							RESTANTE</span>
+						</td>
+					</tr>
+					<tr>
+						<td colspan='2' class='col2'><span lang='ES-NI'>FECHAS DE PAGO</span></td>
+						<td><span lang='ES-NI'>C$</span></td>
+						<td><span lang='ES-NI'>$</span></td>
+						<td><span lang='ES-NI'>C$</span></td>
+						<td><span lang='ES-NI'>$</span></td>
+						<td><span lang='ES-NI'>C$</span></td>
+						<td><span lang='ES-NI'>$</span></td>
+						<td><span lang='ES-NI'>C$</span></td>
+						<td><span lang='ES-NI'>$</span></td>
+						<td><span lang='ES-NI'>C$</span></td>
+						<td><span lang='ES-NI'>$</span></td>
+						<td><span lang='ES-NI'>C$</span></td>
+						<td><span lang='ES-NI'>$</span></td>
+					</tr>
+				</thead>
+				{{ tbody_amortizacion }}
+			</table>
+	

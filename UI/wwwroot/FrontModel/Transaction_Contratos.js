@@ -43,7 +43,7 @@ class Transaction_Contratos_ModelComponent extends EntityClass {
     /** @type {ModelProperty}*/
     mora = { type: "PERCENTAGE", hiddenInTable: true, hiddenFilter: true };
     /** @type {ModelProperty}*/
-    estado = { type: "Select", Dataset: ["ACTIVO", "CANCELADO", "ANULADO", "VENCIDO"] };
+    estado = { type: "Select", Dataset: ["ACTIVO", "CANCELADO", "PENDIENTE","ANULADO", "VENCIDO"] };
     /** @type {ModelProperty}*/
     fecha_vencimiento = { type: "date", hiddenFilter: true };
     /** @type {ModelProperty}*/

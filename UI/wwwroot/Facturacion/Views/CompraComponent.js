@@ -13,6 +13,7 @@ import { WOrtograficValidation } from "../../WDevCore/WModules/WOrtograficValida
 import { WArrayF } from "../../WDevCore/WModules/WArrayF.js";
 import { ModalMessage } from "../../WDevCore/WComponents/ModalMessage.js";
 import { WAlertMessage } from "../../WDevCore/WComponents/WAlertMessage.js";
+import { Money } from "../../WDevCore/WModules/Types/Money.js";
 
 /**
  * @typedef {Object} ComprasConfig
@@ -83,9 +84,9 @@ class ComprasComponent extends HTMLElement {
     }
 
     /**
-     * @param {Number} subtotal
-     * @param {Number} iva
-     * @param {Number} total
+     * @param {Money?} subtotal
+     * @param {Money?} iva
+     * @param {Money?} total
      */
     TotalesDetailUpdate(subtotal, iva, total) {
         // @ts-ignore
@@ -117,7 +118,16 @@ class ComprasComponent extends HTMLElement {
     }//end draw
 
     BuildCompraModel = () => {
-        this.ComprasModel = new Tbl_Compra_ModelComponent();
+        this.ComprasModel = new Tbl_Compra_ModelComponent({}, (/** @type {Tbl_Compra} */ compra) => {
+            compra.Sub_Total = WArrayF.sumMoney(compra.Detalle_Compra, "SubTotal");
+            
+            
+            compra.Total = compra.Detalle_Compra.map(d => d.Total)
+                .reduce((sum, value) => new Money(sum).add(value));
+
+            console.log(compra);
+            this.TotalesDetailUpdate(compra.Sub_Total, new Money(0), compra.Total)
+        });
         this.ComprasModel.Tasa_Cambio.defaultValue = this.TasaCambio;
         this.ComprasModel.Detalle_Compra.ModelObject = this.ComprasModel.Detalle_Compra.ModelObject();
         if (this.ComprasConfig.WithTemplate) {
@@ -129,29 +139,10 @@ class ComprasComponent extends HTMLElement {
             this.ComprasModel.Cat_Proveedor.Dataset = [this.ComprasConfig.Entity?.Cat_Proveedor];
             this.ComprasModel.Detalle_Compra.ModelObject.Cat_Producto.Dataset = this.ComprasConfig.Entity?.Detalle_Compra?.map(d => d.Cat_Producto) ?? [];
         }
-        this.ComprasModel.Detalle_Compra.ModelObject.Iva.action = (/**@type {Detalle_Compra} */ detalleCompra) => {
-            return detalleCompra.Aplica_Iva ? ((detalleCompra.Cantidad * detalleCompra.Precio_Unitario) * this.IvaPercent).toFixed(3) : 0;
-        };
 
-        this.ComprasModel.Detalle_Compra.ModelObject.Total.action = (/**@type {Detalle_Compra} */ detalleCompra) => {
-            // @ts-ignore
-            return (parseFloat(detalleCompra.Iva) + parseFloat(detalleCompra.SubTotal)).toFixed(3);
-        };
         if (this.ComprasConfig.DatosCompra) {
             this.ComprasModel.Datos_Compra = this.ComprasConfig.DatosCompra;
-        }
-
-        this.ComprasModel.Sub_Total.action = (/**@type {Tbl_Compra} */ EditObject, form, control) => {
-            let subtotal;
-            let total;
-            let iva;           
-            if (EditObject.Detalle_Compra != undefined) {
-                subtotal = WArrayF.SumValAtt(EditObject.Detalle_Compra, "SubTotal");
-                iva = WArrayF.SumValAtt(EditObject.Detalle_Compra, "Iva");
-                total = WArrayF.SumValAtt(EditObject.Detalle_Compra, "Total");
-            }
-            this.TotalesDetailUpdate(subtotal ?? 0, iva ?? 0, total ?? 0);
-        }
+        }        
         return this.ComprasModel;
     }
     //this.contratosForm.append(optionContainer, this.ComprasForm);

@@ -11,6 +11,9 @@ import { Detalle_Factura } from "../Detalle_Factura.js";
 import { Tbl_Factura } from "../Tbl_Factura.js";
 import { Catalogo_Cambio_Divisa } from "../../../FrontModel/Catalogo_Cambio_Divisa.js";
 class Detalle_Factura_ModelComponent extends EntityClass {
+	/**
+	  * @param {Partial<Detalle_Factura_ModelComponent>} [props]
+	 */
 	constructor(props) {
 		super(props, 'EntityFacturacion');
 		Object.assign(this, props);
@@ -24,6 +27,7 @@ class Detalle_Factura_ModelComponent extends EntityClass {
 		ModelObject: () => new Tbl_Lotes_ModelComponent(),
 		EntityModel: new Tbl_Lotes(),
 		action: (/**@type {Detalle_Factura} */ detail, /**@type {WForm} */ form) => {
+			// @ts-ignore
 			this.UpdateDetalle(form.Config.ParentEntity, detail);
 		}
 	};
@@ -74,7 +78,7 @@ class Detalle_Factura_ModelComponent extends EntityClass {
 	/**
 	 * @param {Tbl_Factura} ParentEntity
 	 * @param {Detalle_Factura} detail
-	 * @param {WForm} form
+	 * @param {WForm} [form]
 	 */
 	UpdateDetalle(ParentEntity, detail, form, updateProps = true) {
 		

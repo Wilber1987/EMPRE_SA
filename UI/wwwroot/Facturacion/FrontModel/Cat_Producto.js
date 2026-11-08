@@ -11,6 +11,7 @@ class Cat_Producto extends EntityClass {
     }
    /**@type {Number}*/ Id_Producto;
    /**@type {String}*/ Descripcion;
+   /**@type {String}*/ Modelo;
    /**@type {Cat_Marca} ManyToOne*/ Cat_Marca;
    /**@type {Cat_Categorias} ManyToOne*/ Cat_Categorias;
    /**@type {Array<Detalle_Compra>} OneToMany*/ Detalle_Compra;

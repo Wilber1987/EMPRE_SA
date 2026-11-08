@@ -1,0 +1,54 @@
+<style>
+				td {
+					border: 1px black solid;
+					padding: 5px;
+					width: 7.14% !important;
+				}
+
+				td.col2 {
+					width: 14.28% !important;
+				}
+
+				td.col6 {
+					width: 42.85% !important;
+				}
+
+				td.val {
+					text-align: right;
+				}
+				span.sombrear {
+					 border: 1px black solid;
+					color:#FFFF00;
+					background-color:#FFFF00;
+				}
+			</style>
+			<table class='table' style='width: 100%;font-size:9px !important; border-collapse: collapse;'>
+				<thead>
+					<tr>
+						<td colspan='1' class='col2'><span lang='ES-NI'>PRECIO DEL ARTÍCULO EN C$</span></td>
+						<td colspan='1' class='col2'> <span lang='ES-NI'>C$ {{ Valoracion_empeño_cordobas }}</span></td>
+						<td colspan='3' class='col6' rowspan='2'>
+						<span lang='ES-NI'>TABLA DE PAGO DEL SISTEMA DE APARTADO</span>
+						</td>
+						<td colspan='1' class='col2'><span lang='ES-NI'>CUOTA C$</span></td>
+						<td colspan='1' class='col2'> <span lang='ES-NI'>C$ {{ cuotafija }}</span></td>
+					</tr>
+					<tr>
+						<td colspan='1' class='col2'> PRECIO DEL ARTÍCULO EN $</td>
+						<td colspan='1' class='col2'> $ {{ Valoracion_empeño_dolares }}</td>
+						<td colspan='1' class='col2'><span lang='ES-NI'>CUOTA FIJA<br>$</br></span> </td>
+						<td colspan='1' class='col2'>$ {{ cuotafija_dolares }}</td>
+					</tr>
+					
+					<tr>
+						<td colspan='2' class='col2'><span lang='ES-NI'>FECHAS DE PAGO</span></td>
+						<td><span lang='ES-NI'>N° DE CUOTAS</span></td>
+						<td><span lang='ES-NI'>CUOTA EN C$</span></td>
+						<td><span lang='ES-NI'>EQUIVALENTE EN  $</span></td>
+						<td><span lang='ES-NI'>MONTO RESTANTE EN C$</span></td>
+						<td><span lang='ES-NI'>MONTO RESTANTE EN $</span></td>
+					</tr>
+				</thead>
+				{{ tbody_amortizacion }}
+			</table>
+	

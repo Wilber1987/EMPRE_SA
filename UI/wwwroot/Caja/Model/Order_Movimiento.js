@@ -17,6 +17,7 @@ export const DirectionEnum = {
 };
 
 export class Orden_Movimiento extends EntityClass {
+    
     /**
      * @param {Partial<Orden_Movimiento>} [props]
      */
@@ -137,8 +138,13 @@ export class Orden_Movimiento extends EntityClass {
 
     /** @type {DenominacionMovimientoDTO[]} */
     DenominationsVueltoNIO = [];  // Billetes NIO que la caja entrega/recibe en la mesa cambiaria
-
     
+    /** @type {Orden_Movimiento?} */
+    Orden_Related = null;
+    
+    GetMonto() {
+        return new Money(this.monto)?.subtract(this.Orden_Related?.monto ?? 0)
+    }
 
     //ENTITY #########################################
     /**@return {Promise<ResponseServices>} */;
